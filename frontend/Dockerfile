@@ -1,5 +1,5 @@
 # Versión alpine
-FROM ubuntu:jammy
+FROM debian:bullseye
 
 # Puerto 3000
 EXPOSE 3000

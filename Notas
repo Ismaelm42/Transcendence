@@ -50,3 +50,8 @@ https://www.w3schools.com/django/index.php
 
 Ver PostGreSQL:
 https://www.w3schools.com/postgresql/index.php
+
+
+
+Entorno virtual de Django lo dejaría de lado (venv)
+En principio estaría instalado dentro de un container, por lo que ya estaría aíslado.
