@@ -1,0 +1,37 @@
+networks:
+  transcendence:
+
+services:
+# NGINX
+  nginx:
+    build: ./nginx/
+    container_name: nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl_certs/private:/etc/nginx/ssl/private
+      - ./nginx/ssl_certs/public:/etc/ssl/certs
+    networks:
+      - transcendence
+    restart: always
+# FRONTEND
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - transcendence
+    depends_on:
+      - backend
+    restart: always
+# BACKEND
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    networks:
+      - transcendence
+    restart: always
