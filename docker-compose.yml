@@ -15,6 +15,15 @@ services:
     networks:
       - transcendence
     restart: always
+# POSTGRES
+  postgres:
+    build: ./postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - transcendence
+    restart: always
 # FRONTEND
   frontend:
     build: ./frontend
@@ -34,4 +43,6 @@ services:
       - "8000:8000"
     networks:
       - transcendence
+    depends_on:
+      - postgres
     restart: always

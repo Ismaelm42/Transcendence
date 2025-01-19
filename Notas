@@ -55,3 +55,8 @@ https://www.w3schools.com/postgresql/index.php
 
 Entorno virtual de Django lo dejaría de lado (venv)
 En principio estaría instalado dentro de un container, por lo que ya estaría aíslado.
+
+
+CMD para conectarse a la base de datos cuando se está en el container de postgres:
+
+psql -h postgres -U mydatabaseuser -d mydatabase
