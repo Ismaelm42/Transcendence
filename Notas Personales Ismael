@@ -1,0 +1,164 @@
+
+Pong Game
+SPA
+Back and Forward Buttons should work
+Compatible with latest stable up-to-date version of Google Chrome 
+2 players can play 1v1 with the same keyboard
+Option to start a Tournament
+Registration System
+Matchmaking System
+Any password must me hashed (strong hashing algorythm)
+Website must be protected against SQL injection/XSS
+Enable HTTPS connection for all aspects (Utilize wss)
+Validation for forms and any user input
+Protect routes
+Any password, API keys, env variables must be located in a .env and ignored by git
+
+
+Modules (At least 7 Major Modules are recquired)
+
+Major Module: Use a Framework to build the backend: Django
+Minor Module: Use a framework or a toolkit to build the front-end: Bootstrap toolkit
+Minor Module: Use a database for the backend: PostgreSQL
+
+
+
+Major Module: Standard user management, authentication, users across tournaments
+Major module: Remote players
+Major module: Multiple players
+Major module: Live Chat
+Major module: Introduce an AI Opponent.
+Major module: Implement Two-Factor Authentication (2FA) and JWT.
+Major module: Designing the Backend as Microservices.
+Major module: Add Another Game with User History and Matchmaking.
+Minor module: Support on all devices
+Minor module: Expanding Browser Compatibility.
+Minor module: Multiple language supports.
+
+
+Ver Youtube:
+https://www.youtube.com/watch?v=T1intZyhXDU
+
+Intentar instalar Repositorio:
+https://github.com/Linuswidmer/42_transcendence/tree/main
+
+Intentar instalar Repositorio:
+https://github.com/tdameros/42-transcendence
+
+Ver Django:
+https://www.w3schools.com/django/index.php
+
+Ver Bootstrap5:
+https://www.w3schools.com/bootstrap5/index.php
+
+Ver PostGreSQL:
+https://www.w3schools.com/postgresql/index.php
+
+
+
+CMD para conectarse a la base de datos cuando se está en el container de postgres:
+psql -h postgres -U mydatabaseuser -d mydatabase
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gracias por la explicación detallada, ahora puedo darte una mejor orientación.
+
+    Servir archivos estáticos (como la página principal del frontend): Si la página principal de tu web no requiere lógica de backend, sí, deberías servirla desde el contenedor del frontend. Para ello:
+        El contenedor de frontend debe contener los archivos estáticos de tu página (HTML, CSS, JavaScript, etc.).
+        Puedes configurar nginx para servir estos archivos estáticos directamente, sin necesidad de un servidor adicional en el contenedor del frontend.
+        En el archivo de configuración de nginx, debes asegurarte de que las peticiones a la raíz (/) o cualquier ruta estática sean manejadas por nginx y servidas desde el contenedor del frontend.
+
+    Ejemplo básico de configuración de nginx para servir archivos estáticos:
+
+server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        root /path/to/your/frontend/files;
+        index index.html;
+    }
+
+    location /static/ {
+        root /path/to/your/static/files;
+    }
+}
+
+En este caso, el contenedor de frontend solo tiene que estar sirviendo los archivos estáticos y nginx se encarga de redirigir las peticiones adecuadas.
+
+¿Necesitas un servidor en el frontend? Si solo estás sirviendo archivos estáticos (HTML, CSS, JavaScript), no es necesario un servidor en el frontend. Nginx puede manejar las peticiones y servir los archivos directamente. Solo necesitarías un servidor en el frontend si necesitas algo más interactivo, como un servidor de desarrollo para manejar hot reloading, pero para producción nginx debería ser suficiente.
+
+Comunicaciones entre el frontend y el backend: Si el frontend necesita interactuar con el backend (por ejemplo, si tienes un juego y la lógica de este está en Django), el frontend hará peticiones HTTP al backend, como por ejemplo solicitudes GET, POST, PUT, etc.
+
+En el contenedor del frontend, usarás fetch o XMLHttpRequest en tu código JavaScript para hacer estas solicitudes al backend. El backend debería tener las rutas apropiadas configuradas en Django para manejar estas solicitudes.
+
+Por ejemplo, si tienes un endpoint en Django que devuelve el estado del juego:
+
+from django.http import JsonResponse
+
+def game_status(request):
+    # Lógica para obtener el estado del juego
+    return JsonResponse({"status": "ongoing"})
+
+En el frontend, utilizarías algo como:
+
+fetch("http://localhost/back/game-status")
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+Importante: Dado que tienes un proxy inverso en nginx, puedes hacer que las peticiones del frontend a /back/ se redirijan automáticamente al backend. El proxy inverso de nginx manejaría la redirección para ti.
+
+Configuración de nginx para el backend:
+
+    location /back/ {
+        proxy_pass http://backend:8000/;
+    }
+
+    Resumen de flujo de trabajo de las peticiones:
+        El frontend se comunica con el backend haciendo peticiones HTTP a través del navegador o con JavaScript (fetch).
+        Nginx actúa como intermediario entre el frontend y el backend, redirigiendo las peticiones de frontend a los endpoints apropiados del backend.
+        El contenedor de frontend solo maneja la parte estática de la aplicación, y el backend maneja la lógica de negocio (por ejemplo, en el caso del juego, la lógica del juego).
+
+Si tienes alguna otra duda o te gustaría más detalles sobre alguna parte, no dudes en comentarlo.
+
+Frontend se comunica con Backend a través de fetch / websockets?
+
+
+
+
+
+
+
+Implementar ASGI: Solicitudes asincrónicas (Procesa varias solicitudes a la vez de forma no bloqueante a través de hilos etc.)

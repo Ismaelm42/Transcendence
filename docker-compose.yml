@@ -52,3 +52,6 @@ services:
     depends_on:
       - postgres
     restart: always
+    # volume for development only
+    volumes:
+      - ./backend/:/app/

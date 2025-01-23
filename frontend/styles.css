@@ -1,33 +1,14 @@
-body {
-	font-family: Arial, sans-serif;
-	text-align: center;
-	margin: 0;
-	padding: 0;
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background-color: #f4f4f4;
-	color: #333;
+ .header-title {
+	font-family: 'Tektur', serif;
+	color: #8A8D8F;
+	font-weight: bold;
 }
+ 
+ .navbar .nav-link {
+	border-radius: 8px;
+  }
 
-button {
-	padding: 10px 20px;
-	font-size: 16px;
-	background-color: #007bff;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-	margin-top: 20px;
-}
-
-button:hover {
-	background-color: #0056b3;
-}
-
-#app canvas {
-	border: 1px solid #ccc;
-	margin-top: 20px;
-}
+  .navbar .nav-link:hover {
+	color: #ffffff;
+	background-color: rgba(21, 173, 173, 0.1);
+  }
