@@ -57,7 +57,7 @@ https://www.w3schools.com/postgresql/index.php
 
 
 CMD para conectarse a la base de datos cuando se está en el container de postgres:
-psql -h postgres -U mydatabaseuser -d mydatabase
+psql -h postgres -U postgres_default_user -d postgres_database
 
 
 
