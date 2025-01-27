@@ -10,10 +10,14 @@ from .api import UserViewSet
 router = routers.DefaultRouter()
 router.register('api/users', UserViewSet, 'users')
 
+# urlpattenrs = router.urls
+
 urlpatterns = [
 	path('', views.hello),
 	path('about/', views.about),
 	path('index.html', views.index),
 	# from rest framework
+	path('back/', include(router.urls)),
 	path('', include(router.urls)),
+    
 ]
