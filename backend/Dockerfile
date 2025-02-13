@@ -10,5 +10,5 @@ RUN npm install
 
 EXPOSE 8000
 
-#CMD for development. Use ["npm", "start"] for production
+#ISM: CMD for development. Use ["npm", "start"] for production
 CMD ["npm", "run", "dev"]
