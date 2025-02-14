@@ -1,0 +1,3 @@
+# ISM: .env not ignored for development
+
+.env
