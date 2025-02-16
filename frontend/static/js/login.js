@@ -26,7 +26,7 @@ loginButton === null || loginButton === void 0 ? void 0 : loginButton.addEventLi
     passwordLabel.textContent = 'Password ';
     // Create password input
     const passwordInput = document.createElement('input');
-    passwordInput.type = 'text';
+    passwordInput.type = 'password';
     passwordInput.id = 'password';
     passwordInput.required = true;
     // Create submit button

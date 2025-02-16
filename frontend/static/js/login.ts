@@ -23,7 +23,7 @@ loginButton?.addEventListener("click", () => {
 
 // Create password input
 	const passwordInput = document.createElement('input');
-	passwordInput.type = 'text';
+	passwordInput.type = 'password';
 	passwordInput.id = 'password';
 	passwordInput.required = true;
 
