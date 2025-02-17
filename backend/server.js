@@ -1,9 +1,14 @@
 'use strict';
 
-const fastify = require('fastify')({ logger: true });
-const { sequelize, User, Stat } = require('./models'); // Importa sequelize y los modelos
+import fastify from 'fastify';
+import { sequelize } from './models/index.js'; // Importa sequelize y los modelos
+import pino from 'pino';
+import db from './models/index.js'; // Importa el objeto db por defecto
 
-const pino = require('pino');
+const { User, Stat } = db;
+
+const app = fastify({ logger: true });
+
 const logger = pino({
     transport: {
         target: 'pino-pretty',
@@ -13,36 +18,69 @@ const logger = pino({
     }
 });
 
-fastify.get('/create_user/', async (request, reply) => {
-    const user = request.query.username;
-    const pass  = request.query.password;
-    try {
-        const newUser = await User.create({ username: user, password: pass });
-        console.log(`User ${user} created`);
-        return { message: `User ${user} created successfully` };
-    } catch (err) {
-        fastify.log.error(err);
-        return { error: 'Error creating user' };
-    }
-});
-
-fastify.get('/get_users/', async (request, reply) => {
+app.post('/create_user/', async (request, reply) => {
+	const username = request.body['user'];
+	const password = request.body['password'];
 	try {
-		const users = await User.findAll();
-		return users;
+		const newUser = await User.create({ username, password });
+		console.log(`User ${username} created`);
+		return { message: `User ${username} created successfully` };
 	} catch (err) {
-		fastify.log.error('Cannot list users', err);
-		return { error: 'Error fetching users' };
+		app.log.error(err);
+		return { error: 'Error creating user' };
 	}
 });
 
-fastify.get('/about/', async (request, reply) => {
-    fastify.log.info(request.query.user);
+app.get('/get_users/', async (request, reply) => {
+    try {
+        const users = await User.findAll();
+        return users;
+    } catch (err) {
+        app.log.error('Cannot list users', err);
+        return { error: 'Error fetching users' };
+    }
+});
+
+app.delete('/delete_user/', async (request, reply) => {
+	const username = request.body['user'];
+	try {
+		const user = await User.findOne({ where: { username } });
+		if (user) {
+			await user.destroy();
+			return { message: `User ${username} deleted successfully` };
+		} else {
+			return { error: `User ${username} not found` };
+		}
+	} catch (err) {	
+		app.log.error(err);
+		return { error: 'Error deleting user' };
+	}
+});
+
+
+app.delete('/delete_user_by_id/', async (request, reply) => {
+	const userId = request.body['id'];
+	try {
+		const user = await User.findByPk(userId);
+		if (user) {
+			await user.destroy();
+			return { message: `User with ID ${userId} deleted successfully` };
+		} else {
+			return { error: `User with ID ${userId} not found` };
+		}
+	} catch (err) {	
+		app.log.error(err);
+		return { error: 'Error deleting user' };
+	}
+});
+
+app.get('/about/', async (request, reply) => {
+    app.log.info(request.query.user);
     return { hello: 'about' };
 });
 
-fastify.get('/', async (request, reply) => {
-    fastify.log.info(request.query.user);
+app.get('/', async (request, reply) => {
+    app.log.info(request.query.user);
     return { hello: 'WTF!' };
 });
 
@@ -54,10 +92,10 @@ const start = async () => {
         console.log('Database synced');
 
         // Listen on port 8000
-        await fastify.listen({ port: 8000, host: '0.0.0.0' });
-        fastify.log.info(`Server listening on http://localhost:8000`);
+        await app.listen({ port: 8000, host: '0.0.0.0' });
+        app.log.info(`Server listening on http://localhost:8000`);
     } catch (err) {
-        fastify.log.error(err);
+        app.log.error(err);
         process.exit(1);
     }
 };
