@@ -46,7 +46,7 @@ loginButton?.addEventListener("click", () => {
 		};
 
 		try {
-			const response = await fetch("https://localhost/back/api/data", {
+			const response = await fetch("https://localhost:8443/back/api/data", {
 			  method: "POST",
 			  headers: {
 				"Content-Type": "application/json",
@@ -72,7 +72,7 @@ loginButton?.addEventListener("click", () => {
 	googleLoginButton.textContent = "Log in with Google";
 
 	googleLoginButton.addEventListener("click", () => {
-		window.location.href = "https://localhost/back/auth/google/login";
+		window.location.href = "https://localhost:8443/back/auth/google/login";
 	  });	  
 
 	loginWindow.appendChild(usernameLabel);

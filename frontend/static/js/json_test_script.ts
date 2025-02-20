@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            const response = await fetch("https://localhost/back/api/data", {
+            const response = await fetch("https://localhost:8443/back/api/data", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

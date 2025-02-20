@@ -44,7 +44,7 @@ loginButton === null || loginButton === void 0 ? void 0 : loginButton.addEventLi
             password: password,
         };
         try {
-            const response = yield fetch("https://localhost/back/api/data", {
+            const response = yield fetch("https://localhost:8443/back/api/data", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +68,7 @@ loginButton === null || loginButton === void 0 ? void 0 : loginButton.addEventLi
     loginWindow.classList.add("google-login-button");
     googleLoginButton.textContent = "Log in with Google";
     googleLoginButton.addEventListener("click", () => {
-        window.location.href = "https://localhost/back/auth/google/login";
+        window.location.href = "https://localhost:8443/back/auth/google/login";
     });
     loginWindow.appendChild(usernameLabel);
     loginWindow.appendChild(usernameInput);

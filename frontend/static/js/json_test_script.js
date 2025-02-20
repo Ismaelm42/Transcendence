@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             [keyInput.value]: valueInput.value,
         };
         try {
-            const response = yield fetch("https://localhost/back/api/data", {
+            const response = yield fetch("https://localhost:8443/back/api/data", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

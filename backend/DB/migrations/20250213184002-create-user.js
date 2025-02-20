@@ -66,7 +66,7 @@ export const up = async (queryInterface, Sequelize) => {
       type: Sequelize.DATE
     },
     last_logout: {
-      type: Sequelize.INTEGER
+      type: Sequelize.DATE
     }
   });
 };

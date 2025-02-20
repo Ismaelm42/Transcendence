@@ -31,7 +31,7 @@ export function configureGoogleAuth(fastify) {
 	fastifyPassport.use(new GoogleStrategy({
 		clientID: process.env.GOOGLE_CLIENT_ID,
 		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-		callbackURL: "https://localhost/back/auth/google/login"
+		callbackURL: "https://localhost:8443/back/auth/google/login"
 	}, function (accessToken, refreshToken, profile, cb) {
 	// We should store the user profile in the database
 		cb(null, profile);

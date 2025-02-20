@@ -4,7 +4,7 @@
 //	     La siguiente petición crea un usuario:                   //
 // ***************************************************************//
 
-POST https://127.0.0.1/back/create_user HTTP/1.1
+POST https://127.0.0.1:8443/back/create_user HTTP/1.1
 Content-Type: application/json
 
 {
@@ -16,11 +16,11 @@ Content-Type: application/json
 //	     La siguiente petición lanza error username vacío:        //
 // ***************************************************************//
 
-POST https://127.0.0.1/back/create_user HTTP/1.1
+POST https://127.0.0.1:8443/back/create_user HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "Postname",
+	"username": "Postname2",
 	"password": "pass30"
 }
 
@@ -28,21 +28,21 @@ Content-Type: application/json
 //	     La siguiente petición Obtiene todos los usuarios:        //
 // ***************************************************************//
 
-GET https://127.0.0.1/back/get_users  HTTP/1.1
+GET https://127.0.0.1:8443/back/get_users  HTTP/1.1
 
 
 // ***************************************************************//
 //	    La siguiente petición Obtiene el usuario por username:    //
 // ***************************************************************//
 
-GET https://127.0.0.1/back/get_user_by_username/?username=nombreusuario2 HTTP/1.1
+GET https://127.0.0.1:8443/back/get_user_by_username/?username=nombreusuario2 HTTP/1.1
 
 
 // ***************************************************************//
 //	     La siguiente petición elimina usuario por username:      //
 // ***************************************************************//
 
-DELETE  https://127.0.0.1/back/delete_user  HTTP/1.1
+DELETE  https://127.0.0.1:8443/back/delete_user  HTTP/1.1
 Content-Type: application/json
 
 {
@@ -53,7 +53,7 @@ Content-Type: application/json
 //	     La siguiente petición elimina usuario por userId:        //
 // ***************************************************************//
 
-DELETE  https://127.0.0.1/back/delete_user_by_id  HTTP/1.1
+DELETE  https://127.0.0.1:8443/back/delete_user_by_id  HTTP/1.1
 Content-Type: application/json
 
 {
