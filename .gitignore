@@ -1,1 +1,4 @@
 .env
+pino_readme.md
+*.db
+backend/node_modules/

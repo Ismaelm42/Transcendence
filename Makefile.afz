@@ -1,0 +1,58 @@
+NAME = FastifyApp
+DCF = ./docker-compose.yml
+
+# all:	build run
+# 		@echo "Composing... ${NAME}..."
+
+all:
+	@echo "Composing... ${NAME}..."
+	@docker compose -f $(DCF) up -d
+
+build:
+		docker build -t fastifyapp .
+run:
+		docker run -p 3000:3000 fastifyapp
+
+stop:
+	@docker stop $(shell docker ps -a -q)
+
+down:
+	@docker-compose -f ${DCF} down
+
+# comandos para inciar bash en contenedores por separados
+bashend:
+		@docker exec -it backend bash
+
+bashngx:
+		@docker exec -it nginx bash
+
+bashsqlite:
+		@docker exec -it sqlite bash 
+
+logend:
+		@docker logs -f backend
+
+clean:  rm rmi
+	@echo "Limpiando elementos no usados de ${NAME}..."
+	@docker system prune -fa
+	
+rm:
+	@echo "Eliminando contenedores de ${NAME}..."
+	@docker rm -f $(shell docker ps -a -q)
+
+rmi:
+	@echo "Eliminando imagenes de ${NAME}..."
+	@docker rmi -f $(shell docker images -q)
+
+check:
+	@echo "checking running containters, other containers and images" 
+	@docker ps 
+	@docker ps -a 
+	@docker images
+# @docker volume ls
+# @docker network ls 
+
+re:	clean all
+	
+
+.PHONY  : all build run down re clean fclean bashsqlite bashngx bashend stop rm rmi check logend

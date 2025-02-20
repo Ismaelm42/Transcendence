@@ -1,0 +1,17 @@
+{
+  "development": {
+	"username": "root",
+    "password": null,
+	"storage": "./sqlito.db",
+    "dialect": "sqlite"
+  },
+  "test": {
+	"storage": "./sqlito.db",
+    "dialect": "sqlite"
+  },
+  "production": {
+	"USE_ENV_VARIABLE": "DATABASE_URL",
+    "dialect": "sqlite"
+  }
+}
+  
