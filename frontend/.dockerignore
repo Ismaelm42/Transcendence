@@ -1,4 +1,2 @@
 Dockerfile
 .dockerignore
-./src/node_modules
-package-lock.json
