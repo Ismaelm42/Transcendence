@@ -1,14 +1,14 @@
-const loginButton = document.getElementById("loginButton");
+const registerButton = document.getElementById("registerButton");
 const loginContainer = document.getElementById("app-container");
 
-export async function handleLoginSubmit(event: SubmitEvent) {
+export async function handleRegisterSubmit(event: SubmitEvent) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
     try {
-        const response = await fetch("https://localhost:8443/back/auth/login", {
+        const response = await fetch("https://localhost:8443/back/create_user", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -29,21 +29,17 @@ export async function handleLoginSubmit(event: SubmitEvent) {
 
 export async function render() {
     try {
-        const response = await fetch("../html/login.html");
+        const response = await fetch("../html/register.html");
         if (!response.ok)
             throw new Error("Failed to load the HTML file");
         const htmlContent = await response.text();
-        history.pushState(null, '', '/login');
+        history.pushState(null, '', '/register');
         if (loginContainer) {
             loginContainer.innerHTML = htmlContent;
             const form = loginContainer.querySelector("form");
-            form?.addEventListener("submit", handleLoginSubmit);
-            const signUp = loginContainer.querySelector("#signUp");
-            signUp?.addEventListener("click", async () => {
-                await import('./register.js').then(module => module.render());
-            });
-            document.getElementById("loginButton")?.classList.add("hidden");
-            document.getElementById("registerButton")?.classList.remove("hidden");
+            form?.addEventListener("submit", handleRegisterSubmit);
+            document.getElementById("registerButton")?.classList.add("hidden");
+            document.getElementById("loginButton")?.classList.remove("hidden");
             document.getElementById("headerSeparator")?.classList.add("hidden");
         }
     }
@@ -53,7 +49,7 @@ export async function render() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    loginButton?.addEventListener("click", async () => {
-        await loadLoginHtml();
+    registerButton?.addEventListener("click", async () => {
+        await loadRegisterHtml();
     });
 });
