@@ -18,7 +18,8 @@ class SPA {
             'play-tournament': 'playTournament.js',
             'friends': 'friends.js',
             'chat': 'chat.js',
-            'stats': 'stats.js'
+            'stats': 'stats.js',
+            'logout': 'logout.js'
         };
         this.container = document.getElementById(containerId);
         window.onpopstate = () => this.loadStep();

@@ -15,7 +15,7 @@ export function configureServer(fastify) {
 	});
 }
 
-export function configureGoogleAuth(fastify) {
+export function configureGoogleAuth(fastify, reply) {
 
 	// Register Fastify Secure Session
 	fastify.register(fastifySecureSession, {
@@ -44,18 +44,28 @@ export function configureGoogleAuth(fastify) {
             // If user does not exist, create a new user
 			if (!user){
 				user = await getUserByEmail(profile.emails[0].value);
-				if (user) {
-					user.googleId = profile.id;
-				}
-				else {
-					user = await createUser(profile.displayName, null, profile.emails[0].value);
-					user.googleId = profile.id;
-					user.avatarPath = profile.photos?.[0]?.value || null;
-				}
-				await user.save();
-				// // Create a JWT token
-				// const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+			if (user) {
+				user.googleId = profile.id;
 			}
+			else {
+				user = await createUser(profile.displayName, null, profile.emails[0].value);
+				user.googleId = profile.id;
+				user.avatarPath = profile.photos?.[0]?.value || null;
+			}
+			await user.save();
+				// // Create a JWT token
+			// const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+			
+			// // Establecer el token como una cookie HTTP-only y secure
+			// reply.setCookie('token', "melocotonenAlmibar", {
+			// 	httpOnly: true,
+			// 	secure: true, // Asegúrate de que tu servidor esté configurado para HTTPS
+			// 	sameSite: 'strict', // Opcional: evita que la cookie sea enviada en solicitudes de terceros
+			// 	path: '/', // La cookie estará disponible en toda la aplicación
+			// 	maxAge: 3600 // Tiempo de expiración en segundos (1 hora)
+			// 	});
+
+			 }
             cb(null, user);
         } catch (err) {
             cb(err);

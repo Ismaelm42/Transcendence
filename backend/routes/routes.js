@@ -5,6 +5,7 @@ const { createUser, getUserById, updateUserbyId, getUserByName, getUserByEmail, 
 import { checkUser } from '../auth/login.js';
 import { verifyToken } from '../auth/jwtValidator.js';
 import fastify from "fastify";
+import jwt from 'jsonwebtoken';
 
 export default function configureRoutes(fastify, sequelize) {
 
@@ -27,6 +28,20 @@ export default function configureRoutes(fastify, sequelize) {
 		preValidation: fastifyPassport.authenticate('google', { scope: ['profile', 'email'] })
 	},
 		async (request, reply) => {
+			
+			const JWT_SECRET = process.env.JWT_SECRET;
+
+			const token = jwt.sign({ username: request.user.username }, JWT_SECRET, { expiresIn: '1h' });
+			
+			// Establecer el token como una cookie HTTP-only y secure
+			reply.setCookie('token', token, {
+				httpOnly: true,
+				secure: true, // Asegúrate de que tu servidor esté configurado para HTTPS
+				sameSite: 'strict', // Opcional: evita que la cookie sea enviada en solicitudes de terceros
+				path: '/', // La cookie estará disponible en toda la aplicación
+				maxAge: 3600 // Tiempo de expiración en segundos (1 hora)
+				});
+
 			reply.redirect('/back');
 		}
 	);

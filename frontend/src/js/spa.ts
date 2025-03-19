@@ -8,7 +8,8 @@ class SPA {
         'play-tournament': 'playTournament.js',
         'friends': 'friends.js',
         'chat': 'chat.js',
-        'stats': 'stats.js'
+        'stats': 'stats.js',
+		'logout': 'logout.js'
     };
     
     constructor(containerId: string) {
