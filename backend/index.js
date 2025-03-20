@@ -1,18 +1,14 @@
 import Fastify from "fastify";
-import { configureServer, configureGoogleAuth } from './config/config.js';
+import { configureServer } from './config/config.js';
 import configureRoutes from './routes/routes.js';
 import pino from 'pino';
 import pkg from './database/models/index.cjs';
 const { sequelize } = pkg;
 
-
-
 const fastify = Fastify({ logger: true });
 
 configureServer(fastify);
-configureGoogleAuth(fastify);
 configureRoutes(fastify, sequelize);
-
 
 const logger = pino({
     transport: {
