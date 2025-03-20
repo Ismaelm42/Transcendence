@@ -2,11 +2,11 @@ import fastifyPassport from "@fastify/passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { createUser, getUserByEmail, getUserByGoogleId } from "../database/crud.cjs";
-import jwt from 'jsonwebtoken';
+import { setTokenCookie } from "./authToken.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const authenticateUser = async (email, password, reply) => {
+export async function authenticateUser (email, password, reply) {
 
 	// Check if user exists and return it
 	const user = await getUserByEmail(email);
@@ -18,15 +18,7 @@ export const authenticateUser = async (email, password, reply) => {
 	const isMatch = await comparePassword(password, user.password);
 	if (!isMatch)
 		return reply.status(401).send({ message: 'Wrong password' });
-	const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: '1h' });
-
-	reply.setCookie('token', token, {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'strict',
-		path: '/',
-		maxAge: 3600
-	});
+	setTokenCookie(user.username, reply);
 	return reply.status(200).send({
 		user: user
 	});

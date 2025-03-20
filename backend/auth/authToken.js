@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const verifyToken = (request, reply, done) => {
+export function verifyToken (request, reply, done) {
 
     // Get token from headers and verify it
     const authHeader = request.headers['authorization'];
@@ -18,3 +18,16 @@ export const verifyToken = (request, reply, done) => {
         done();
     });
 };
+
+export function setTokenCookie(username, reply) {
+
+    // Set token cookie with username
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
+    reply.setCookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 3600,
+    });
+}

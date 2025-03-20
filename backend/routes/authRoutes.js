@@ -1,6 +1,6 @@
 import fastifyPassport from "@fastify/passport";
-import jwt from 'jsonwebtoken';
-import { authenticateUser } from "../auth/authHandler.js";
+import { authenticateUser } from "../auth/authUser.js";
+import { setTokenCookie } from "../auth/authToken.js";
 
 export function configureAuthRoutes(fastify) {
 
@@ -20,22 +20,19 @@ export function configureAuthRoutes(fastify) {
 		preValidation: fastifyPassport.authenticate('google', { scope: ['profile', 'email'] })
 	},
 		async (request, reply) => {
-
-			const JWT_SECRET = process.env.JWT_SECRET;
-			const token = jwt.sign({ username: request.user.username }, JWT_SECRET, { expiresIn: '1h' });
-			reply.setCookie('token', token, {
-				httpOnly: true,
-				secure: true,
-				sameSite: 'strict',
-				path: '/',
-				maxAge: 3600,
-			});
-			reply.redirect('/');
+			setTokenCookie(request.user.username, reply);
+			reply.redirect('/back');
 		}
 	);
 
 	// Define a GET route to logout an user with GoogleStrategy
 	fastify.get('/auth/google/logout', async (request, reply) => {
-		request.logout();
+		console.log("User should appear: ", request.user.username)
+		request.logout((err) => {
+			if (err) {
+				return reply.status(500).send({ message: 'Logout error' });
+			}
+		});
+		console.log("User should not appear: ", request.user.username)
 	})
 }

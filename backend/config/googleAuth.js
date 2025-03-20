@@ -1,6 +1,6 @@
 import fastifyPassport from "@fastify/passport";
 import fastifySecureSession from "@fastify/secure-session";
-import { authenticateUserWithGoogleStrategy } from "../auth/authHandler.js";
+import { authenticateUserWithGoogleStrategy } from "../auth/authUser.js";
 
 export function configureGoogleAuth(fastify) {
 

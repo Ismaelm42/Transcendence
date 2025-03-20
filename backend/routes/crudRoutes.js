@@ -1,4 +1,4 @@
-import { verifyToken } from '../auth/jwtValidator.js';
+import { verifyToken } from '../auth/authToken.js';
 import { createUser, getUserById, updateUserbyId, getUserByName, getUserByEmail, getUserByGoogleId, getUsers, deleteUserById, deleteAllUsers} from '../database/crud.cjs';
 
 export function configureCrudRoutes(fastify) {
