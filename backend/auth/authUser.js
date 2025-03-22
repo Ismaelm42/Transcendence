@@ -2,19 +2,16 @@ import fastifyPassport from "@fastify/passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { createUser, getUserByEmail, getUserByGoogleId } from "../database/crud.cjs";
-import { setTokenCookie } from "./authToken.js";
+import { setTokenCookie, destroyTokenCookie } from "./authToken.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export async function authenticateUser (email, password, reply) {
+export async function authenticateUser(email, password, reply) {
 
 	// Check if user exists and return it
 	const user = await getUserByEmail(email);
-	console.log('Searching user:', email);
 	if (!user)
-		return reply.status(401).send({ message: 'Wrong username' });
-	console.log(password);
-	console.log(user.password);
+		return reply.status(401).send({ message: 'Wrong email' });
 	const isMatch = await comparePassword(password, user.password);
 	if (!isMatch)
 		return reply.status(401).send({ message: 'Wrong password' });
@@ -51,11 +48,12 @@ export function authenticateUserWithGoogleStrategy() {
 	}));
 }
 
-export async function signOutUser (email, password, reply) {
-
+export async function signOutUser(reply) {
+	destroyTokenCookie(reply);
+	return reply.status(200).send({ message: 'Logged out successfully' });
 }
 
 
-export function signOutUserWithGoogleStrategy (email, password, reply) {
-	
+export function signOutUserWithGoogleStrategy(email, password, reply) {
+
 }

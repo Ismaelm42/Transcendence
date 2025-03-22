@@ -31,3 +31,19 @@ export function setTokenCookie(username, reply) {
         maxAge: 3600,
     });
 }
+
+// Destroy token cookie
+// Change the last logout session date in the database
+// Change the last login session date in the database in the login functions too
+// Check if the cookie is set with a frontend fetch request
+export function destroyTokenCookie(reply) {
+    
+    // Destroy token cookie
+    reply.setCookie('token', 'lacookiedelmonstruodelasgalletas', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+        expires: new Date(0),
+    });
+}

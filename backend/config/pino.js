@@ -3,7 +3,7 @@ const pinoConfig = {
 		target: 'pino-pretty',
 		options: {
 			colorize: true,
-			ignore: 'pid,hostname',
+			ignore: 'pid,hostname,reqId,req,res,responseTime',
 			singleLine: false,
 		},
 	},

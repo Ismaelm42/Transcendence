@@ -93,4 +93,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-export { render , handleLoginSubmit};
+export { render , handleLoginSubmit };

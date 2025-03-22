@@ -11,7 +11,7 @@
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.0.2",
-    "@fastify/formbody": "^6.0.0",
+    "@fastify/formbody": "^8.0.2",
     "@fastify/jwt": "^9.1.0",
     "@fastify/passport": "^3.0.2",
     "@fastify/secure-session": "^8.1.1",

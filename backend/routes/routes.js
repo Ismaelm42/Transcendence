@@ -13,10 +13,10 @@ export default function configureRoutes(fastify, sequelize) {
 
 	// Define a test route to handle POST requests
 	fastify.post('/api/data', async (request, reply) => {
-		fastify.log.info('Received data:', request.body);
+		fastify.log.info({ body: request.body }, 'Received data');
 		return { data_received: request.body };
 	});
-
+	
 	configureAuthRoutes(fastify);
 	configureCrudRoutes(fastify);
 }

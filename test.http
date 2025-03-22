@@ -106,3 +106,12 @@ Content-Type: application/json
 	"email": "ElFary@gmail.com",
 	"avatarPath": "foto.jpg"
 }
+
+POST https://localhost:8443/back/auth/logout HTTP/1.1
+Content-Type: application/json
+
+{
+	"username": "Ismael",
+	"password": "1234",
+	"email": "ismael@gmail.com"
+}
