@@ -39,10 +39,12 @@ export function authenticateUserWithGoogleStrategy() {
 			if (!user) {
 				user = await getUserByEmail(profile.emails[0].value);
 				if (user) {
+					updateLastLoginById(user.id);
 					user.googleId = profile.id;
 				}
-				else
+				else {
 					user = await createUser(profile.displayName, null, profile.id, profile.emails?.[0]?.value || null, profile.photos?.[0]?.value || null);
+				}
 			}
 			cb(null, user);
 		}
