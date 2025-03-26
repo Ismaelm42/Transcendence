@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-class SPA {
+export class SPA {
     constructor(containerId) {
         this.routes = {
             'home': { module: 'home.js', protected: false },
@@ -86,17 +85,9 @@ class SPA {
             if (modulePath) {
                 const module = yield import(`./${modulePath.module}`);
                 console.log('import:', module);
-                // Inicializar el módulo antes de renderizar
-                if (module.initialize) {
-                    yield module.initialize();
-                }
                 const headerElement = document.getElementById('header_buttons');
                 const menuElement = document.getElementById('menu-container');
                 const appElement = document.getElementById('app-container');
-                console.log('headerElement:', headerElement);
-                console.log('menuElement:', menuElement);
-                console.log('appElement:', appElement);
-                console.log('module.renderHeader:', module.renderHeader);
                 if (headerElement && module.renderHeader) {
                     const headerContent = yield module.renderHeader();
                     if (headerContent) {

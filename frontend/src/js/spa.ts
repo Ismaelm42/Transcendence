@@ -1,4 +1,4 @@
-class SPA {
+export class SPA {
     private container: HTMLElement;
     private routes: { [key: string]: { module: string; protected: boolean } } = {
 		'home': { module: 'home.js', protected: false },
@@ -78,18 +78,9 @@ class SPA {
 			const module = await import(`./${modulePath.module}`);
 			console.log('import:', module);
 
-
-	        // Inicializar el módulo antes de renderizar
-	        if (module.initialize) {
-	            await module.initialize();
-	        }
 			const headerElement = document.getElementById('header_buttons');
 			const menuElement = document.getElementById('menu-container');
 			const appElement = document.getElementById('app-container');
-			console.log('headerElement:', headerElement);
-			console.log('menuElement:', menuElement);
-			console.log('appElement:', appElement);	
-			console.log('module.renderHeader:', module.renderHeader);
 			if (headerElement && module.renderHeader) {
 				const headerContent = await module.renderHeader();
 				if (headerContent) {

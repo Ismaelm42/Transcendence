@@ -7,8 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { SPA } from './spa.js';
 const loginButton = document.getElementById("loginButton");
 const loginContainer = document.getElementById("app-container");
+const menuContainer = document.getElementById("menu-container");
 function handleLoginSubmit(event) {
     return __awaiter(this, void 0, void 0, function* () {
         event.preventDefault();
@@ -23,18 +25,34 @@ function handleLoginSubmit(event) {
                 },
                 body: JSON.stringify(data),
             });
-            if (!response.ok)
-                throw new Error("Failed to send data");
-            const result = yield response.json();
-            console.log("Data sent successfully:", result);
-            if (loginContainer)
-                loginContainer.innerHTML = "";
-            // Almacenar el token de autenticación y el nombre de usuario
-            localStorage.setItem('authToken', result.token);
-            localStorage.setItem('username', result.username);
-            // // Actualizar la UI
-            // const spa = new SPA('app-container');
-            // spa.updateUI();
+            if (!response.ok) {
+                const errorResponse = yield response.json();
+                alert(`Error message: , ${errorResponse.message}`);
+                //throw new Error("Failed to send data");
+            }
+            else {
+                const result = yield response.json();
+                console.log("Data sent successfully:", result);
+                if (loginContainer)
+                    loginContainer.innerHTML = "";
+                if (menuContainer)
+                    menuContainer.innerHTML =
+                        `<nav id="nav" class="bg-gray-800 p-4 hidden">
+				<ul class="flex space-x-4">
+					<li><a href="#play-pong" class="text-white hover:text-gray-400">Play Game</a></li>
+					<li><a href="#play-tournament" class="text-white hover:text-gray-400">Start Tournament</a></li>
+					<li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
+					<li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>
+					<li><a href="#stats">Stats</a></li>
+				</ul>
+			</nav>`;
+                // // se podría crear en una función navigate y llamarla navigate('#home');
+                // history.pushState(null, '', '#home');
+                // const homeEvent = new Event("home");
+                // document.dispatchEvent(homeEvent);
+                const app = new SPA('content');
+                app.navigate("#home");
+            }
         }
         catch (error) {
             console.error(error);
@@ -42,7 +60,6 @@ function handleLoginSubmit(event) {
     });
 }
 function render() {
-    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield fetch("../html/login.html");
@@ -58,9 +75,9 @@ function render() {
                 signUp === null || signUp === void 0 ? void 0 : signUp.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                     yield import('./register.js').then(module => module.render());
                 }));
-                (_a = document.getElementById("loginButton")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
-                (_b = document.getElementById("registerButton")) === null || _b === void 0 ? void 0 : _b.classList.remove("hidden");
-                (_c = document.getElementById("headerSeparator")) === null || _c === void 0 ? void 0 : _c.classList.add("hidden");
+                // document.getElementById("loginButton")?.classList.add("hidden");
+                // document.getElementById("registerButton")?.classList.remove("hidden");
+                // document.getElementById("headerSeparator")?.classList.add("hidden");
             }
         }
         catch (error) {
