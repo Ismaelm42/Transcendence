@@ -35,21 +35,6 @@ function handleLoginSubmit(event) {
                 console.log("Data sent successfully:", result);
                 if (loginContainer)
                     loginContainer.innerHTML = "";
-                if (menuContainer)
-                    menuContainer.innerHTML =
-                        `<nav id="nav" class="bg-gray-800 p-4 hidden">
-				<ul class="flex space-x-4">
-					<li><a href="#play-pong" class="text-white hover:text-gray-400">Play Game</a></li>
-					<li><a href="#play-tournament" class="text-white hover:text-gray-400">Start Tournament</a></li>
-					<li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
-					<li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>
-					<li><a href="#stats">Stats</a></li>
-				</ul>
-			</nav>`;
-                // // se podría crear en una función navigate y llamarla navigate('#home');
-                // history.pushState(null, '', '#home');
-                // const homeEvent = new Event("home");
-                // document.dispatchEvent(homeEvent);
                 const app = new SPA('content');
                 app.navigate("#home");
             }
@@ -66,7 +51,7 @@ function render() {
             if (!response.ok)
                 throw new Error("Failed to load the HTML file");
             const htmlContent = yield response.text();
-            history.pushState(null, '', '/login');
+            // history.pushState(null, '', '/login');
             if (loginContainer) {
                 loginContainer.innerHTML = htmlContent;
                 const form = loginContainer.querySelector("form");

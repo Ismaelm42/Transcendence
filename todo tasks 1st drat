@@ -1,0 +1,30 @@
+
+USER MANAGEMENT
+1.- Login con google - ver opciones para cambiar username si coincide, 
+	prompt para cambiarlo o añadimos el user_id al final (opción preferida).
+2.- Login con google - chequear si su funcionamiento es correcto
+3.- Logout con google - chequer si debe funconar así, actualmente al 
+	hacer logout se elimina el jwt pero al pulsar login sobre google entra sin más 
+	con tu información.
+4.- crear formulario de edición de datos personales, con la posibilidad de 
+	usar un avatar y enlazarlo a su usuario en el header
+	DUDA??? el nickname lo creamos específico para los torneos o hacemos el 
+5.- logout - incluir la llamada
+6.- ver validación o role admin para rutas comprometidas 
+7.- Olvidó su contraseña -  ver opciones para su implementación
+
+
+USER/STATS
+5.- Stats crear modelo 	
+
+
+FRONT
+1.- navegación - ver como gestionar las almohadillas y su eliminnación en la url
+2.- añadir los headers y el menú en todos los pasos - al hacer refresh se van todos...
+3.- register - revisar que las dos contraseñas coinciden (validar datos que no estén bien puestos)
+4.- avatar - ver como implementar el avatar en el header y si merece la pena
+
+BACK/FRONT
+4.- play game - implementar juego para jugar en local
+5.- gestionar Torneos
+6.-	 

@@ -21,8 +21,8 @@ export class SPA {
             'logout': { module: 'logout.js', protected: true }
         };
         this.container = document.getElementById(containerId);
-        // Cargar el header y el footer
-        this.loadHeaderAndFooter();
+        // Cargar el footer - el el header se carga, laimagen en el index.html y los botones en "cada" módulo
+        this.loadFooter();
         window.onpopstate = () => this.loadStep();
         if (!this.isAuthenticated()) {
             this.navigate('home');
@@ -31,31 +31,9 @@ export class SPA {
             this.loadStep();
         }
     }
-    loadHeaderAndFooter() {
+    loadFooter() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Cargar el header
-                // const headerResponse = await fetch('../html/header.html');
-                // if (headerResponse.ok) {
-                // 	const headerContent = await headerResponse.text();
-                // 	const headerElement = document.getElementById('header-container');
-                // 	if (headerElement) {
-                // 		headerElement.innerHTML = headerContent;
-                // 	}
-                // } else {
-                // 	console.error('Error al cargar el header:', headerResponse.statusText);
-                // }
-                // const appElement = document.getElementById('app-container');
-                // // const welcomeMessage = '<h1> Welcome</h1>';
-                // const welcomeMessage =
-                // 	`<div id="pong-container">
-                // 	<div class="paddle left-paddle"></div>
-                // 	<div class="ball"><img src="../img/bola.png" alt="Ball"></div>
-                // 	<div class="paddle right-paddle"></div>
-                // 	</div>`;
-                // if (appElement) {
-                // 	appElement.innerHTML = welcomeMessage;
-                // }
                 // Cargar el footer
                 const footerResponse = yield fetch('../html/footer.html');
                 if (footerResponse.ok) {
@@ -75,7 +53,7 @@ export class SPA {
         });
     }
     navigate(step) {
-        history.pushState({}, '', `#${step}`);
+        history.pushState({}, '', `${step}`);
         this.loadStep();
     }
     loadStep() {
@@ -140,8 +118,8 @@ export class SPA {
     // 	}
     // }
     isAuthenticated() {
-        console.log('En isAuthenticated');
-        console.log(localStorage.getItem('authToken'));
+        // console.log('En isAuthenticated');
+        // console.log(localStorage.getItem('authToken'));
         // Aquí puedes agregar la lógica para verificar si el usuario está autenticado
         // Por ejemplo, verificar un token en el localStorage o una cookie
         return !!localStorage.getItem('authToken');
