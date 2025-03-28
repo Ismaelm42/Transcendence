@@ -31,6 +31,7 @@ export class SPA {
             this.loadStep();
         }
     }
+	
     loadFooter() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -122,7 +123,9 @@ export class SPA {
         // console.log(localStorage.getItem('authToken'));
         // Aquí puedes agregar la lógica para verificar si el usuario está autenticado
         // Por ejemplo, verificar un token en el localStorage o una cookie
-        return !!localStorage.getItem('authToken');
+        // return !!localStorage.getItem('username');
+        // !!localStorage.getItem('authToken')
+        return false;
     }
 }
 document.addEventListener('DOMContentLoaded', () => new SPA('content'));

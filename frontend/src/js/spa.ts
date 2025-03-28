@@ -113,11 +113,8 @@ export class SPA {
 	// }
 
 	isAuthenticated(): boolean {
-		// console.log('En isAuthenticated');
-		// console.log(localStorage.getItem('authToken'));
-		// Aquí puedes agregar la lógica para verificar si el usuario está autenticado
-		// Por ejemplo, verificar un token en el localStorage o una cookie
-		return !!localStorage.getItem('authToken');
+		// chequear si el usuario está autenticado
+		return false;
 	}
 
 	// getUsername(): string {
