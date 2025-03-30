@@ -10,18 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 export class SPA {
     constructor(containerId) {
         this.routes = {
-            'home': { module: 'home.js', protected: false },
-            'login': { module: 'login.js', protected: false },
-            'register': { module: 'register.js', protected: false },
-            'play-pong': { module: 'playPong.js', protected: true },
-            'play-tournament': { module: 'playTournament.js', protected: true },
-            'friends': { module: 'friends.js', protected: true },
-            'chat': { module: 'chat.js', protected: true },
-            'stats': { module: 'stats.js', protected: true },
-            'logout': { module: 'logout.js', protected: true }
+            'home': { module: 'homeRender.js', protected: false },
+            'login': { module: 'loginRender.js', protected: false },
+            'register': { module: 'registerRender.js', protected: false },
+            'play-pong': { module: 'playPongRender.js', protected: true },
+            'play-tournament': { module: 'playTournamentRender.js', protected: true },
+            'friends': { module: 'friendsRender.js', protected: true },
+            'chat': { module: 'chatRender.js', protected: true },
+            'stats': { module: 'statsRender.js', protected: true },
+            'logout': { module: 'logoutRender.js', protected: true }
         };
         this.container = document.getElementById(containerId);
-        // Cargar el footer - el el header se carga, laimagen en el index.html y los botones en "cada" módulo
+        SPA.instance = this; // Guardamos la instancia en una propiedad estática
         this.loadFooter();
         window.onpopstate = () => this.loadStep();
         if (!this.isAuthenticated()) {
@@ -34,6 +34,18 @@ export class SPA {
     loadFooter() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                // cargar el header
+                const headerResponse = yield fetch('../html/header.html');
+                if (headerResponse.ok) {
+                    const headerContent = yield headerResponse.text();
+                    const headerElement = document.getElementById('header-container');
+                    if (headerElement) {
+                        headerElement.innerHTML = headerContent;
+                    }
+                }
+                else {
+                    console.error('Error al cargar el header:', headerResponse.statusText);
+                }
                 // Cargar el footer
                 const footerResponse = yield fetch('../html/footer.html');
                 if (footerResponse.ok) {
@@ -48,81 +60,54 @@ export class SPA {
                 }
             }
             catch (error) {
-                console.error('Error al cargar el header o footer:', error);
+                console.error('Error al cargar el footer:', error);
             }
         });
     }
     navigate(step) {
-        history.pushState({}, '', `${step}`);
+        history.pushState({}, '', `#${step}`);
         this.loadStep();
     }
     loadStep() {
         return __awaiter(this, void 0, void 0, function* () {
             let step = location.hash.replace('#', '') || 'home';
-            const modulePath = this.routes[step];
-            if (modulePath) {
-                const module = yield import(`./${modulePath.module}`);
-                console.log('import:', module);
+            const routeConfig = this.routes[step];
+            if (routeConfig) {
+                // Verificar si la ruta es protegida y si el usuario está autenticado
+                if (routeConfig.protected && !this.isAuthenticated()) {
+                    console.warn(`Acceso denegado a la ruta protegida: ${step}`);
+                    this.navigate('login'); // Redirigir al usuario a la página de login
+                    return;
+                }
+                // Cargar el módulo correspondiente
+                const module = yield import(`./${routeConfig.module}`);
+                const stepInstance = new module.default('app-container');
                 const headerElement = document.getElementById('header_buttons');
                 const menuElement = document.getElementById('menu-container');
                 const appElement = document.getElementById('app-container');
-                if (headerElement && module.renderHeader) {
-                    const headerContent = yield module.renderHeader();
-                    if (headerContent) {
-                        headerElement.innerHTML = headerContent;
-                    }
+                if (headerElement) {
+                    headerElement.innerHTML = yield stepInstance.renderHeader();
                 }
-                if (menuElement && module.renderMenu) {
-                    const menuContent = yield module.renderMenu();
-                    if (menuContent) {
-                        menuElement.innerHTML = menuContent;
-                    }
+                if (menuElement) {
+                    menuElement.innerHTML = yield stepInstance.renderMenu();
                 }
-                if (appElement && module.render) {
-                    const appcontent = yield module.render();
-                    if (appcontent) {
-                        appElement.innerHTML = appcontent;
-                    }
+                if (appElement) {
+                    appElement.innerHTML = yield stepInstance.render();
                 }
-                else {
-                    const appElement = document.getElementById('app-container');
-                    if (appElement) {
-                        appElement.innerHTML = '<div>Step not found</div>';
-                    }
-                }
+            }
+            else {
+                this.container.innerHTML = '<div>Step not found</div>';
             }
         });
     }
-    // updateUI() {
-    // 	console.log ('En updateUI');
-    // 	const isLoggedIn = this.isAuthenticated();
-    // 	const loginButton = document.getElementById('loginButton');
-    // 	const registerButton = document.getElementById('registerButton');
-    // 	const logoutButton = document.getElementById('logoutButton');
-    // 	const usernameSpan = document.getElementById('username');
-    // 	const nav = document.getElementById('nav');
-    // 	if (isLoggedIn) {
-    // 		const username = this.getUsername();
-    // 		loginButton?.classList.add('hidden');
-    // 		registerButton?.classList.add('hidden');
-    // 		logoutButton?.classList.remove('hidden');
-    // 		usernameSpan?.classList.remove('hidden');
-    // 		usernameSpan!.textContent = username;
-    // 		nav?.classList.remove('hidden');
-    // 	} else {
-    // 		loginButton?.classList.remove('hidden');
-    // 		registerButton?.classList.remove('hidden');
-    // 		logoutButton?.classList.add('hidden');
-    // 		usernameSpan?.classList.add('hidden');
-    // 		nav?.classList.add('hidden');
-    // 	}
-    // }
     isAuthenticated() {
-        // console.log('En isAuthenticated');
-        // console.log(localStorage.getItem('authToken'));
-        // Aquí puedes agregar la lógica para verificar si el usuario está autenticado
-        // Por ejemplo, verificar un token en el localStorage o una cookie
-        return !!localStorage.getItem('authToken');
+        //hardcode para las pruebas
+        // return false; // Aquí iría la lógica real de autenticación
+        return true; // Para pruebas, siempre autenticado
+    }
+    // Método estático para acceder a la instancia de SPA
+    static getInstance() {
+        return SPA.instance;
     }
 }
 document.addEventListener('DOMContentLoaded', () => new SPA('content'));

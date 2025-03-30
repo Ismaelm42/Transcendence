@@ -89,7 +89,8 @@ export function configureAuthRoutes(fastify, sequelize) {
 	// Ruta para verificar si el token es válido 
 	// todo : ver si se puede reutilizar la función de authToken.js
 	fastify.get('/auth/verify-token', async (request, reply) => {
-		console.log('Verificando token');
+		console.log('Verificando token: ');
+		// console.log(request.cookies);
 		console.log(request.cookies.token);
 	    try {
 	        const token = request.cookies.token;

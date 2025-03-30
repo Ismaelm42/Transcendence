@@ -34,9 +34,9 @@ POST https://localhost:8443/back/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "trutru2",
-	"password": "pass30",
-	"email": "trutru2@email.com"
+	"username": "Pepe5@gmail.com",
+	"password": "1234",
+	"email": "Pepe5@gmail.com"
 }
 
 
@@ -111,10 +111,10 @@ POST https://localhost:8443/back/auth/logout HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "Ismael",
+	"username": "Pepe5@gmail.com",
 	"password": "1234",
-	"email": "ismael@gmail.com"
+	"email": "Pepe5@gmail.com"
 }
 
 GET https://localhost:8443/back/auth/verify-token HTTP/1.1
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGVAZ21haWwuY29tIiwiaWF0IjoxNzQyNzUzNDkwLCJleHAiOjE3NDI3NTcwOTB9.usZno2kUB8wepF3M327E6Dmjs3U7wTRFB91ZnqhqoXg
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU1QGdtYWlsLmNvbSIsImlhdCI6MTc0MzM1NTc1NSwiZXhwIjoxNzQzMzU5MzU1fQ.15Er6poGRQI8bRCdjKaOnVbIDYDf-z9SANftX7qjJ1I
