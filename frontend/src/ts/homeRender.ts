@@ -5,24 +5,9 @@ export default class Home extends Step {
 		const menuContainer = document.getElementById("menu-container");
 		try {
 			console.log("En render");
-	
 			const user = await this.checkAuth();
 			console.log ('Hardcode user: ' + user);
 		if (user) {
-			// Modificar el innerHTML de menuContainer si el usuario está autenticado
-			if (menuContainer) {
-				menuContainer.innerHTML = `
-					<nav id="nav" class="bg-gray-800 p-4">
-						<ul class="flex space-x-4">
-							<li><a href="#play-pong" class="text-white hover:text-gray-400">Play Game</a></li>
-							<li><a href="#play-tournament" class="text-white hover:text-gray-400">Start Tournament</a></li>
-							<li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
-							<li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>
-							<li><a href="#stats" class="text-white hover:text-gray-400">Stats</a></li>
-						</ul>
-					</nav>
-				`;
-			}
 			// Retornar el contenido para usuarios autenticados
 			return `
 				<div id="pong-container">
@@ -32,10 +17,6 @@ export default class Home extends Step {
 				</div>
 			`;
 			} else {
-				if (menuContainer) {
-					menuContainer.innerHTML = "";
-				}			
-					// Retornar el contenido para usuarios no autenticados
 				return `
 					<div id="pong-container">
 						<div class="paddle left-paddle"></div>
@@ -55,7 +36,6 @@ export default class Home extends Step {
 		console.log('En renderHeader');
 		try {
 			const user = await this.checkAuth();
-	
 			return user ? `
 				<div id="authButtons" class="flex items-center">
 					<span id="username" class="text-white">${user}</span>
@@ -75,14 +55,4 @@ export default class Home extends Step {
 		}
 	}
 
-	// async renderMenu(): Promise<string> {
-	// 	return `<ul><li>Inicio</li><li>Contacto</li></ul>`;
-	// }
-
-	// Método para inicializar eventos después de renderizar el contenido
-	// async afterRender() {
-	// 	document.getElementById('goToLogin')?.addEventListener('click', () => {
-	// 		this.navigate('login');
-	// 	});
-	// }
 }

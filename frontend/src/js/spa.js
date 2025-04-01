@@ -22,7 +22,7 @@ export class SPA {
         };
         this.container = document.getElementById(containerId);
         SPA.instance = this; // Guardamos la instancia en una propiedad estática
-        this.loadFooter();
+        this.loadHEaderAndFooter();
         window.onpopstate = () => this.loadStep();
         if (!this.isAuthenticated()) {
             this.navigate('home');
@@ -31,7 +31,7 @@ export class SPA {
             this.loadStep();
         }
     }
-    loadFooter() {
+    loadHEaderAndFooter() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // cargar el header
@@ -71,6 +71,14 @@ export class SPA {
     loadStep() {
         return __awaiter(this, void 0, void 0, function* () {
             let step = location.hash.replace('#', '') || 'home';
+            // // Obtener la URL actual
+            // let currentUrl = window.location.href;
+            // // Eliminar todo lo que está después de la última barra
+            // let baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+            // // Modificar la URL para que termine con /#home
+            // let newUrl = baseUrl + '#home';
+            // // Actualizar la URL sin recargar la página
+            // history.replaceState(null, '', newUrl);
             const routeConfig = this.routes[step];
             if (routeConfig) {
                 // Verificar si la ruta es protegida y si el usuario está autenticado
@@ -82,9 +90,12 @@ export class SPA {
                 // Cargar el módulo correspondiente
                 const module = yield import(`./${routeConfig.module}`);
                 const stepInstance = new module.default('app-container');
-                const headerElement = document.getElementById('header_buttons');
+                const headerElement = document.getElementById('header-buttons');
                 const menuElement = document.getElementById('menu-container');
                 const appElement = document.getElementById('app-container');
+                console.log('headerElement: ', headerElement);
+                console.log('menuElement: ', menuElement);
+                console.log('appElement: ', appElement);
                 if (headerElement) {
                     headerElement.innerHTML = yield stepInstance.renderHeader();
                 }

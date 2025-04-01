@@ -23,7 +23,7 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
 		        } else {
 		            alert("Error desconocido. Por favor, inténtalo más tarde.");
 		        }
-				;
+			// ;
 			// try
 			// {
 			// 	const result = await response.json();

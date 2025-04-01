@@ -51,12 +51,49 @@ export class Step {
     }
     renderHeader() {
         return __awaiter(this, void 0, void 0, function* () {
-            return '';
+            try {
+                const user = yield this.checkAuth();
+                console.log('user en renderHeader: ' + user);
+                return user ?
+                    `<div id="authButtons" class="flex items-center">
+					<span id="username" class="text-white">${user}</span>
+					<div id="headerSeparator" class="vertical-bar"></div>
+					<a href="#logout" id="logoutButton" class="text-white hover:text-gray-400">Logout</a>
+				</div>
+			` : `
+				<div id="authButtons" class="flex items-center">
+					<a href="#login" class="text-white hover:text-gray-400">Login</a>
+					<div id="headerSeparator" class="vertical-bar"></div>
+					<a href="#register" class="text-white hover:text-gray-400 ml-2">Register</a>
+				</div>
+			`;
+            }
+            catch (error) {
+                console.error("Error en renderHeader:", error);
+                return `<div id="authButtons">Error al cargar el estado de autenticación</div>`;
+            }
         });
     }
     renderMenu() {
         return __awaiter(this, void 0, void 0, function* () {
-            return '';
+            const user = yield this.checkAuth();
+            if (user) {
+                // Modificar el innerHTML de menuContainer si el usuario está autenticado
+                return `
+	        <nav id="nav" class="bg-gray-800 p-4">
+	            <ul class="flex space-x-4">
+	                <li><a href="#play-pong" class="text-white hover:text-gray-400">Play Game</a></li>
+	                <li><a href="#play-tournament" class="text-white hover:text-gray-400">Start Tournament</a></li>
+	                <li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
+	                <li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>
+	                <li><a href="#stats" class="text-white hover:text-gray-400">Stats</a></li>
+	            </ul>
+	        </nav>
+    	`;
+            }
+            else {
+                return '';
+            }
         });
     }
     navigate(step) {

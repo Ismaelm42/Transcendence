@@ -2463,8 +2463,8 @@ body {
 height: 12vh;
 }
 #app-container {
+	margin-top: 2rem;
 	flex: 1;
-	overflow-y: auto;
 }
 
 #footer-container {

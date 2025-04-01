@@ -31,7 +31,11 @@ export default class Pong extends Step {
 					`;
                     }
                     // Retornar el contenido para usuarios autenticados
-                    return `<div>Play Pong Step</div>`;
+                    return `
+						<div class="flex-grow flex flex-col items-center justify-center ">
+		   					<h1 class="text-4xl font-bold text-gray-800">Play Pong Step</h1>
+						</div>
+				`;
                 }
                 else {
                     if (menuContainer) {
@@ -55,7 +59,7 @@ export default class Pong extends Step {
     }
     renderHeader() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('En Friends Step');
+            console.log('En playpongStep');
             try {
                 const user = yield this.checkAuth();
                 return user ? `

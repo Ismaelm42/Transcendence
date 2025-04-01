@@ -35,20 +35,20 @@ export function handleRegisterSubmit(event) {
                 else {
                     alert("Error desconocido. Por favor, inténtalo más tarde.");
                 }
-            ;
-            // 	try
-            // 	{
-            // 		const result = await response.json();
-            // 		console.log("Resultado del registro:", result);
-            // 	} catch (error) {
-            // 		console.error("Error al realizar el registro:", error);
-            //         if (error instanceof Error) {
-            //             alert("Error: " + error.message);
-            //         } else {
-            //             alert("Error: An unknown error occurred");
-            //         }
-            // 	}
-            //     // Navegar a la página de inicio
+            // ;
+            // try
+            // {
+            // 	const result = await response.json();
+            // 	console.log("Resultado del registro:", result);
+            // } catch (error) {
+            // 	console.error("Error al realizar el registro:", error);
+            //     if (error instanceof Error) {
+            //         alert("Error: " + error.message);
+            //     } else {
+            //         alert("Error: An unknown error occurred");
+            //     }
+            // }
+            // Navegar a la página de inicio
             const app = SPA.getInstance();
             app.navigate("home");
         }

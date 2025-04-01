@@ -10,28 +10,13 @@ export default class Stats extends Step {
 			const user = await this.checkAuth();
 
 			if (user) {
-				// Modificar el innerHTML de menuContainer si el usuario está autenticado
-				if (menuContainer) {
-					menuContainer.innerHTML = `
-						<nav id="nav" class="bg-gray-800 p-4">
-							<ul class="flex space-x-4">
-								<li><a href="#play-pong" class="text-white hover:text-gray-400">Play Game</a></li>
-								<li><a href="#play-tournament" class="text-white hover:text-gray-400">Start Tournament</a></li>
-								<li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
-								<li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>
-								<li><a href="#stats" class="text-white hover:text-gray-400">Stats</a></li>
-							</ul>
-						</nav>
-					`;
-				}
-		
 				// Retornar el contenido para usuarios autenticados
-				return`<div>Stats Step</div>`;
-				} else {
-					if (menuContainer) {
-						menuContainer.innerHTML = "";
-					}			
-		
+				return`
+						<div class="flex-grow flex flex-col items-center justify-center ">
+		   					<h1 class="text-4xl font-bold text-gray-800">Stats Step</h1>
+						</div>
+				`;
+				} else {	
 					// Retornar el contenido para usuarios no autenticados
 					return `
 						<div id="pong-container">
