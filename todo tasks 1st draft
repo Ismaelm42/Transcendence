@@ -6,9 +6,10 @@ BACK
 3. Incluir la fecha de logout en la base de datos.
 4. Echarle un vistazo a la configuración de CORS y a las rutas comprometidas (delete users, etc.). Por ejemplo, para realizar un delete user, quizás sea importante que el token del usuario que intenta realizar esa acción coincida con el token del usuario que se quiere borrar.
 
+matchHistory
 fecha | usuario1 | usuario2 | winner | loser | hits | misses | duration | game_id | tournament_id
 
-5. Crear modelo userHistory para el usuario. Sería un listadpo:
+5. Crear modelo userMatchHistory para el usuario. Sería un listado:
 	- Número de partidas jugadas
 	- Número de partidas ganadas
 	- Número de partidas perdidas

@@ -30,13 +30,6 @@ export function configureAuthRoutes(fastify, sequelize) {
 		await signOutUser(token, user, reply);
 	});
 
-	// Define a GET route to logout an user with GoogleStrategy
-	fastify.get('/auth/google/logout', async (request, reply) => {
-		const token = request.cookies.token
-		const user = extractUserFromToken(token, reply);
-		await signOutUser(token, user, reply);
-	})
-
 	fastify.get('/auth/verify-token', async (request, reply) => {
 		console.log('Verificando token');
 		console.log(request.cookies.token);

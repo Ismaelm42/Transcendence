@@ -18,7 +18,7 @@ module.exports = {
 	},
 	production: {
 		USE_ENV_VARIABLE: "DATABASE_URL",
-		database: 'sqlito.db',
+		database: 'database.sqlite',
 		dialect: "sqlite",
 	},
   };

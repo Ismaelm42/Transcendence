@@ -34,6 +34,8 @@ export function verifyToken (request, reply, done) {
 };
 
 export async function extractUserFromToken(token) {
+
+    // Extract user from token
     try {
         if (!token) {
             console.log('No token provided.');

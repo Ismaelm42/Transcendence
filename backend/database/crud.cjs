@@ -1,7 +1,7 @@
 const db = require('./models/index.cjs');
 const { hashPassword } = require('./users/PassUtils.cjs');
 
-const { User, Stat } = db;
+const { User, Gamelog } = db;
 
 const createUser = async (username, password, googleId, email, avatarPath) => {
 	if (!username || !email) {
@@ -163,6 +163,29 @@ const updateLastLogoutById = async (userId) => {
 	}
 }
 
+const getGamelogs = async () => {
+	try {
+		const gamelogs = await Gamelog.findAll({});
+		return gamelogs;
+	} catch (err) {
+		throw new Error('Error fetching gamelogs ', err);
+	}
+};
+
+// const getGamelogsByUserId = async () => {
+// 	try {
+// 	  const [matchHistory] = await db.sequelize.query(
+// 		'SELECT * FROM "UserMatchHistory" WHERE userId = 1',
+// 		{
+// 		  type: db.Sequelize.QueryTypes.SELECT,
+// 		}
+// 	  );
+// 	  return matchHistory;  // Retorna el resultado (único registro)
+// 	} catch (err) {
+// 	  throw new Error('Error fetching match history: ' + err.message);
+// 	}
+//   };
+
 module.exports = {
 	createUser,
 	getUserById,
@@ -174,6 +197,7 @@ module.exports = {
 	deleteUserById,
 	deleteAllUsers,
 	updateLastLoginById,
-	updateLastLogoutById
+	updateLastLogoutById,
+	getGamelogs,
 };
 

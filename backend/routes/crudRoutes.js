@@ -1,5 +1,5 @@
 import { verifyToken } from '../auth/authToken.js';
-import { createUser, getUserById, updateUserbyId, getUserByName, getUserByEmail, getUserByGoogleId, getUsers, deleteUserById, deleteAllUsers} from '../database/crud.cjs';
+import { createUser, getUserById, updateUserbyId, getUserByName, getUserByEmail, getUserByGoogleId, getUsers, deleteUserById, deleteAllUsers, getGamelogs } from '../database/crud.cjs';
 
 export function configureCrudRoutes(fastify) {
 // Define all CRUD routes here
@@ -104,6 +104,17 @@ export function configureCrudRoutes(fastify) {
 		} catch (err) {
 			fastify.log.error(err);
 			reply.send({ error: 'Error deleting all users ', err });
+		}
+	});
+
+	// Define a GET route to retrieve all match history
+	fastify.get('/get_gamelogs', async (request, reply) => {
+		try {
+			const gamelogs = await getGamelogs();
+			reply.send(gamelogs);
+		} catch (err) {
+			fastify.log.error('Cannot list gamelogs ', err);
+			reply.send({ error: 'Error fetching gamelogs' });
 		}
 	});
 }

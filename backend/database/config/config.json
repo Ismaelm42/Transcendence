@@ -1,20 +1,18 @@
 
 {
 	"development": {
-	  "username": "root",
-	  "password": null,
-	  "database": "sqlito.db",
-	  "storage": "./sqlito.db",
+	  "database": "database.sqlite",
+	  "storage": "./database.sqlite",
 	  "dialect": "sqlite"
 	},
 	"test": {
-	  "database": "sqlito.db",
-	  "storage": "./sqlito.db",
+	  "database": "database.sqlite",
+	  "storage": "./database.sqlite",
 	  "dialect": "sqlite"
 	},
 	"production": {
 	  "USE_ENV_VARIABLE": "DATABASE_URL",
-	  "database": "sqlito.db",
+	  "database": "database.sqlite",
 	  "dialect": "sqlite"
 	}
 }
