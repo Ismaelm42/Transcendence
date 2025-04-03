@@ -31,28 +31,4 @@ export default class Home extends Step {
 			return `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
 		}
 	}
-
-// 	async renderHeader(): Promise<string> {
-// 		console.log('En renderHeader');
-// 		try {
-// 			const user = await this.checkAuth();
-// 			return user ? `
-// 				<div id="authButtons" class="flex items-center">
-// 					<span id="username" class="text-white">${user}</span>
-// 					<div id="headerSeparator" class="vertical-bar"></div>
-// 					<a href="#logout" id="logoutButton" class="text-white hover:text-gray-400">Logout</a>
-// 				</div>
-// 			` : `
-// 				<div id="authButtons" class="flex items-center">
-// 					<a href="#login" class="text-white hover:text-gray-400">Login</a>
-// 					<div id="headerSeparator" class="vertical-bar"></div>
-// 					<a href="#register" class="text-white hover:text-gray-400 ml-2">Register</a>
-// 				</div>
-// 			`;
-// 		} catch (error) {
-// 			console.error("Error en renderHeader:", error);
-// 			return `<div id="authButtons">Error al cargar el estado de autenticación</div>`;
-// 		}
-// 	}
-
-// }
+}

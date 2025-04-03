@@ -28,3 +28,13 @@ BACK/FRONT
 4.- play game - implementar juego para jugar en local
 5.- gestionar Torneos
 6.-	 
+
+
+Backend log info:
+
+			fastify.log.trace("Este es un log de nivel TRACE");
+			fastify.log.debug("Depuración: se recibió una solicitud en /example");
+			fastify.log.info("Solicitud recibida en /example");
+			fastify.log.warn("Advertencia: posible problema detectado");
+			fastify.log.error("Error: algo salió mal");
+			fastify.log.fatal("FATAL: Error crítico, posible caída del servidor");

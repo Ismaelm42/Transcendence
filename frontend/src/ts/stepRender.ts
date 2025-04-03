@@ -3,15 +3,21 @@ import  {SPA} from './spa.js';
 export class Step {
 	protected container: HTMLElement;
 	protected spa: SPA;
+	protected username: string | null = null; // Almacena el nombre de usuario autenticado
 
 	constructor(containerId: string) {
 		this.container = document.getElementById(containerId) as HTMLElement;
 		this.spa = SPA.getInstance(); // Obtenemos la instancia de SPA
+		this.initializeUsername();
+	}
+
+	private async initializeUsername() {
+		this.username = await this.checkAuth();
 	}
 
 	async checkAuth() {
 
-		const validation = false;
+		const validation = false;	// si está en false se está verificando la autenticación
 		// Simulación de verificación de autenticación PARA CUANDO LA COOKIE NO SE ENVIA BIEN"
 		if (validation) {
 			const user= {
@@ -45,10 +51,10 @@ export class Step {
 	async renderHeader(): Promise<string> {
 		try {
 			const user = await this.checkAuth();
-			console.log ('user en renderHeader: ' + user);
+			console.log("Valor de user en renderHeader:", user);
 			return user ? 			
 				`<div id="authButtons" class="flex items-center">
-					<span id="username" class="text-white">${user}</span>
+					<span id="username" class="text-white"><a href="#profile"> ${user} </a></span>
 					<div id="headerSeparator" class="vertical-bar"></div>
 					<a href="#logout" id="logoutButton" class="text-white hover:text-gray-400">Logout</a>
 				</div>

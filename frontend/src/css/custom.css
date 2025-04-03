@@ -1,0 +1,71 @@
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	padding : 0 20rem 0 2rem 0;
+	margin: 0;
+}
+#header-container {
+height: 12vh;
+}
+#app-container {
+	margin-top: 2rem;
+	flex: 1;
+}
+
+#footer-container {
+	padding: 1.4rem;
+	text-align: center;
+	position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.vertical-bar {
+	border-left: 1px solid white;
+	height: 24px;
+	margin: 0 10px;
+}
+#pong-container {
+	width: 100%; /* El ancho será el 100% del contenedor */
+	max-width: 500px; /* Ancho máximo para pantallas grandes */
+	aspect-ratio: 4 / 3; /* Proporción de aspecto (ancho/alto) */
+	border: 2px solid white; /* Borde blanco */
+	margin: 4em auto; /* Centrar horizontalmente */
+	background-color: transparent; /* Sin fondo */
+	position: relative; /* Necesario para posicionar los hijos */
+	display: flex; /* Habilitar flexbox */
+	justify-content: center; /* Centrar horizontalmente */
+	align-items: center; /* Centrar verticalmente */
+}
+
+.paddle {
+    position: absolute;
+    width: 2.4%; /* Ancho relativo al contenedor */
+    height: 20%; /* Alto relativo al contenedor */
+    background-color: white; /* Color blanco */
+}
+
+.left-paddle {
+    left: 2%; /* Separación del borde izquierdo */
+    top: 80%; /* Centrado vertical relativo */
+    transform: translateY(-50%);
+}
+
+.right-paddle {
+    right: 2%; /* Separación del borde derecho */
+    top: 20%; /* Centrado vertical relativo */
+    transform: translateY(-50%);
+}
+
+.ball {
+    position: absolute;
+    width: 4%; /* Diámetro relativo al contenedor */
+    aspect-ratio: 1 / 1; /* Mantener la forma circular */
+    background-color: white; /* Color blanco */
+    border-radius: 50%; /* Hacerla circular */
+    top: 40%; /* Centrado vertical */
+    left: 60%; /* Centrado horizontal */
+    transform: translate(-50%, -50%);
+}

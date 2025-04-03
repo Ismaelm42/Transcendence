@@ -23,9 +23,6 @@ export function configureAuthRoutes(fastify, sequelize) {
 	// 	signOutUser(username, reply);
 	// });
 
-
-
-
 	fastify.post('/auth/logout', async (request, reply) => {
 		try {
 			// Obtener la cookie `token` (asegúrate de que Fastify soporta cookies con el plugin `fastify-cookie`)
@@ -67,10 +64,6 @@ export function configureAuthRoutes(fastify, sequelize) {
 		}
 	});
 	
-
-
-
-
 	// Define a GET route to authenticate an user with GoogleStrategy
 	fastify.get('/auth/google/login', {
 		preValidation: fastifyPassport.authenticate('google', { scope: ['profile', 'email'] })

@@ -40,29 +40,4 @@ export default class Tournament extends Step {
             }
         });
     }
-    renderHeader() {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log('En Friends Step');
-            try {
-                const user = yield this.checkAuth();
-                return user ? `
-				<div id="authButtons" class="flex items-center">
-					<span id="username" class="text-white">${user}</span>
-					<div id="headerSeparator" class="vertical-bar"></div>
-					<a href="#logout" id="logoutButton" class="text-white hover:text-gray-400">Logout</a>
-				</div>
-			` : `
-				<div id="authButtons" class="flex items-center">
-					<a href="#login" class="text-white hover:text-gray-400">Login</a>
-					<div id="headerSeparator" class="vertical-bar"></div>
-					<a href="#register" class="text-white hover:text-gray-400 ml-2">Register</a>
-				</div>
-			`;
-            }
-            catch (error) {
-                console.error("Error en renderHeader:", error);
-                return `<div id="authButtons">Error al cargar el estado de autenticación</div>`;
-            }
-        });
-    }
 }

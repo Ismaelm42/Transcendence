@@ -18,7 +18,8 @@ export class SPA {
             'friends': { module: 'friendsRender.js', protected: true },
             'chat': { module: 'chatRender.js', protected: true },
             'stats': { module: 'statsRender.js', protected: true },
-            'logout': { module: 'logoutRender.js', protected: true }
+            'logout': { module: 'logoutRender.js', protected: true },
+            'profile': { module: 'userProfileRender.js', protected: true }
         };
         this.container = document.getElementById(containerId);
         SPA.instance = this; // Guardamos la instancia en una propiedad estática
@@ -90,9 +91,19 @@ export class SPA {
                 // Cargar el módulo correspondiente
                 const module = yield import(`./${routeConfig.module}`);
                 const stepInstance = new module.default('app-container');
-                const headerElement = document.getElementById('header-buttons');
-                const menuElement = document.getElementById('menu-container');
-                const appElement = document.getElementById('app-container');
+                // Esperar hasta que los elementos del DOM estén disponibles
+                let headerElement = document.getElementById('header-buttons');
+                let menuElement = document.getElementById('menu-container');
+                let appElement = document.getElementById('app-container');
+                // const headerElement = document.getElementById('header-buttons');
+                // const menuElement = document.getElementById('menu-container');
+                // const appElement = document.getElementById('app-container');
+                while (!headerElement || !menuElement || !appElement) {
+                    yield new Promise(resolve => setTimeout(resolve, 100)); // Esperar 100ms antes de volver a comprobar
+                    headerElement = document.getElementById('header-buttons');
+                    menuElement = document.getElementById('menu-container');
+                    appElement = document.getElementById('app-container');
+                }
                 console.log('headerElement: ', headerElement);
                 console.log('menuElement: ', menuElement);
                 console.log('appElement: ', appElement);

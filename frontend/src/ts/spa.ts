@@ -11,7 +11,8 @@ export class SPA {
         'friends': { module: 'friendsRender.js', protected: true },
         'chat': { module: 'chatRender.js', protected: true },
         'stats': { module: 'statsRender.js', protected: true },
-        'logout': { module: 'logoutRender.js', protected: true }
+        'logout': { module: 'logoutRender.js', protected: true },
+		'profile': { module: 'userProfileRender.js', protected: true }
     };
 
     constructor(containerId: string) {
@@ -90,10 +91,21 @@ export class SPA {
 			// Cargar el módulo correspondiente
 			const module = await import(`./${routeConfig.module}`);
 			const stepInstance = new module.default('app-container');
-	
-			const headerElement = document.getElementById('header-buttons');
-			const menuElement = document.getElementById('menu-container');
-			const appElement = document.getElementById('app-container');
+			// Esperar hasta que los elementos del DOM estén disponibles
+			let headerElement = document.getElementById('header-buttons');
+			let menuElement = document.getElementById('menu-container');
+			let appElement = document.getElementById('app-container');
+
+			// const headerElement = document.getElementById('header-buttons');
+			// const menuElement = document.getElementById('menu-container');
+			// const appElement = document.getElementById('app-container');
+
+			while (!headerElement || !menuElement || !appElement) {
+				await new Promise(resolve => setTimeout(resolve, 100)); // Esperar 100ms antes de volver a comprobar
+				headerElement = document.getElementById('header-buttons');
+				menuElement = document.getElementById('menu-container');
+				appElement = document.getElementById('app-container');
+			}
 			console.log('headerElement: ', headerElement);
 			console.log('menuElement: ', menuElement);
 			console.log('appElement: ', appElement);

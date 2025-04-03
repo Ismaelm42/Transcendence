@@ -1,4 +1,6 @@
+import fastify from 'fastify';
 import jwt from 'jsonwebtoken';
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -15,21 +17,39 @@ export function setTokenCookie(username, reply) {
     });
 }
 
-export function verifyToken (request, reply, done) {
+// // modificada para usar el token de la cookie_ AFZ
+// export function verifyToken (request, reply, done) {
+// 	try {
+// 		console.info('Verifying token ' , request.cookies.token);
+// 		const token = request.cookies.token;
+// 		if (!token) {
+// 			return reply.status(401).send({ message: 'Token no incluidotrutru' });
+// 		}
+// 		const decoded = jwt.verify(token, JWT_SECRET);
+// 		reply.send({ valid: true, user: decoded });
+// 	} catch (error) {
+// 		reply.status(401).send({ valid: false, message: 'Token inválido o expirado' });
+// 	}
+//     done();
+// };
 
-    // Get token from headers and verify it
-    const authHeader = request.headers['authorization'];
-    if (!authHeader)
-        return reply.status(401).send({ message: 'Token not found' });
-    const token = authHeader.split(' ')[1];
-    if (!token)
-        return reply.status(401).send({ message: 'Token not found' });
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err)
-            return reply.status(401).send({ message: 'Token not valid' });
-        request.user = decoded;
-        done();
-    });
+export function verifyToken (request, reply, done) {
+	try {
+		console.info('Verifying token', request.cookies.token);
+		const token = request.cookies.token;
+		
+		if (!token) {
+			reply.status(401).send({ message: 'Token no incluido' });
+			return; // Cortamos la ejecución si no hay token
+		}
+
+		// Decodificamos el token y lo guardamos en request para usarlo en la ruta
+		request.user = jwt.verify(token, process.env.JWT_SECRET);
+		
+		done(); // Continuar con la ejecución de la ruta protegida
+	} catch (error) {
+		reply.status(401).send({ valid: false, message: 'Token inválido o expirado' });
+	}
 };
 
 // Destroy token cookie

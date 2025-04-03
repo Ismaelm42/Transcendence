@@ -38,7 +38,6 @@ export function configureCrudRoutes(fastify) {
 		}
 	});
 
-
 	// Define a POST route to update a user by ID
 	fastify.post('/update_user_by_id', async (request, reply) => {
 		const { userId, username, password, googleId, email, avatarPath } = request.body;
@@ -75,9 +74,12 @@ export function configureCrudRoutes(fastify) {
 	});
 
 	// Define a GET route to retrieve a user by username
+	// fastify.get('/get_user_by_username/', async (request, reply) => {
 	fastify.get('/get_user_by_username/', { preValidation: verifyToken }, async (request, reply) => {
-		try {
-			const user = await getUserByName(request.query.username);
+			try {
+			const username = decodeURIComponent(request.query.username);
+			const user = await getUserByName(username);
+			fastify.log.info('user devuelto en Userget_user_by_username/name', user);
 			reply.send(user);
 		} catch (err) {
 			fastify.log.error('User not found ', err);

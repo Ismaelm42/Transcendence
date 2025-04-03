@@ -61,10 +61,10 @@ GET https://localhost:8443/back/get_users  HTTP/1.1
 //	    La siguiente petición Obtiene el usuario por username:    //
 // ***************************************************************//
 
-GET https://localhost:8443/back/localhost:8443/back/get_user_by_username/?username=trutru2 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRydXRydTIiLCJpYXQiOjE3NDIxNDkyMTIsImV4cCI6MTc0MjE1MjgxMn0.Q3kSMYf-djluD-oBJ9ZCxNAOa5QLVA6Ym90F4Beaftw
+GET https://localhost:8443/back/get_user_by_username/?username=pepe@gmail.com  HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsZm9uc28gRmVybsOhbmRlel8xMTM4NjQyNzgwNTAzNDA5MTE0NzgiLCJpYXQiOjE3NDM3MTA2MzgsImV4cCI6MTc0MzcxNDIzOH0.6sG1S7hfE8D_RpMUKkMtdVC0GmGGf1EWzqV-vQ1vNcs
 
-// ***************************************************************//
+// ***************************************************************//		
 //	     La siguiente petición elimina usuario por username:      //
 // ***************************************************************//
 
@@ -127,4 +127,4 @@ Content-Type: application/json
 }
 
 GET https://localhost:8443/back/auth/verify-token HTTP/1.1
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU1QGdtYWlsLmNvbSIsImlhdCI6MTc0MzM1NTc1NSwiZXhwIjoxNzQzMzU5MzU1fQ.15Er6poGRQI8bRCdjKaOnVbIDYDf-z9SANftX7qjJ1I
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsZm9uc28gRmVybsOhbmRlel8xMTM4NjQyNzgwNTAzNDA5MTE0NzgiLCJpYXQiOjE3NDM2OTY5NjYsImV4cCI6MTc0MzcwMDU2Nn0.h2L1dBHqGqlbG_eTW6edwS6pvw-pwxVAENGkGZchIvY
