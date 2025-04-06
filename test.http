@@ -34,9 +34,19 @@ POST https://localhost:8443/back/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "trutru2",
-	"password": "pass30",
-	"email": "trutru2@email.com"
+	"username": "Pepe5@gmail.com",
+	"password": "1234",
+	"email": "Pepe5@gmail.com"
+}
+
+
+POST https://localhost:8443/back/register_user HTTP/1.1
+Content-Type: application/json
+
+{
+	"username": "User@gmail.com",
+	"password": "1234",
+	"email": "Pepe50@gmail.com"
 }
 
 
@@ -51,7 +61,7 @@ GET https://localhost:8443/back/get_users  HTTP/1.1
 //	    La siguiente petición Obtiene el usuario por username:    //
 // ***************************************************************//
 
-GET https://localhost:8443/back/?username=trutru2 HTTP/1.1
+GET https://localhost:8443/back/localhost:8443/back/get_user_by_username/?username=trutru2 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRydXRydTIiLCJpYXQiOjE3NDIxNDkyMTIsImV4cCI6MTc0MjE1MjgxMn0.Q3kSMYf-djluD-oBJ9ZCxNAOa5QLVA6Ym90F4Beaftw
 
 // ***************************************************************//
@@ -73,7 +83,7 @@ DELETE  https://localhost:8443/back/delete_user_by_id  HTTP/1.1
 Content-Type: application/json
 
 {
-	"userId" : "3"
+	"userId" : "28"
 }
 
 GET https://localhost:8443/back/get_user_by_id/?id=1  HTTP/1.1
@@ -111,10 +121,10 @@ POST https://localhost:8443/back/auth/logout HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "Ismael",
+	"username": "User@gmail.com",
 	"password": "1234",
-	"email": "ismael@gmail.com"
+	"email": "Pepe50@gmail.com"
 }
 
 GET https://localhost:8443/back/auth/verify-token HTTP/1.1
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGVAZ21haWwuY29tIiwiaWF0IjoxNzQyNzUzNDkwLCJleHAiOjE3NDI3NTcwOTB9.usZno2kUB8wepF3M327E6Dmjs3U7wTRFB91ZnqhqoXg
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU1QGdtYWlsLmNvbSIsImlhdCI6MTc0MzM1NTc1NSwiZXhwIjoxNzQzMzU5MzU1fQ.15Er6poGRQI8bRCdjKaOnVbIDYDf-z9SANftX7qjJ1I

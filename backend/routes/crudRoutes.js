@@ -16,6 +16,28 @@ export function configureCrudRoutes(fastify) {
 		}
 	});
 
+	fastify.post('/register_user', async (request, reply) => {
+		const { username, password, googleId, email, avatarPath } = request.body;
+		try {
+			const newUser = await createUser(username, password, googleId, email, avatarPath);
+			if (!newUser) {
+				return reply.status(409).send({ error: 'User already exists' });
+			}
+			return authenticateUser(email, password, reply);
+		} catch (err) {
+			fastify.log.error(err);
+			if (err.message === 'Username already exists') {
+				return reply.status(409).send({ error: err.message });
+			}
+			if (err.message === 'Email already exists') {
+				return reply.status(409).send({ error: err.message });
+			} else {
+			reply.status(500).send({ error: `Error creating user : ${err.message}`}); 
+			}
+		}
+	});
+
+
 	// Define a POST route to update a user by ID
 	fastify.post('/update_user_by_id', async (request, reply) => {
 		const { userId, username, password, googleId, email, avatarPath } = request.body;

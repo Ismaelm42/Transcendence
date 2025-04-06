@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Fondo con un color que puede representar la idea de trascendencia -->
+  <rect width="100" height="100" fill="#4A90E2"/>
+  <!-- Letra "T" centrada y estilizada -->
+  <text x="50" y="65" font-size="60" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-weight="bold">T</text>
+</svg>

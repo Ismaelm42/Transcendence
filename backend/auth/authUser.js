@@ -43,7 +43,7 @@ export function authenticateUserWithGoogleStrategy() {
 					user.googleId = profile.id;
 				}
 				else {
-					user = await createUser(profile.displayName, null, profile.id, profile.emails?.[0]?.value || null, profile.photos?.[0]?.value || null);
+					user = await createUser(profile.displayName + "_" + profile.id, null, profile.id, profile.emails?.[0]?.value || null, profile.photos?.[0]?.value || null);
 				}
 			}
 			cb(null, user);

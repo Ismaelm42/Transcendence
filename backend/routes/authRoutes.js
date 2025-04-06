@@ -31,7 +31,8 @@ export function configureAuthRoutes(fastify, sequelize) {
 	});
 
 	fastify.get('/auth/verify-token', async (request, reply) => {
-		console.log('Verificando token');
+		console.log('Verificando token: ');
+		// console.log(request.cookies);
 		console.log(request.cookies.token);
 	    try {
 	        const token = request.cookies.token;
