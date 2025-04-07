@@ -29,14 +29,14 @@ export default class Profile extends Step {
                 }
                 const userData = yield getUserResponse.json();
                 // console.log("userData:", userData);
-                if (userData) {
-                    console.log('username: ', userData.username);
-                    console.log('email: ', userData.email);
-                    console.log('pass: ', userData.password);
-                    console.log('avatar:', userData.avatarPath);
-                    console.log('pass: ', userData.password);
-                    console.log('last Login: ', userData.lastLogin);
-                }
+                // if (userData) {
+                // 	console.log( 'username: ',userData.username);
+                // 	console.log( 'email: ' , userData.email);
+                // 	console.log( 'pass: ', userData.password);
+                // 	console.log( 'avatar:' ,userData.avatarPath);
+                // 	console.log( 'pass: ', userData.password);
+                // 	console.log( 'last Login: ',userData.lastLogin);
+                // }
                 // console.log("Valor de user en getUserResponse:", getUserResponse);
                 const response = yield fetch("../html/profile.html");
                 if (!response.ok)

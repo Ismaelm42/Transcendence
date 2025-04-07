@@ -1,14 +1,14 @@
 import fastify from 'fastify';
 import jwt from 'jsonwebtoken';
-import { getUserByName } from "../database/crud.cjs";
+import { getUserById } from "../database/crud.cjs";
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export function setTokenCookie(username, reply) {
+export function setTokenCookie(userId, reply) {
 
     // Set accessToken cookie with username
-    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
     reply.setCookie('token', token, {
         httpOnly: true,
         secure: true,
@@ -36,17 +36,12 @@ export function setTokenCookie(username, reply) {
 
 export function verifyToken (request, reply, done) {
 	try {
-		console.info('Verifying token', request.cookies.token);
 		const token = request.cookies.token;
-		
 		if (!token) {
 			reply.status(401).send({ message: 'Token no incluido' });
 			return; // Cortamos la ejecución si no hay token
 		}
-
-		// Decodificamos el token y lo guardamos en request para usarlo en la ruta
-		request.user = jwt.verify(token, process.env.JWT_SECRET);
-		
+		request.userId = jwt.verify(token, process.env.JWT_SECRET);
 		done(); // Continuar con la ejecución de la ruta protegida
 	} catch (error) {
 		reply.status(401).send({ valid: false, message: 'Token inválido o expirado' });
@@ -54,21 +49,19 @@ export function verifyToken (request, reply, done) {
 };
 
 export async function extractUserFromToken(token) {
-
-    // Extract user from token
     try {
         if (!token) {
             console.log('No token provided.');
             return null;
         }
-        const decoded = jwt.verify(token, JWT_SECRET);
-        if (!decoded || !decoded.username) {
-            console.log('Invalid or missing username in token.');
+        const decodedId = jwt.verify(token, JWT_SECRET);
+		const decodedUser = await getUserById(decodedId.userId);
+        if (!decodedUser || !decodedUser.username) {
+            console.log('Invalid or missing username in getUserById.');
             return null;
         }
-        const username = decoded.username;
-        const user = await getUserByName(username);
-        return user;
+        const username = decodedUser.username;
+        return decodedUser;
     } catch (error) {
         console.error('Error verifying token:', error);
         return null;

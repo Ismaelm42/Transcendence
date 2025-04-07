@@ -15,7 +15,7 @@ export default class Home extends Step {
             try {
                 console.log("En render");
                 const user = yield this.checkAuth();
-                console.log('Hardcode user: ' + user);
+                console.log('En Home user despues de checkAuth: ' + user);
                 if (user) {
                     // Retornar el contenido para usuarios autenticados
                     return `

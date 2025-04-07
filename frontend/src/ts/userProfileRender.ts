@@ -4,6 +4,7 @@ export default class Profile extends Step {
 	async render(): Promise<string> {
 		console.log("En Profile render");
 		try {
+
 			if (!this.username) {
 				this.username = await this.checkAuth();
 			}
@@ -22,14 +23,14 @@ export default class Profile extends Step {
 			}
 			const userData = await getUserResponse.json();
 			// console.log("userData:", userData);
-			if (userData) {
-				console.log( 'username: ',userData.username);
-				console.log( 'email: ' , userData.email);
-				console.log( 'pass: ', userData.password);
-				console.log( 'avatar:' ,userData.avatarPath);
-				console.log( 'pass: ', userData.password);
-				console.log( 'last Login: ',userData.lastLogin);
-			}
+			// if (userData) {
+			// 	console.log( 'username: ',userData.username);
+			// 	console.log( 'email: ' , userData.email);
+			// 	console.log( 'pass: ', userData.password);
+			// 	console.log( 'avatar:' ,userData.avatarPath);
+			// 	console.log( 'pass: ', userData.password);
+			// 	console.log( 'last Login: ',userData.lastLogin);
+			// }
 			// console.log("Valor de user en getUserResponse:", getUserResponse);
 
 			const response = await fetch("../html/profile.html");

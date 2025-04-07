@@ -1,6 +1,7 @@
 import fastifyPassport from "@fastify/passport";
 import { authenticateUser, signOutUser } from "../auth/authUser.js";
 import { extractUserFromToken, setTokenCookie } from "../auth/authToken.js";
+import { getUserById } from "../database/crud.cjs";
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -11,7 +12,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 	fastify.post('/auth/login', async (request, reply) => {
 		fastify.log.info({ body: request.body }, 'login data sent');
 		const { email, password } = request.body;
-		return authenticateUser(email, password, reply);
+		return authenticateUser( email, password, reply);
 	});
 
 	// Define a GET route to authenticate an user with GoogleStrategy
@@ -19,7 +20,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 		preValidation: fastifyPassport.authenticate('google', { scope: ['profile', 'email'] })
 	},
 		async (request, reply) => {
-			setTokenCookie(request.user.username, reply);
+			setTokenCookie(request.user.id, reply);
 			reply.redirect('https://localhost:8443/#home');		}
 	);
 
@@ -39,7 +40,8 @@ export function configureAuthRoutes(fastify, sequelize) {
 	            return reply.status(401).send({ message: 'Token no incluido' });
 	        }
 	        // Verificar el token
-	        const decoded = jwt.verify(token, JWT_SECRET);
+	        const decodedId = jwt.verify(token, JWT_SECRET);
+			const decoded = await getUserById(decodedId.userId);
 	        reply.send({ valid: true, user: decoded });
 	    } catch (error) {
 	        reply.status(401).send({ valid: false, message: 'Token inválido o expirado' });

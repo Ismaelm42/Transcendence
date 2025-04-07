@@ -15,7 +15,7 @@ export async function authenticateUser(email, password, reply) {
 	const isMatch = await comparePassword(password, user.password);
 	if (!isMatch)
 		return reply.status(401).send({ message: 'Wrong password' });
-	setTokenCookie(user.username, reply);
+	setTokenCookie(user.id, reply);
 	updateLastLoginById(user.id);
 	return reply.status(200).send({
 		user: user

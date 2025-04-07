@@ -9,6 +9,7 @@ export class Step {
 		this.container = document.getElementById(containerId) as HTMLElement;
 		this.spa = SPA.getInstance(); // Obtenemos la instancia de SPA
 		this.initializeUsername();
+
 	}
 
 	private async initializeUsername() {
@@ -16,7 +17,7 @@ export class Step {
 	}
 
 	async checkAuth() {
-
+		console.log("Verificando autenticación en checkAuth()...");
 		const validation = false;	// si está en false se está verificando la autenticación
 		// Simulación de verificación de autenticación PARA CUANDO LA COOKIE NO SE ENVIA BIEN"
 		if (validation) {

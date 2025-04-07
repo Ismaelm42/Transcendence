@@ -22,6 +22,7 @@ export class Step {
     }
     checkAuth() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("Verificando autenticación en checkAuth()...");
             const validation = false; // si está en false se está verificando la autenticación
             // Simulación de verificación de autenticación PARA CUANDO LA COOKIE NO SE ENVIA BIEN"
             if (validation) {
