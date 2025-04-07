@@ -17,7 +17,7 @@ const start = async () => {
 		// Sync the database
 		await sequelize.sync();
 		await runMigrations();
-		// await runSeeders();
+		await runSeeders(sequelize);
 
 		fastify.log.info('Database synced');
 

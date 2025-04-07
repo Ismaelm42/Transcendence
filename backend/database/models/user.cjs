@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		avatarPath: {
 			type: DataTypes.STRING,
-			defaultValue: '/images/default-avatar.png'
+			defaultValue: 'https://localhost:8443/back//images/default-avatar.png'
 		},
 		lastLogin: {
 			type: DataTypes.DATE,

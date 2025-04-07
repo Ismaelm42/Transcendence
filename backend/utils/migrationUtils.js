@@ -12,8 +12,14 @@ export const runMigrations = () => {
 	});
 };
 
-export const runSeeders = () => {
-	return new Promise((resolve, reject) => {
+export const runSeeders = (sequelize) => {
+	return new Promise(async (resolve, reject) => {
+		const { User } = sequelize.models;
+		const userCount = await User.count();
+		if (userCount > 0) {
+			console.log('Seeders not executed: the database already contains data.');
+			return resolve('Seeders not needed');
+		}
 		exec('npx sequelize-cli db:seed:all --debug', { cwd: '/app/database/' }, (err, stdout, stderr) => {
 			if (err) {
 				reject(`Error executing seeder: ${stderr || stdout || err.message}`);

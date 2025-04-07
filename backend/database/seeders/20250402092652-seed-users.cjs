@@ -1,4 +1,5 @@
 'use strict';
+const { hashPassword } = require('../users/PassUtils.cjs'); 
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -6,7 +7,7 @@ module.exports = {
 		await queryInterface.bulkInsert('users', [
 			{
 				username: 'ismael',
-				password: '1234',
+				password: await hashPassword('1234'),
 				email: 'ismael@gmail.com',
 				last_login: new Date(),
 				created_at: new Date(),
@@ -14,7 +15,7 @@ module.exports = {
 			},
 			{
 				username: 'alfonso',
-				password: '1234',
+				password: await hashPassword('1234'),
 				email: 'alfonso@gmail.com',
 				last_login: new Date(),
 				created_at: new Date(),
