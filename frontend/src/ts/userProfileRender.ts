@@ -1,4 +1,5 @@
 import { Step } from './stepRender.js';
+import { handleProfile } from './handleProfile.js';
 
 export default class Profile extends Step {
 	async render(appElement: HTMLElement): Promise<void>  {
@@ -45,6 +46,7 @@ export default class Profile extends Step {
 			userData.tournamentUserName ? htmlContent = htmlContent.replace("{{ tournamentusername }}", userData.tournamentUserName) 
 				: htmlContent = htmlContent.replace("{{ tournamentusername }}", userData.username);
 			appElement.innerHTML =  htmlContent;
+			handleProfile();
 			// }
 		} catch (error) {
 			console.error("Error al renderizar la página de login:", error);

@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from './stepRender.js';
+import { handleProfile } from './handleProfile.js';
 export default class Profile extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -48,6 +49,7 @@ export default class Profile extends Step {
                 userData.tournamentUserName ? htmlContent = htmlContent.replace("{{ tournamentusername }}", userData.tournamentUserName)
                     : htmlContent = htmlContent.replace("{{ tournamentusername }}", userData.username);
                 appElement.innerHTML = htmlContent;
+                handleProfile();
                 // }
             }
             catch (error) {

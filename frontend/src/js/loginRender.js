@@ -35,19 +35,6 @@ export default class LoginRender extends Step {
                                 console.error("Error al importar handleLoginSubmit.js:", err);
                             }
                         }
-                        // Configurar evento para el botón de registro
-                        // const signUp = this.container.querySelector("#signUp");
-                        // if (signUp) {
-                        // 	signUp.addEventListener("click", async () => {
-                        // 		try {
-                        // 			const { default: RegisterRender } = await import('./registerRender.js');
-                        // 			const registerInstance = new RegisterRender('app-container');
-                        // 			await registerInstance.render(appElement: HTMLElement);
-                        // 		} catch (err) {
-                        // 			console.error("Error al importar registerRender.js:", err);
-                        // 		}
-                        // 	});
-                        // }
                     }));
                     appElement.innerHTML = htmlContent;
                 }

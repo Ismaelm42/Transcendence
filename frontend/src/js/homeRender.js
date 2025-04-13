@@ -13,7 +13,6 @@ export default class Home extends Step {
         return __awaiter(this, void 0, void 0, function* () {
             const menuContainer = document.getElementById("menu-container");
             try {
-                console.log("En render");
                 const user = yield this.checkAuth();
                 console.log('En Home user despues de checkAuth: ' + user);
                 if (user) {
@@ -37,7 +36,6 @@ export default class Home extends Step {
                 }
             }
             catch (error) {
-                console.error("Error en render:", error);
                 appElement.innerHTML = `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
             }
         });

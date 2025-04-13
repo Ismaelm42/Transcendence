@@ -1,6 +1,7 @@
 import { verifyToken } from '../auth/authToken.js';
 import { authenticateUser } from '../auth/authUser.js';
 import { createUser, getUserById, updateUserbyId, getUserByName, getUserByEmail, getUserByGoogleId, getUsers, deleteUserById, deleteAllUsers, getGamelogs, getGamelogsByUserId } from '../database/crud.cjs';
+import jwt from 'jsonwebtoken';
 
 export function configureCrudRoutes(fastify) {
 // Define all CRUD routes here
@@ -51,6 +52,23 @@ export function configureCrudRoutes(fastify) {
 		}
 	});
 
+	// Define a POST route to update a user by ID
+	fastify.post('/update_user', async (request, reply) => {
+		const { username, password, googleId, email, avatarPath } = request.body;
+		try {
+				const token = request.cookies.token;
+				const decoded = jwt.verify(token, process.env.JWT_SECRET);
+				const userId = decoded.userId;
+				fastify.log.info('userId en update_user', userId);
+			const updatedUser = await updateUserbyId(userId, username, password, googleId, email, avatarPath);
+			reply.send({message: `User ${username} updated successfully`, updatedUser});
+		} catch (err) {
+			fastify.log.error(err);
+			reply.send({ error: 'Error updating user' + err.message });
+		}
+	});
+
+
 	// Define a GET route to retrieve all users
 	fastify.get('/get_users', async (request, reply) => {
 		try {
@@ -80,7 +98,7 @@ export function configureCrudRoutes(fastify) {
 			try {
 			const username = decodeURIComponent(request.query.username);
 			const user = await getUserByName(username);
-			fastify.log.info('user devuelto en Userget_user_by_username/name', user);
+			fastify.log.info('user devuelto en User get_user_by_username/name', user);
 			reply.send(user);
 		} catch (err) {
 			fastify.log.error(err);

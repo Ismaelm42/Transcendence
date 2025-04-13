@@ -48,6 +48,11 @@ export function verifyToken (request, reply, done) {
 	}
 };
 
+/**
+ * 
+ * @param {*} token including the user_id
+ * @returns username
+ */
 export async function extractUserFromToken(token) {
     try {
         if (!token) {

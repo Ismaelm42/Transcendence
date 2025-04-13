@@ -34,7 +34,6 @@ export default class Chat extends Step {
                 }
             }
             catch (error) {
-                console.error("Error en render:", error);
                 appElement.innerHTML = `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
             }
         });
