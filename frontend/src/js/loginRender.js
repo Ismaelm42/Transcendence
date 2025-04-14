@@ -8,40 +8,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from './stepRender.js';
+import { showMessage } from './showMessage.js';
 export default class LoginRender extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.checkAuth();
             console.log("En login render");
-            try {
-                const response = yield fetch("../html/login.html");
-                if (!response.ok)
-                    throw new Error("Failed to load the HTML file");
-                const htmlContent = yield response.text();
-                if (this.container && htmlContent) {
-                    this.container.innerHTML = htmlContent;
-                    // Esperar un breve tiempo antes de asignar eventos
-                    requestAnimationFrame(() => __awaiter(this, void 0, void 0, function* () {
-                        const form = this.container.querySelector("form");
-                        if (form) {
-                            try {
-                                const { handleLoginSubmit } = yield import('./handleLoginSubmit.js');
-                                form.addEventListener("submit", (event) => __awaiter(this, void 0, void 0, function* () {
-                                    event.preventDefault();
-                                    console.log("Se ha pulsado handleLoginSubmit:", event);
-                                    handleLoginSubmit(event);
-                                }));
-                            }
-                            catch (err) {
-                                console.error("Error al importar handleLoginSubmit.js:", err);
-                            }
-                        }
-                    }));
-                    appElement.innerHTML = htmlContent;
-                }
+            if (user) {
+                showMessage("Usuario autenticado, redirigiendo a perfil", null);
+                window.location.hash = "#home";
             }
-            catch (error) {
-                console.error("Error al renderizar la página de login:", error);
-                appElement.innerHTML = `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
+            else {
+                try {
+                    const response = yield fetch("../html/login.html");
+                    if (!response.ok)
+                        throw new Error("Failed to load the HTML file");
+                    const htmlContent = yield response.text();
+                    if (this.container && htmlContent) {
+                        this.container.innerHTML = htmlContent;
+                        // Esperar un breve tiempo antes de asignar eventos
+                        requestAnimationFrame(() => __awaiter(this, void 0, void 0, function* () {
+                            const form = this.container.querySelector("form");
+                            if (form) {
+                                try {
+                                    const { handleLoginSubmit } = yield import('./handleLoginSubmit.js');
+                                    form.addEventListener("submit", (event) => __awaiter(this, void 0, void 0, function* () {
+                                        event.preventDefault();
+                                        console.log("Se ha pulsado handleLoginSubmit:", event);
+                                        handleLoginSubmit(event);
+                                    }));
+                                }
+                                catch (err) {
+                                    console.error("Error al importar handleLoginSubmit.js:", err);
+                                }
+                            }
+                        }));
+                        appElement.innerHTML = htmlContent;
+                    }
+                }
+                catch (error) {
+                    console.error("Error al renderizar la página de login:", error);
+                    appElement.innerHTML = `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
+                }
             }
         });
     }

@@ -70,3 +70,7 @@ height: 12vh;
     left: 60%; /* Centrado horizontal */
     transform: translate(-50%, -50%);
 }
+
+.bg-opacity-90 {
+	background-color: rgba(0, 0, 0, 0.9) !important;
+}

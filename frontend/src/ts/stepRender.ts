@@ -9,7 +9,6 @@ export class Step {
 		this.container = document.getElementById(containerId) as HTMLElement;
 		this.spa = SPA.getInstance(); // Obtenemos la instancia de SPA
 		this.initializeUsername();
-
 	}
 
 	private async initializeUsername() {

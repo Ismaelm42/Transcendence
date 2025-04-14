@@ -51,7 +51,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 
 	fastify.post('/change_password', async (request, reply) => {
 		// fastify.log.info({ body: request.body }, 'change_password data sent');
-		const { currentPassword, newPassword, confirmPassword } = request.body;
+		let { currentPassword, newPassword, confirmPassword } = request.body;
 		try {
 			const token = request.cookies.token;
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -60,16 +60,22 @@ export function configureAuthRoutes(fastify, sequelize) {
 			if (!user) {
 				return reply.status(401).send({ message: 'User not found' });
 			}
-			const isMatch = await comparePassword(currentPassword, user.password);
-			if (!isMatch)
-				return reply.status(401).send({ message: 'Wrong current password' });
-			if (newPassword !== confirmPassword) {	// No es estrictamente necesario, ya que se hace desde el front.
-				return reply.status(401).send({ message: 'Passwords are not identical' });
+			
+			fastify.log.info({ user }, 'user data');
+			fastify.log.info ( user.password , 'user password');
+			fastify.log.info ({ currentPassword }, 'current password');
+			if (currentPassword !== "" || currentPassword.trim().length > 0 || user.password ) {
+				const isMatch = await comparePassword(currentPassword, user.password);
+				if (!isMatch)
+					return reply.status(401).send({ message: 'Wrong current password' });
+				if (newPassword !== confirmPassword) {	// No es estrictamente necesario, ya que se hace desde el front.
+					return reply.status(401).send({ message: 'Passwords are not identical' });
+				}
 			}
 			const username = user.username;
 			const password = newPassword;
 			const updatedUser = await updateUserbyId(userId, username, password);
-			reply.send({message: `User ${username} updated successfully`});
+			reply.send({message: `User ${username} updated successfully` + updatedUser});
 		} catch (err) {
 			fastify.log.error(err);
 			reply.status(500).send({ error: 'Error changing password: ' + err.message });

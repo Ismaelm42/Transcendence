@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { showMessage } from "./showMessage.js";
+let originalUsername = "";
+let originalEmail = "";
+let originalTournamentusername = "";
 function changePassword() {
     const form = document.getElementById("change-password-form");
     form === null || form === void 0 ? void 0 : form.addEventListener("submit", (event) => {
@@ -64,9 +67,17 @@ function changePassword() {
 }
 function cancel() {
     console.log("cancel button clicked cancel launched");
+    console.log("Original values:", originalUsername, originalEmail, originalTournamentusername);
     const userForm = document.getElementById("user-form");
     if (userForm) {
         const inputs = userForm.querySelectorAll("input");
+        const nameInput = document.getElementById('usernameInput');
+        const emailInput = document.getElementById('emailInput');
+        const Tournamentusername = document.getElementById('tournamentusernameInput');
+        emailInput.value = originalEmail;
+        nameInput.value = originalUsername;
+        emailInput.value = originalEmail;
+        Tournamentusername.value = originalTournamentusername;
         inputs.forEach(input => input.setAttribute("readonly", "true"));
         inputs.forEach(input => {
             input.style.backgroundColor = "oklch(37.3% 0.034 259.733)"; // Example of using OKLCH color in CSS
@@ -81,6 +92,7 @@ function cancel() {
     changePasswordButton.innerHTML = 'Change password';
     changePasswordButton.classList.replace("bg-red-500", "bg-orange-500");
     changePasswordButton.classList.replace("hover:bg-red-600", "hover:bg-orange-600");
+    changePasswordButton === null || changePasswordButton === void 0 ? void 0 : changePasswordButton.removeEventListener("click", cancel);
     changePasswordButton === null || changePasswordButton === void 0 ? void 0 : changePasswordButton.addEventListener("click", changePassword);
 }
 function editInfo() {
@@ -93,9 +105,9 @@ function editInfo() {
         const emailInput = document.getElementById('emailInput');
         const Tournamentusername = document.getElementById('tournamentusernameInput');
         console.log("nameInput:", nameInput);
-        const originalUsername = nameInput.value;
-        const originalEmail = emailInput.value;
-        const originalTournamentusername = Tournamentusername.value;
+        originalUsername = nameInput.value;
+        originalEmail = emailInput.value;
+        originalTournamentusername = Tournamentusername.value;
         inputs.forEach(input => input.removeAttribute("readonly"));
         inputs.forEach(input => {
             input.style.backgroundColor = "#fff"; // Cambia el fondo a un color claro para indicar que es editable
@@ -103,21 +115,7 @@ function editInfo() {
         });
         const cancelButton = document.getElementById("change-password-button");
         cancelButton === null || cancelButton === void 0 ? void 0 : cancelButton.removeEventListener('click', changePassword);
-        cancelButton === null || cancelButton === void 0 ? void 0 : cancelButton.addEventListener("click", () => {
-            console.log("Cancel button clicked");
-            console.log("Original username:", originalUsername);
-            emailInput.value = originalEmail;
-            nameInput.value = originalUsername;
-            emailInput.value = originalEmail;
-            Tournamentusername.innerHTML = originalTournamentusername;
-            // const inputs = userForm?.querySelectorAll("input");
-            inputs === null || inputs === void 0 ? void 0 : inputs.forEach(input => input.setAttribute("readonly", "true"));
-            inputs === null || inputs === void 0 ? void 0 : inputs.forEach(input => {
-                input.style.backgroundColor = "oklch(37.3% 0.034 259.733)"; // Example of using OKLCH color in CSS
-                input.style.color = "#fff"; // Cambia el fondo a un color claro para indicar que es editable
-            });
-            cancel();
-        });
+        cancelButton === null || cancelButton === void 0 ? void 0 : cancelButton.addEventListener("click", cancel);
     }
 }
 function saveInfo() {
@@ -160,6 +158,9 @@ function saveInfo() {
                 input.style.color = "#fff"; // Cambia el fondo a un color claro para indicar que es editable
             });
         }
+        const cancelButton = document.getElementById("change-password-button");
+        cancelButton === null || cancelButton === void 0 ? void 0 : cancelButton.removeEventListener('click', cancel);
+        cancelButton === null || cancelButton === void 0 ? void 0 : cancelButton.addEventListener("click", changePassword);
     });
 }
 export function handleProfile() {

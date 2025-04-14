@@ -23,4 +23,3 @@ export function showMessage(message, time) {
         }, time);
     }
 }
-export default showMessage;

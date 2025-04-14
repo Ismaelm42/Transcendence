@@ -1,4 +1,5 @@
-import { Step } from "./stepRender";
+import { Step } from "./stepRender.js";
+import { showMessage } from "./showMessage.js";
 
 export class SPA {
     private container: HTMLElement;
@@ -21,8 +22,9 @@ export class SPA {
         this.container = document.getElementById(containerId) as HTMLElement;
 		SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
         this.loadHEaderAndFooter();
+		this.loadStep();
         window.onpopstate = () => this.loadStep();
-		this.navigate('home');
+		// this.navigate('home');
     }
 
     private async loadHEaderAndFooter() {
@@ -63,6 +65,8 @@ export class SPA {
 
 	async loadStep() {
 		let step = location.hash.replace('#', '') || 'home';
+		// this.navigate(step);
+
 		// // Obtener la URL actual
 		// let currentUrl = window.location.href;
 
@@ -76,11 +80,10 @@ export class SPA {
 		// history.replaceState(null, '', newUrl);
 
 		const routeConfig = this.routes[step];
-	
+		console.log (this);
 		if (routeConfig) {
 			//Verificar si la ruta es protegida y si el usuario está autenticado
 
-			
 			// Cargar el módulo correspondiente
 			console.log("he pasado por loadStep de la clase SPA");
 			//importamos el módulo correspondiente
@@ -101,7 +104,8 @@ export class SPA {
 			}
 			await stepInstance.init(); // Inicializar el módulo
 		} else {
-			this.container.innerHTML = '<div>Step not found</div>';
+			showMessage('url does not exist', 2000);
+			window.location.hash = '#home'; 
 		}
 	}
 

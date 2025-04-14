@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { showMessage } from "./showMessage.js";
 export class SPA {
     constructor(containerId) {
         this.routes = {
@@ -24,8 +25,9 @@ export class SPA {
         this.container = document.getElementById(containerId);
         SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
         this.loadHEaderAndFooter();
+        this.loadStep();
         window.onpopstate = () => this.loadStep();
-        this.navigate('home');
+        // this.navigate('home');
     }
     loadHEaderAndFooter() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,6 +69,7 @@ export class SPA {
     loadStep() {
         return __awaiter(this, void 0, void 0, function* () {
             let step = location.hash.replace('#', '') || 'home';
+            // this.navigate(step);
             // // Obtener la URL actual
             // let currentUrl = window.location.href;
             // // Eliminar todo lo que está después de la última barra
@@ -76,6 +79,7 @@ export class SPA {
             // // Actualizar la URL sin recargar la página
             // history.replaceState(null, '', newUrl);
             const routeConfig = this.routes[step];
+            console.log(this);
             if (routeConfig) {
                 //Verificar si la ruta es protegida y si el usuario está autenticado
                 // Cargar el módulo correspondiente
@@ -100,7 +104,8 @@ export class SPA {
                 yield stepInstance.init(); // Inicializar el módulo
             }
             else {
-                this.container.innerHTML = '<div>Step not found</div>';
+                showMessage('url does not exist', 2000);
+                window.location.hash = '#home';
             }
         });
     }
