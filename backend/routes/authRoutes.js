@@ -74,7 +74,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 			}
 			const username = user.username;
 			const password = newPassword;
-			const updatedUser = await updateUserbyId(userId, username, password);
+			const updatedUser = await updateUserbyId(userId, username, null, password);
 			reply.send({message: `User ${username} updated successfully` + updatedUser});
 		} catch (err) {
 			fastify.log.error(err);

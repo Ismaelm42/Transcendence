@@ -13,6 +13,11 @@ module.exports = {
 				allowNull: false,
 				unique: true
 			},
+			tournament_username: {
+				type: Sequelize.STRING,
+				allowNull: true,
+				unique: true,
+			},
 			password: {
 				type: Sequelize.STRING,
 				allowNull: true

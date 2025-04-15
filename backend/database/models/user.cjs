@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			unique: true
 		},
+		tournamentUsername: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			unique: true
+		},
 		password: {
 			type: DataTypes.STRING,
 			allowNull: true

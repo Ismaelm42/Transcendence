@@ -11,10 +11,10 @@ export function configureCrudRoutes(fastify) {
 		const { username, password, googleId, email, avatarPath } = request.body;
 		try {
 			const newUser = await createUser(username, password, googleId, email, avatarPath);
-			reply.send({ message: `User ${username} created successfully`, user: newUser });
+			reply.status(200).send({ message: `User ${username} created successfully`, user: newUser });
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error creating user' + err.message });
+			reply.status(400).send({ error: 'Error creating user' + err.message });
 		}
 	});
 
@@ -42,41 +42,40 @@ export function configureCrudRoutes(fastify) {
 
 	// Define a POST route to update a user by ID
 	fastify.post('/update_user_by_id', async (request, reply) => {
-		const { userId, username, password, googleId, email, avatarPath } = request.body;
+		const { userId, username, tournamentUsername, password, googleId, email, avatarPath } = request.body;
 		try {
-			const updatedUser = await updateUserbyId(userId, username, password, googleId, email, avatarPath);
-			reply.send({message: `User ${username} updated successfully`, updatedUser});
+			const updatedUser = await updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
+			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error updating user' + err.message });
+			reply.status(400).send({ error: 'Error updating user' + err.message });
 		}
 	});
 
-	// Define a POST route to update a user by ID
+	// Define a POST route to update a user by token
 	fastify.post('/update_user', async (request, reply) => {
-		const { username, password, googleId, email, avatarPath } = request.body;
+		const { username, tournamentUsername, password, googleId, email, avatarPath } = request.body;
 		try {
 				const token = request.cookies.token;
 				const decoded = jwt.verify(token, process.env.JWT_SECRET);
 				const userId = decoded.userId;
 				fastify.log.info('userId en update_user', userId);
-			const updatedUser = await updateUserbyId(userId, username, password, googleId, email, avatarPath);
-			reply.send({message: `User ${username} updated successfully`, updatedUser});
+			const updatedUser = await updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
+			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error updating user' + err.message });
+			reply.status(400).send({ error: 'Error updating user' + err.message });
 		}
 	});
-
 
 	// Define a GET route to retrieve all users
 	fastify.get('/get_users', async (request, reply) => {
 		try {
 			const users = await getUsers();
-			reply.send(users);
+			reply.status(200).send(users);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error fetching users' + err.message });
+			reply.status(500).send({ error: 'Error fetching users' + err.message });
 		}
 	});
 
@@ -85,10 +84,10 @@ export function configureCrudRoutes(fastify) {
 		const userId = request.query.id;
 		try {
 			const user = await getUserById(userId);
-			reply.send(user);
+			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error searching userId' + err.message });
+			reply.status(400).send({ error: 'Error searching userId' + err.message });
 		}
 	});
 
@@ -99,10 +98,10 @@ export function configureCrudRoutes(fastify) {
 			const username = decodeURIComponent(request.query.username);
 			const user = await getUserByName(username);
 			fastify.log.info('user devuelto en User get_user_by_username/name', user);
-			reply.send(user);
+			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error searching username' + err.message });
+			reply.status(400).send({ error: 'Error searching username' + err.message });
 		}
 	});
 
@@ -110,10 +109,10 @@ export function configureCrudRoutes(fastify) {
 	fastify.get('/get_user_by_email/', async (request, reply) => {
 		try {
 			const user = await getUserByEmail(request.query.email);
-			reply.send(user);
+			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error searching email' + err.message });
+			reply.status(400).send({ error: 'Error searching email' + err.message });
 		}
 	});
 
@@ -121,10 +120,10 @@ export function configureCrudRoutes(fastify) {
 	fastify.get('/get_user_by_google_id/', async (request, reply) => {
 		try {
 			const user = await getUserByGoogleId(request.query.googleId);
-			reply.send(user);
+			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error searching googleId' + err.message });
+			reply.status(400).send({ error: 'Error searching googleId' + err.message });
 		}
 	});
 
@@ -133,10 +132,10 @@ export function configureCrudRoutes(fastify) {
 		const { userId } = request.body;
 		try {
 			const result = await deleteUserById(userId);
-			reply.send(result);
+			reply.status(200).send(result);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error deleting user' + err.message });
+			reply.status(400).send({ error: 'Error deleting user' + err.message });
 		}
 	});
 
@@ -144,10 +143,10 @@ export function configureCrudRoutes(fastify) {
 	fastify.delete('/delete_all_users', async (request, reply) => {
 		try {
 			const result = await deleteAllUsers();
-			reply.send(result);
+			reply.status(200).send(result);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error deleting all users '+ err.message });
+			reply.status(500).send({ error: 'Error deleting all users '+ err.message });
 		}
 	});
 
@@ -155,10 +154,10 @@ export function configureCrudRoutes(fastify) {
 	fastify.get('/get_gamelogs', async (request, reply) => {
 		try {
 			const gamelogs = await getGamelogs();
-			reply.send(gamelogs);
+			reply.status(200).send(gamelogs);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error fetching gamelogs '+ err.message });
+			reply.status(400).send({ error: 'Error fetching gamelogs '+ err.message });
 		}
 	});
 
@@ -167,10 +166,10 @@ export function configureCrudRoutes(fastify) {
 		try {
 			const userId = request.params.userId;
 			const userGamelogs = await getGamelogsByUserId(userId);
-			reply.send(userGamelogs);
+			reply.status(200).send(userGamelogs);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.send({ error: 'Error fetching user gamelogs' + err.message });
+			reply.status(400).send({ error: 'Error fetching user gamelogs' + err.message });
 		}
 	});
 }

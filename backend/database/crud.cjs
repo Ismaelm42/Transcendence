@@ -28,6 +28,10 @@ const createUser = async (username, password, googleId, email, avatarPath) => {
 		if (err.name === 'SequelizeUniqueConstraintError') {
 			throw new Error('Username already exists');
 		}
+		if (err.tournamentUsername === 'SequelizeUniqueConstraintError') {
+			throw new Error('Tournament Name already exists');
+		}
+
 		else if (err.email === 'SequelizeUniqueConstraintError') {
 			throw new Error('Email already exists');
 		}
@@ -44,12 +48,14 @@ const getUserById = async (userId) => {
 	}
 };
 
-const updateUserbyId = async (userId, username, password, googleId, email, avatarPath) => {
+const updateUserbyId = async (userId, username, tournamentUsername, password, googleId, email, avatarPath) => {
 	try {
 		let user = await User.findByPk(userId);
 		if (user) {
 			if (username)
 				user.username = username;
+			if (tournamentUsername)
+				user.tournamentUsername = tournamentUsername;
             if (password) {
                 const hashedPassword = await hashPassword(password);
                 user.password = hashedPassword;
@@ -73,6 +79,15 @@ const updateUserbyId = async (userId, username, password, googleId, email, avata
 const getUserByName = async (username) => {
 	try {
 		const user = await User.findOne({ where: { username } });
+		return user;
+	} catch (err) {
+		throw new Error('User not found at getUserByName ', err);
+	}
+};
+
+const getUserByTournamentName = async (tournamentUsername) => {
+	try {
+		const user = await User.findOne({ where: { tournamentUsername } });
 		return user;
 	} catch (err) {
 		throw new Error('User not found at getUserByName ', err);
@@ -192,6 +207,7 @@ module.exports = {
 	getUserById,
 	updateUserbyId,
 	getUserByName,
+	getUserByTournamentName,
 	getUserByEmail,
 	getUserByGoogleId,
 	getUsers,

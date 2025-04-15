@@ -22,7 +22,7 @@ export function configureImagesRoutes(fastify, sequelize) {
 				const filePath = path.join('/app/images', imageId);
 				await pump(part.file, fs.createWriteStream(filePath));
 				const avatarPath = "https://localhost:8443/back/images/" + imageId;
-				await updateUserbyId(user.id, null, null, null, null, avatarPath);
+				await updateUserbyId(user.id, null, null, null, null, null, avatarPath);
 				return reply.send({ status: 'ok', url: avatarPath });
 			}
 		}
@@ -41,7 +41,7 @@ export function configureImagesRoutes(fastify, sequelize) {
 					return reply.code(500).send({ error: 'Error deleting the image' });
 			});
 			const avatarPath = "https://localhost:8443/back/images/" + imageId;
-			await updateUserbyId(user.id, null, null, null, null, avatarPath);
+			await updateUserbyId(user.id, null, null, null, null, null, avatarPath);
 			return reply.send({ status: 'ok', message: 'Image deleted successfully' });
 		}
 	});

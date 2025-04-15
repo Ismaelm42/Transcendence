@@ -126,27 +126,27 @@ async function saveInfo() {
 	console.log("Form data:", data);
 	try {
 		const response = await fetch('https://localhost:8443/back/update_user', {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(data),
-			});
+		});
 		if (response.ok) {
 			alert('Profile updated successfully');
 			const HeaderButton = document.getElementById("username");
-			console.log ("data.usernameInput. ", data.username);
+			console.log("data.usernameInput. ", data.username);
 			if (HeaderButton) {
 				HeaderButton.textContent = data.username.toString();
-				}
+			}
 			window.location.hash = "#profile";
 
 		} else {
-				alert('Failed to update profile');
+			alert('Failed to update profile');
 		}
 	} catch (error) {
 		console.error("Error al enviar el formulario de registro:", error);
-		}	
+	}
 	// volver a estado incial Edit info
 	if (userForm) {
 		const inputs = userForm.querySelectorAll("input");
