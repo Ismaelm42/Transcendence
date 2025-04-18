@@ -1,4 +1,5 @@
 import { SPA } from './spa.js';
+import { showMessage } from './showMessage.js';
 
 export async function handleRegisterSubmit(event: SubmitEvent) {
     event.preventDefault();
@@ -6,7 +7,7 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 	if (data.password !== data.confirm_password) {
-		alert("Las contraseñas no coinciden. Por favor, verifica e intenta nuevamente.");
+		showMessage("Passwords do not match. Please check and try again.", null);
 		return;
 	}
     try {
@@ -18,15 +19,18 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
             body: JSON.stringify(data),
         });
     		if (!response.ok) 
+			{
+				const errorResponse = await response.json();
 				if (response.status === 409) {
-		            alert("El nombre de usuario o el correo ya existe. Por favor, elige otro.");
-		        } else if (response.status === 500) {
-		            alert("Error interno del servidor. Por favor, inténtalo más tarde.");
-		        } else if (response.status === 400) {
-		            alert("Error en la solicitud. Por favor, verifica los datos ingresados.");
-		        } else {
-		            alert("Error desconocido. Por favor, inténtalo más tarde.");
+					showMessage(`Error: ` + errorResponse.error, null);
+				} else if (response.status === 500) {
+					showMessage("Internal server error. Please try again later.", null);
+				} else if (response.status === 400) {
+					showMessage("Bad request. Please check the entered data.", null);
+				} else {
+					showMessage("Unknown error. Please try again later.", null);
 		        }
+			}else {	
 			// ;
 			// try
 			// {
@@ -43,7 +47,7 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
 	        // Navegar a la página de inicio
 	        const app = SPA.getInstance();
 	        app.navigate("home");
-
+			}
     	 } catch (error) {
 			console.error("Error al enviar el formulario de registro:", error);
 	    console.error("Error en el registro o login:", error);

@@ -29,13 +29,10 @@ export function configureCrudRoutes(fastify) {
 			return authenticateUser(email, password, reply);
 		} catch (err) {
 			fastify.log.error(err);
-			if (err.message === 'Username already exists') {
-				return reply.status(409).send({ error: 'Error registering user' + err.message });
-			}
-			if (err.message === 'Email already exists') {
-				return reply.status(409).send({ error: 'Error registering user' + err.message });
+			if (err.message.includes('already')) {
+				return reply.status(409).send({ error: err.message });
 			} else {
-				reply.status(500).send({ error: 'Error registering user' + err.message }); 
+				reply.status(500).send({ error: err.message }); 
 			}
 		}
 	});
@@ -47,8 +44,9 @@ export function configureCrudRoutes(fastify) {
 			const updatedUser = await updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
+			fastify.log.error("Desde updateUserbyId");
 			fastify.log.error(err);
-			reply.status(400).send({ error: 'Error updating user' + err.message });
+			reply.status(400).send({ error: err.message});
 		}
 	});
 
@@ -63,8 +61,13 @@ export function configureCrudRoutes(fastify) {
 			const updatedUser = await updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
+			fastify.log.error("Desde updateUser");
 			fastify.log.error(err);
-			reply.status(400).send({ error: 'Error updating user' + err.message });
+			if (err.message.includes('already')) {
+				return reply.status(409).send({ error: err.message });
+			} else {
+				reply.status(500).send({ error: err.message }); 
+			}
 		}
 	});
 

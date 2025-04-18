@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { SPA } from './spa.js';
+import { showMessage } from './showMessage.js';
 export function handleRegisterSubmit(event) {
     return __awaiter(this, void 0, void 0, function* () {
         event.preventDefault();
@@ -15,7 +16,7 @@ export function handleRegisterSubmit(event) {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
         if (data.password !== data.confirm_password) {
-            alert("Las contraseñas no coinciden. Por favor, verifica e intenta nuevamente.");
+            showMessage("Passwords do not match. Please check and try again.", null);
             return;
         }
         try {
@@ -26,35 +27,39 @@ export function handleRegisterSubmit(event) {
                 },
                 body: JSON.stringify(data),
             });
-            if (!response.ok)
+            if (!response.ok) {
+                const errorResponse = yield response.json();
                 if (response.status === 409) {
-                    alert("El nombre de usuario o el correo ya existe. Por favor, elige otro.");
+                    showMessage(`Error: ` + errorResponse.error, null);
                 }
                 else if (response.status === 500) {
-                    alert("Error interno del servidor. Por favor, inténtalo más tarde.");
+                    showMessage("Internal server error. Please try again later.", null);
                 }
                 else if (response.status === 400) {
-                    alert("Error en la solicitud. Por favor, verifica los datos ingresados.");
+                    showMessage("Bad request. Please check the entered data.", null);
                 }
                 else {
-                    alert("Error desconocido. Por favor, inténtalo más tarde.");
+                    showMessage("Unknown error. Please try again later.", null);
                 }
-            // ;
-            // try
-            // {
-            // 	const result = await response.json();
-            // 	console.log("Resultado del registro:", result);
-            // } catch (error) {
-            // 	console.error("Error al realizar el registro:", error);
-            //     if (error instanceof Error) {
-            //         alert("Error: " + error.message);
-            //     } else {
-            //         alert("Error: An unknown error occurred");
-            //     }
-            // }
-            // Navegar a la página de inicio
-            const app = SPA.getInstance();
-            app.navigate("home");
+            }
+            else {
+                // ;
+                // try
+                // {
+                // 	const result = await response.json();
+                // 	console.log("Resultado del registro:", result);
+                // } catch (error) {
+                // 	console.error("Error al realizar el registro:", error);
+                //     if (error instanceof Error) {
+                //         alert("Error: " + error.message);
+                //     } else {
+                //         alert("Error: An unknown error occurred");
+                //     }
+                // }
+                // Navegar a la página de inicio
+                const app = SPA.getInstance();
+                app.navigate("home");
+            }
         }
         catch (error) {
             console.error("Error al enviar el formulario de registro:", error);

@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { SPA } from './spa.js';
+import { showMessage } from './showMessage.js';
 export function handleLoginSubmit(event) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("handleLoginSubmit:", event);
@@ -25,7 +26,7 @@ export function handleLoginSubmit(event) {
             });
             if (!response.ok) {
                 const errorResponse = yield response.json();
-                alert(`Error: ${errorResponse.message}`);
+                showMessage(`Error: ${errorResponse.message}`, null);
             }
             else {
                 const result = yield response.json();

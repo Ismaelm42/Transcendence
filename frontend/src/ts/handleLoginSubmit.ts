@@ -1,4 +1,5 @@
 import { SPA } from './spa.js';
+import { showMessage } from './showMessage.js';
 
 export async function handleLoginSubmit(event: SubmitEvent) {
 	console.log("handleLoginSubmit:", event);
@@ -19,7 +20,7 @@ export async function handleLoginSubmit(event: SubmitEvent) {
 
         if (!response.ok) {
             const errorResponse = await response.json();
-            alert(`Error: ${errorResponse.message}`);
+            showMessage(`Error: ${errorResponse.message}`, null);
         } else {
             const result = await response.json();
             console.log("Login exitoso:", result);

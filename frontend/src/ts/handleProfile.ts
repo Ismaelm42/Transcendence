@@ -27,7 +27,7 @@ function changePassword(){
 		  confirmPassword: formData.get('confirm-password')
 		};
 		if (data.newPassword !== data.confirmPassword) {
-			alert("New password and confirmation do not match");
+			showMessage("New password and confirmation do not match", null);
 			return;
 		}
 		console.log("Form data:", data);
@@ -133,19 +133,19 @@ async function saveInfo() {
 			body: JSON.stringify(data),
 		});
 		if (response.ok) {
-			alert('Profile updated successfully');
+			showMessage('Profile updated successfully', 2000);
 			const HeaderButton = document.getElementById("username");
 			console.log("data.usernameInput. ", data.username);
 			if (HeaderButton) {
 				HeaderButton.textContent = data.username.toString();
 			}
 			window.location.hash = "#profile";
-
 		} else {
-			alert('Failed to update profile');
+			const errorResponse = await response.json();
+			showMessage(`Error: ${errorResponse.error}`, null);
 		}
 	} catch (error) {
-		console.error("Error al enviar el formulario de registro:", error);
+		showMessage(`Oops, something went wrong while submitting the form. Please try again.`, 3000);
 	}
 	// volver a estado incial Edit info
 	if (userForm) {

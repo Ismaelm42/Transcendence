@@ -26,14 +26,7 @@ const createUser = async (username, password, googleId, email, avatarPath) => {
 	}
 	catch (err) {
 		if (err.name === 'SequelizeUniqueConstraintError') {
-			throw new Error('Username already exists');
-		}
-		if (err.tournamentUsername === 'SequelizeUniqueConstraintError') {
-			throw new Error('Tournament Name already exists');
-		}
-
-		else if (err.email === 'SequelizeUniqueConstraintError') {
-			throw new Error('Email already exists');
+			throw new Error( err.errors[0].path + ' already exists');
 		}
 		throw new Error('Error creating user: ', err);
 	}
@@ -72,7 +65,11 @@ const updateUserbyId = async (userId, username, tournamentUsername, password, go
 			return { error: `User ${userId} not found at updateUserbyId` };
 		}
 	} catch (err) {
-		throw new Error('Error updating user ', err);
+		// throw new Error('Error updating user ', err);
+		if (err.name === 'SequelizeUniqueConstraintError') {
+			throw new Error( err.errors[0].path + ' already exists');
+		}
+		throw new Error('Error creating user: ', err);
 	}
 };
 
