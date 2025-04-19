@@ -13,9 +13,9 @@ export default class RegisterRender extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.checkAuth();
-            console.log("En register render");
+            console.log("En login render");
             if (user) {
-				showMessage("User authenticated, redirecting to profile", 3000);
+                showMessage("Usuario autenticado, redirigiendo a perfil", 3000);
                 window.location.hash = "#home";
             }
             else {
@@ -37,7 +37,7 @@ export default class RegisterRender extends Step {
                                 }));
                             }
                             catch (err) {
-								console.error("Error importing handleRegisterSubmit.js:", err);
+                                console.error("Error al importar handleRegisterSubmit.js:", err);
                             }
                         }
                     }));
@@ -45,7 +45,7 @@ export default class RegisterRender extends Step {
                 }
                 catch (err) {
                     console.error("Error in render method:", err);
-					appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
+                    appElement.innerHTML = `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
                 }
             }
         });

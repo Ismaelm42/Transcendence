@@ -204,7 +204,7 @@ function changeAvatar() {
 ;
 export function handleProfile() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("En desde el ts handleProfile");
+        console.log("En handleProfile desde el ts handleProfile");
         const editButton = document.getElementById("edit-button");
         const changePasswordButton = document.getElementById("change-password-button");
         requestAnimationFrame(() => {

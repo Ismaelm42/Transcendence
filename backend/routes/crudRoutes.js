@@ -175,4 +175,24 @@ export function configureCrudRoutes(fastify) {
 			reply.status(400).send({ error: 'Error fetching user gamelogs' + err.message });
 		}
 	});
+
+
+	fastify.get('/get_user_gamelogs', async (request, reply) => {
+		try {
+			const token = request.cookies.token;
+			const decoded = jwt.verify(token, process.env.JWT_SECRET);
+			const userId = decoded.userId;
+			const ParamsuserId = request.params.userId;
+			console.log('userId en get_user_gamelogs', userId);
+			console.log('ParamsuserId en get_user_gamelogs', ParamsuserId);
+			const userGamelogs = await getGamelogsByUserId(userId);
+			reply.status(200).send(userGamelogs);
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(400).send({ error: 'Error fetching user gamelogs' + err.message });
+		}
+	});
+
+
+
 }

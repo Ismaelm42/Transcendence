@@ -62,6 +62,7 @@ export class SPA {
                     if (footerElement) {
                         footerElement.innerHTML = footerContent;
                     }
+                    console.log('footer cargado');
                 }
                 else {
                     console.error('Error al cargar el footer:', footerResponse.statusText);
@@ -89,11 +90,7 @@ export class SPA {
             // // Actualizar la URL sin recargar la página
             // history.replaceState(null, '', newUrl);
             const routeConfig = this.routes[step];
-            console.log(this);
             if (routeConfig) {
-                //Verificar si la ruta es protegida y si el usuario está autenticado
-                // Cargar el módulo correspondiente
-                console.log("he pasado por loadStep de la clase SPA");
                 //importamos el módulo correspondiente
                 const module = yield import(`./${routeConfig.module}`);
                 // Creamos una instancia del módulo

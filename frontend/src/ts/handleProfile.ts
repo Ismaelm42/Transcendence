@@ -199,7 +199,7 @@ async function changeAvatar() {
 
 export async function handleProfile() {
 
-		console.log("En desde el ts handleProfile");
+		console.log("En handleProfile desde el ts handleProfile");
 		const editButton = document.getElementById("edit-button");
 		const changePasswordButton = document.getElementById("change-password-button");
 

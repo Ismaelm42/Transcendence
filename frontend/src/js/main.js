@@ -6,5 +6,10 @@
 import './spa.js';
 // // Importar handleLoginSubmit.js
 // import './handleLoginSubmit.js';
-// Importar handleProfile.js
-import './handleProfile.js';
+
+/* si incluimos este import se ejecuta directamente, en esta ocasión no pasa nada
+ya que solo se hacén asignaciones de botones de ese paso, pero no tiene sentido que 
+se haga cada vez que se arranca el código.
+*/
+// import './handleProfile.js'; 
+

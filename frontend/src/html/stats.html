@@ -1,0 +1,48 @@
+<div id="stats-container" class="bg-gray-200 bg-red-50 text-white items-center justify-center w-full"></div>
+	<div id="stats-title-container" class="flex w-full basis-full items-center justify-center">
+		<h2 id="stats-tittle" class="text-xl font-bold text-white mb-4">Statistics</h2>
+	</div>
+	<div id="stats-content" class="flex flex-col items-center gap-8 px-4">
+		<!-- Estadísticas -->
+		<div id="stats-component-list" class="bg-gray-800 shadow-lg rounded-lg p-6 w-full max-w-[80vw]">
+		  <div class="flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-between gap-8">
+			<div class="flex justify-between items-center w-full lg:w-auto">
+			  <p class="text-sm text-gray-400">Total Games:</p>
+			  <p class="text-lg lg:text-4xl font-bold ml-1 text-blue-400"> {{ totalGames }}</p>
+			</div>
+			<div class="flex justify-between items-center w-full lg:w-auto">
+			  <p class="text-sm text-gray-400">Wins:</p>
+			  <p class="text-lg lg:text-4xl font-bold ml-1 text-green-400"> {{ wins }}</p>
+			</div>
+			<div class="flex justify-between items-center w-full lg:w-auto">
+			  <p class="text-sm text-gray-400">Losses:</p>
+			  <p class="text-lg lg:text-4xl font-bold ml-1 text-red-400"> {{ losses }}</p>
+			</div>
+			<div class="flex justify-between items-center w-full lg:w-auto">
+			  <p class="text-sm text-gray-400">Time Played (min):</p>
+			  <p class="text-lg lg:text-4xl font-bold ml-1 text-yellow-400"> {{ timePlayed }}</p>
+			</div>
+			<div class="flex justify-between items-center w-full lg:w-auto">
+			  <p class="text-sm text-gray-400">Tournaments Played:</p>
+			  <p class="text-lg lg:text-4xl font-bold ml-1 text-purple-400"> {{ tournamentsPlayed }}</p>
+			</div>
+			<div class="flex justify-between items-center w-full lg:w-auto">
+			  <p class="text-sm text-gray-400">Tournaments Won:</p>
+			  <p class="text-lg lg:text-4xl font-bold ml-1 text-indigo-400"> {{ tournamentsWon }}</p>
+			</div>
+		  </div>
+		</div>
+		<!-- Gráficos -->
+		<div class="flex flex-col lg:flex-row justify-center items-center gap-8 w-full max-w-[80vw]">
+			<div id="stats-component-games-chart" class="flex flex-col justify-center items-center w-full lg:w-[40vw] h-[30vw] max-h-[420px]">
+				<h3>Games</h3>
+			  	<canvas id="statsChart" class="aspect-square w-[30vw] max-w-[400px]"></canvas>
+			</div>
+			<div id="stats-component-tournament-chart" class="flex flex-col justify-center items-center lg:w-[40vw] h-[30vw] max-h-[420px]">
+				<h3>Tournaments</h3>
+				<canvas id="statsTournamentChart" class="aspect-square w-[30vw] max-w-[400px]"></canvas>
+			</div>
+		  </div>
+	</div>
+</div>
+
