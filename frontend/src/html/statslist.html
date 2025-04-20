@@ -1,0 +1,24 @@
+<!-- statslist.html -->
+<div id="stats-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+	<div class="relative bg-gray-900 text-white rounded-xl w-4/5 max-h-[60vh] overflow-hidden p-4">
+	  <h1 id="modal-title" class="text-center text-xl font-bold border-b-4 pb-2 mb-4 sticky top-0 z-10 bg-gray-900" style="border-color: {{color}}">{{label}}</h1>
+	  <button id="close-stats-modal" class="absolute top-4 right-4 text-white px-4 py-1 rounded hover:bg-opacity-90 z-20" style="background-color: {{color}}">Close</button>
+	  <div class="overflow-auto max-h-[calc(60vh-80px)]">
+		<table class="w-full text-left border-collapse">
+		  <thead class="sticky top-0 bg-gray-800 z-10">
+			<tr>
+			  <th class="p-2 border-b-2 border-gray-600">Date</th>
+			  <th class="p-2 border-b-2 border-gray-600">Winner</th>
+			  <th class="p-2 border-b-2 border-gray-600">Loser</th>
+			  <th class="p-2 border-b-2 border-gray-600">Duration</th>
+			  <th class="p-2 border-b-2 border-gray-600">Tournament Info</th>
+			</tr>
+		  </thead>
+		  <tbody id="stats-table-body">
+			{{table_rows}}
+		  </tbody>
+		</table>
+	  </div>
+	</div>
+  </div>
+  
