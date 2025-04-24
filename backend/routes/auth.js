@@ -1,9 +1,9 @@
+import jwt from 'jsonwebtoken';
 import fastifyPassport from "@fastify/passport";
+import { crud } from '../crud/crud.js';
+import { comparePassword } from '../database/users/PassUtils.cjs';
 import { authenticateUser, signOutUser } from "../auth/authUser.js";
 import { extractUserFromToken, setTokenCookie } from "../auth/authToken.js";
-import { getUserById , updateUserbyId} from "../database/crud.cjs";
-import { comparePassword } from '../database/users/PassUtils.cjs';
-import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -42,7 +42,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 	        }
 	        // Verificar el token
 	        const decodedId = jwt.verify(token, JWT_SECRET);
-			const decoded = await getUserById(decodedId.userId);
+			const decoded = await crud.user.getUserById(decodedId.userId);
 	        reply.send({ valid: true, user: decoded });
 	    } catch (error) {
 	        reply.status(401).send({ valid: false, message: 'Invalid or expired Token' });
@@ -56,7 +56,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 			const token = request.cookies.token;
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			const userId = decoded.userId;
-			const user = await getUserById(userId);
+			const user = await crud.user.getUserById(userId);
 			if (!user) {
 				return reply.status(401).send({ message: 'User not found' });
 			}
@@ -74,7 +74,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 			}
 			const username = user.username;
 			const password = newPassword;
-			const updatedUser = await updateUserbyId(userId, username, null, password);
+			const updatedUser = await crud.user.updateUserbyId(userId, username, null, password);
 			reply.send({message: `User ${username} updated successfully` + updatedUser});
 		} catch (err) {
 			fastify.log.error(err);
