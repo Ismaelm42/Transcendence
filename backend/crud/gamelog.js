@@ -1,9 +1,9 @@
-const db = require('../database/models/index.cjs');
-const { hashPassword } = require('../database/users/PassUtils.cjs');
-const { Op } = require('sequelize');
-const { User, Gamelog, Friend } = db;
+import db from '../database/models/index.cjs';
+import pkg from '../database/models/index.cjs';
+const { sequelize, Sequelize } = pkg;
+const { Gamelog } = db;
 
-const getGamelogs = async () => {
+export const getGamelogs = async () => {
 	try {
 		const gamelogs = await Gamelog.findAll({});
 		return gamelogs;
@@ -12,12 +12,12 @@ const getGamelogs = async () => {
 	}
 };
 
-const getGamelogsByUserId = async (userId) => {
+export const getGamelogsByUserId = async (userId) => {
 	try {
-		const [userGamelogs] = await db.sequelize.query(
+		const [userGamelogs] = await sequelize.query(
 			'SELECT * FROM "Usergamelog" WHERE "userId" = :userId',
 			{
-				type: db.Sequelize.QueryTypes.SELECT,
+				type: Sequelize.QueryTypes.SELECT,
 				replacements: { userId },
 			}
 		);

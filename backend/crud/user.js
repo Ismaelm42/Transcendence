@@ -1,9 +1,8 @@
-const db = require('../database/models/index.cjs');
-const { hashPassword } = require('../database/users/PassUtils.cjs');
-const { Op } = require('sequelize');
-const { User, Gamelog, Friend } = db;
+import db from '../database/models/index.cjs';
+import { hashPassword } from '../database/users/PassUtils.cjs';
+const { User } = db;
 
-const createUser = async (username, password, googleId, email, avatarPath) => {
+export const createUser = async (username, password, googleId, email, avatarPath) => {
 	if (!username || !email) {
 		throw new Error('Username and Email cannot be empty');
 	}
@@ -32,7 +31,7 @@ const createUser = async (username, password, googleId, email, avatarPath) => {
 	}
 };
 
-const getUserById = async (userId) => {
+export const getUserById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		return user;
@@ -41,7 +40,7 @@ const getUserById = async (userId) => {
 	}
 };
 
-const updateUserbyId = async (userId, username, tournamentUsername, password, googleId, email, avatarPath) => {
+export const updateUserbyId = async (userId, username, tournamentUsername, password, googleId, email, avatarPath) => {
 	try {
 		let user = await User.findByPk(userId);
 		if (user) {
@@ -72,7 +71,7 @@ const updateUserbyId = async (userId, username, tournamentUsername, password, go
 	}
 };
 
-const getUserByName = async (username) => {
+export const getUserByName = async (username) => {
 	try {
 		const user = await User.findOne({ where: { username } });
 		return user;
@@ -81,7 +80,7 @@ const getUserByName = async (username) => {
 	}
 };
 
-const getUserByTournamentName = async (tournamentUsername) => {
+export const getUserByTournamentName = async (tournamentUsername) => {
 	try {
 		const user = await User.findOne({ where: { tournamentUsername } });
 		return user;
@@ -90,7 +89,7 @@ const getUserByTournamentName = async (tournamentUsername) => {
 	}
 };
 
-const getUserByEmail = async (email) => {
+export const getUserByEmail = async (email) => {
 	try {
 		const user = await User.findOne({ where: { email } });
 		return user;
@@ -99,7 +98,7 @@ const getUserByEmail = async (email) => {
 	}
 };
 
-const getUserByGoogleId = async (googleId) => {
+export const getUserByGoogleId = async (googleId) => {
 	try {
 		const user = await User.findOne({ where: { googleId } });
 		return user;
@@ -108,7 +107,7 @@ const getUserByGoogleId = async (googleId) => {
 	}
 };
 
-const getUsers = async () => {
+export const getUsers = async () => {
 	try {
 		const users = await User.findAll({});
 		return users;
@@ -117,7 +116,7 @@ const getUsers = async () => {
 	}
 };
 
-const deleteUserById = async (userId) => {
+export const deleteUserById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (user) {
@@ -131,7 +130,7 @@ const deleteUserById = async (userId) => {
 	}
 };
 
-const deleteAllUsers = async () => {
+export const deleteAllUsers = async () => {
 	try {
 		const users = await User.findAll();
 		for (const user of users) {
@@ -143,7 +142,7 @@ const deleteAllUsers = async () => {
 	}
 };
 
-const updateLastLoginById = async (userId) => {
+export const updateLastLoginById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (user) {
@@ -158,7 +157,7 @@ const updateLastLoginById = async (userId) => {
 	}
 };
 
-const updateLastLogoutById = async (userId) => {
+export const updateLastLogoutById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (user) {

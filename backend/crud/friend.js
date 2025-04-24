@@ -1,9 +1,8 @@
-const db = require('../database/models/index.cjs');
-const { hashPassword } = require('../database/users/PassUtils.cjs');
-const { Op } = require('sequelize');
-const { User, Gamelog, Friend } = db;
+import db from '../database/models/index.cjs';
+import { Op } from 'sequelize';
+const { Friend } = db;
 
-const createFriendEntry = async (userId, friendId) => {
+export const createFriendEntry = async (userId, friendId) => {
 	try {
 		const friend = await Friend.create({ userId, friendId });
 		return friend;
@@ -12,7 +11,7 @@ const createFriendEntry = async (userId, friendId) => {
 	}
 };
 
-const deleteFriendEntry = async (userId, friendId) => {
+export const deleteFriendEntry = async (userId, friendId) => {
 	try {
 		const friend = await Friend.findOne({
 			where: {
@@ -33,7 +32,7 @@ const deleteFriendEntry = async (userId, friendId) => {
 	}
 };
 
-const updateFriendStatus = async (userId, friendId, status) => {
+export const updateFriendStatus = async (userId, friendId, status) => {
 	try {
 		const friend = await Friend.findOne({
 			where: {
@@ -55,7 +54,7 @@ const updateFriendStatus = async (userId, friendId, status) => {
 	}
 };
 
-const getAllFriendsEntriesFromUser = async (userId, status) => {
+export const getAllFriendsEntriesFromUser = async (userId, status) => {
 	try {
 		const queryConditions = {
 			[Op.or]: [
@@ -73,7 +72,7 @@ const getAllFriendsEntriesFromUser = async (userId, status) => {
 	}
 };
 
-const getAllFriendsEntries = async () => {
+export const getAllFriendsEntries = async () => {
 	try {
 		const friends = await Friend.findAll({});
 		return friends;

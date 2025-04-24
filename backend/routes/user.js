@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
+import { crud } from '../crud/crud.js';
 import { verifyToken } from '../auth/authToken.js';
 import { authenticateUser } from '../auth/authUser.js';
-import { createUser, getUserById, updateUserbyId, getUserByName, getUserByEmail, getUserByGoogleId, getUsers, deleteUserById, deleteAllUsers } from '../crud/crud.js';
 
 export function configureUserRoutes(fastify, sequelize) {
 
@@ -9,7 +9,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.post('/create_user', async (request, reply) => {
 		const { username, password, googleId, email, avatarPath } = request.body;
 		try {
-			const newUser = await createUser(username, password, googleId, email, avatarPath);
+			const newUser = await crud.user.createUser(username, password, googleId, email, avatarPath);
 			reply.status(200).send({ message: `User ${username} created successfully`, user: newUser });
 		} catch (err) {
 			fastify.log.error(err);
@@ -21,7 +21,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.post('/register_user', async (request, reply) => {
 		const { username, password, googleId, email, avatarPath } = request.body;
 		try {
-			const newUser = await createUser(username, password, googleId, email, avatarPath);
+			const newUser = await crud.user.createUser(username, password, googleId, email, avatarPath);
 			if (!newUser) {
 				return reply.status(409).send({ error: 'User already exists' });
 			}
@@ -40,7 +40,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.post('/update_user_by_id', async (request, reply) => {
 		const { userId, username, tournamentUsername, password, googleId, email, avatarPath } = request.body;
 		try {
-			const updatedUser = await updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
+			const updatedUser = await crud.user.updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
 			fastify.log.error("Desde updateUserbyId");
@@ -57,7 +57,7 @@ export function configureUserRoutes(fastify, sequelize) {
 				const decoded = jwt.verify(token, process.env.JWT_SECRET);
 				const userId = decoded.userId;
 				fastify.log.info('userId en update_user', userId);
-			const updatedUser = await updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
+			const updatedUser = await crud.user.updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
 			fastify.log.error("Desde updateUser");
@@ -73,7 +73,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	// Define a GET route to retrieve all users
 	fastify.get('/get_users', async (request, reply) => {
 		try {
-			const users = await getUsers();
+			const users = await crud.user.getUsers();
 			reply.status(200).send(users);
 		} catch (err) {
 			fastify.log.error(err);
@@ -85,7 +85,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.get('/get_user_by_id/', async (request, reply) => {
 		const userId = request.query.id;
 		try {
-			const user = await getUserById(userId);
+			const user = await crud.user.getUserById(userId);
 			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
@@ -98,7 +98,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.get('/get_user_by_username/', { preValidation: verifyToken }, async (request, reply) => {
 			try {
 			const username = decodeURIComponent(request.query.username);
-			const user = await getUserByName(username);
+			const user = await crud.user.getUserByName(username);
 			fastify.log.info('user devuelto en User get_user_by_username/name', user);
 			reply.status(200).send(user);
 		} catch (err) {
@@ -110,7 +110,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	// Define a GET route to retrieve a user by email
 	fastify.get('/get_user_by_email/', async (request, reply) => {
 		try {
-			const user = await getUserByEmail(request.query.email);
+			const user = await crud.user.getUserByEmail(request.query.email);
 			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
@@ -121,7 +121,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	// Define a GET route to retrieve a user by googleId
 	fastify.get('/get_user_by_google_id/', async (request, reply) => {
 		try {
-			const user = await getUserByGoogleId(request.query.googleId);
+			const user = await crud.user.getUserByGoogleId(request.query.googleId);
 			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);
@@ -133,7 +133,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.delete('/delete_user_by_id', async (request, reply) => {
 		const { userId } = request.body;
 		try {
-			const result = await deleteUserById(userId);
+			const result = await crud.user.deleteUserById(userId);
 			reply.status(200).send(result);
 		} catch (err) {
 			fastify.log.error(err);
@@ -144,7 +144,7 @@ export function configureUserRoutes(fastify, sequelize) {
 	// Define a DELETE route to remove all users
 	fastify.delete('/delete_all_users', async (request, reply) => {
 		try {
-			const result = await deleteAllUsers();
+			const result = await crud.user.deleteAllUsers();
 			reply.status(200).send(result);
 		} catch (err) {
 			fastify.log.error(err);

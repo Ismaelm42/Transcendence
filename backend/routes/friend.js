@@ -1,5 +1,5 @@
+import { crud } from '../crud/crud.js';
 import { extractUserFromToken } from '../auth/authToken.js';
-import { createFriendEntry, deleteFriendEntry, updateFriendStatus, getAllFriendsEntriesFromUser, getAllFriendsEntries } from '../crud/crud.js';
 
 export function configureFriendRoutes(fastify) {
 
@@ -12,7 +12,7 @@ export function configureFriendRoutes(fastify) {
 		const { friendId } = request.body;
 		console.log('friendId = ', friendId);
 		try {
-			const newFriend = await createFriendEntry(userId, friendId);
+			const newFriend = await crud.friend.createFriendEntry(userId, friendId);
 			reply.status(200).send(newFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -28,7 +28,7 @@ export function configureFriendRoutes(fastify) {
 		const userId = user.id;
 		const { friendId } = request.body;
 		try {
-			const newFriend = await updateFriendStatus(userId, friendId, 'accepted');
+			const newFriend = await crud.friend.updateFriendStatus(userId, friendId, 'accepted');
 			reply.status(200).send(newFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -44,7 +44,7 @@ export function configureFriendRoutes(fastify) {
 		const userId = user.id;
 		const { friendId } = request.body;
 		try {
-			const updatedFriend = await deleteFriendEntry(userId, friendId);
+			const updatedFriend = await crud.friend.deleteFriendEntry(userId, friendId);
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -60,7 +60,7 @@ export function configureFriendRoutes(fastify) {
 		const userId = user.id;
 		const { friendId } = request.body;
 		try {
-			const updatedFriend = await updateFriendStatus(userId, friendId, 'blocked');
+			const updatedFriend = await crud.friend.updateFriendStatus(userId, friendId, 'blocked');
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -76,7 +76,7 @@ export function configureFriendRoutes(fastify) {
 		const userId = user.id;
 		const { friendId } = request.body;
 		try {
-			const updatedFriend = await deleteFriendEntry(userId, friendId);
+			const updatedFriend = await crud.friend.deleteFriendEntry(userId, friendId);
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -91,7 +91,7 @@ export function configureFriendRoutes(fastify) {
 			return reply.code(401).send({ error: 'Unauthenticated user' });
 		const userId = user.id;
 		try {
-			const updatedFriend = await getAllFriendsEntriesFromUser(userId, null);
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, null);
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -106,7 +106,7 @@ export function configureFriendRoutes(fastify) {
 			return reply.code(401).send({ error: 'Unauthenticated user' });
 		const userId = user.id;
 		try {
-			const updatedFriend = await getAllFriendsEntriesFromUser(userId, 'pending');
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'pending');
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -121,7 +121,7 @@ export function configureFriendRoutes(fastify) {
 			return reply.code(401).send({ error: 'Unauthenticated user' });
 		const userId = user.id;
 		try {
-			const updatedFriend = await getAllFriendsEntriesFromUser(userId, 'accepted');
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'accepted');
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -136,7 +136,7 @@ export function configureFriendRoutes(fastify) {
 			return reply.code(401).send({ error: 'Unauthenticated user' });
 		const userId = user.id;
 		try {
-			const updatedFriend = await getAllFriendsEntriesFromUser(userId, 'blocked');
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'blocked');
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -147,7 +147,7 @@ export function configureFriendRoutes(fastify) {
 	// Define a GET route to retrieve all friends status (pending, accepted and blocked) from all users
 	fastify.get('/get_all_friends_entries', async (request, reply) => {
 		try {
-			const friends = await getAllFriendsEntries();
+			const friends = await crud.friend.getAllFriendsEntries();
 			reply.status(200).send(friends);
 		} catch (err) {
 			fastify.log.error(err);
