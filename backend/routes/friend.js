@@ -1,8 +1,7 @@
-
 import { extractUserFromToken } from '../auth/authToken.js';
-import { createFriendEntry, deleteFriendEntry, updateFriendStatus, getAllFriendsEntriesFromUser, getAllFriendsEntries } from '../database/crud.cjs';
+import { createFriendEntry, deleteFriendEntry, updateFriendStatus, getAllFriendsEntriesFromUser, getAllFriendsEntries } from '../crud/crud.js';
 
-export function configureFriendsRoutes(fastify) {
+export function configureFriendRoutes(fastify) {
 
 	// Define a POST route to send a friend request to an user
 	fastify.post('/send_friend_request', async (request, reply) => {

@@ -3,11 +3,11 @@ import path from 'path';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
 import { extractUserFromToken } from '../auth/authToken.js';
-import { updateUserbyId } from '../database/crud.cjs';
+import { updateUserbyId } from '../crud/crud.js';
 
 const pump = promisify(pipeline);
 
-export function configureImagesRoutes(fastify, sequelize) {
+export function configureImageRoutes(fastify, sequelize) {
 
 	fastify.post('/upload_image', async (request, reply) => {
 		const parts = request.parts();

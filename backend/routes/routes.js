@@ -1,7 +1,8 @@
-import { configureAuthRoutes } from './authRoutes.js';
-import { configureCrudRoutes } from './crudRoutes.js';
-import { configureImagesRoutes } from './imagesRoutes.js';
-import { configureFriendsRoutes } from './friendsRoutes.js';
+import { configureUserRoutes } from './user.js';
+import { configureAuthRoutes } from './auth.js';
+import { configureImageRoutes } from './image.js';
+import { configureGamelogRoutes } from './gamelog.js';
+import { configureFriendRoutes } from './friend.js';
 
 export default function configureRoutes(fastify, sequelize) {
 
@@ -18,10 +19,11 @@ export default function configureRoutes(fastify, sequelize) {
 		fastify.log.info({ body: request.body }, 'Received data');
 		return { data_received: request.body };
 	});
-	
+
+	configureUserRoutes(fastify);
 	configureAuthRoutes(fastify);
-	configureCrudRoutes(fastify);
-	configureImagesRoutes(fastify);
-	configureFriendsRoutes(fastify);
+	configureImageRoutes(fastify);
+	configureGamelogRoutes(fastify);
+	configureFriendRoutes(fastify);
 }
 

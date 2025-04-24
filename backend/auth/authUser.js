@@ -1,7 +1,7 @@
 import fastifyPassport from "@fastify/passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { comparePassword } from '../database/users/PassUtils.cjs';
-import { createUser, getUserByEmail, getUserByGoogleId, updateLastLoginById, updateLastLogoutById } from "../database/crud.cjs";
+import { createUser, getUserByEmail, getUserByGoogleId, updateLastLoginById, updateLastLogoutById } from "../crud/crud.js";
 import { setTokenCookie, destroyTokenCookie } from "./authToken.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;

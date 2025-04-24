@@ -1,5 +1,5 @@
-const db = require('./models/index.cjs');
-const { hashPassword } = require('./users/PassUtils.cjs');
+const db = require('../database/models/index.cjs');
+const { hashPassword } = require('../database/users/PassUtils.cjs');
 const { Op } = require('sequelize');
 const { User, Gamelog, Friend } = db;
 
@@ -65,7 +65,6 @@ const updateUserbyId = async (userId, username, tournamentUsername, password, go
 			return { error: `User ${userId} not found at updateUserbyId` };
 		}
 	} catch (err) {
-		// throw new Error(`Error updating user ${err.message}`);
 		if (err.name === 'SequelizeUniqueConstraintError') {
 			throw new Error( err.errors[0].path + ' already exists');
 		}

@@ -1,7 +1,7 @@
 import fastifyPassport from "@fastify/passport";
 import { authenticateUser, signOutUser } from "../auth/authUser.js";
 import { extractUserFromToken, setTokenCookie } from "../auth/authToken.js";
-import { getUserById , updateUserbyId} from "../database/crud.cjs";
+import { getUserById , updateUserbyId} from "../crud/crud.js";
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import jwt from 'jsonwebtoken';
 

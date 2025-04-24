@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import jwt from 'jsonwebtoken';
-import { getUserById } from "../database/crud.cjs";
+import { getUserById } from "../crud/crud.js";
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
