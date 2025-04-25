@@ -1,7 +1,7 @@
 import db from '../database/models/index.cjs';
 import pkg from '../database/models/index.cjs';
-const { sequelize, Sequelize } = pkg;
 const { Gamelog } = db;
+const { sequelize, Sequelize } = pkg;
 
 export const getGamelogs = async () => {
 	try {

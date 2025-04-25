@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.ENUM('pending', 'accepted', 'blocked'),
 			defaultValue: 'pending',
 		},
+		wasFriend: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false,
+		},
 	}, {
 		sequelize,
 		modelName: 'Friend',

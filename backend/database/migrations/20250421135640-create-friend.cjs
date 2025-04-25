@@ -30,6 +30,10 @@ module.exports = {
 				type: Sequelize.ENUM('pending', 'accepted', 'blocked'),
 				defaultValue: 'pending'
 			},
+			was_friend: {
+				type: Sequelize.BOOLEAN,
+				defaultValue: false
+			},
 			created_at: {
 				allowNull: false,
 				type: Sequelize.DATE,

@@ -1,6 +1,9 @@
 import db from '../database/models/index.cjs';
+import pkg from '../database/models/index.cjs';
+import { Op } from 'sequelize';
 import { hashPassword } from '../database/users/PassUtils.cjs';
 const { User } = db;
+const { sequelize } = pkg;
 
 export const createUser = async (username, password, googleId, email, avatarPath) => {
 	if (!username || !email) {
@@ -170,5 +173,23 @@ export const updateLastLogoutById = async (userId) => {
 		}
 	} catch (err) {
 		throw new Error(`Error updating last logout ${err.message}`);
+	}
+}
+
+export const getAllUsersCoincidences = async (userId, keyword) => {
+	try {
+		keyword = String(keyword).toLowerCase();
+		console.log('keyword = ', keyword);
+		const users = await User.findAll({
+			where: {
+				[Op.and]: [
+					{ id: { [Op.ne]: userId } },
+					{ username: sequelize.where(sequelize.fn('LOWER', sequelize.col('username')), 'LIKE', `${keyword}%`) }
+				]
+			}
+		});
+		return users;
+	} catch (err) {
+		throw new Error(`Error searching for users with ${keyword}: ${err.message}`);
 	}
 }
