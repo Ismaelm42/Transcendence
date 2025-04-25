@@ -162,7 +162,7 @@ GET https://localhost:8443/back/get_gamelogs HTTP/1.1
 # Petición para enviar una friend_request:
 POST https://localhost:8443/back/send_friend_request HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTQ5MjIzOSwiZXhwIjoxNzQ1NDk1ODM5fQ.TQYLYnErr_TR0P5KyUPF27PoP1J6-yGQaMs0SN4qawA
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NTUwNzkwNCwiZXhwIjoxNzQ1NTExNTA0fQ.JWROxbSuAoHgoRZapoOQUpqS71x1I2hZoUpav1W_LL8
 
 {
   "friendId": "1"
@@ -209,7 +209,8 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 # Petición para tener la lista de relaciones de un usuario:
 POST https://localhost:8443/back/get_all_friends_entries_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTQ5MjIzOSwiZXhwIjoxNzQ1NDk1ODM5fQ.TQYLYnErr_TR0P5KyUPF27PoP1J6-yGQaMs0SN4qawA
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NTUwNzkwNCwiZXhwIjoxNzQ1NTExNTA0fQ.JWROxbSuAoHgoRZapoOQUpqS71x1I2hZoUpav1W_LL8
+
 
 {
 }
@@ -217,7 +218,8 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 # Petición para tener la lista de solicitudes pendientes de un usuario:
 POST https://localhost:8443/back/get_all_pending_users_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTQ5MjIzOSwiZXhwIjoxNzQ1NDk1ODM5fQ.TQYLYnErr_TR0P5KyUPF27PoP1J6-yGQaMs0SN4qawA
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NTUwNzkwNCwiZXhwIjoxNzQ1NTExNTA0fQ.JWROxbSuAoHgoRZapoOQUpqS71x1I2hZoUpav1W_LL8
+
 
 {
 }
@@ -226,7 +228,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 # Petición para tener la lista de amigos de un usuario:
 POST https://localhost:8443/back/get_all_accepted_users_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTQ5MjIzOSwiZXhwIjoxNzQ1NDk1ODM5fQ.TQYLYnErr_TR0P5KyUPF27PoP1J6-yGQaMs0SN4qawA
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NTUwNzkwNCwiZXhwIjoxNzQ1NTExNTA0fQ.JWROxbSuAoHgoRZapoOQUpqS71x1I2hZoUpav1W_LL8
 
 {
 }
@@ -234,7 +236,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 # Petición para tener la lista de bloqueados de un usuario:
 POST https://localhost:8443/back/get_all_blocked_users_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTQ5MjIzOSwiZXhwIjoxNzQ1NDk1ODM5fQ.TQYLYnErr_TR0P5KyUPF27PoP1J6-yGQaMs0SN4qawA
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NTUwNzkwNCwiZXhwIjoxNzQ1NTExNTA0fQ.JWROxbSuAoHgoRZapoOQUpqS71x1I2hZoUpav1W_LL8
 
 {
 }
