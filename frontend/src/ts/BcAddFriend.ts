@@ -1,9 +1,9 @@
 import { BasicComponent } from './BasicComponent.js';
 import { showMessage } from './showMessage.js';
 
-export class ComponentAddFriend extends BasicComponent {
+export class BcAddFriend extends BasicComponent {
   constructor() {
-    super('../html/AddfriendItem.html', () => {
+    super('../html/BcAddfriendItem.html', () => {
       this.bindEvents();
     });
   }

@@ -7,25 +7,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ComponentAddFriend } from './ComponentAddFriend.js';
-/**
- *
- * 			type: DataTypes.ENUM('pending', 'accepted', 'blocked'),
-            defaultValue: 'none',
-        },
- *
- * UserStatus
- * | 	enum 	 	; mi estatus en front 	; 	signficado 			; 	opciones que mostraríamos en Front
- * |		  		; 			0			;	no somos amigos 	; 		addfriend
- * |	accepted 	;			1 			; 	Somos amigos 		; 		removefriend | block
- * |	pending 	;			2 			; 	solicitud enviada 	;		cancel request
- * |	waiting 	;			3 			; 	solicitud recibida 	; 		accept request | decline request
- * |	blocked 	;			4 			; 	yo lo he bloqueado 	; 		unblock
- *
- * 2 - Pending request - cancel request
- * 3 - Request sent - accept request
- * 4 - Request received - go to request list
- */
+import { BcAddFriend } from './BcAddFriend.js';
+import { BcCancelFriendRequest } from './BcCancelFriendRequest.js';
+// import { BcRemoveFriend } from './BcRemoveFriend.js';
+// import { BcAcceptFriendRequest } from './BcAcceptFriendRequest.js';
+// import { BcDeclineFriendRequest } from './BcDeclineFriendRequest.js';
+// import { showMessage } from './showMessage.js';
+// import { BcBlockUser } from './BcBlockUser.js';
+// import { BcUnblockUser } from './BcUnblockUser.js';
+/* | 	enum 	 	; mi estatus en front 	; 	signficado 			; 	opciones que mostraríamos en Front
+* |		  		; 			0			;	no somos amigos 	; 		addfriend
+* |	accepted 	;			1 			; 	Somos amigos 		; 		removefriend | block
+* |	pending P	;			2 			; 	solicitud enviada 	;		cancel request
+* |	pending A 	;			3 			; 	solicitud recibida 	; 		accept request | decline request
+* |	blocked P	;			4 			; 	yo lo he bloqueado 	; 		unblock
+* |	blocked A	;			5 			; 	Me ha bloqueado 	; 		Cagarme en sus 💀
+*/
 /**
  * Friends list action buttons
  * 1 - Friends - removefriend
@@ -67,18 +64,46 @@ export class SearchItem {
         this.user = user;
         this.userStatus = userStatus; // Inicializa el estado de usuarios
         this.init();
+        console.log("userStatus en SearchItem:", this.userStatus);
     }
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("En SearchItem render");
+            console.log("userStatus:", this.userStatus);
+            console.log("user:", this.user);
+            console.log("containerId:", this.container.id);
             const placeholders = {
                 "id": this.user ? this.user[0] : "",
                 "username": this.user ? this.user[1] : "",
             };
             try {
+                let component;
                 if (this.userStatus == 0) {
-                    const component = new ComponentAddFriend();
+                    component = new BcAddFriend();
+                }
+                else if (this.userStatus == 2) {
+                    component = new BcCancelFriendRequest();
+                }
+                if (component) {
                     component.render(this.container, placeholders);
                 }
+                else {
+                    console.error("Component is undefined for userStatus:", this.userStatus);
+                }
+                // try{
+                // 	if (this.userStatus == 0) {
+                // 			const component = new BcAddFriend();
+                // 		}else if (this.userStatus == 1) {
+                // 			const component = new BcRemoveFriend();
+                // 		} else if (this.userStatus == 2) {
+                // 			const component = new BcCancelFriendRequest();
+                // 		} else if (this.userStatus == 3) {
+                // 			const component = new BcAcceptFriendRequest();
+                // 		} else if (this.userStatus == 4) {
+                // 			const component = new BcDeclineFriendRequest();
+                // 		}
+                // 	component.render(this.container!, placeholders);
+                // }
             }
             catch (error) {
                 console.error("Error loading HTML file:", error);

@@ -24,7 +24,7 @@ export default class Friends extends Step {
                 appElement.innerHTML = htmlContent;
                 const btnSearch = document.getElementById("btnSearch");
                 if (btnSearch) {
-                    searchUsersFriends(btnSearch);
+                    btnSearch.addEventListener("click", searchUsersFriends);
                 }
                 // const searchTableTemplate = await fetch("../html/search_table.html");
                 // if (!searchTableTemplate.ok) throw new Error("Failed to load the HTML file");
