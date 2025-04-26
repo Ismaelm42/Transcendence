@@ -179,7 +179,6 @@ export const updateLastLogoutById = async (userId) => {
 export const getAllUsersCoincidences = async (userId, keyword) => {
 	try {
 		keyword = String(keyword).toLowerCase();
-		console.log('keyword = ', keyword);
 		const users = await User.findAll({
 			where: {
 				[Op.and]: [
