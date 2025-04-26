@@ -3,7 +3,7 @@ import path from 'path';
 import { crud } from '../crud/crud.js';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
-import { extractUserFromToken } from '../auth/authToken.js';
+import { extractUserFromToken } from '../auth/token.js';
 
 const pump = promisify(pipeline);
 

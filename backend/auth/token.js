@@ -16,42 +16,26 @@ export function setTokenCookie(userId, reply) {
     });
 }
 
-// // modificada para usar el token de la cookie_ AFZ
-// export function verifyToken (request, reply, done) {
-// 	try {
-// 		console.info('Verifying token ' , request.cookies.token);
-// 		const token = request.cookies.token;
-// 		if (!token) {
-// 			return reply.status(401).send({ message: 'Token no incluidotrutru' });
-// 		}
-// 		const decoded = jwt.verify(token, JWT_SECRET);
-// 		reply.send({ valid: true, user: decoded });
-// 	} catch (error) {
-// 		reply.status(401).send({ valid: false, message: 'Token inválido o expirado' });
-// 	}
-//     done();
-// };
-
 export function verifyToken (request, reply, done) {
+
+    // Verify accessToken cookie
 	try {
 		const token = request.cookies.token;
 		if (!token) {
 			reply.status(401).send({ message: 'Token no incluido' });
-			return; // Cortamos la ejecución si no hay token
+			return;
 		}
 		request.userId = jwt.verify(token, process.env.JWT_SECRET);
-		done(); // Continuar con la ejecución de la ruta protegida
+		done();
 	} catch (error) {
 		reply.status(401).send({ valid: false, message: 'Token inválido o expirado' });
 	}
 };
 
-/**
- * 
- * @param {*} token including the user_id
- * @returns username
- */
+
 export async function extractUserFromToken(token) {
+
+    // Extract user from token
     try {
         if (!token) {
             console.log('No token provided.');

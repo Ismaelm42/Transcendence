@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import fastifyPassport from "@fastify/passport";
 import { crud } from '../crud/crud.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
-import { authenticateUser, signOutUser } from "../auth/authUser.js";
-import { extractUserFromToken, setTokenCookie } from "../auth/authToken.js";
+import { authenticateUser, signOutUser } from "../auth/user.js";
+import { extractUserFromToken, setTokenCookie } from "../auth/token.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

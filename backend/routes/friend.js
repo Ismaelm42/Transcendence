@@ -1,5 +1,5 @@
 import { crud } from '../crud/crud.js';
-import { extractUserFromToken } from '../auth/authToken.js';
+import { extractUserFromToken } from '../auth/token.js';
 
 export function configureFriendRoutes(fastify) {
 

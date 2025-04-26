@@ -2,7 +2,7 @@ import fastifyPassport from "@fastify/passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { crud } from '../crud/crud.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
-import { setTokenCookie, destroyTokenCookie } from "./authToken.js";
+import { setTokenCookie, destroyTokenCookie } from "./token.js";
 
 export async function authenticateUser(email, password, reply) {
 
@@ -19,6 +19,23 @@ export async function authenticateUser(email, password, reply) {
 		user: user
 	});
 };
+
+async function checkUsernameAvailability(googleDisplayName, attempt = 0) {
+
+	// Check if username is available and create a new one if not
+	const username = attempt === 0 ? googleDisplayName : googleDisplayName + attempt;
+	try {
+		const user = await crud.user.getUserByName(username);
+		if (user) {
+			return await checkUsernameAvailability(googleDisplayName, attempt + 1);
+		}
+		else {
+			return username;
+		}
+	} catch (err) {
+		throw new Error(`Error checking username: ${err.message}`);
+	}
+}
 
 export function authenticateUserWithGoogleStrategy() {
 
@@ -41,7 +58,9 @@ export function authenticateUserWithGoogleStrategy() {
 					user.googleId = profile.id;
 				}
 				else {
-					user = await crud.user.createUser(profile.displayName + "_" + profile.id, null, profile.id, profile.emails?.[0]?.value || null, profile.photos?.[0]?.value || null);
+					const googleDisplayName = profile.displayName.trim().replace(/\s+/g, '_');
+					const username = await checkUsernameAvailability(googleDisplayName);
+					user = await crud.user.createUser(username, null, profile.id, profile.emails?.[0]?.value || null, profile.photos?.[0]?.value || null);
 				}
 			}
 			cb(null, user);
