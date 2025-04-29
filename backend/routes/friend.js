@@ -1,5 +1,5 @@
 import { crud } from '../crud/crud.js';
-import { extractUserFromToken } from '../auth/authToken.js';
+import { extractUserFromToken } from '../auth/token.js';
 
 export function configureFriendRoutes(fastify) {
 
@@ -109,65 +109,65 @@ export function configureFriendRoutes(fastify) {
 		}
 	});
 
-	// // Define a POST route to retrieve all friends status (pending, accepted and blocked) from an user
-	// fastify.post('/get_all_friends_entries_from_an_id', async (request, reply) => {
-	// 	const user = await extractUserFromToken(request.cookies.token);
-	// 	if (!user)
-	// 		return reply.code(401).send({ error: 'Unauthenticated user' });
-	// 	const userId = user.id;
-	// 	try {
-	// 		const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, null);
-	// 		reply.status(200).send(updatedFriend);
-	// 	} catch (err) {
-	// 		fastify.log.error(err);
-	// 		reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
-	// 	}
-	// });
+	// Define a POST route to retrieve all friends status (pending, accepted and blocked) from an user
+	fastify.post('/get_all_friends_entries_from_an_id', async (request, reply) => {
+		const user = await extractUserFromToken(request.cookies.token);
+		if (!user)
+			return reply.code(401).send({ error: 'Unauthenticated user' });
+		const userId = user.id;
+		try {
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, null);
+			reply.status(200).send(updatedFriend);
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
+		}
+	});
 
-	// // Define a POST route to retrieve all pending users from an user
-	// fastify.post('/get_all_pending_users_from_an_id', async (request, reply) => {
-	// 	const user = await extractUserFromToken(request.cookies.token);
-	// 	if (!user)
-	// 		return reply.code(401).send({ error: 'Unauthenticated user' });
-	// 	const userId = user.id;
-	// 	try {
-	// 		const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'pending');
-	// 		reply.status(200).send(updatedFriend);
-	// 	} catch (err) {
-	// 		fastify.log.error(err);
-	// 		reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
-	// 	}
-	// });
+	// Define a POST route to retrieve all pending users from an user
+	fastify.post('/get_all_pending_users_from_an_id', async (request, reply) => {
+		const user = await extractUserFromToken(request.cookies.token);
+		if (!user)
+			return reply.code(401).send({ error: 'Unauthenticated user' });
+		const userId = user.id;
+		try {
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'pending');
+			reply.status(200).send(updatedFriend);
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
+		}
+	});
 
-	// // Define a POST route to retrieve all accepted users from an user
-	// fastify.post('/get_all_accepted_users_from_an_id', async (request, reply) => {
-	// 	const user = await extractUserFromToken(request.cookies.token);
-	// 	if (!user)
-	// 		return reply.code(401).send({ error: 'Unauthenticated user' });
-	// 	const userId = user.id;
-	// 	try {
-	// 		const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'accepted');
-	// 		reply.status(200).send(updatedFriend);
-	// 	} catch (err) {
-	// 		fastify.log.error(err);
-	// 		reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
-	// 	}
-	// });
+	// Define a POST route to retrieve all accepted users from an user
+	fastify.post('/get_all_accepted_users_from_an_id', async (request, reply) => {
+		const user = await extractUserFromToken(request.cookies.token);
+		if (!user)
+			return reply.code(401).send({ error: 'Unauthenticated user' });
+		const userId = user.id;
+		try {
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'accepted');
+			reply.status(200).send(updatedFriend);
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
+		}
+	});
 
-	// // Define a POST route to retrieve all blocked users from an user
-	// fastify.post('/get_all_blocked_users_from_an_id', async (request, reply) => {
-	// 	const user = await extractUserFromToken(request.cookies.token);
-	// 	if (!user)
-	// 		return reply.code(401).send({ error: 'Unauthenticated user' });
-	// 	const userId = user.id;
-	// 	try {
-	// 		const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'blocked');
-	// 		reply.status(200).send(updatedFriend);
-	// 	} catch (err) {
-	// 		fastify.log.error(err);
-	// 		reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
-	// 	}
-	// });
+	// Define a POST route to retrieve all blocked users from an user
+	fastify.post('/get_all_blocked_users_from_an_id', async (request, reply) => {
+		const user = await extractUserFromToken(request.cookies.token);
+		if (!user)
+			return reply.code(401).send({ error: 'Unauthenticated user' });
+		const userId = user.id;
+		try {
+			const updatedFriend = await crud.friend.getAllFriendsEntriesFromUser(userId, 'blocked');
+			reply.status(200).send(updatedFriend);
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(400).send({ error: 'Error rejecting friend request: ' + err.message });
+		}
+	});
 
 	// Define a GET route to retrieve all friends status (pending, accepted and blocked) from all users
 	fastify.get('/get_all_friends_entries', async (request, reply) => {
@@ -179,7 +179,6 @@ export function configureFriendRoutes(fastify) {
 			reply.status(500).send({ error: 'Error fetching all friends from all users' + err });
 		}
 	});
-
 
 	// Define a POST route to search for users and return them
 	fastify.post('/get_all_users_coincidences', async (request, reply) => {
