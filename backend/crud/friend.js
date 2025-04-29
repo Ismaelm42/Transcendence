@@ -1,4 +1,3 @@
-import { mergeDefaults } from 'sequelize/lib/utils';
 import db from '../database/models/index.cjs';
 import { Op } from 'sequelize';
 const { Friend } = db;
@@ -65,14 +64,12 @@ export const updateFriendStatus = async (userId, friendId, status) => {
 				friend.userId = userId;
 				friend.friendId = friendId;
 				await friend.save();
-			}
+			}			
 			else if (status === 'unblocked' && friend.userId === userId && friend.status === 'blocked') {
-				if (friend.wasFriend) {
-					friend.status = 'accepted';
-					await friend.save();
-				}
-				else {
-					deleteFriendEntry(userId, friendId);
+				friend.status = 'accepted';
+				await friend.save();
+				if (!friend.wasFriend) {
+					return deleteFriendEntry(userId, friendId);
 				}
 			}
 			else
