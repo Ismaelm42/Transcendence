@@ -1,7 +1,5 @@
-import fastify from 'fastify';
 import jwt from 'jsonwebtoken';
-import { getUserById } from "../database/crud.cjs";
-
+import { crud } from '../crud/crud.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -60,7 +58,7 @@ export async function extractUserFromToken(token) {
             return null;
         }
         const decodedId = jwt.verify(token, JWT_SECRET);
-		const decodedUser = await getUserById(decodedId.userId);
+		const decodedUser = await crud.user.getUserById(decodedId.userId);
         if (!decodedUser || !decodedUser.username) {
             console.log('Invalid or missing username in getUserById.');
             return null;

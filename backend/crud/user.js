@@ -1,9 +1,11 @@
-const db = require('./models/index.cjs');
-const { hashPassword } = require('./users/PassUtils.cjs');
+import db from '../database/models/index.cjs';
+import pkg from '../database/models/index.cjs';
+import { Op } from 'sequelize';
+import { hashPassword } from '../database/users/PassUtils.cjs';
+const { User } = db;
+const { sequelize } = pkg;
 
-const { User, Gamelog } = db;
-
-const createUser = async (username, password, googleId, email, avatarPath) => {
+export const createUser = async (username, password, googleId, email, avatarPath) => {
 	if (!username || !email) {
 		throw new Error('Username and Email cannot be empty');
 	}
@@ -28,20 +30,20 @@ const createUser = async (username, password, googleId, email, avatarPath) => {
 		if (err.name === 'SequelizeUniqueConstraintError') {
 			throw new Error( err.errors[0].path + ' already exists');
 		}
-		throw new Error('Error creating user: ', err);
+		throw new Error(`Error creating user: ${err.message}`);
 	}
 };
 
-const getUserById = async (userId) => {
+export const getUserById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		return user;
 	} catch (err) {
-		throw new Error('User not found at getUserById ', err);
+		throw new Error(`User not found at getUserById ${err.message}`);
 	}
 };
 
-const updateUserbyId = async (userId, username, tournamentUsername, password, googleId, email, avatarPath) => {
+export const updateUserbyId = async (userId, username, tournamentUsername, password, googleId, email, avatarPath) => {
 	try {
 		let user = await User.findByPk(userId);
 		if (user) {
@@ -65,60 +67,59 @@ const updateUserbyId = async (userId, username, tournamentUsername, password, go
 			return { error: `User ${userId} not found at updateUserbyId` };
 		}
 	} catch (err) {
-		// throw new Error('Error updating user ', err);
 		if (err.name === 'SequelizeUniqueConstraintError') {
 			throw new Error( err.errors[0].path + ' already exists');
 		}
-		throw new Error('Error creating user: ', err);
+		throw new Error(`Error creating user: ${err.message}`);
 	}
 };
 
-const getUserByName = async (username) => {
+export const getUserByName = async (username) => {
 	try {
 		const user = await User.findOne({ where: { username } });
 		return user;
 	} catch (err) {
-		throw new Error('User not found at getUserByName ', err);
+		throw new Error(`User not found at getUserByName ${err.message}`);
 	}
 };
 
-const getUserByTournamentName = async (tournamentUsername) => {
+export const getUserByTournamentName = async (tournamentUsername) => {
 	try {
 		const user = await User.findOne({ where: { tournamentUsername } });
 		return user;
 	} catch (err) {
-		throw new Error('User not found at getUserByName ', err);
+		throw new Error(`User not found at getUserByName ${err.message}`);
 	}
 };
 
-const getUserByEmail = async (email) => {
+export const getUserByEmail = async (email) => {
 	try {
 		const user = await User.findOne({ where: { email } });
 		return user;
 	} catch (err) {
-		throw new Error('User not found at getUserByEmail ', err);
+		throw new Error(`User not found at getUserByEmail ${err.message}`);
 	}
 };
 
-const getUserByGoogleId = async (googleId) => {
+export const getUserByGoogleId = async (googleId) => {
 	try {
 		const user = await User.findOne({ where: { googleId } });
 		return user;
 	} catch (err) {
-		throw new Error('User not found at getUserByGoogleId ', err);
+		throw new Error(`User not found at getUserByGoogleId ${err.message}`);
 	}
 };
 
-const getUsers = async () => {
+export const getUsers = async () => {
 	try {
 		const users = await User.findAll({});
 		return users;
 	} catch (err) {
-		throw new Error('Error fetching users ', err);
+		throw new Error(`Error fetching users ${err.message}`);
 	}
 };
 
-const deleteUserById = async (userId) => {
+export const deleteUserById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (user) {
@@ -128,11 +129,11 @@ const deleteUserById = async (userId) => {
 			return { error: `User ${userId} not found deleteUserbyId` };
 		}
 	} catch (err) {
-		throw new Error('Error deleting user ', err);
+		throw new Error(`Error deleting user ${err.message}`);
 	}
 };
 
-const deleteAllUsers = async () => {
+export const deleteAllUsers = async () => {
 	try {
 		const users = await User.findAll();
 		for (const user of users) {
@@ -140,11 +141,11 @@ const deleteAllUsers = async () => {
 		}
 		return { message: 'All users deleted successfully' };
 	} catch (err) {
-		throw new Error('Error deleting users ', err);
+		throw new Error(`Error deleting users ${err.message}`);
 	}
 };
 
-const updateLastLoginById = async (userId) => {
+export const updateLastLoginById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (user) {
@@ -155,11 +156,11 @@ const updateLastLoginById = async (userId) => {
 			return { error: `User ${userId} not found at updateLastLogin` };
 		}
 	} catch (err) {
-		throw new Error('Error updating last login ', err);
+		throw new Error(`Error updating last login ${err.message}`);
 	}
 };
 
-const updateLastLogoutById = async (userId) => {
+export const updateLastLogoutById = async (userId) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (user) {
@@ -171,47 +172,23 @@ const updateLastLogoutById = async (userId) => {
 			return { error: `User ${userId} not found at updateLastLogout` };
 		}
 	} catch (err) {
-		throw new Error('Error updating last logout ', err);
+		throw new Error(`Error updating last logout ${err.message}`);
 	}
 }
 
-const getGamelogs = async () => {
+export const getAllUsersCoincidences = async (userId, keyword) => {
 	try {
-		const gamelogs = await Gamelog.findAll({});
-		return gamelogs;
-	} catch (err) {
-		throw new Error('Error fetching gamelogs ', err);
-	}
-};
-
-const getGamelogsByUserId = async (userId) => {
-	try {
-		const [userGamelogs] = await db.sequelize.query(
-			'SELECT * FROM "Usergamelog" WHERE "userId" = :userId',
-			{
-				type: db.Sequelize.QueryTypes.SELECT,
-				replacements: { userId },
+		keyword = String(keyword).toLowerCase();
+		const users = await User.findAll({
+			where: {
+				[Op.and]: [
+					{ id: { [Op.ne]: userId } },
+					{ username: sequelize.where(sequelize.fn('LOWER', sequelize.col('username')), 'LIKE', `${keyword}%`) }
+				]
 			}
-		);
-		return userGamelogs;
+		});
+		return users;
 	} catch (err) {
-		throw new Error('Error fetching user gamelogs: ', err.message);
+		throw new Error(`Error searching for users with ${keyword}: ${err.message}`);
 	}
-};
-
-module.exports = {
-	createUser,
-	getUserById,
-	updateUserbyId,
-	getUserByName,
-	getUserByTournamentName,
-	getUserByEmail,
-	getUserByGoogleId,
-	getUsers,
-	deleteUserById,
-	deleteAllUsers,
-	updateLastLoginById,
-	updateLastLogoutById,
-	getGamelogs,
-	getGamelogsByUserId,
-};
+}

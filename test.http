@@ -8,9 +8,9 @@ POST https://localhost:8443/back/create_user HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "Pepe5@gmail.com",
+	"username": "Ismaelito",
 	"password": "1234",
-	"email": "Pepe5@gmail.com"
+	"email": "ismaelito@gmail.com"
 }
 
 // ***************************************************************//
@@ -84,7 +84,7 @@ DELETE  https://localhost:8443/back/delete_user_by_id  HTTP/1.1
 Content-Type: application/json
 
 {
-	"userId" : "28"
+	"userId" : "2"
 }
 
 GET https://localhost:8443/back/get_user_by_id/?id=1  HTTP/1.1
@@ -136,3 +136,107 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsZ
 
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU0MEBnbWFpbC5jb20iLCJpYXQiOjE3NDM5MzU2NDksImV4cCI6MTc0MzkzOTI0OX0.F9B84eGNdqQ7nsa9nAME_hPp6oNAxiMWjIBLadDr1Qc
+
+
+// ╔═══════════════════════════════════════════════════════════════════════╗
+// ║                              FRIENDS                                  ║
+// ║                         RELATIONSHIP HANDLERS                         ║
+// ╚═══════════════════════════════════════════════════════════════════════╝
+
+# Petición para enviar una friend_request:
+POST https://localhost:8443/back/send_friend_request HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+  "friendId": "1"
+}
+
+
+# Petición para aceptar una friend_request:
+POST https://localhost:8443/back/accept_friend_request HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+  "friendId": "1"
+}
+
+# Petición para rechazar una friend_request:
+POST https://localhost:8443/back/reject_friend_request HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+  "friendId": "1"
+}
+
+
+# Petición para bloquear un usuario:
+POST https://localhost:8443/back/block_user HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+  "friendId": "4"
+}
+
+# Petición para desbloquear un usuario:
+POST https://localhost:8443/back/unblock_user HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+  "friendId": "1"
+}
+
+#Petición para eliminar un usuario:
+POST https://localhost:8443/back/delete_friend HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+  "friendId": "1"
+}
+
+# Petición para tener la lista de relaciones de un usuario:
+POST https://localhost:8443/back/get_all_friends_entries_from_an_id HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+}
+
+# Petición para tener la lista de solicitudes pendientes de un usuario:
+POST https://localhost:8443/back/get_all_pending_users_from_an_id HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+}
+
+
+# Petición para tener la lista de amigos de un usuario:
+POST https://localhost:8443/back/get_all_accepted_users_from_an_id HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+}
+
+# Petición para tener la lista de bloqueados de un usuario:
+POST https://localhost:8443/back/get_all_blocked_users_from_an_id HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+}
+
+# Petición para tener la lista de coincidencias de usuarios por keyword:
+POST https://localhost:8443/back/get_all_users_coincidences HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+
+{
+	"keyword": "is"
+}

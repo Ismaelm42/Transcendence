@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { promisify } from 'util';
+import { crud } from '../crud/crud.js';
 import { pipeline } from 'stream';
+import { promisify } from 'util';
 import { extractUserFromToken } from '../auth/authToken.js';
-import { updateUserbyId } from '../database/crud.cjs';
 
 const pump = promisify(pipeline);
 
-export function configureImagesRoutes(fastify, sequelize) {
+export function configureImageRoutes(fastify, sequelize) {
 
 	fastify.post('/upload_image', async (request, reply) => {
 		const parts = request.parts();
@@ -22,7 +22,7 @@ export function configureImagesRoutes(fastify, sequelize) {
 				const filePath = path.join('/app/images', imageId);
 				await pump(part.file, fs.createWriteStream(filePath));
 				const avatarPath = "https://localhost:8443/back/images/" + imageId;
-				await updateUserbyId(user.id, null, null, null, null, null, avatarPath);
+				await crud.user.updateUserbyId(user.id, null, null, null, null, null, avatarPath);
 				return reply.send({ status: 'ok', url: avatarPath });
 			}
 		}
@@ -30,7 +30,7 @@ export function configureImagesRoutes(fastify, sequelize) {
 	});
 
 	fastify.post('/delete_image', async (request, reply) => {
-		const user = extractUserFromToken(request.cookies.token);
+		const user = await extractUserFromToken(request.cookies.token);
 		if (!user)
 			return reply.code(401).send({ error: 'Unauthenticated user' });
 		const imageId = user.id + '.png';
@@ -41,7 +41,7 @@ export function configureImagesRoutes(fastify, sequelize) {
 					return reply.code(500).send({ error: 'Error deleting the image' });
 			});
 			const avatarPath = "https://localhost:8443/back/images/" + imageId;
-			await updateUserbyId(user.id, null, null, null, null, null, avatarPath);
+			await crud.user.updateUserbyId(user.id, null, null, null, null, null, avatarPath);
 			return reply.send({ status: 'ok', message: 'Image deleted successfully' });
 		}
 	});
