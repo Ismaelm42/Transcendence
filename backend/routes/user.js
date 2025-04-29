@@ -1,7 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { crud } from '../crud/crud.js';
+<<<<<<< HEAD
 import { verifyToken } from '../auth/authToken.js';
 import { authenticateUser } from '../auth/authUser.js';
+=======
+import { verifyToken } from '../auth/token.js';
+import { authenticateUser } from '../auth/user.js';
+>>>>>>> main
 
 export function configureUserRoutes(fastify, sequelize) {
 
@@ -21,7 +26,12 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.post('/register_user', async (request, reply) => {
 		const { username, password, googleId, email, avatarPath } = request.body;
 		try {
+<<<<<<< HEAD
 			const newUser = await crud.user.createUser(username, password, googleId, email, avatarPath);
+=======
+			const formatUsername = username.trim().replace(/\s+/g, '_');
+			const newUser = await crud.user.createUser(formatUsername, password, googleId, email, avatarPath);
+>>>>>>> main
 			if (!newUser) {
 				return reply.status(409).send({ error: 'User already exists' });
 			}
