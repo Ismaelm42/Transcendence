@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { crud } from '../crud/crud.js';
 import { verifyToken } from '../auth/token.js';
 import { authenticateUser } from '../auth/user.js';
-import { format } from 'sequelize/lib/utils';
 
 export function configureUserRoutes(fastify, sequelize) {
 

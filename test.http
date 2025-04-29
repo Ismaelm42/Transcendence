@@ -133,9 +133,10 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsZ
 
 
 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTc0NTkxOTE0NSwiZXhwIjoxNzQ1OTIyNzQ1fQ.00XlKPvaU7YBJZOZPeZdouZI9h2Cbl0IvNCrI7Rcnso
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU0MEBnbWFpbC5jb20iLCJpYXQiOjE3NDM5MzU2NDksImV4cCI6MTc0MzkzOTI0OX0.F9B84eGNdqQ7nsa9nAME_hPp6oNAxiMWjIBLadDr1Qc
 
 
 // ╔═══════════════════════════════════════════════════════════════════════╗
@@ -146,17 +147,17 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU0MEBnbWFpbC5jb20iLCJ
 # Petición para enviar una friend_request:
 POST https://localhost:8443/back/send_friend_request HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
-  "friendId": "1"
+  "friendId": "5"
 }
 
 
 # Petición para aceptar una friend_request:
 POST https://localhost:8443/back/accept_friend_request HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
   "friendId": "1"
@@ -165,7 +166,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0N
 # Petición para rechazar una friend_request:
 POST https://localhost:8443/back/reject_friend_request HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
   "friendId": "1"
@@ -175,34 +176,34 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0N
 # Petición para bloquear un usuario:
 POST https://localhost:8443/back/block_user HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
-  "friendId": "4"
+  "friendId": "5"
 }
 
 # Petición para desbloquear un usuario:
 POST https://localhost:8443/back/unblock_user HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
-  "friendId": "1"
+  "friendId": "5"
 }
 
 #Petición para eliminar un usuario:
 POST https://localhost:8443/back/delete_friend HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
-  "friendId": "1"
+  "friendId": "5"
 }
 
 # Petición para tener la lista de relaciones de un usuario:
 POST https://localhost:8443/back/get_all_friends_entries_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
 }
@@ -210,7 +211,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0N
 # Petición para tener la lista de solicitudes pendientes de un usuario:
 POST https://localhost:8443/back/get_all_pending_users_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
 }
@@ -219,7 +220,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0N
 # Petición para tener la lista de amigos de un usuario:
 POST https://localhost:8443/back/get_all_accepted_users_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
 }
@@ -227,7 +228,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0N
 # Petición para tener la lista de bloqueados de un usuario:
 POST https://localhost:8443/back/get_all_blocked_users_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
 }
@@ -235,7 +236,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0N
 # Petición para tener la lista de coincidencias de usuarios por keyword:
 POST https://localhost:8443/back/get_all_users_coincidences HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTc0NTU5MTM2MiwiZXhwIjoxNzQ1NTk0OTYyfQ.CO6DJ_eBcUv1Z3DPg01E3Kg99_iqZ3Av3xuktAGEJX0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 {
 	"keyword": "is"
