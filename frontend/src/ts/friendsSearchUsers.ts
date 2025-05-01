@@ -1,9 +1,11 @@
 import { SearchResultItem } from "./friendsResultItems.js";
 import { showMessage } from "./showMessage.js";
 
-export async function searchUsersFriends(origen: 'boton' | 'codigo'): Promise<void> {
-	// event.preventDefault();
+export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Event): Promise<void> {
 
+	if (event) {
+		event.preventDefault(); // Prevenir el comportamiento por defecto del evento
+	}
 	const searchInput = document.getElementById("searchInput") as HTMLInputElement;
 	const lastSearch = document.getElementById("friendLastSearch") as HTMLInputElement;
 
@@ -25,8 +27,20 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo'): Promise<vo
 		return;
 	}
 	const requestBody = { keyword: searchValue };
-	console.log("searchValue antes del try :", searchValue);
-	console.log("requestBody antes del try :", requestBody);;
+
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	console.log("searchValue antes del try :" + searchValue);
+	
+	console.log("requestBody antes del try :" + requestBody);;
+	
 	try {
 		const response = await fetch("https://localhost:8443/back/get_all_users_coincidences", {
 			method: "POST",
@@ -38,7 +52,7 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo'): Promise<vo
 		if (!response.ok) {
 			const errorMessage = await response.json();
 			console.error("Error retrieving user list:", errorMessage);
-			showMessage(errorMessage.error, 2000);
+			showMessage(errorMessage.error, null);
 			return;
 		}
 
@@ -87,6 +101,6 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo'): Promise<vo
 		}
 	} catch (error) {
 		console.error("Error retrieving user list:", error);
-		showMessage("An error occurred while retrieving the user list.", 2000);
+		showMessage("An error occurred while retrieving the user list.", null);
 	}
 }

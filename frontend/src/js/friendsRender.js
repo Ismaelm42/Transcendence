@@ -22,10 +22,12 @@ export default class Friends extends Step {
                     throw new Error("Failed to load the HTML file");
                 let htmlContent = yield response.text();
                 appElement.innerHTML = htmlContent;
-                const btnSearch = document.getElementById("btnSearch");
-                if (btnSearch) {
-                    btnSearch.addEventListener("click", () => searchUsersFriends('boton'));
+                let btnSearch = document.getElementById("btnSearch");
+                while (!btnSearch) {
+                    yield new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                    btnSearch = document.getElementById("btnSearch");
                 }
+                btnSearch.addEventListener("click", (event) => searchUsersFriends('boton', event));
             }
             catch (error) {
                 console.error("Error loading HTML file:", error);

@@ -9,9 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { SearchResultItem } from "./friendsResultItems.js";
 import { showMessage } from "./showMessage.js";
-export function searchUsersFriends(origen) {
+export function searchUsersFriends(origen, event) {
     return __awaiter(this, void 0, void 0, function* () {
-        // event.preventDefault();
+        if (event) {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del evento
+        }
         const searchInput = document.getElementById("searchInput");
         const lastSearch = document.getElementById("friendLastSearch");
         let searchValue = searchInput.value.trim();
@@ -28,8 +30,17 @@ export function searchUsersFriends(origen) {
             return;
         }
         const requestBody = { keyword: searchValue };
-        console.log("searchValue antes del try :", searchValue);
-        console.log("requestBody antes del try :", requestBody);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("searchValue antes del try :" + searchValue);
+        console.log("requestBody antes del try :" + requestBody);
         ;
         try {
             const response = yield fetch("https://localhost:8443/back/get_all_users_coincidences", {
@@ -41,7 +52,7 @@ export function searchUsersFriends(origen) {
             if (!response.ok) {
                 const errorMessage = yield response.json();
                 console.error("Error retrieving user list:", errorMessage);
-                showMessage(errorMessage.error, 2000);
+                showMessage(errorMessage.error, null);
                 return;
             }
             const userList = yield response.json();
@@ -97,7 +108,7 @@ export function searchUsersFriends(origen) {
         }
         catch (error) {
             console.error("Error retrieving user list:", error);
-            showMessage("An error occurred while retrieving the user list.", 2000);
+            showMessage("An error occurred while retrieving the user list.", null);
         }
     });
 }

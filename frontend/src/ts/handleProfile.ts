@@ -230,7 +230,9 @@ export async function handleProfile() {
 		}
 }
 
-document.addEventListener('DOMContentLoaded', () => {handleProfile();});
+/** TODO - ver si es necesario descomentarlo con más pruebas - la primera prueba parece satisfactoria y no se lanza cada vez que se actualiza el dom */
+
+// document.addEventListener('DOMContentLoaded', () => {handleProfile();});
 
 
 
