@@ -141,7 +141,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 		if (container) {
 			container.remove();
 		}
-		window.location.hash = "#stats";
 		window.removeEventListener("popstate", navivageBack);
 	};
 	// 🖱️ Doble click handler for game stats
@@ -218,7 +217,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 				const container = document.createElement("div");
 				container.innerHTML = htmlTemplate;
 				document.body.appendChild(container);
-
 				const closeBtn = container.querySelector("#close-stats-modal");
 				if (closeBtn) {
 					window.addEventListener("popstate", navivageBack)
@@ -226,6 +224,7 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 
 				closeBtn?.addEventListener("click", () => {
 					container.remove();
+					window.removeEventListener("popstate", navivageBack);
 				});
 			} catch (error) {
 				console.error("Error fetching game logs:", error);

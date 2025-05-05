@@ -151,7 +151,6 @@ export function handleStats(userStats) {
             if (container) {
                 container.remove();
             }
-            window.location.hash = "#stats";
             window.removeEventListener("popstate", navivageBack);
         }
         ;
@@ -231,6 +230,7 @@ export function handleStats(userStats) {
                         }
                         closeBtn === null || closeBtn === void 0 ? void 0 : closeBtn.addEventListener("click", () => {
                             container.remove();
+                            window.removeEventListener("popstate", navivageBack);
                         });
                     }
                     catch (error) {
