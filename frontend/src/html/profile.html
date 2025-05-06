@@ -1,4 +1,4 @@
-<div class="flex flex-row min-h-screen bg-gray-900 text-white">
+<div class="flex flex-row bg-gray-900 text-white items-center justify-between">
 	<!-- Sección izquierda: Datos del usuario -->
 	<div class="w-1/2 p-6 flex flex-col items-center border-r border-gray-700">
 	  <!-- Avatar -->
@@ -32,11 +32,10 @@
 	</div>
   
 	<!-- Sección derecha: Estadísticas del usuario -->
-	<div class="w-1/2 p-6">
+	<div id="profile-stats-container" class="w-1/2 p-6">
 	  <h2 class="text-2xl font-bold mb-4">User Statistics</h2>
 	  <div id="user-stats" class="bg-gray-800 p-4 rounded-lg">
 		<!-- Aquí se renderizarán las estadísticas del usuario -->
-		<p class="text-gray-400">Statistics will be displayed here...</p>
 	  </div>
 	</div>
   </div>
@@ -60,7 +59,7 @@
 		</div>
 		<div class="flex justify-end">
 		  <button type="button" id="cancel-modal-password" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg mr-2">Cancel</button>
-		  <button type="submit" id="save-modal-password" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Save</button>
+		  <button type="button" id="save-modal-password" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Save</button>
 		</div>
 	  </form>
 	</div>

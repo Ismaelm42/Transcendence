@@ -182,6 +182,9 @@ export function configureFriendRoutes(fastify) {
 
 	// Define a POST route to search for users and return them
 	fastify.post('/get_all_users_coincidences', async (request, reply) => {
+		fastify.log.info('get_all_users_coincidences');
+		fastify.log.info(request.body);
+		fastify.log.info(request.cookies);
 		const user = await extractUserFromToken(request.cookies.token);
 		if (!user)
 			return reply.code(401).send({ error: 'Unauthenticated user' });

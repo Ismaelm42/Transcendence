@@ -2,7 +2,6 @@ import { Step } from './stepRender.js';
 import { handleStats } from './handleStats.js'; 
 
 export default class Stats extends Step {
-	
 	async render(appElement: HTMLElement): Promise<void>  {
 		console.log("En Stats render");
 		// Removed unused variable menuContainer

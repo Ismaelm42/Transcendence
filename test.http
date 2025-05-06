@@ -132,12 +132,29 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsZ
 
 
 
+GET https://localhost:8443/back/get_gamelogs HTTP/1.1
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkxOTExNCwiZXhwIjoxNzQ1OTIyNzE0fQ.-H8R_Up98hoHh6XEkjAZHD5v1ilf3CJc1M006dGCwtE
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTc0NTkxOTE0NSwiZXhwIjoxNzQ1OTIyNzQ1fQ.00XlKPvaU7YBJZOZPeZdouZI9h2Cbl0IvNCrI7Rcnso
 
+# /** para crear datos " a mano" en gamelogs dar permisos 777 a la base de datos
+# abrirla con DB Browser for SQlite y ejectuar insert*/
+	INSERT INTO gamelogs (user1, user2, winner, loser, duration, game_id, tournament_id, created_at, updated_at)
+	VALUES
+	(1, 2, 1, 2, 3500, 'game_001', 'tournament_001', DATETIME('now'), DATETIME('now')),
+	(3, 4, 3, 4, 4200, 'game_002', NULL, DATETIME('now'), DATETIME('now')),
+	(5, 6, 6, 5, 2800, 'game_003', 'tournament_002', DATETIME('now'), DATETIME('now')),
+	(7, 8, 7, 8, 3100, 'game_004', NULL, DATETIME('now'), DATETIME('now')),
+	(2, 3, 3, 2, 3900, 'game_005', 'tournament_001', DATETIME('now'), DATETIME('now'));
 
+# Actualiar los datos de gamelogs
+	UPDATE gamelogs
+	SET winner = 2,
+	    loser = 1,
+	    game_id = 'game_000',
+	    updated_at = DATETIME('now')
+	WHERE id = 2;
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBlcGU0MEBnbWFpbC5jb20iLCJpYXQiOjE3NDM5MzU2NDksImV4cCI6MTc0MzkzOTI0OX0.F9B84eGNdqQ7nsa9nAME_hPp6oNAxiMWjIBLadDr1Qc
 
 

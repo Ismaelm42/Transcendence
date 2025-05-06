@@ -3,7 +3,6 @@ import { showMessage } from './showMessage.js';
 
 export async function handleLoginSubmit(event: SubmitEvent) {
 	console.log("handleLoginSubmit:", event);
-	
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
