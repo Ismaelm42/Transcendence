@@ -12,7 +12,7 @@ const playButton = document.getElementById("playButton");
 function WebsocketTest() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("Button pushed");
-        const socket = new WebSocket("https://localhost:8443/back/ws");
+        const socket = new WebSocket("https://localhost:8443/back/chat");
         socket.onopen = () => {
             console.log("CLIENT: Connected to Websocket-server");
             socket.send("Hi server!");
