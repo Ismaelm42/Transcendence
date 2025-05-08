@@ -25,6 +25,10 @@ async function formatMessage(imagePath:string, username:string, message:string, 
 	return htmlContent;
 }
 
+
+
+
+
 async function initWebsocket(): Promise<WebSocket> {
 	const socket = new WebSocket("wss://localhost:8443/back/chat");
 	socket.onopen = () => {
@@ -62,10 +66,24 @@ export default class Chat extends Step {
 			socket.onerror = (event) => {
 				console.error("CLIENT: WebSocket error:", event);
 			};
-
-		
-			// const htmlContent = await formatMessage("https://localhost:8443/back/images/default-avatar.png", "Ismael", "Hey, how are you? Is everything fine! I'm testing this with a very very very very very very very very very very very long message.", "sent");
-			// appElement.innerHTML = htmlContent;
+			const htmlContent = await formatMessage("https://localhost:8443/back/images/default-avatar.png", "Ismael", "Hey, how are you? Is everything fine! I'm testing this with a very very very very very very very very very very very long message.", "sent");
+			appElement.innerHTML = htmlContent;
+			const form = document.getElementById("chat-form") as HTMLFormElement;
+			const textarea = document.getElementById("chat-textarea") as HTMLTextAreaElement;
+			textarea.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' && !e.shiftKey) {
+					e.preventDefault();
+					form.requestSubmit();
+				}
+			});
+			form.addEventListener('submit', (e) => {
+				e.preventDefault();
+				const message = textarea.value.trim();
+				if (message) {
+					socket.send(message);
+					textarea.value = '';
+				}
+			});
 		}
 		catch (error) {
 				appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

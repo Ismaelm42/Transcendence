@@ -70,8 +70,24 @@ export default class Chat extends Step {
                 socket.onerror = (event) => {
                     console.error("CLIENT: WebSocket error:", event);
                 };
-                // const htmlContent = await formatMessage("https://localhost:8443/back/images/default-avatar.png", "Ismael", "Hey, how are you? Is everything fine! I'm testing this with a very very very very very very very very very very very long message.", "sent");
-                // appElement.innerHTML = htmlContent;
+                const htmlContent = yield formatMessage("https://localhost:8443/back/images/default-avatar.png", "Ismael", "Hey, how are you? Is everything fine! I'm testing this with a very very very very very very very very very very very long message.", "sent");
+                appElement.innerHTML = htmlContent;
+                const form = document.getElementById("chat-form");
+                const textarea = document.getElementById("chat-textarea");
+                textarea.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        form.requestSubmit();
+                    }
+                });
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const message = textarea.value.trim();
+                    if (message) {
+                        socket.send(message);
+                        textarea.value = '';
+                    }
+                });
             }
             catch (error) {
                 appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
