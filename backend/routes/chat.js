@@ -1,6 +1,24 @@
 import {parse} from 'cookie';
 import { extractUserFromToken } from '../auth/token.js';
 
+function createMessageJSON(user, message) {
+	return {
+		image: user.image,
+		username: user.username,
+		message: message,
+		timeStamp: getTimeStamp(),
+		// timeStamp: new Date().toLocaleString(),
+		messageStatus: "Sent!"
+	}
+}
+
+function getTimeStamp() {
+	const now = new Date();
+	const hours = now.getHours().toString().padStart(2, '0');
+	const minutes = now.getMinutes().toString().padStart(2, '0');
+	return `${hours}:${minutes}`;
+}
+
 export function configureChatRoutes(fastify) {
 
 	const clients = new Map();
@@ -13,15 +31,19 @@ export function configureChatRoutes(fastify) {
 		const user = await extractUserFromToken(token);
 		clients.set(user.id, socket);
 
-
-
 		socket.on('message', message => {
-		console.log("Mensaje del front:", message.toString())
-		//   message.toString() === 'hi from client'
-		  socket.send('hi from server')
+			console.log("Mensaje del front:", message.toString());
+			const response = createMessageJSON(user, message.toString());
+			
+			for (const [id, client] of clients) {
+				client.send(JSON.stringify(response));
+			}
 		})
 
-
+		socket.on('close', () => {
+			clients.delete(user.id);
+			console.log(`Client ${user.username} disconnected`);
+		});
 
 	  })
 	})
