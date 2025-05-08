@@ -1,4 +1,5 @@
 import { Step } from './stepRender.js';
+import {setupSlider, resetSlider} from './hanldlePlaygameLogin.js';
 
 export default class Pong extends Step {
 	
@@ -24,16 +25,18 @@ export default class Pong extends Step {
 						</nav>
 					`;
 				}
-				try
-				{
-					const response = await fetch("../html/playGame.html");
-					if (!response.ok) throw new Error("Failed to load the HTML file");
-		
-					let htmlContent = await response.text();
-					appElement.innerHTML =  htmlContent;
-				}	catch (error) {
-						console.error("Error en render:", error);
-					}
+					try
+					{
+						const response = await fetch("../html/playGame.html");
+						if (!response.ok) throw new Error("Failed to load the HTML file");
+						
+						let htmlContent = await response.text();
+						appElement.innerHTML =  htmlContent;
+						resetSlider();
+						setupSlider();
+					}	catch (error) {
+							console.error("Error en render:", error);
+						}
 				} else {
 					if (menuContainer) {
 						menuContainer.innerHTML = "";
