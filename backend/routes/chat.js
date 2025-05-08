@@ -3,7 +3,8 @@ import { extractUserFromToken } from '../auth/token.js';
 
 function createMessageJSON(user, message) {
 	return {
-		image: user.image,
+		type: "message",
+		image: user.avatarPath,
 		username: user.username,
 		message: message,
 		timeStamp: getTimeStamp(),
@@ -32,11 +33,27 @@ export function configureChatRoutes(fastify) {
 		clients.set(user.id, socket);
 
 		socket.on('message', message => {
-			console.log("Mensaje del front:", message.toString());
-			const response = createMessageJSON(user, message.toString());
-			
-			for (const [id, client] of clients) {
-				client.send(JSON.stringify(response));
+			try {
+				let data;
+				try {
+					data = JSON.parse(message.toString());
+				} catch (error) {
+					// Si no es JSON, tratarlo como un string simple
+					data = { type: "message", message: message.toString() };
+				}
+				if (data.type === "handshake") {
+					//console.log("Handshake received:", data);
+					//socket.send(JSON.stringify({ type: "handshake", message: "Welcome to the chat!" }));
+					return;
+				}
+				if (data.type === "message") {
+					console.log("Message received:", data);
+					const response = createMessageJSON(user, data.message);
+					for (const [id, client] of clients) {
+						client.send(JSON.stringify(response));
+				}}
+			} catch (error) {
+				console.error("Error parsing message:", error);
 			}
 		})
 
