@@ -16,6 +16,10 @@ export default class Chat extends Step {
 			const form = document.getElementById("chat-form") as HTMLFormElement;
 			const textarea = document.getElementById("chat-textarea") as HTMLTextAreaElement;
 			const chatMessages = document.getElementById("chat-messages") as HTMLDivElement;
+
+			// const users = document.getElementById("users-container") as HTMLDivElement;
+			// const items = document.getElementById("item-container") as HTMLDivElement;
+
 			const socket = handleSocket(chatMessages, this.username? this.username : "Undefined");
 			textarea.addEventListener('keydown', (e) => handleTextareaKeydown(e, form));
 			form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, socket));

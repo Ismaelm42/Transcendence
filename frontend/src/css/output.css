@@ -864,6 +864,9 @@
   .bg-red-700 {
     background-color: var(--color-red-700);
   }
+  .bg-red-800 {
+    background-color: var(--color-red-800);
+  }
   .bg-sky-600 {
     background-color: var(--color-sky-600);
   }
