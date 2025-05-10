@@ -18,9 +18,9 @@ export default class Chat extends Step {
 			const chatMessages = document.getElementById("chat-messages") as HTMLDivElement;
 
 			// const users = document.getElementById("users-container") as HTMLDivElement;
-			// const items = document.getElementById("item-container") as HTMLDivElement;
+			const items = document.getElementById("item-container") as HTMLDivElement;
 
-			const socket = handleSocket(chatMessages, this.username? this.username : "Undefined");
+			const socket = handleSocket(chatMessages, items, this.username? this.username : "Undefined");
 			textarea.addEventListener('keydown', (e) => handleTextareaKeydown(e, form));
 			form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, socket));
 		}
@@ -29,3 +29,8 @@ export default class Chat extends Step {
 			}
 		}
 }
+
+
+
+// Caso raro cuando uno se loguea con la misma cuenta de un navegador diferente
+// Aunque no hay fallo. Todo parece funcionar bien. Simplemente se actualiza el socket
