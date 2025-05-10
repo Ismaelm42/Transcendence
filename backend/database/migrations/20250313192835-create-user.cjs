@@ -34,7 +34,7 @@ module.exports = {
 			},
 			avatar_path: {
 				type: Sequelize.STRING,
-				defaultValue: 'https://localhost:8443/back//images/default-avatar.png'
+				allowNull: true,
 			},
 			last_login: {
 				type: Sequelize.DATE,

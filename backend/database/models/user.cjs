@@ -1,5 +1,8 @@
 'use strict';
 const {	Model } = require('sequelize');
+
+const avatarUrls = Array.from({ length: 20 }, (_, i) => `https://localhost:8443/back/images/avatar-${i + 1}.png`);
+
 module.exports = (sequelize, DataTypes) => {
 	class User extends Model {
 		static associate(models) {
@@ -32,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		avatarPath: {
 			type: DataTypes.STRING,
-			defaultValue: 'https://localhost:8443/back/images/default-avatar.png'
+			allowNull: true,
 		},
 		lastLogin: {
 			type: DataTypes.DATE,
@@ -55,6 +58,14 @@ module.exports = (sequelize, DataTypes) => {
 	underscored: true,
 	tableName: 'users',
 	freezeTableName: true,
+	hooks: {
+		beforeCreate: (user) => {
+			if (!user.avatarPath) {
+				const randomIndex = Math.floor(Math.random() * avatarUrls.length);
+				user.avatarPath = avatarUrls[randomIndex];
+			}
+		}
+	}
 	});
 	return User;
 };
