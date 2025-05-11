@@ -32,7 +32,6 @@ function formatConnectedUsersTemplate(data, name) {
         let htmlContent;
         let userHtmlContent;
         const usersConnected = Object.values(data.object);
-        console.log("ESTOYT AQUI");
         console.log(usersConnected);
         for (const user of usersConnected) {
             // if (user.username.toString() !== name.toString()) {

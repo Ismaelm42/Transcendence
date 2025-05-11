@@ -16,4 +16,9 @@ export function configureChatRoutes(fastify) {
 	})
 }
 
-// users {userId, username, avatarPath}
+// Controlar los mensajes muy largos del front
+// Controlar que el username no sea de más de 20 caracteres
+// Guardar los mensajes en la cache o algo del navegador para que no se pierdan cuando
+// se cambia de pestaña
+// Implementar la búsqueda de usuario dinámica
+// Implementar el puntito naranja cuando un usuario lleva tiempo sin escribir

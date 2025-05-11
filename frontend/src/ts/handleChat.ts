@@ -27,7 +27,6 @@ async function formatConnectedUsersTemplate(data: any, name:string): Promise<str
 	let userHtmlContent;
 	const usersConnected = Object.values(data.object) as { username: string; imagePath: string }[];
 
-	console.log("ESTOYT AQUI");
 	console.log(usersConnected)
 	for (const user of usersConnected) {
 		// if (user.username.toString() !== name.toString()) {
