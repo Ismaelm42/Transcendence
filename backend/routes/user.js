@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken';
 import { crud } from '../crud/crud.js';
 import { verifyToken } from '../auth/token.js';
 import { authenticateUser } from '../auth/user.js';
+import { comparePassword } from '../database/users/PassUtils.cjs';
+import { extractUserFromToken } from '../auth/token.js';
 
 export function configureUserRoutes(fastify, sequelize) {
 
@@ -150,6 +152,51 @@ export function configureUserRoutes(fastify, sequelize) {
 		} catch (err) {
 			fastify.log.error(err);
 			reply.status(500).send({ error: 'Error deleting all users '+ err.message });
+		}
+	});
+
+	/**
+	 * Define a POST route to verify and provided a safe User with non-sensitive data
+	 * It also compares player two with player one  
+	 * To get player One info use it with no email and password
+	 * 
+	 * @param {string} email - The email of the user to verify.
+	 * @param {string} password - The password of the user to verify.
+	 * @returns {object} - A safe user object with non-sensitive data.
+	*/
+	fastify.post('/verify_user', async (request, reply) => {
+		const { email, password } = request.body;
+		let userSafe1;
+		let userSafe;
+		try {
+			const user1 = await extractUserFromToken(request.cookies.token);
+			if (!user1)
+				return reply.code(401).send({ error: 'Unauthenticated user' });
+			userSafe1 = (({ id, username,tournamentUsername, email, avatarPath }) => ({ id, username,tournamentUsername, email, avatarPath }))(user1);
+		} catch (error) {
+			reply.status(401).send({ valid: false, message: 'Invalid or expired Token' });
+		}
+		if (!email && !password) {
+			reply.status(200).send(userSafe1);
+		} else if (email && password) {
+			try {
+				const user = await crud.user.getUserByEmail(email);
+				if (!user)
+					return reply.status(401).send({ message: 'Wrong email' });
+				const isMatch = await comparePassword(password, user.password);
+				if (!isMatch)
+					return reply.status(401).send({ message: 'Wrong password' });		
+				userSafe = (({ id, username,tournamentUsername, email, avatarPath }) => ({ id, username,tournamentUsername, email, avatarPath }))(user);
+				if (userSafe.id == userSafe1.id) {
+					return reply.status(401).send({ message: 'Payer two cannot be the same than player one' });
+				}
+				reply.status(200).send(userSafe);
+			} catch (err) {
+				fastify.log.error(err);
+				reply.status(400).send({ error: 'Error verifying user' + err.message });
+			}
+		} else {
+			reply.status(400).send({ error: 'Error verifying user' + "an empty field has been found" });
 		}
 	});
 }

@@ -1,0 +1,115 @@
+<!-- Contenedor padre con overflow oculto para ocultar las secciones laterales -->
+<div id="viewport-wrapper" class="overflow-hidden w-screen h-[calc(100svh-20rem)] relative">
+	<!-- Contenedor de 3x ancho del viewport -->
+		<div id="slider" class="w-[200vw] h-full flex transition-transform duration-500 ease-in-out">
+		<!--central visible por defecto -->
+			<div class="w-screen h-full flex flex-col lg:flex-row items-center justify-center gap-20 bg-gray-900">
+				<!-- Icono de 1 jugador -->
+					<button id="btn-one-player" class="flex flex-col items-center cursor-pointer text-white hover:scale-110 transition">
+						<svg class="w-40 h-40 mb-2" fill="none" stroke="currentcolor" stroke-width="1.5"
+							viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<path stroke-linecap="round" stroke-linejoin="round"
+								d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118A7.5 7.5 0 0112 15.75a7.5 7.5 0 017.5 4.368"></path>
+						</svg>
+						<span class="text-3xl font-bold font-[Tektur]">1 PLAYER</span>	
+					</button>
+				<!-- Icono de 2 jugadores -->
+					<button id="btn-two-players" class="flex flex-col items-center cursor-pointer text-white hover:scale-110 transition">
+						<svg class="w-40 h-40 mb-2" fill="none" stroke="currentcolor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<!-- Cabeza del jugador trasero (verde) -->
+							<path  stroke-linecap="round" stroke-linejoin="round"
+								  d="M16.5 6a3.25 3.25 0 11-6.5 0 3.25 3.25 0 016.5 0z" />
+							<!-- Hombros del jugador trasero (verde) -->
+							<path  stroke-linecap="round" stroke-linejoin="round"
+								  d="M5.5 20A6.75 6.75 0 0112 15.5a6.75 6.75 0 016.5 4.5" />
+							<!-- Cabeza del jugador delantero (azul) -->
+							<path stroke-linecap="round" stroke-linejoin="round"
+								  d="M10 9a3.75 3.75 0 11-7.5 0A3.75 3.75 0 0110 9z" />
+							<!-- Hombros del jugador delantero (azul) -->
+							<path stroke-linecap="round" stroke-linejoin="round"
+								  d="M0.5 21.5A7.5 7.5 0 017 17a7.5 7.5 0 017.5 4.5" />
+					 	</svg>
+						<span class="text-3xl font-bold font-[Tektur]">2 PLAYERS</span>
+					</button>
+			</div>
+		
+			<!--En colores-->
+			<!-- <div class="w-screen h-full flex flex-col lg:flex-row items-center justify-center gap-20 bg-gray-900">
+				<button id="btn-one-player" class="flex flex-col items-center cursor-pointer text-white hover:scale-110 transition">
+					<svg class="w-40 h-40 mb-2" fill="none" stroke="oklch(48.8% 0.243 264.376)" stroke-width="1.5"
+						viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path stroke-linecap="round" stroke-linejoin="round"
+							d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118A7.5 7.5 0 0112 15.75a7.5 7.5 0 017.5 4.368"></path>
+					</svg>
+					<span class="text-3xl font-bold font-[Tektur] text-green-500">1 PLAYER</span>
+				</button>
+				<button id="btn-multiplayer" class="flex flex-col items-center cursor-pointer text-white hover:scale-110 transition">
+					<svg class="w-40 h-40 mb-2 " fill="none" stroke-width="1.5"
+						 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<path stroke="oklch(52% 0.105 223.128)" stroke-linecap="round" stroke-linejoin="round"
+							  d="M16.5 6a3.25 3.25 0 11-6.5 0 3.25 3.25 0 016.5 0z" />
+						<path stroke="oklch(52% 0.105 223.128)" stroke-linecap="round" stroke-linejoin="round"
+							  d="M5.5 20A6.75 6.75 0 0112 15.5a6.75 6.75 0 016.5 4.5" />
+					 
+						<path stroke="oklch(48.8% 0.243 264.376)" stroke-linecap="round" stroke-linejoin="round"
+							  d="M10 9a3.75 3.75 0 11-7.5 0A3.75 3.75 0 0110 9z" />
+						<path stroke="oklch(48.8% 0.243 264.376)" stroke-linecap="round" stroke-linejoin="round"
+							  d="M0.5 21.5A7.5 7.5 0 017 17a7.5 7.5 0 017.5 4.5" />
+				 	</svg>
+					<span class="text-3xl font-bold font-[Tektur] text-green-500">2 PLAYERS</span>
+				</button>
+			</div> -->
+
+ 		<!-- Sección 2 jugadores derecha (por defecto oculta) -->
+			<div class="w-screen h-full flex flex-col items-center justify-center text-white gap-10">
+				<div class="w-screen h-full flex flex-col items-center justify-center text-white gap-10">
+					<div id="game-login2p-wrapper" class="flex flex-col p-8 pt-2 rounded-lg shadow-lg max-w-2xl lg:w-[30vw] mx-auto text-white max-h-screen">
+							<div id="game-login2p-header" class="flex flex-col items-center mb-6">
+								<h1 class="text-4xl font-bold">Play Pong</h1>
+								<p class="text-lg text-gray-400 mt-4">Insert email and password to save your stats</p>
+							</div>
+							<div id="game-login2p-container" class=" flex flex-col lg:flex-row gap-6 w-full">
+								<div id="player2p-wrapper" class="wrapper flex flex-col flex-1">
+									<form id="player2p-form" class="space-y-5">
+										<div>
+											<label for="player2p-email" class="hidden lg:block text-lg font-medium text-gray-300">Email player 2</label>
+											<input
+													type="email"
+													id="player2p-email"
+													name="player2p-email"
+													placeholder="Email Jugador 1"
+													class="mt-2 px-4 py-2 w-full rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400 lg:placeholder-transparent"
+												required />
+										</div>
+										<div>
+											<label for="player2p-password" class="hidden lg:block text-lg font-medium text-gray-300">Password player 2</label>
+											<input
+													type="password"
+													id="player2p-password"
+													name="player2p-password"
+													placeholder="Contraseña Jugador 1"
+													class="mt-2 px-4 py-2 w-full rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400 lg:placeholder-transparent"
+												required />
+										</div>
+										<div class="flex justify-center gap-x-4">
+											<button type="submit" id="btnPLayer2p" class="w-1/2 lg:w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+												Insert player 2
+											</button>
+											<button type="button" id="btnguest2p" class="w-1/2 lg:w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
+												guest 2
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							 <!-- El contenedor para el botón de iniciar juego -->
+							 <div id="start-2p-game-container" class=" flex-col flex-1 	mt-4 mb-6">
+								<button id="start-2p-game" type="button" class="w-full lg:mt-3 py-2 rounded-lg text-white focus:outline-none focus:ring-2 bg-slate-500 focus:ring-slate-500">
+									PLAY GAME
+								</button>
+							</div>
+					<button id="btn-back-center-right" class="text-3xl hover:scale-110 transition"><<<</button>
+				</div>
+			</div>
+		</div>
+</div>
