@@ -71,7 +71,6 @@ function sortUsersAlphabetically(htmlContent) {
 function handleSocketMessage(socket, chatMessages, items, name) {
     socket.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
         const data = JSON.parse(event.data);
-        console.log(data);
         if (data.type === 'message') {
             const HtmlContent = yield formatMsgTemplate(data, name);
             let stored = sessionStorage.getItem("chatHTML") || "";
@@ -99,8 +98,7 @@ function handleSocketError(socket) {
         console.error("CLIENT: WebSocket error:", event);
     };
 }
-export function handleSocket(chatMessages, items, username) {
-    const socket = new WebSocket("https://localhost:8443/back/ws/chat");
+export function handleSocket(socket, chatMessages, items, username) {
     handleSocketOpen(socket);
     handleSocketMessage(socket, chatMessages, items, username);
     handleSocketClose(socket);
