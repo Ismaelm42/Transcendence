@@ -50,7 +50,7 @@ function handleSocketOpen(socket) {
     socket.onopen = () => {
         const handshake = {
             type: 'handshake',
-            message: 'hi'
+            message: ''
         };
         socket.send(JSON.stringify(handshake));
     };
@@ -97,6 +97,13 @@ function handleSocketError(socket) {
     socket.onerror = (event) => {
         console.error("CLIENT: WebSocket error:", event);
     };
+}
+export function retrieveConnectedUsers(socket) {
+    const message = {
+        type: 'status',
+        message: ''
+    };
+    socket.send(JSON.stringify(message));
 }
 export function handleSocket(socket, chatMessages, items, username) {
     handleSocketOpen(socket);

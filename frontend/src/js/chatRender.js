@@ -8,12 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from './stepRender.js';
-import { handleSocket, handleTextareaKeydown, handleFormSubmit } from './handleChat.js';
+import { retrieveConnectedUsers, handleSocket, handleTextareaKeydown, handleFormSubmit } from './handleChat.js';
 export default class Chat extends Step {
-    constructor() {
-        super(...arguments);
-        this.socket = null;
-    }
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.username) {
@@ -35,12 +31,15 @@ export default class Chat extends Step {
                     chatMessages.innerHTML = stored;
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
-                if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-                    this.socket = new WebSocket("https://localhost:8443/back/ws/chat");
+                if (!Step.socket || Step.socket.readyState === WebSocket.CLOSED) {
+                    Step.socket = new WebSocket("https://localhost:8443/back/ws/chat");
                 }
-                handleSocket(this.socket, chatMessages, items, this.username ? this.username : "Undefined");
+                else {
+                    retrieveConnectedUsers(Step.socket);
+                }
+                handleSocket(Step.socket, chatMessages, items, this.username);
                 textarea.addEventListener('keydown', (e) => handleTextareaKeydown(e, form));
-                form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, this.socket));
+                form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket));
             }
             catch (error) {
                 appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

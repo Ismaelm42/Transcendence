@@ -101,6 +101,9 @@ export function handleIncomingSocketMessage(user, socket) {
 					client.send(JSON.stringify(response));
 				}
 			}
+			else if (data.type === "status") {
+				setTimer(user);
+			}
 		} catch (error) {
 			console.log("An error occured:", error);
 		}
