@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+let htmlUsersConnected = '';
 function formatMsgTemplate(data, name) {
     return __awaiter(this, void 0, void 0, function* () {
         let htmlContent;
@@ -71,7 +72,6 @@ function sortUsersAlphabetically(htmlContent) {
 function handleSocketMessage(socket, chatMessages, items, name) {
     socket.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
         const data = JSON.parse(event.data);
-        console.log(data);
         if (data.type === 'message') {
             const HtmlContent = yield formatMsgTemplate(data, name);
             let stored = sessionStorage.getItem("chatHTML") || "";
@@ -83,6 +83,7 @@ function handleSocketMessage(socket, chatMessages, items, name) {
         if (data.type === 'connectedUsers') {
             let HtmlContent = yield formatConnectedUsersTemplate(data, name);
             HtmlContent = sortUsersAlphabetically(HtmlContent);
+            htmlUsersConnected = HtmlContent;
             items.innerHTML = HtmlContent;
         }
     });
@@ -123,5 +124,44 @@ export function handleFormSubmit(e, textarea, socket) {
         };
         socket.send(JSON.stringify(message));
         textarea.value = '';
+    }
+}
+/**
+ * Take the keyword from the search input and filter the list of connected users.
+ * @param keyword - The keyword to search for in the list of connected users.
+ * @returns
+ */
+export function filterSearchUsers(keyword) {
+    // Obtener el contenedor de usuarios conectados
+    const itemsContainer = document.getElementById("item-container");
+    if (!itemsContainer) {
+        console.error("Items container not found");
+        return;
+    }
+    // Crear un contenedor temporal para procesar htmlUsersConnected
+    const tempContainer = document.createElement("div");
+    tempContainer.innerHTML = htmlUsersConnected;
+    // Obtener todos los elementos de usuario conectados desde htmlUsersConnected
+    const userElements = Array.from(tempContainer.querySelectorAll(".item"));
+    // Filtrar los usuarios que coincidan con el término de búsqueda
+    const filteredUsers = userElements.filter(userElement => {
+        var _a, _b;
+        const username = ((_b = (_a = userElement.querySelector("span.text-sm")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim().toLowerCase()) || "";
+        return username.includes(keyword.toLowerCase());
+    });
+    // Limpiar el contenedor de usuarios
+    itemsContainer.innerHTML = "";
+    // Mostrar solo los usuarios que coincidan
+    if (filteredUsers.length > 0) {
+        filteredUsers.forEach(userElement => {
+            itemsContainer.appendChild(userElement);
+        });
+    }
+    else {
+        // Si no hay coincidencias, mostrar un mensaje
+        const noResultsElement = document.createElement("div");
+        noResultsElement.className = "text-gray-500";
+        noResultsElement.textContent = "No users found";
+        itemsContainer.appendChild(noResultsElement);
     }
 }

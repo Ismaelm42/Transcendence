@@ -1,3 +1,4 @@
+let htmlUsersConnected = '';
 
 async function formatMsgTemplate(data: any, name: string): Promise<string> {
 
@@ -10,15 +11,15 @@ async function formatMsgTemplate(data: any, name: string): Promise<string> {
 	}
 	let htmlText = await htmlContent.text();
 	htmlText = htmlText
-	.replace("{{ username }}", data.username.toString())
-	.replace("{{ timeStamp }}", data.timeStamp.toString())
-	.replace("{{ message }}", data.message.toString())
-	.replace("{{ imagePath }}", data.imagePath.toString())
-	.replace("{{ usernameImage }}", data.username.toString());
+		.replace("{{ username }}", data.username.toString())
+		.replace("{{ timeStamp }}", data.timeStamp.toString())
+		.replace("{{ message }}", data.message.toString())
+		.replace("{{ imagePath }}", data.imagePath.toString())
+		.replace("{{ usernameImage }}", data.username.toString());
 	return htmlText;
 }
 
-async function formatConnectedUsersTemplate(data: any, name:string): Promise<string> {
+async function formatConnectedUsersTemplate(data: any, name: string): Promise<string> {
 
 	let htmlText = '';
 	let htmlContent;
@@ -26,15 +27,15 @@ async function formatConnectedUsersTemplate(data: any, name:string): Promise<str
 	const usersConnected = Object.values(data.object) as { username: string; imagePath: string; status: string }[];
 
 	for (const user of usersConnected) {
-			userHtmlContent = await fetch("../html/userListItem.html");
-			htmlContent = await userHtmlContent.text();
-			htmlContent = htmlContent
+		userHtmlContent = await fetch("../html/userListItem.html");
+		htmlContent = await userHtmlContent.text();
+		htmlContent = htmlContent
 			.replace("{{ username }}", user.username.toString())
 			.replace("{{ usernameImage }}", user.username.toString())
 			.replace("{{ imagePath }}", user.imagePath.toString())
 			.replace("{{ bgcolor }}", user.status.toString())
 			.replace("{{ bcolor }}", user.status.toString());
-			htmlText += htmlContent;
+		htmlText += htmlContent;
 	}
 	return htmlText;
 }
@@ -57,10 +58,10 @@ function sortUsersAlphabetically(htmlContent: string): string {
 
 	items.sort((a, b) => {
 		const usernameA = a.querySelector('span.text-sm')?.textContent?.trim().toLowerCase() || '';
-		const usernameB = b.querySelector('span.text-sm')?.textContent?.trim().toLowerCase() || '';        
-        return usernameA.localeCompare(usernameB);
-    });
-    const sortedHtml = items.map(item => item.outerHTML).join('');
+		const usernameB = b.querySelector('span.text-sm')?.textContent?.trim().toLowerCase() || '';
+		return usernameA.localeCompare(usernameB);
+	});
+	const sortedHtml = items.map(item => item.outerHTML).join('');
 	return sortedHtml;
 }
 
@@ -78,6 +79,7 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, it
 		if (data.type === 'connectedUsers') {
 			let HtmlContent = await formatConnectedUsersTemplate(data, name);
 			HtmlContent = sortUsersAlphabetically(HtmlContent);
+			htmlUsersConnected = HtmlContent;
 			items.innerHTML = HtmlContent;
 		}
 	}
@@ -97,7 +99,7 @@ function handleSocketError(socket: WebSocket): void {
 	}
 }
 
-export function handleSocket(chatMessages: HTMLDivElement, items:HTMLDivElement , username: string): WebSocket {
+export function handleSocket(chatMessages: HTMLDivElement, items: HTMLDivElement, username: string): WebSocket {
 	const socket = new WebSocket("https://localhost:8443/back/ws/chat");
 	handleSocketOpen(socket);
 	handleSocketMessage(socket, chatMessages, items, username);
@@ -123,5 +125,49 @@ export function handleFormSubmit(e: SubmitEvent, textarea: HTMLTextAreaElement, 
 		};
 		socket.send(JSON.stringify(message));
 		textarea.value = '';
+	}
+}
+
+/**
+ * Take the keyword from the search input and filter the list of connected users.
+ * @param keyword - The keyword to search for in the list of connected users.
+ * @returns 
+ */
+export function filterSearchUsers(keyword: string): void {
+
+	// Obtener el contenedor de usuarios conectados
+	const itemsContainer = document.getElementById("item-container") as HTMLDivElement;
+	if (!itemsContainer) {
+		console.error("Items container not found");
+		return;
+	}
+
+	// Crear un contenedor temporal para procesar htmlUsersConnected
+	const tempContainer = document.createElement("div");
+	tempContainer.innerHTML = htmlUsersConnected;
+
+	// Obtener todos los elementos de usuario conectados desde htmlUsersConnected
+	const userElements = Array.from(tempContainer.querySelectorAll(".item")) as HTMLDivElement[];
+
+	// Filtrar los usuarios que coincidan con el término de búsqueda
+	const filteredUsers = userElements.filter(userElement => {
+		const username = userElement.querySelector("span.text-sm")?.textContent?.trim().toLowerCase() || "";
+		return username.includes(keyword.toLowerCase());
+	});
+
+	// Limpiar el contenedor de usuarios
+	itemsContainer.innerHTML = "";
+
+	// Mostrar solo los usuarios que coincidan
+	if (filteredUsers.length > 0) {
+		filteredUsers.forEach(userElement => {
+			itemsContainer.appendChild(userElement);
+		});
+	} else {
+		// Si no hay coincidencias, mostrar un mensaje
+		const noResultsElement = document.createElement("div");
+		noResultsElement.className = "text-gray-500";
+		noResultsElement.textContent = "No users found";
+		itemsContainer.appendChild(noResultsElement);
 	}
 }
