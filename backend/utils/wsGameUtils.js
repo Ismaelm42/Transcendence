@@ -1,7 +1,5 @@
-import { extractUserFromToken } from "../auth/token";
-
-const clients = new Map();
-const gameStates = new Map();
+import { extractUserFromToken } from "../auth/token.js";
+import {handleLeaveGame} from "../game/manager/handlers.js"
 
 /**
  *	The client's auth token is extracted from cookies
@@ -22,4 +20,11 @@ export async function	registerGameClient(request, connection)
 	})
 
 	return ({user, connection});
+}
+
+export function	handleGameDisconnect(client, connection)
+{
+	connection.socket.on('close', () => {
+		handleLeaveGame(client);
+	});
 }
