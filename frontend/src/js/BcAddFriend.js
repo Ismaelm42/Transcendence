@@ -20,7 +20,7 @@ export class BcAddFriend extends BasicComponent {
         var _a;
         const btn = (_a = this.el) === null || _a === void 0 ? void 0 : _a.querySelector('.btnAddfriend');
         btn === null || btn === void 0 ? void 0 : btn.addEventListener('click', (e) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _b;
             const btn = e.currentTarget;
             const wrapper = btn.closest('div.flex');
             if (!wrapper)
@@ -28,7 +28,7 @@ export class BcAddFriend extends BasicComponent {
             const span = wrapper.querySelector('span[data-user-id]');
             if (!span)
                 return;
-            const userId = (_a = span.textContent) === null || _a === void 0 ? void 0 : _a.trim();
+            const userId = (_b = span.textContent) === null || _b === void 0 ? void 0 : _b.trim();
             console.log('ID del usuario:', userId);
             const requestBody = {
                 friendId: userId

@@ -107,7 +107,7 @@ export function handleStats(userStats) {
                 labels: ['Wins', 'Losses', 'Total'],
                 datasets: [{
                         data: [userStats.wins, userStats.losses, userStats.totalGames],
-                        backgroundColor: ['#34D399', '#F87171', '#60A5FA'], // green, red, blue
+                        backgroundColor: ['#34D399', '#F87171', '#60A5FA'],
                         borderColor: '#1F2937',
                         borderWidth: 2
                     }]
@@ -130,7 +130,7 @@ export function handleStats(userStats) {
                 labels: ['Wins', 'Looses', 'Total'],
                 datasets: [{
                         data: [userStats.tournamentsWon, torunamentLoosed, userStats.tournamentsPlayed],
-                        backgroundColor: ['#34D399', '#F87171', '#60A5FA'], // green, red, blue
+                        backgroundColor: ['#34D399', '#F87171', '#60A5FA'],
                         borderColor: '#1F2937',
                         borderWidth: 2
                     }]

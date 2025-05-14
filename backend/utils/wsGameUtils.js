@@ -1,5 +1,5 @@
 import { extractUserFromToken } from "../auth/token.js";
-import {handleLeaveGame} from "../game/manager/handlers.js"
+import { handleLeaveGame } from "../game/manager/handlers.js"
 
 /**
  *	The client's auth token is extracted from cookies
@@ -8,17 +8,17 @@ import {handleLeaveGame} from "../game/manager/handlers.js"
  */
 export async function	registerGameClient(request, connection)
 {
+	console.log("Game Socket Connecting...");
 	// First, extract user from cookies - as in chat logic (or as I understood it)
 	const	cookies = parse(request.headers.cookies || '');
 	const	token = cookies.token;
 	const	user = await extractUserFromToken(token);
-
+	console.log("User extracted from token: ", user);
 	// Register and track connection
 	clients.set(user.id, {
 		connection,
 		roomId: null
 	})
-
 	return ({user, connection});
 }
 

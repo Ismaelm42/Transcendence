@@ -1,5 +1,6 @@
 
-import { registerGameClient, handleGameMessage, handleGameDisconnect, handleGameError} from '../utils/wsGameUtils.js';
+import { registerGameClient, handleGameDisconnect} from '../utils/wsGameUtils.js';
+import { handleGameMessage} from '../game/manager/handlers.js';
 
 /**
  *	What happens when a client connects:
@@ -10,7 +11,7 @@ import { registerGameClient, handleGameMessage, handleGameDisconnect, handleGame
  *		- handleGameMessage: Sets up message handling
  *		- handleGameDisconnect: Handles cleanup when a player leaves
  *		- handleGameError: Handles connection errors
- *	TODO: implement the four main functions
+ *	TODO: implement handleGameError at ../utils/wsGameUtils.js
  */
 export function configureGameRoutes(fastify)
 {
@@ -19,7 +20,7 @@ export function configureGameRoutes(fastify)
 			const	client = await registerGameClient(request, connection);
 			handleGameMessage(client, connection);
 			handleGameDisconnect(client, connection);
-			handleGameError(client, connection);
+			//handleGameError(client, connection);
 		})
 	})
 }

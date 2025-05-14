@@ -1,6 +1,6 @@
-import { Step } from "./stepRender";
+import { Step } from "./stepRender.js";
 
-export default class Pong extends Step
+export default class Game extends Step
 {
 	private socket: WebSocket | null = null;
 	private currentState: any = null;
@@ -56,14 +56,12 @@ export default class Pong extends Step
 	}
 
 	private connectToGame(mode: string) {
-		this.socket = new WebSocket(`ws://${window.location.host}/ws/game`);
+		this.socket = new WebSocket(`https://${window.location.host}/back/ws/game`);
 
 		this.socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-			
-			if (data.type === 'GAME_STATE') {
+			if (data.type === 'GAME_STATE')
 				this.renderGameState(data.state);
-			}
 		};
 
 		this.socket.onopen = () => {

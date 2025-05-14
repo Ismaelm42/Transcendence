@@ -20,7 +20,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
         var _a, _b;
         const btn = (_a = this.el) === null || _a === void 0 ? void 0 : _a.querySelector('.btnAcceptRequest ');
         btn === null || btn === void 0 ? void 0 : btn.addEventListener('click', (e) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _c;
             const btn = e.currentTarget;
             const wrapper = btn.closest('div.flex');
             if (!wrapper)
@@ -28,7 +28,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
             const span = wrapper.querySelector('span[data-user-id]');
             if (!span)
                 return;
-            const userId = (_a = span.textContent) === null || _a === void 0 ? void 0 : _a.trim();
+            const userId = (_c = span.textContent) === null || _c === void 0 ? void 0 : _c.trim();
             console.log('ID del usuario:', userId);
             const requestBody = {
                 friendId: userId
@@ -57,7 +57,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
         }));
         const btn2 = (_b = this.el) === null || _b === void 0 ? void 0 : _b.querySelector('.btnDeclineRequest ');
         btn2 === null || btn2 === void 0 ? void 0 : btn2.addEventListener('click', (e) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _d;
             const btn2 = e.currentTarget;
             const wrapper = btn2.closest('div.flex');
             if (!wrapper)
@@ -65,7 +65,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
             const span = wrapper.querySelector('span[data-user-id]');
             if (!span)
                 return;
-            const userId = (_a = span.textContent) === null || _a === void 0 ? void 0 : _a.trim();
+            const userId = (_d = span.textContent) === null || _d === void 0 ? void 0 : _d.trim();
             console.log('ID del usuario:', userId);
             const requestBody = {
                 friendId: userId

@@ -20,7 +20,8 @@ export class SPA {
             'chat': { module: 'chatRender.js', protected: true },
             'stats': { module: 'statsRender.js', protected: true },
             'logout': { module: 'logoutRender.js', protected: true },
-            'profile': { module: 'userProfileRender.js', protected: true }
+            'profile': { module: 'userProfileRender.js', protected: true },
+            'test': { module: 'testGame.js', protected: true }
         };
         this.container = document.getElementById(containerId);
         SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
