@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from './stepRender.js';
+import { setupSlider, resetSlider } from './hanldlePlaygameLogin.js';
 export default class Pong extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30,12 +31,18 @@ export default class Pong extends Step {
 						</nav>
 					`;
                     }
-                    // Retornar el contenido para usuarios autenticados
-                    appElement.innerHTML = `
-						<div class="flex-grow flex flex-col items-center justify-center ">
-		   					<h1 class="text-4xl font-bold text-gray-800">Play Pong Step</h1>
-						</div>
-				`;
+                    try {
+                        const response = yield fetch("../html/playGame.html");
+                        if (!response.ok)
+                            throw new Error("Failed to load the HTML file");
+                        let htmlContent = yield response.text();
+                        appElement.innerHTML = htmlContent;
+                        resetSlider();
+                        setupSlider();
+                    }
+                    catch (error) {
+                        console.error("Error en render:", error);
+                    }
                 }
                 else {
                     if (menuContainer) {

@@ -222,7 +222,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 # Petición para tener la lista de relaciones de un usuario:
 POST https://localhost:8443/back/get_all_friends_entries_from_an_id HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkyMDY3NCwiZXhwIjoxNzQ1OTI0Mjc0fQ.1caxFQLJ4IEGrvmgXJfTK18X2CVaMRJLfpzMdl_PaTs
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Njg2ODgwOSwiZXhwIjoxNzQ2ODcyNDA5fQ.ufRauLJfr9QF2HpYk74QHOKyeu-mixnirmkx7IvI320
 
 {
 }
@@ -260,3 +260,38 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 {
 	"keyword": "is"
 }
+
+// ***************************************************************//
+//	     Las siguientes peticiones verifican el usuario:               //
+//       player 2 o más usa email y password para verificar       //
+//       player 1 no envía nada en el body y usa token		      //
+//       														  //
+// ***************************************************************//
+
+POST https://localhost:8443/back/verify_user HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkyMDY3NCwiZXhwIjoxNzQ1OTI0Mjc0fQ.1caxFQLJ4IEGrvmgXJfTK18X2CVaMRJLfpzMdl_PaTs
+
+{
+	"email": "alfonso@gmail.com",
+	"password": "1234"
+}
+
+
+POST https://localhost:8443/back/verify_user HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Njg2ODgwOSwiZXhwIjoxNzQ2ODcyNDA5fQ.ufRauLJfr9QF2HpYk74QHOKyeu-mixnirmkx7IvI320
+
+{
+	"email": "",
+	"password": ""
+}
+
+POST https://localhost:8443/back/verify_user HTTP/1.1
+Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Njg2ODgwOSwiZXhwIjoxNzQ2ODcyNDA5fQ.ufRauLJfr9QF2HpYk74QHOKyeu-mixnirmkx7IvI320
+
+{
+}
+
+// ***************************************************************//

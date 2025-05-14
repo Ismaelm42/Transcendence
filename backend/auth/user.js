@@ -1,3 +1,5 @@
+import fs from 'fs/promises';import path from 'path';
+import fetch from 'node-fetch';
 import fastifyPassport from "@fastify/passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { crud } from '../crud/crud.js';
@@ -37,6 +39,19 @@ async function checkUsernameAvailability(googleDisplayName, attempt = 0) {
 	}
 }
 
+async function saveImageInDatabase(googleImagePath, user) {
+
+	// Save the googleImage in database
+	const response = await fetch(googleImagePath);
+	if (response.ok) {
+		const arrayBuffer = await response.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
+		const dbImagePath = path.join(`/app/images/${user.id}.png`);
+		await fs.writeFile(dbImagePath, buffer);
+		crud.user.updateUserbyId(user.id, null, null, null, null, null, `https://localhost:8443/back/images/${user.id}.png`);
+	}
+}
+
 export function authenticateUserWithGoogleStrategy() {
 
 	// Use Google Strategy to authenticate user
@@ -61,6 +76,9 @@ export function authenticateUserWithGoogleStrategy() {
 					const googleDisplayName = profile.displayName.trim().replace(/\s+/g, '_');
 					const username = await checkUsernameAvailability(googleDisplayName);
 					user = await crud.user.createUser(username, null, profile.id, profile.emails?.[0]?.value || null, profile.photos?.[0]?.value || null);
+					if (profile.photos?.[0]?.value) {
+						saveImageInDatabase(profile.photos[0].value, user);
+					}
 				}
 			}
 			cb(null, user);

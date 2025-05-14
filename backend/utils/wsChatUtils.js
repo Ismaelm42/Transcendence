@@ -1,10 +1,9 @@
 import { parse } from 'cookie';
 import { extractUserFromToken } from '../auth/token.js';
 
-export const clients = new Map();
-export const connected = new Map();
-let firstTimer = 1;
-let secondTimer;
+const clients = new Map();
+const connected = new Map();
+const usersTimeout = new Map();
 
 // Get the current time in a specific format
 function getTimeStamp() {
@@ -48,31 +47,32 @@ function updateConnectedUsers(user, isConnected, status) {
 
 function sendStatusToAllClients(user, status) {
 
-	const response = updateConnectedUsers(user, true, status);
-	for (const [id, client] of clients) {
-		client.send(JSON.stringify(response));
+	if (clients.has(user.id))
+	{
+		const response = updateConnectedUsers(user, true, status);
+		for (const [id, client] of clients) {
+			client.send(JSON.stringify(response));
+		}
 	}
 }
 
-// Set a timer to update the user's status connection
+// Update the user's status connection 120000(2mn) 180000(3mn)
 function setTimer(user) {
 
-	if (firstTimer) {
-		clearTimeout(firstTimer);
-		sendStatusToAllClients(user, "green");
+	const timeout = usersTimeout.get(user.id);
+	if (timeout) {
+		clearTimeout(timeout);
 	}
-	if (secondTimer) {
-		clearTimeout(secondTimer);
-	}
-	firstTimer = setTimeout(() => {
+	sendStatusToAllClients(user, "green");
+	const yellowTimer = setTimeout(() => {
 		sendStatusToAllClients(user, "yellow");
-		secondTimer = setTimeout(() => {
-			sendStatusToAllClients(user, "red");	
+		const redTimer = setTimeout(() => {
+			sendStatusToAllClients(user, "red");
 		}, 5000);
-	  }, 5000);
+		usersTimeout.set(user.id, redTimer);
+	}, 5000);
+	usersTimeout.set(user.id, yellowTimer);
 }
-// 180000
-// 120000
 
 // Register a user when they connect to the WebSocket server
 export async function registerUser(request, socket) {
@@ -81,10 +81,8 @@ export async function registerUser(request, socket) {
 	const token = cookies.token;
 	const user = await extractUserFromToken(token);
 	clients.set(user.id, socket);
+	usersTimeout.set(user.id, null)
 	setTimer(user);
-	// for (const [id, client] of clients) {
-	// 	client.send(JSON.stringify(response));
-	// }
 	return user;
 }
 
@@ -104,6 +102,9 @@ export function handleIncomingSocketMessage(user, socket) {
 					client.send(JSON.stringify(response));
 				}
 			}
+			else if (data.type === "status") {
+				setTimer(user);
+			}
 		} catch (error) {
 			console.log("An error occured:", error);
 		}
@@ -115,6 +116,7 @@ export function handleSocketClose(user, socket) {
 
 	socket.on('close', () => {
 		clients.delete(user.id);
+		usersTimeout.delete(user.id);
 		const response = updateConnectedUsers(user, false);
 		for (const [id, client] of clients) {
 			client.send(JSON.stringify(response));
@@ -127,6 +129,7 @@ export function handleSocketError(user, socket) {
 
 	socket.on('error', (error) => {
 		clients.delete(user.id);
+		usersTimeout.delete(user.id);
 		const response = updateConnectedUsers(user, false);
 		for (const [id, client] of clients) {
 			client.send(JSON.stringify(response));
@@ -141,6 +144,7 @@ export function disconnectUser(user) {
 	if (socket) {
 		socket.close(1000, "Server closed connection");
 		clients.delete(user.id);
+		usersTimeout.delete(user.id);
 		const response = updateConnectedUsers(user, false);
 		for (const [id, client] of clients) {
 			client.send(JSON.stringify(response));

@@ -44,7 +44,7 @@ function handleSocketOpen(socket: WebSocket): void {
 	socket.onopen = () => {
 		const handshake = {
 			type: 'handshake',
-			message: 'hi'
+			message: ''
 		};
 		socket.send(JSON.stringify(handshake));
 	}
@@ -99,8 +99,17 @@ function handleSocketError(socket: WebSocket): void {
 	}
 }
 
-export function handleSocket(chatMessages: HTMLDivElement, items: HTMLDivElement, username: string): WebSocket {
-	const socket = new WebSocket("https://localhost:8443/back/ws/chat");
+export function retrieveConnectedUsers(socket: WebSocket){
+
+	const message = {
+		type: 'status',
+		message: ''
+	};
+	socket.send(JSON.stringify(message));
+}
+
+export function handleSocket(socket: WebSocket, chatMessages: HTMLDivElement, items:HTMLDivElement , username: string): WebSocket {
+
 	handleSocketOpen(socket);
 	handleSocketMessage(socket, chatMessages, items, username);
 	handleSocketClose(socket);
