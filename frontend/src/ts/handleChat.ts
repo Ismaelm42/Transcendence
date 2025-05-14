@@ -1,3 +1,5 @@
+let htmlUsersConnected = '';
+let keyword = '';
 
 async function formatMsgTemplate(data: any, name: string): Promise<string> {
 
@@ -26,15 +28,15 @@ async function formatConnectedUsersTemplate(data: any, name:string): Promise<str
 	const usersConnected = Object.values(data.object) as { username: string; imagePath: string; status: string }[];
 
 	for (const user of usersConnected) {
-			userHtmlContent = await fetch("../html/userListItem.html");
-			htmlContent = await userHtmlContent.text();
-			htmlContent = htmlContent
-			.replace("{{ username }}", user.username.toString())
-			.replace("{{ usernameImage }}", user.username.toString())
-			.replace("{{ imagePath }}", user.imagePath.toString())
-			.replace("{{ bgcolor }}", user.status.toString())
-			.replace("{{ bcolor }}", user.status.toString());
-			htmlText += htmlContent;
+		userHtmlContent = await fetch("../html/userListItem.html");
+		htmlContent = await userHtmlContent.text();
+		htmlContent = htmlContent
+		.replace("{{ username }}", user.username.toString())
+		.replace("{{ usernameImage }}", user.username.toString())
+		.replace("{{ imagePath }}", user.imagePath.toString())
+		.replace("{{ bgcolor }}", user.status.toString())
+		.replace("{{ bcolor }}", user.status.toString());
+		htmlText += htmlContent;
 	}
 	return htmlText;
 }
@@ -76,9 +78,10 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, it
 			chatMessages.scrollTop = chatMessages.scrollHeight;
 		}
 		if (data.type === 'connectedUsers') {
-			let HtmlContent = await formatConnectedUsersTemplate(data, name);
-			HtmlContent = sortUsersAlphabetically(HtmlContent);
-			items.innerHTML = HtmlContent;
+			htmlUsersConnected = await formatConnectedUsersTemplate(data, name);
+			htmlUsersConnected = sortUsersAlphabetically(htmlUsersConnected);
+			items.innerHTML = htmlUsersConnected;
+			filterUsers(items);
 		}
 	}
 }
@@ -133,4 +136,31 @@ export function handleFormSubmit(e: SubmitEvent, textarea: HTMLTextAreaElement, 
 		socket.send(JSON.stringify(message));
 		textarea.value = '';
 	}
+}
+
+function filterUsers(items: HTMLDivElement) {
+
+	const tempContainer = document.createElement("div");
+	tempContainer.innerHTML = htmlUsersConnected;
+
+	const userElements = Array.from(tempContainer.querySelectorAll(".item")) as HTMLDivElement[];
+
+	const filteredUsers = userElements.filter(userElement => {
+		const username = userElement.querySelector("span.text-sm")?.textContent?.trim().toLowerCase() || "";
+		return username.includes(keyword.toLowerCase());
+	});
+	items.innerHTML = "";
+	if (filteredUsers.length > 0) {
+		filteredUsers.forEach(userElement => {
+			items.appendChild(userElement);
+		});
+	}
+}
+
+export function handleSearchInput(e: Event, items: HTMLDivElement) {
+
+	const target = e.target as HTMLInputElement;
+	const value = target.value;
+	keyword = value.toLowerCase();
+	filterUsers(items);
 }

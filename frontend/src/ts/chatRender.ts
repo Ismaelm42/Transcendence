@@ -1,5 +1,5 @@
 import { Step } from './stepRender.js';
-import { retrieveConnectedUsers, handleSocket, handleTextareaKeydown, handleFormSubmit} from './handleChat.js';
+import { retrieveConnectedUsers, handleSocket, handleTextareaKeydown, handleFormSubmit, handleSearchInput} from './handleChat.js';
 
 export default class Chat extends Step {
 
@@ -18,6 +18,7 @@ export default class Chat extends Step {
 				const textarea = document.getElementById("chat-textarea") as HTMLTextAreaElement;
 				const chatMessages = document.getElementById("chat-messages") as HTMLDivElement;
 				const items = document.getElementById("item-container") as HTMLDivElement;
+				const search = document.getElementById("search-input") as HTMLInputElement;
 				const stored = sessionStorage.getItem("chatHTML") || "";
 				if (stored) {
 					chatMessages.innerHTML = stored;
@@ -33,6 +34,7 @@ export default class Chat extends Step {
 				handleSocket(Step.socket, chatMessages, items, this.username!);
 				textarea.addEventListener('keydown', (e) => handleTextareaKeydown(e, form));
 				form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket!));
+				search.addEventListener('input', (e) => handleSearchInput(e, items));
 			}
 		catch (error) {
 				appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
