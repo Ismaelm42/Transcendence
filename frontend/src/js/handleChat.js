@@ -34,9 +34,7 @@ function formatConnectedUsersTemplate(data, name) {
         let htmlContent;
         let userHtmlContent;
         const usersConnected = Object.values(data.object);
-        //filtrar los usuarios aqui
         for (const user of usersConnected) {
-            //if (user.username contains keyword && si el input no esta vacio) {}
             userHtmlContent = yield fetch("../html/userListItem.html");
             htmlContent = yield userHtmlContent.text();
             htmlContent = htmlContent
@@ -47,7 +45,6 @@ function formatConnectedUsersTemplate(data, name) {
                 .replace("{{ bcolor }}", user.status.toString());
             htmlText += htmlContent;
         }
-        //
         return htmlText;
     });
 }
@@ -144,33 +141,26 @@ export function handleFormSubmit(e, textarea, socket) {
  */
 export function filterSearchUsers(keyword) {
     inputKeyword = keyword;
-    // Obtener el contenedor de usuarios conectados
     const itemsContainer = document.getElementById("item-container");
     if (!itemsContainer) {
         console.error("Items container not found");
         return;
     }
-    // Crear un contenedor temporal para procesar htmlUsersConnected
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = htmlUsersConnected;
-    // Obtener todos los elementos de usuario conectados desde htmlUsersConnected
     const userElements = Array.from(tempContainer.querySelectorAll(".item"));
-    // Filtrar los usuarios que coincidan con el término de búsqueda
     const filteredUsers = userElements.filter(userElement => {
         var _a, _b;
         const username = ((_b = (_a = userElement.querySelector("span.text-sm")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim().toLowerCase()) || "";
         return username.includes(keyword.toLowerCase());
     });
-    // Limpiar el contenedor de usuarios
     itemsContainer.innerHTML = "";
-    // Mostrar solo los usuarios que coincidan
     if (filteredUsers.length > 0) {
         filteredUsers.forEach(userElement => {
             itemsContainer.appendChild(userElement);
         });
     }
     else {
-        // Si no hay coincidencias, mostrar un mensaje
         const noResultsElement = document.createElement("div");
         noResultsElement.className = "text-gray-500";
         noResultsElement.textContent = "No users found";

@@ -45,14 +45,6 @@ export default class Chat extends Step {
                         filterSearchUsers(searchInput.value);
                 	});
                 }
-				//
-				const usersContainer = document.getElementById("users-container") as HTMLDivElement;
-				usersContainer.addEventListener('change', (e) => {
-					console.log("on-change");
-					//filterSearchUsers(searchInput.value);
-				});
-				//
-
 			}
 		catch (error) {
 				appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

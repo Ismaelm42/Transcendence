@@ -26,9 +26,8 @@ async function formatConnectedUsersTemplate(data: any, name: string): Promise<st
 	let htmlContent;
 	let userHtmlContent;
 	const usersConnected = Object.values(data.object) as { username: string; imagePath: string; status: string }[];
-//filtrar los usuarios aqui
+
 	for (const user of usersConnected) {
-		//if (user.username contains keyword && si el input no esta vacio) {}
 		userHtmlContent = await fetch("../html/userListItem.html");
 		htmlContent = await userHtmlContent.text();
 		htmlContent = htmlContent
@@ -39,7 +38,6 @@ async function formatConnectedUsersTemplate(data: any, name: string): Promise<st
 			.replace("{{ bcolor }}", user.status.toString());
 		htmlText += htmlContent;
 	}
-	//
 	return htmlText;
 }
 
@@ -148,36 +146,30 @@ export function handleFormSubmit(e: SubmitEvent, textarea: HTMLTextAreaElement, 
  */
 export function filterSearchUsers(keyword: string): void {
 	inputKeyword = keyword;
-	// Obtener el contenedor de usuarios conectados
 	const itemsContainer = document.getElementById("item-container") as HTMLDivElement;
 	if (!itemsContainer) {
 		console.error("Items container not found");
 		return;
 	}
 
-	// Crear un contenedor temporal para procesar htmlUsersConnected
 	const tempContainer = document.createElement("div");
 	tempContainer.innerHTML = htmlUsersConnected;
 
-	// Obtener todos los elementos de usuario conectados desde htmlUsersConnected
+
 	const userElements = Array.from(tempContainer.querySelectorAll(".item")) as HTMLDivElement[];
 
-	// Filtrar los usuarios que coincidan con el término de búsqueda
 	const filteredUsers = userElements.filter(userElement => {
 		const username = userElement.querySelector("span.text-sm")?.textContent?.trim().toLowerCase() || "";
 		return username.includes(keyword.toLowerCase());
 	});
 
-	// Limpiar el contenedor de usuarios
 	itemsContainer.innerHTML = "";
 
-	// Mostrar solo los usuarios que coincidan
 	if (filteredUsers.length > 0) {
 		filteredUsers.forEach(userElement => {
 			itemsContainer.appendChild(userElement);
 		});
 	} else {
-		// Si no hay coincidencias, mostrar un mensaje
 		const noResultsElement = document.createElement("div");
 		noResultsElement.className = "text-gray-500";
 		noResultsElement.textContent = "No users found";
