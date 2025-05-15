@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from './stepRender.js';
-import { retrieveConnectedUsers, handleSocket, handleTextareaKeydown, handleFormSubmit } from './handleChat.js';
+import { retrieveConnectedUsers, handleSocket, handleTextareaKeydown, handleFormSubmit, filterSearchUsers } from './handleChat.js';
 export default class Chat extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,6 +26,7 @@ export default class Chat extends Step {
                 const textarea = document.getElementById("chat-textarea");
                 const chatMessages = document.getElementById("chat-messages");
                 const items = document.getElementById("item-container");
+                const searchInput = document.getElementById("search-input");
                 const stored = sessionStorage.getItem("chatHTML") || "";
                 if (stored) {
                     chatMessages.innerHTML = stored;
@@ -41,6 +42,24 @@ export default class Chat extends Step {
                 handleSocket(Step.socket, chatMessages, items, this.username);
                 textarea.addEventListener('keydown', (e) => handleTextareaKeydown(e, form));
                 form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket));
+                if (searchInput) {
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            filterSearchUsers(searchInput.value);
+                        }
+                    });
+                    searchInput.addEventListener('input', () => {
+                        filterSearchUsers(searchInput.value);
+                    });
+                }
+                //
+                const usersContainer = document.getElementById("users-container");
+                usersContainer.addEventListener('change', (e) => {
+                    console.log("on-change");
+                    //filterSearchUsers(searchInput.value);
+                });
+                //
             }
             catch (error) {
                 appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

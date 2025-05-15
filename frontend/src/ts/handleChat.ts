@@ -1,4 +1,5 @@
 let htmlUsersConnected = '';
+let inputKeyword = '';
 
 async function formatMsgTemplate(data: any, name: string): Promise<string> {
 
@@ -25,8 +26,9 @@ async function formatConnectedUsersTemplate(data: any, name: string): Promise<st
 	let htmlContent;
 	let userHtmlContent;
 	const usersConnected = Object.values(data.object) as { username: string; imagePath: string; status: string }[];
-
+//filtrar los usuarios aqui
 	for (const user of usersConnected) {
+		//if (user.username contains keyword && si el input no esta vacio) {}
 		userHtmlContent = await fetch("../html/userListItem.html");
 		htmlContent = await userHtmlContent.text();
 		htmlContent = htmlContent
@@ -37,6 +39,7 @@ async function formatConnectedUsersTemplate(data: any, name: string): Promise<st
 			.replace("{{ bcolor }}", user.status.toString());
 		htmlText += htmlContent;
 	}
+	//
 	return htmlText;
 }
 
@@ -80,7 +83,8 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, it
 			let HtmlContent = await formatConnectedUsersTemplate(data, name);
 			HtmlContent = sortUsersAlphabetically(HtmlContent);
 			htmlUsersConnected = HtmlContent;
-			items.innerHTML = HtmlContent;
+			filterSearchUsers(inputKeyword);
+			//items.innerHTML = HtmlContent;
 		}
 	}
 }
@@ -143,7 +147,7 @@ export function handleFormSubmit(e: SubmitEvent, textarea: HTMLTextAreaElement, 
  * @returns 
  */
 export function filterSearchUsers(keyword: string): void {
-
+	inputKeyword = keyword;
 	// Obtener el contenedor de usuarios conectados
 	const itemsContainer = document.getElementById("item-container") as HTMLDivElement;
 	if (!itemsContainer) {

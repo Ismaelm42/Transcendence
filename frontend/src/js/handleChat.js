@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 let htmlUsersConnected = '';
+let inputKeyword = '';
 function formatMsgTemplate(data, name) {
     return __awaiter(this, void 0, void 0, function* () {
         let htmlContent;
@@ -33,7 +34,9 @@ function formatConnectedUsersTemplate(data, name) {
         let htmlContent;
         let userHtmlContent;
         const usersConnected = Object.values(data.object);
+        //filtrar los usuarios aqui
         for (const user of usersConnected) {
+            //if (user.username contains keyword && si el input no esta vacio) {}
             userHtmlContent = yield fetch("../html/userListItem.html");
             htmlContent = yield userHtmlContent.text();
             htmlContent = htmlContent
@@ -44,6 +47,7 @@ function formatConnectedUsersTemplate(data, name) {
                 .replace("{{ bcolor }}", user.status.toString());
             htmlText += htmlContent;
         }
+        //
         return htmlText;
     });
 }
@@ -84,7 +88,8 @@ function handleSocketMessage(socket, chatMessages, items, name) {
             let HtmlContent = yield formatConnectedUsersTemplate(data, name);
             HtmlContent = sortUsersAlphabetically(HtmlContent);
             htmlUsersConnected = HtmlContent;
-            items.innerHTML = HtmlContent;
+            filterSearchUsers(inputKeyword);
+            //items.innerHTML = HtmlContent;
         }
     });
 }
@@ -138,6 +143,7 @@ export function handleFormSubmit(e, textarea, socket) {
  * @returns
  */
 export function filterSearchUsers(keyword) {
+    inputKeyword = keyword;
     // Obtener el contenedor de usuarios conectados
     const itemsContainer = document.getElementById("item-container");
     if (!itemsContainer) {
