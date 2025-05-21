@@ -39,6 +39,7 @@ function formatConnectedUsersTemplate(data, name) {
             userHtmlContent = yield fetch("../html/userListItem.html");
             htmlContent = yield userHtmlContent.text();
             htmlContent = htmlContent
+                .replace("{{ userId }}", user.userId.toString())
                 .replace("{{ username }}", user.username.toString())
                 .replace("{{ usernameImage }}", user.username.toString())
                 .replace("{{ imagePath }}", user.imagePath.toString())
@@ -171,6 +172,10 @@ function showUserOptionsMenu(userElement, event) {
     const username = (_b = (_a = userElement.querySelector("span.text-sm")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
     if (!username)
         return;
+    const userId = userElement.id.replace("item-", "");
+    console.log("userId", userId);
+    if (!userId)
+        return;
     const oldMenu = document.getElementById("user-options-menu");
     if (oldMenu) {
         oldMenu.remove();
@@ -179,9 +184,9 @@ function showUserOptionsMenu(userElement, event) {
     menu.id = "user-options-menu";
     menu.className = "absolute bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-50";
     menu.innerHTML = `
-		<div class="text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded" data-action="add">➕ Agregar amigo</div>
-		<div class="text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded" data-action="msg">📩 Mensaje privado</div>
-		<div class="text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded" data-action="block">🚫 Bloquear</div>
+		<div class="text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded" data-action="add">➕ Add Friend</div>
+		<div class="text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded" data-action="msg">📩 Private Message</div>
+		<div class="text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded" data-action="block">🚫 Block</div>
 	`;
     menu.style.top = `${event.clientY + 5}px`;
     menu.style.left = `${event.clientX + 5}px`;
@@ -193,7 +198,7 @@ function showUserOptionsMenu(userElement, event) {
                 switch (action) {
                     case "add":
                         console.log(`Agregar amigo a ${username}`);
-                        //sendFriendRequest(userId!);
+                        sendFriendRequest(userId);
                         break;
                     case "msg":
                         console.log(`Mensaje privado a ${username}`);
