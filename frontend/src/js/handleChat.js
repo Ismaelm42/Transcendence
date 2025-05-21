@@ -34,6 +34,7 @@ function formatConnectedUsersTemplate(data, name) {
         let htmlContent;
         let userHtmlContent;
         const usersConnected = Object.values(data.object);
+        console.log("Connected users:", usersConnected);
         for (const user of usersConnected) {
             userHtmlContent = yield fetch("../html/userListItem.html");
             htmlContent = yield userHtmlContent.text();
@@ -163,15 +164,10 @@ export function filterSearchUsers(keyword) {
             });
         });
     }
-    else {
-        const noResultsElement = document.createElement("div");
-        noResultsElement.className = "text-gray-500";
-        noResultsElement.textContent = "No users found";
-        itemsContainer.appendChild(noResultsElement);
-    }
 }
 function showUserOptionsMenu(userElement, event) {
     var _a, _b;
+    console.log(userElement);
     const username = (_b = (_a = userElement.querySelector("span.text-sm")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
     if (!username)
         return;
@@ -197,6 +193,7 @@ function showUserOptionsMenu(userElement, event) {
                 switch (action) {
                     case "add":
                         console.log(`Agregar amigo a ${username}`);
+                        //sendFriendRequest(userId!);
                         break;
                     case "msg":
                         console.log(`Mensaje privado a ${username}`);
@@ -226,4 +223,33 @@ function openPrivateChat(username) {
         privateChat.remove();
     }
     console.log("Abriendo chat privado con:", username);
+}
+function sendFriendRequest(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("Enviando solicitud de amistad a:", userId);
+        try {
+            const requestBody = { friendId: userId };
+            console.log("Request body:", requestBody);
+            const response = yield fetch("https://localhost:8443/back/send_friend_request", {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+            console.log("Response---------------D:", response);
+            if (response.ok) {
+                const data = yield response.json();
+                console.log("Friend request sent successfully:", data);
+            }
+            else {
+                const errorMessage = yield response.json();
+                console.error("Error sending friend request:", errorMessage);
+            }
+        }
+        catch (error) {
+            console.error("Error sending friend request:", error);
+        }
+    });
 }

@@ -25,8 +25,8 @@ async function formatConnectedUsersTemplate(data: any, name: string): Promise<st
 	let htmlText = '';
 	let htmlContent;
 	let userHtmlContent;
-	const usersConnected = Object.values(data.object) as { username: string; imagePath: string; status: string }[];
-
+	const usersConnected = Object.values(data.object) as { userId: string; username: string; imagePath: string; status: string }[];
+	console.log("Connected users:", usersConnected);
 	for (const user of usersConnected) {
 		userHtmlContent = await fetch("../html/userListItem.html");
 		htmlContent = await userHtmlContent.text();
@@ -172,15 +172,11 @@ export function filterSearchUsers(keyword: string): void {
 				showUserOptionsMenu(userElement, event)
 			});
 		});
-	} else {
-		const noResultsElement = document.createElement("div");
-		noResultsElement.className = "text-gray-500";
-		noResultsElement.textContent = "No users found";
-		itemsContainer.appendChild(noResultsElement);
 	}
 }
 
 function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent) {
+	console.log(userElement);
 	const username = userElement.querySelector("span.text-sm")?.textContent?.trim();
 	if (!username) return;
 
@@ -209,6 +205,7 @@ function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent) {
 				switch (action) {
 					case "add":
 						console.log(`Agregar amigo a ${username}`);
+						//sendFriendRequest(userId!);
 						break;
 					case "msg":
 						console.log(`Mensaje privado a ${username}`);
@@ -239,4 +236,32 @@ function openPrivateChat(username: string) {
 		privateChat.remove();
 	}
 	console.log("Abriendo chat privado con:", username);
+}
+
+async function sendFriendRequest(userId: string): Promise<void> {
+	console.log("Enviando solicitud de amistad a:", userId);
+	try {
+		const requestBody = { friendId: userId };
+		console.log("Request body:", requestBody);
+		const response = await fetch("https://localhost:8443/back/send_friend_request", {
+			method: "POST",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(requestBody),
+		});
+		console.log("Response---------------D:", response);
+		if (response.ok) {
+			const data = await response.json();
+			console.log("Friend request sent successfully:", data);
+		}
+		else {
+			const errorMessage = await response.json();
+			console.error("Error sending friend request:", errorMessage);
+		}
+	} catch (error) {
+		console.error("Error sending friend request:", error);
+	}
+
 }
