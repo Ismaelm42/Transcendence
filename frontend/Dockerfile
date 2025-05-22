@@ -14,4 +14,5 @@ RUN npm install
 
 EXPOSE 3000
 
+# ISM: Copy only files to /src so there's not /src/src
 CMD ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]

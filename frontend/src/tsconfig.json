@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+	"target": "es6",
+	"outDir": "js",
+	"module": "es2020",
+    "strict": true,
+    "esModuleInterop": true,
+	"moduleResolution": "node",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+	"allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2022",
+      "dom",
+      "dom.iterable"
+    ],
+  },
+  "include": ["ts/**/*"],
+}
