@@ -25,8 +25,8 @@ export default class Chat extends Step {
                 const form = document.getElementById("chat-form");
                 const textarea = document.getElementById("chat-textarea");
                 const chatMessages = document.getElementById("chat-messages");
-                const items = document.getElementById("item-container");
-                const searchInput = document.getElementById("search-input");
+                const items = document.getElementById("user-item-container");
+                const searchInput = document.getElementById("search-users-input");
                 const stored = sessionStorage.getItem("chatHTML") || "";
                 if (stored) {
                     chatMessages.innerHTML = stored;

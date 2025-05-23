@@ -140,7 +140,7 @@ export function handleFormSubmit(e: SubmitEvent, textarea: HTMLTextAreaElement, 
 
 export function filterSearchUsers(keyword: string): void {
 	inputKeyword = keyword;
-	const itemsContainer = document.getElementById("item-container") as HTMLDivElement;
+	const itemsContainer = document.getElementById("user-item-container") as HTMLDivElement;
 	const tempContainer = document.createElement("div");
 	tempContainer.innerHTML = htmlUsersConnected;
 	const userElements = Array.from(tempContainer.querySelectorAll(".item")) as HTMLDivElement[];

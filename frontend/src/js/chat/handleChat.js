@@ -135,7 +135,7 @@ export function handleFormSubmit(e, textarea, socket) {
 }
 export function filterSearchUsers(keyword) {
     inputKeyword = keyword;
-    const itemsContainer = document.getElementById("item-container");
+    const itemsContainer = document.getElementById("user-item-container");
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = htmlUsersConnected;
     const userElements = Array.from(tempContainer.querySelectorAll(".item"));
