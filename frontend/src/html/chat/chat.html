@@ -1,17 +1,21 @@
 <section id="chat-section" class="bg-gray-900 flex justify-center items-start">
 	<!-- Responsive Container -->
 	<div class="flex flex-col lg:flex-row lg:flex-wrap h-auto lg:h-[65vh] w-full max-w-screen-xl mx-auto">
-		
+
+
 		<!-- Messages Container -->
-		<div id="messages-container"
-			class="overflow-y-auto flex flex-col justify-start w-full lg:flex-[3] h-[50vh] lg:h-full rounded-tl-xl rounded-bl-xl bg-gray-800 border border-gray-500 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-			<!-- Title -->
-			<div class="py-4 bg-gray-800 px-4 border-2 border-yellow-500">
+		<div id= "messages-container"
+			class="flex flex-col items-center justify-start w-full lg:flex-[2] h-[50vh] lg:h-full rounded-tl-xl rounded-bl-xl bg-gray-800 border border-gray-500">
+			<!-- Chats div -->
+			<div id="messages-container-title" class="w-full px-4 py-4 bg-gray-800 rounded-tl-xl">
 				<h2 class="text-white text-xl mb-2">Chats</h2>
 			</div>
 			<!-- Chats List Container -->
-			<div id="chat-item-container" class="w-full">
-				<!-- Chats will be dynamically inserted here -->
+			<div id="chat-item-container"
+				class="w-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+				<div id="chat-item-list-container" class="w-full">
+					<!-- Chat users will be dynamically inserted here -->
+				</div>
 			</div>
 		</div>
 
@@ -19,15 +23,14 @@
 		<!-- Chat Container -->
 		<div id="chat-container" class="flex flex-col items-center justify-start w-full lg:flex-[5] h-[50vh] lg:h-full border-t border-b border-gray-500">
 		<!-- User info Container -->
-			<!-- <div class="py-4 px-4 bg-gray-800 border-b border-gray-500 w-full"> -->
-			<div class="py-4 px-4 bg-gray-800 border-2 border-emerald-500 w-full">
+			<div id="user-info-container" class="py-4 px-4 bg-gray-800 border-b border-gray-500 w-full">
 				<h2 class="text-white text-xl mb-2">User info here</h2>
 				<!-- User info will be dynamically inserted here -->
 				 <!-- <div>
 				 </div> -->
 			</div>
 			<div id="chat-messages"
-				class="overflow-y-auto flex flex-col items-center justify-start px-6 py-4 pr-2 h-[50vh] lg:h-full w-full border-b border-gray-500 bg-gray-800 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+				class="overflow-y-auto flex flex-col items-center justify-start px-6 py-1 pr-2 h-[50vh] lg:h-full w-full border-b border-gray-500 bg-gray-800 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 				<!-- Chat messages will be dynamically inserted here -->
 			</div>
 			<!-- Chat input area -->
@@ -59,22 +62,27 @@
 			</div>
 		</div>
 
-
+		
 		<!-- Users Container -->
-		<div id="users-container"
-			class="overflow-y-auto flex flex-col justify-start w-full lg:flex-[2] h-[50vh] lg:h-full rounded-tr-xl rounded-br-xl bg-gray-800 border border-gray-500 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-			<!-- Search Form -->
-			 
-			<form id="search-users-form" class="w-full mb-4 border-2 border-red-500">
-				<div class="flex items-center py-4 bg-gray-800 ">
-					<input id="search-users-input" type="text"
-						class="block mx-4 p-2.5 w-full text-sm text-gray-900 rounded-lg border bg-gray-700 border-gray-900 placeholder-gray-400 text-white resize-none focus:outline focus:outline-2 focus:outline-gray-400"
-						placeholder="Search users..." />
+		<div id = "users-container"
+			class="flex flex-col items-center justify-start w-full lg:flex-[2] h-[50vh] lg:h-full rounded-tr-xl rounded-br-xl bg-gray-800 border border-gray-500">
+			<!-- Search div -->
+			<div id="search-users-container">
+				<!-- Search Form -->
+				<form id="search-users-form" class="px-4 py-4 w-full">
+					<div class="flex items-center bg-gray-800 ">
+						<input id="search-users-input" type="text"
+							class="block mx-4 p-2 w-full text-sm text-gray-900 rounded-lg border bg-gray-700 border-gray-900 placeholder-gray-400 text-white resize-none focus:outline focus:outline-2 focus:outline-gray-400"
+							placeholder="Search users..."/>
+					</div>
+				</form>
+			</div>
+			<!-- Users list Container -->
+			<div id="users-list-container"
+				class="w-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+				<div id="user-item-container" class="w-full">
+					<!-- Chat users will be dynamically inserted here -->
 				</div>
-			</form>
-			<!-- Users Item List Container -->
-			<div id="user-item-container" class="w-full">
-				<!-- Chat users will be dynamically inserted here -->
 			</div>
 		</div>
 	</div>
