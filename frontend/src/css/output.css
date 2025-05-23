@@ -782,6 +782,9 @@
   .border-blue-700 {
     border-color: var(--color-blue-700);
   }
+  .border-emerald-500 {
+    border-color: var(--color-emerald-500);
+  }
   .border-gray-100 {
     border-color: var(--color-gray-100);
   }
