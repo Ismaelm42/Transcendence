@@ -6,18 +6,19 @@ export class GameSession
 	{
 		this.roomId = roomId;
 		this.gameMode = gameMode;
-		this.players = new Map(); // playerId -> { connection, playerNumber }
+		this.players = new Map();
 		this.state = this.resetState();
 		this.gameLoop = null;
 		this.aiInterval = null;
 		this.lastUpdateTime = Date.now();
+		this.isResetting = false; // Add this flag
 	}
 
 	// Initialize or reset game state
 	resetState()
 	{
 		return {
-			ball: { x: 0.5, y: 0.5, dx: 0.02, dy: 0.01 },
+			ball: { x: 0.5, y: 0.5, dx: 0.20, dy: 0.07 },
 			paddles: {
 				player1: { y: 0.5 },
 				player2: { y: 0.5 }
@@ -60,76 +61,224 @@ export class GameSession
 	// Main game update loop
 	update(deltaTime)
 	{
-		// Ball movement
+		// Ball movement with appropriate clamping
 		this.state.ball.x += this.state.ball.dx * deltaTime;
 		this.state.ball.y += this.state.ball.dy * deltaTime;
-
+	
 		// Wall collisions (top/bottom)
-		if (this.state.ball.y <= 0 || this.state.ball.y >= 1) {
-			this.state.ball.dy *= -1;
+		// Add a small buffer (0.01) to prevent ball getting stuck
+		if (this.state.ball.y <= 0.01) {
+			this.state.ball.y = 0.01;
+			this.state.ball.dy = Math.abs(this.state.ball.dy);
+		} 
+		else if (this.state.ball.y >= 0.99) {
+			this.state.ball.y = 0.99;
+			this.state.ball.dy = -Math.abs(this.state.ball.dy);
 		}
-
+	
 		// Paddle collisions
 		this.checkPaddleCollision('player1');
 		this.checkPaddleCollision('player2');
-
+	
 		// Scoring
 		this.checkScoring();
-	}
+	}	
 
 	checkPaddleCollision(playerNumber) {
 		const paddle = this.state.paddles[playerNumber];
 		const ball = this.state.ball;
-		const paddleWidth = 0.02;
-		const paddleHeight = 0.2;
-
-		const paddleX = playerNumber === 'player1' ? 0 : 1 - paddleWidth;
-		const paddleTop = paddle.y - paddleHeight / 2;
-		const paddleBottom = paddle.y + paddleHeight / 2;
-
-		if (
-			ball.x >= paddleX && ball.x <= paddleX + paddleWidth &&
-			ball.y >= paddleTop && ball.y <= paddleBottom
-		) {
-			this.state.ball.dx *= -1.05; // Increase speed slightly on hit
-			// Add angle based on where ball hits paddle
-			this.state.ball.dy += (ball.y - paddle.y) * 0.1;
+		
+		// Store last paddle position to detect movement
+		if (!paddle.lastY) {
+			paddle.lastY = paddle.y;
+		}
+		
+		// Calculate paddle velocity (how fast it's moving)
+		const paddleVelocity = paddle.y - paddle.lastY;
+		paddle.lastY = paddle.y; // Update for next frame
+		
+		// Paddle dimensions
+		const paddleWidth = 0.025;  // 2.5% of screen width
+		const paddleHeight = 0.15;  // 15% of screen height
+		
+		// Calculate paddle position
+		const paddleX = playerNumber === 'player1' ? 0.03 : (0.97 - paddleWidth);
+		const paddleTop = paddle.y - (paddleHeight/2);
+		const paddleBottom = paddle.y + (paddleHeight/2);
+		const collisionEdgeX = playerNumber === 'player1' ? 
+			paddleX + paddleWidth : paddleX;
+		
+		// Ball properties
+		const ballRadius = 0.015;
+		
+		// Collision detection
+		const ballInYRange = ball.y >= paddleTop && ball.y <= paddleBottom;
+		let ballAtCollisionX = false;
+		
+		if (playerNumber === 'player1') {
+			ballAtCollisionX = (ball.x - ballRadius) <= collisionEdgeX && ball.x >= paddleX;
+		} else {
+			ballAtCollisionX = (ball.x + ballRadius) >= collisionEdgeX && ball.x <= (paddleX + paddleWidth);
+		}
+		
+		// Check for collision
+		if (ballAtCollisionX && ballInYRange) {
+			// Position adjustment to prevent penetration
+			if (playerNumber === 'player1') {
+				this.state.ball.x = collisionEdgeX + ballRadius + 0.001;
+			} else {
+				this.state.ball.x = collisionEdgeX - ballRadius - 0.001;
+			}
+			
+			// Calculate current ball speed
+			const currentSpeed = Math.sqrt(
+				this.state.ball.dx * this.state.ball.dx + 
+				this.state.ball.dy * this.state.ball.dy
+			);
+			
+			// Increase speed by 7% (more noticeable than 5%)
+			const speedMultiplier = 1.07;
+			
+			// ATARI-STYLE BOUNCE PHYSICS:
+			// 1. Calculate relative position on paddle (from -1 at top to +1 at bottom)
+			const hitPosition = (ball.y - paddle.y) / (paddleHeight/2);
+			
+			// 2. Base angle change - more dramatic at edges
+			// This creates a more pronounced angle when hitting near the edges
+			let angleEffect = hitPosition * 0.3; // Stronger effect than before (was 0.12)
+			
+			// 3. Add paddle movement effect - if paddle is moving, it influences the ball direction
+			// This is what gives that classic Atari pong feel
+			const paddleMovementEffect = paddleVelocity * 3.0; // Amplify paddle movement effect
+			angleEffect += paddleMovementEffect;
+			
+			// 4. Reverse horizontal direction with speed increase  
+			this.state.ball.dx *= -speedMultiplier;
+			
+			// 5. Apply the combined angle effect
+			this.state.ball.dy += angleEffect;
+			
+			// 6. Edge cases - hitting extreme top/bottom of paddle creates extreme angles
+			// This makes edge hits more dramatic and skillful
+			if (Math.abs(hitPosition) > 0.8) { // Near the edge (top 20% or bottom 20%)
+				// Amplify the angle even more for edge hits
+				this.state.ball.dy += (hitPosition > 0 ? 0.1 : -0.1);
+			}
+			
+			// 7. Cap maximum speed to prevent the game from becoming unplayable
+			const maxSpeed = 0.6; // Adjust this value as needed
+			const newSpeed = Math.sqrt(
+				this.state.ball.dx * this.state.ball.dx + 
+				this.state.ball.dy * this.state.ball.dy
+			);
+			
+			if (newSpeed > maxSpeed) {
+				// Scale back to maximum speed
+				const scaleFactor = maxSpeed / newSpeed;
+				this.state.ball.dx *= scaleFactor;
+				this.state.ball.dy *= scaleFactor;
+			}
+			
+			console.log(`Paddle hit: ${playerNumber}, speed: ${newSpeed.toFixed(2)}, angle effect: ${angleEffect.toFixed(2)}`);
 		}
 	}
 
 	checkScoring() {
 		const ball = this.state.ball;
-
+	
+		// Skip scoring check if already in reset phase
+		if (this.isResetting) return;
+	
 		// Player 1 scores (ball passes right edge)
 		if (ball.x >= 1) {
 			this.state.scores[0]++;
-			this.resetBall();
+			this.isResetting = true;
+			
+			// Freeze the ball
+			this.state.ball.dx = 0;
+			this.state.ball.dy = 0;
+			
+			// Reset after delay
+			setTimeout(() => {
+				this.resetBall('right');
+				this.isResetting = false;
+			}, 1000);
 		}
 		// Player 2 scores (ball passes left edge)
 		else if (ball.x <= 0) {
 			this.state.scores[1]++;
-			this.resetBall();
+			this.isResetting = true;
+			
+			// Freeze the ball
+			this.state.ball.dx = 0;
+			this.state.ball.dy = 0;
+			
+			// Reset after delay
+			setTimeout(() => {
+				this.resetBall('left');
+				this.isResetting = false;
+			}, 1000);
 		}
 	}
 
-	resetBall() {
-		this.state.ball = { x: 0.5, y: 0.5, dx: 0.02 * (Math.random() > 0.5 ? 1 : -1), dy: 0.01 };
+	resetBall(scoringDirection) {
+		// Place ball in center
+		const centerX = 0.5; 
+		const centerY = 0.5;
+		
+		// Set reasonable initial velocity
+		const speed = 0.20;
+		
+		// Direction should be opposite of who scored
+		// If scoringDirection is not provided, choose randomly
+		let direction;
+		if (scoringDirection === undefined) {
+			direction = Math.random() > 0.5 ? 1 : -1;
+		} else {
+			// If ball went out on right side (x>=1), player1 scored
+			// So direct ball toward player2 (direction=1)
+			// If ball went out on left side (x<=0), player2 scored
+			// So direct ball toward player1 (direction=-1)
+			direction = scoringDirection === 'right' ? 1 : -1;
+		}
+		
+		// Small random angle variance
+		const angleVariance = (Math.random() * 0.1) - 0.05;
+		
+		this.state.ball = { 
+			x: centerX, 
+			y: centerY, 
+			dx: speed * direction, 
+			dy: 0.05 + angleVariance 
+		};
+		
+		console.log("Ball reset with velocity:", this.state.ball.dx, this.state.ball.dy, "direction:", direction);
 	}
 
 	// Handle player input
 	handleInput(playerId, input) {
 		const playerData = this.players.get(playerId);
 		if (!playerData) return;
-
+	
 		const paddle = this.state.paddles[playerData.playerNumber];
-		const speed = 0.02;
-
+		const speed = 0.020; // Slightly slower for better control
+		const paddleHeight = 0.15;
+		
+		// Calculate the exact boundaries
+		const minY = paddleHeight / 2;
+		const maxY = 1 - (paddleHeight / 2);
+		
+		// Move paddle with boundary enforcement
 		if (input.up) {
-			paddle.y = Math.max(0, paddle.y - speed);
+			paddle.y = Math.max(minY, paddle.y - speed);
 		}
 		if (input.down) {
-			paddle.y = Math.min(1, paddle.y + speed);
+			paddle.y = Math.min(maxY, paddle.y + speed);
 		}
+		
+		// Double-check boundaries to ensure paddle is fully contained
+		if (paddle.y < minY) paddle.y = minY;
+		if (paddle.y > maxY) paddle.y = maxY;
 	}
 
 	// Get all active connections
@@ -165,12 +314,32 @@ export class GameSession
 	}
 
 	// Start AI opponent
-	startAI()
-	{
+	startAI() {
 		this.aiInterval = setInterval(() => {
 			const ballY = this.state.ball.y;
 			const paddle = this.state.paddles.player2;
-			paddle.y += (ballY - paddle.y) * 0.1;
+			
+			// Store last position to track movement
+			if (!paddle.lastY) {
+				paddle.lastY = paddle.y;
+			}
+			
+			// Old position
+			const oldY = paddle.y;
+			
+			// Increase tracking speed from 0.1 to 0.13 (30% faster)
+			paddle.y += (ballY - paddle.y) * 0.13;
+			
+			// Respect boundaries for AI paddle too
+			const paddleHeight = 0.15;
+			const minY = paddleHeight / 2;
+			const maxY = 1 - (paddleHeight / 2);
+			
+			if (paddle.y < minY) paddle.y = minY;
+			if (paddle.y > maxY) paddle.y = maxY;
+			
+			// Track velocity
+			paddle.lastY = oldY;
 		}, 50);
 	}
 

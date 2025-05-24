@@ -17,6 +17,8 @@ export default class Game extends Step {
         this.ctx = null;
         this.gameState = null;
         this.animationFrameId = null;
+        this.lastKnownState = null;
+        this.stateTimestamp = 0;
     }
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,8 +31,8 @@ export default class Game extends Step {
 					<button id="play-online" style="width: 200px" class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">Play Online</button>
 				</div>
 			</div>
-			<div class="game-container" id="game-container" style="display: none;">
-				<canvas id="game-canvas" width="800" height="600" style="background-color: black;"></canvas>
+			<div class="game-container" id="game-container" style="display: none; width: 100%; max-width: 1200px; margin: 0 auto; text-align: center;">
+				<canvas id="game-canvas" width="800" height="600" style="background-color: black; margin: 0 auto; display: block; max-width: 100%; height: auto;"></canvas>
 			</div>
 		`;
             yield this.establishConnection();
@@ -145,15 +147,30 @@ export default class Game extends Step {
             this.ctx = this.canvas.getContext('2d');
     }
     renderGameState(state) {
+        console.log("Received new game state:", state);
+        this.lastKnownState = this.gameState;
         this.gameState = state;
+        this.stateTimestamp = Date.now();
         if (!this.canvas) {
+            console.log("Canvas not found, attempting to initialize");
             this.canvas = document.getElementById('game-canvas');
-            this.ctx = this.canvas.getContext('2d');
-            if (!this.canvas || !this.ctx)
+            if (this.canvas) {
+                console.log("Canvas found with dimensions:", this.canvas.width, "x", this.canvas.height);
+                this.ctx = this.canvas.getContext('2d');
+                if (!this.ctx) {
+                    console.error("Failed to get canvas context");
+                    return;
+                }
+                // Start the animation loop if this is the first state update
+                this.startRenderLoop();
+            }
+            else {
+                console.error("Could not find canvas element");
                 return;
-            // Start the animation loop if this is the first state update
-            this.startRenderLoop();
+            }
         }
+        // Force a redraw with the new state
+        this.drawGame();
     }
     startRenderLoop() {
         // Cancel any existing animation frame
@@ -166,56 +183,97 @@ export default class Game extends Step {
         this.animationFrameId = requestAnimationFrame(renderLoop);
     }
     drawGame() {
-        if (!this.ctx || !this.canvas || !this.gameState)
+        if (!this.ctx || !this.canvas) {
+            console.error("Cannot draw: missing context or canvas");
             return;
+        }
+        if (!this.gameState) {
+            console.error("Cannot draw: missing game state");
+            return;
+        }
+        console.log("Drawing game with state:", this.gameState);
         // Clear the canvas
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // Draw elements
         this.drawCenterLine();
         this.drawPaddles();
         this.drawBall();
         this.drawScore();
     }
+    drawPaddles() {
+        if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.paddles) {
+            console.error("Cannot draw paddles");
+            return;
+        }
+        const paddleWidth = Math.round(this.canvas.width * 0.025); // 2.5% of screen width
+        const paddleHeight = Math.round(this.canvas.height * 0.15); // 15% of screen height
+        const leftPaddleX = Math.round(this.canvas.width * 0.03);
+        const rightPaddleX = Math.round(this.canvas.width * 0.97) - paddleWidth;
+        this.ctx.fillStyle = "white";
+        // Draw left paddle (player1)
+        if (this.gameState.paddles.player1) {
+            const y = this.gameState.paddles.player1.y * this.canvas.height;
+            const leftPaddleY = Math.round(y - (paddleHeight / 2));
+            this.ctx.fillRect(leftPaddleX, leftPaddleY, paddleWidth, paddleHeight);
+        }
+        // Draw right paddle (player2)
+        if (this.gameState.paddles.player2) {
+            const y = this.gameState.paddles.player2.y * this.canvas.height;
+            const rightPaddleY = Math.round(y - (paddleHeight / 2));
+            this.ctx.fillRect(rightPaddleX, rightPaddleY, paddleWidth, paddleHeight);
+        }
+    }
+    drawBall() {
+        if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.ball) {
+            console.error("Cannot draw ball");
+            return;
+        }
+        // Ball position is in normalized coordinates (0-1 range)
+        const ballX = this.gameState.ball.x * this.canvas.width;
+        const ballY = this.gameState.ball.y * this.canvas.height;
+        // Keep the ball radius consistent with backend collision detection
+        const ballRadius = Math.round(this.canvas.height * 0.015);
+        // Draw a highlight circle to better visualize the ball's collision boundary
+        this.ctx.beginPath();
+        this.ctx.arc(ballX, ballY, ballRadius + 1, 0, Math.PI * 2);
+        this.ctx.fillStyle = "rgba(255, 255, 255, 0.3)"; // Semi-transparent white
+        this.ctx.fill();
+        this.ctx.closePath();
+        // Draw the main ball
+        this.ctx.beginPath();
+        this.ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+        this.ctx.fillStyle = "white";
+        this.ctx.fill();
+        this.ctx.closePath();
+    }
+    drawScore() {
+        if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.scores) {
+            console.error("Cannot draw scores:");
+            return;
+        }
+        const player1Score = this.gameState.scores[0];
+        const player2Score = this.gameState.scores[1];
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "60px Tektur, sans-serif";
+        // Position scores on their respective sides (about 25% in from each edge)
+        const leftScoreX = Math.round(this.canvas.width * 0.25);
+        const rightScoreX = Math.round(this.canvas.width * 0.75);
+        const scoreY = 80; // Position from top
+        this.ctx.textAlign = "center";
+        this.ctx.fillText(`${player1Score}`, leftScoreX, scoreY);
+        this.ctx.fillText(`${player2Score}`, rightScoreX, scoreY);
+    }
     drawCenterLine() {
         if (!this.ctx || !this.canvas)
             return;
-        const centerX = this.canvas.width / 2;
-        this.ctx.strokeStyle = "white";
-        this.ctx.lineWidth = 2;
-        this.ctx.setLineDash([10, 10]);
+        this.ctx.strokeStyle = 'white';
+        this.ctx.setLineDash([10, 10]); // Create dashed line
         this.ctx.beginPath();
-        this.ctx.moveTo(centerX, 0);
-        this.ctx.lineTo(centerX, this.canvas.height);
+        this.ctx.moveTo(this.canvas.width / 2, 0);
+        this.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
         this.ctx.stroke();
-        this.ctx.setLineDash([]);
-    }
-    drawPaddles() {
-        if (!this.ctx || !this.canvas || !this.gameState)
-            return;
-        this.ctx.fillStyle = "white";
-        const leftPaddleY = this.gameState.paddles.player1.y * this.canvas.height;
-        this.ctx.fillRect(30, leftPaddleY, 20, 100); // Assuming paddle width of 20 and height of 100
-        const rightPaddleY = this.gameState.paddles.player2.y * this.canvas.height;
-        this.ctx.fillRect(this.canvas.width - 50, rightPaddleY, 20, 100);
-    }
-    drawBall() {
-        if (!this.ctx || !this.canvas || !this.gameState)
-            return;
-        const ballX = this.gameState.ball.x * this.canvas.width;
-        const ballY = this.gameState.ball.y * this.canvas.height;
-        this.ctx.beginPath();
-        this.ctx.arc(ballX, ballY, 10, 0, Math.PI * 2); // Ball with radius 10
-        this.ctx.fillStyle = "white";
-        this.ctx.fill();
-    }
-    drawScore() {
-        if (!this.ctx || !this.canvas || !this.gameState)
-            return;
-        this.ctx.fillStyle = "white";
-        this.ctx.font = "40px Tektur, sans-serif";
-        this.ctx.textAlign = "center";
-        const scoreText = `${this.gameState.scores[0]} - ${this.gameState.scores[1]}`;
-        this.ctx.fillText(scoreText, this.canvas.width / 2, 50);
+        this.ctx.setLineDash([]); // Reset line style
     }
     destroy() {
         if (this.socket)
