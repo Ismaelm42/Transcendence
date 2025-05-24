@@ -5,15 +5,38 @@
 
 		<!-- Messages Container -->
 		<div id= "messages-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-[3] h-[50vh] lg:h-full rounded-tl-xl rounded-bl-xl bg-gray-800 border border-gray-500">
+			class="flex flex-col items-center justify-start w-full lg:flex-[3] lg:max-w-[30%] h-[50vh] lg:h-full rounded-tl-xl rounded-bl-xl bg-gray-800 border border-gray-500">
 			<!-- Chats div -->
-			<div id="messages-title-container" class="px-4 h-[100px] bg-gray-800 rounded-tl-xl border-b border-gray-500 w-full flex items-center">
+			<div id="messages-title-container" class="px-4 h-[80px] bg-gray-800 rounded-tl-xl border-b border-gray-500 w-full flex items-center">
 				<h2 class="text-white text-xl font-semibold mb-2 ">Chats</h2>
 			</div>
 			<!-- Chats List Container -->
 			<div id="chat-item-container"
 				class="w-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-				<div id="chat-item-list-container" class="w-full">
+				<div id="chat-item-list-container"
+					class="overflow-y-auto flex-1 flex flex-col items-center justify-start px-6 py-1 pr-2 w-full border-2 border-red-500 border-b border-gray-500 bg-gray-800 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+
+
+
+
+					<div id="chat-item" class="flex items-center w-full px-4 py-3 hover:bg-gray-800 rounded-lg cursor-pointer">
+						<!-- Avatar -->
+						<img src="https://localhost:8443/back/images/avatar-2.png" alt="avatar"
+							class="w-12 h-12 rounded-full mr-4 border border-gray-600" />
+						<!-- Chat content -->
+						<div class="flex-1 min-w-0">
+							<!-- Username -->
+							<div class="text-white font-semibold text-sm truncate">ismael</div>
+							<!-- Last message -->
+							<div class="text-gray-400 text-sm truncate">Este es un mensaje de forwejfjrweijfirejifjrweifjiwejifjweirfjiwejrifjifjweirfj</div>
+						</div>
+						<!-- Time -->
+						<div class="text-gray-500 text-xs ml-4 whitespace-nowrap">14:37</div>
+					</div>
+					
+
+
+
 					<!-- Chat users will be dynamically inserted here -->
 				</div>
 			</div>
@@ -21,17 +44,25 @@
 
 
 		<!-- Chat Container -->
-		<div id="chat-container" class="flex flex-col items-center justify-start w-full lg:flex-[5] h-[50vh] lg:h-full border-t border-b border-gray-500">
+		<div id="chat-container" class="flex flex-col items-center justify-start w-full lg:flex-[5] lg:max-w-[50%] h-[50vh] lg:h-full border-t border-b border-gray-500">
 		<!-- User info Container -->
-			<div id="user-info-container" class="px-4 h-[100px] bg-gray-800 border-b border-gray-500 w-full flex justify-start items-center gap-4">
+			<div id="user-info-container" class="px-2 h-[80px] bg-gray-800 border-b border-gray-500 w-full flex justify-start items-center">
 					<!-- User info will be dynamically inserted here -->
 			
 			
-    			<!-- Imagen del usuario -->
-    			<img src="https://localhost:8443/back/images/avatar-2.png" alt="Ismael" class="w-14 h-14 rounded-full border border-gray-600" />
-						
-    			<!-- Nombre del usuario -->
-    			<h2 class="text-white text-xl font-semibold">Ismael</h2>
+					<button id="back-group-chat" type="button" class="cursor-pointer group">
+						<svg viewBox="0 0 1024 1024"
+							class="w-9 h-9 mr-2 fill-gray-500 stroke-gray-500 group-hover:fill-gray-300 group-hover:stroke-gray-300 transition-colors duration-200"
+							xmlns="http://www.w3.org/2000/svg" stroke-width="102.4">
+							<path d="M669.6 849.6c8.8 8 22.4 7.2 30.4-1.6s7.2-22.4-1.6-30.4l-309.6-280c-8-7.2-8-17.6 0-24.8l309.6-270.4c8.8-8 9.6-21.6 2.4-30.4-8-8.8-21.6-9.6-30.4-2.4L360.8 480.8c-27.2 24-28 64-0.8 88.8l309.6 280z" />
+						</svg>
+					</button>
+					
+					
+					<img src="https://localhost:8443/back/images/avatar-2.png" alt="ismael" class="w-13 h-13 rounded-full border border-gray-600 mr-4" />
+					
+					<h2 class="text-white text-xl font-semibold truncate">ismael</h2>
+					
 
 
 
@@ -73,11 +104,11 @@
 		
 		<!-- Users Container -->
 		<div id = "users-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-[2] h-[50vh] lg:h-full rounded-tr-xl rounded-br-xl bg-gray-800 border border-gray-500">
+			class="flex flex-col items-center justify-start w-full lg:flex-[2] lg:max-w-[20%] h-[50vh] lg:h-full rounded-tr-xl rounded-br-xl bg-gray-800 border border-gray-500">
 			<!-- Search div -->
 			<div id="search-users-container">
 				<!-- Search Form -->
-				<form id="search-users-form" class="px-4 h-[100px] w-full flex items-center">
+				<form id="search-users-form" class="px-4 h-[80px] w-full flex items-center">
 					<div class="flex items-center bg-gray-800 ">
 						<input id="search-users-input" type="text"
 							class="block mx-4 p-2 w-full text-sm text-gray-900 rounded-lg border bg-gray-700 border-gray-900 placeholder-gray-400 text-white resize-none focus:outline focus:outline-2 focus:outline-gray-400"
