@@ -16,7 +16,7 @@ export class SPA {
         'stats': { module: 'statsRender.js', protected: true },
         'logout': { module: 'logoutRender.js', protected: true },
 		'profile': { module: 'userProfileRender.js', protected: true },
-		'test': { module: 'testGame.js', protected: true }
+		'test': { module: 'Game.js', protected: true }
     };
 
     public constructor(containerId: string) {

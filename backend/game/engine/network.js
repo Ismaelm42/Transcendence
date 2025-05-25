@@ -1,5 +1,5 @@
 /**
- * network.js file: socket connections and broadcast/communication between client-server related methods
+ * network.js file: getters and setters for game state and connections
  */
 
 // Get all active connections
