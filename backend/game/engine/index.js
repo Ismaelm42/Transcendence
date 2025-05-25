@@ -6,8 +6,7 @@
 import GameSession from './GameSession.js';
 import { resetState, update, checkScoring } from './gameState.js';
 import { resetBall, checkPaddleCollision } from './physics.js';
-import { addPlayer, removePlayer, getPlayerState, getPlayerView } from './players.js';
-import { startAI } from './ai.js';
+import { addPlayer, removePlayer, getPlayerView, handleInput, startAI } from './players.js';
 import { broadcastState, getConnections } from './network.js';
 
 // From gameState.js
@@ -19,12 +18,15 @@ GameSession.prototype.checkScoring = checkScoring;
 GameSession.prototype.checkPaddleCollision = checkPaddleCollision;
 GameSession.prototype.resetBall = resetBall;
 
+// From players.js
 GameSession.prototype.addPlayer = addPlayer;
-GameSession.prototype.removePlayer = removePlayer;
-GameSession.prototype.getPlayerState = getPlayerState;
 GameSession.prototype.getPlayerView = getPlayerView;
+GameSession.prototype.removePlayer = removePlayer;
 GameSession.prototype.startAI = startAI;
-GameSession.prototype.broadcastState = broadcastState;
+GameSession.prototype.handleInput = handleInput;
+
+// From network.js
 GameSession.prototype.getConnections = getConnections;
+GameSession.prototype.broadcastState = broadcastState;
 
 export default GameSession;

@@ -31,7 +31,7 @@ export function checkPaddleCollision(playerNumber)
 	// Get paddle and ball position from the game state
 	const paddle = this.state.paddles[playerNumber];
 	const ball = this.state.ball;
-	// Set paddle and ball dimensions relative to screen size, using relative % units
+	// Set paddle and ball dimensions relative to canvas size, using relative % units
 	const paddleWidth = 0.025;
 	const paddleHeight = 0.15;
 	const ballRadius = 0.015;
@@ -42,15 +42,14 @@ export function checkPaddleCollision(playerNumber)
 	const paddleVelocity = paddle.y - paddle.lastY;
 	paddle.lastY = paddle.y;
 	
-	// Calculate paddle position and dimensions (edges), again with relative units to screen size
+	// Calculate paddle position and dimensions (edges), again with relative units to canvas size
 	const paddleX = playerNumber === 'player1' ? 0.03 : (0.97 - paddleWidth);
 	const paddleTop = paddle.y - (paddleHeight / 2);
 	const paddleBottom = paddle.y + (paddleHeight / 2);
 	const collisionEdgeX = playerNumber === 'player1' ? paddleX + paddleWidth : paddleX;
 	
-	// Checks if the ball is within paddle's vertical range, this ends in a boolean true/false
+	// Checks if ball is within paddle's vertical range and at the collision edge, this ends in booleans true/false
 	const ballInYRange = (ball.y >= paddleTop) && (ball.y <= paddleBottom);
-	// Check if the ball is at the collision edge, using a boolean as well
 	let ballAtCollisionX = false;
 	if (playerNumber === 'player1')
 		ballAtCollisionX = ((ball.x - ballRadius) <= collisionEdgeX) && (ball.x >= paddleX);
@@ -65,50 +64,32 @@ export function checkPaddleCollision(playerNumber)
 			this.state.ball.x = collisionEdgeX + ballRadius + 0.001;
 		else
 			this.state.ball.x = collisionEdgeX - ballRadius - 0.001;
-		// Calculate current ball speed
-		const currentSpeed = Math.sqrt(
-			this.state.ball.dx * this.state.ball.dx + 
-			this.state.ball.dy * this.state.ball.dy
-		);
-		
-		// Increase speed by 7% (more noticeable than 5%)
-		const speedMultiplier = 1.07;
-		
+			
 		// ATARI-STYLE BOUNCE PHYSICS:
+		// Base multiplier so each bounce will make the ball go faster
+		const speedMultiplier = 1.07;
 		// 1. Calculate relative position on paddle (from -1 at top to +1 at bottom)
-		const hitPosition = (ball.y - paddle.y) / (paddleHeight/2);
-		
-		// 2. Base angle change - more dramatic at edges
-		// This creates a more pronounced angle when hitting near the edges
-		let angleEffect = hitPosition * 0.3; // Stronger effect than before (was 0.12)
-		
-		// 3. Add paddle movement effect - if paddle is moving, it influences the ball direction
-		// This is what gives that classic Atari pong feel
-		const paddleMovementEffect = paddleVelocity * 3.0; // Amplify paddle movement effect
+		const hitPosition = (ball.y - paddle.y) / (paddleHeight / 2);
+		// 2. Base angle change - more pronounced angle when hitting near the edges
+		let angleEffect = hitPosition * 0.3;
+		// 3. Pddle movement effect - if paddle is moving, it influences the ball direction
+		const paddleMovementEffect = paddleVelocity * 3.0;
 		angleEffect += paddleMovementEffect;
-		
 		// 4. Reverse horizontal direction with speed increase  
 		this.state.ball.dx *= -speedMultiplier;
-		
 		// 5. Apply the combined angle effect
 		this.state.ball.dy += angleEffect;
-		
 		// 6. Edge cases - hitting extreme top/bottom of paddle creates extreme angles
-		// This makes edge hits more dramatic and skillful
-		if (Math.abs(hitPosition) > 0.8) { // Near the edge (top 20% or bottom 20%)
-			// Amplify the angle even more for edge hits
+		if (Math.abs(hitPosition) > 0.8)
 			this.state.ball.dy += (hitPosition > 0 ? 0.1 : -0.1);
-		}
-		
 		// 7. Cap maximum speed to prevent the game from becoming unplayable
-		const maxSpeed = 0.6; // Adjust this value as needed
 		const newSpeed = Math.sqrt(
 			this.state.ball.dx * this.state.ball.dx + 
 			this.state.ball.dy * this.state.ball.dy
 		);
-		
-		if (newSpeed > maxSpeed) {
-			// Scale back to maximum speed
+		const maxSpeed = 0.6;
+		if (newSpeed > maxSpeed)
+		{
 			const scaleFactor = maxSpeed / newSpeed;
 			this.state.ball.dx *= scaleFactor;
 			this.state.ball.dy *= scaleFactor;

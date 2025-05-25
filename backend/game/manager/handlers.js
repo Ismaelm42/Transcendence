@@ -3,7 +3,7 @@
 import { GameSession, startGameLoop } from "../engine/GameSession.js"
 import { extractUserFromToken } from "../../auth/token.js";
 
-const gameSessions = new Map();
+const gamesList = new Map();
 const clients = new Map();
 
 /**
@@ -125,11 +125,11 @@ function handleJoinGame(client, data)
 	const	roomId = data.roomId || `game-${Date.now()}`;
 
 	// 1. Find or create the game session
-	let gameSession = gameSessions.get(roomId);
+	let gameSession = gamesList.get(roomId);
 	if (!gameSession)
 	{
 		gameSession = new GameSession(roomId, gameMode);
-		gameSessions.set(roomId, gameSession);
+		gamesList.set(roomId, gameSession);
 	}
 	// 2. Add player to the game
 	const playerNumber = gameSession.addPlayer(user.id, connection);
@@ -150,7 +150,7 @@ function handleJoinGame(client, data)
 	}));
 	// 5. Start game if ready (e.g., 2 players connected + online mode, 1 player connected + 1vAI mode...)
 	if (gameSession.shouldStart()) {
-		startGameLoop(gameSession);
+		startGameLoop(gameSession, gamesList);
 	}
 }
 
@@ -164,7 +164,7 @@ function handlePlayerInput(client, data)
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	// 1. Find the game session
-	const gameSession = gameSessions.get(clientData.roomId);
+	const gameSession = gamesList.get(clientData.roomId);
 	// 2. Update the player's paddle position
 	if (gameSession)
 		gameSession.handleInput(user.id, data.input);
@@ -178,13 +178,13 @@ export function handleLeaveGame(client) {
 	const clientData = clients.get(user.id);
 	
 	// 1. Find and update the game session
-	const gameSession = gameSessions.get(clientData?.roomId);
+	const gameSession = gamesList.get(clientData?.roomId);
 	if (gameSession)
 	{
 		gameSession.removePlayer(user.id);
 		// 2. End game if empty
 		if (gameSession.isEmpty())
-			gameSessions.delete(clientData.roomId);
+			gamesList.delete(clientData.roomId);
 	}
 	// 3. Remove client tracking
 	clients.delete(user.id);
