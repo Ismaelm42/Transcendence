@@ -80,16 +80,33 @@ function sortUsersAlphabetically(htmlContent) {
 function handleSocketMessage(socket, chatMessages, items, name) {
     socket.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
         const data = JSON.parse(event.data);
+        let HtmlContent = "";
+        let stored = "";
         if (data.type === 'message') {
-            const HtmlContent = yield formatMsgTemplate(data, name);
-            let stored = sessionStorage.getItem("chatHTML") || "";
+            HtmlContent = yield formatMsgTemplate(data, name);
+            stored = sessionStorage.getItem("public-chat") || "";
             stored += HtmlContent;
-            sessionStorage.setItem("chatHTML", stored);
+            sessionStorage.setItem("public-chat", stored);
+            sessionStorage.setItem("current-room", "");
             chatMessages.innerHTML = stored;
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+        if (data.type === 'private') {
+            console.log(data);
+            if (data.message) {
+                HtmlContent = yield formatMsgTemplate(data, name);
+            }
+            const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
+            stored = privateChat[data.roomId] || "";
+            stored += HtmlContent || "";
+            privateChat[data.roomId] = stored || "";
+            sessionStorage.setItem("private-chat", JSON.stringify(privateChat));
+            sessionStorage.setItem("current-room", data.roomId);
+            chatMessages.innerHTML = stored || "";
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
         if (data.type === 'connectedUsers') {
-            let HtmlContent = yield formatConnectedUsersTemplate(data, name);
+            HtmlContent = yield formatConnectedUsersTemplate(data, name);
             HtmlContent = sortUsersAlphabetically(HtmlContent);
             htmlUsersConnected = HtmlContent;
             filterSearchUsers(inputKeyword);
@@ -108,12 +125,31 @@ function handleSocketError(socket) {
         console.error("CLIENT: WebSocket error:", event);
     };
 }
-export function retrieveConnectedUsers(socket) {
+function retrieveConnectedUsers(socket) {
     const message = {
         type: 'status',
         message: ''
     };
     socket.send(JSON.stringify(message));
+}
+export function handleSessionStorage(chatMessages, socket) {
+    const currentRoom = sessionStorage.getItem("current-room") || "";
+    const publicChat = sessionStorage.getItem("public-chat") || "";
+    const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
+    if (!currentRoom && publicChat) {
+        chatMessages.innerHTML = publicChat;
+    }
+    if (currentRoom) {
+        chatMessages.innerHTML = privateChat[currentRoom];
+    }
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (!socket || socket.readyState === WebSocket.CLOSED) {
+        socket = new WebSocket("https://localhost:8443/back/ws/chat");
+    }
+    else {
+        retrieveConnectedUsers(socket);
+    }
+    return socket;
 }
 export function handleSocket(socket, chatMessages, items, username) {
     handleSocketOpen(socket);
@@ -130,12 +166,23 @@ export function handleTextareaKeydown(e, form) {
 }
 export function handleFormSubmit(e, textarea, socket) {
     e.preventDefault();
-    const chatMsg = textarea.value.trim();
-    if (chatMsg) {
-        const message = {
-            type: 'message',
-            message: chatMsg,
-        };
+    let message = {};
+    const currentRoom = sessionStorage.getItem("current-room") || "";
+    const msg = textarea.value.trim();
+    if (msg) {
+        if (!currentRoom) {
+            message = {
+                type: 'message',
+                message: msg,
+            };
+        }
+        else {
+            message = {
+                type: 'private',
+                roomId: currentRoom,
+                message: msg,
+            };
+        }
         socket.send(JSON.stringify(message));
         textarea.value = '';
     }
@@ -159,4 +206,16 @@ export function filterSearchUsers(keyword) {
             });
         }
     }
+}
+export function handlePrivateMsg(e, items, username, socket) {
+    const target = e.target;
+    const userDiv = target.closest('[data-id]');
+    if (!userDiv)
+        return;
+    const id = userDiv.dataset.id;
+    const message = {
+        type: 'private',
+        id: id,
+    };
+    socket.send(JSON.stringify(message));
 }

@@ -76,16 +76,33 @@ function sortUsersAlphabetically(htmlContent: string): string {
 function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, items: HTMLDivElement, name: string): void {
 	socket.onmessage = async (event: MessageEvent) => {
 		const data = JSON.parse(event.data);
+		let HtmlContent = "";
+		let stored = "";
 		if (data.type === 'message') {
-			const HtmlContent = await formatMsgTemplate(data, name);
-			let stored = sessionStorage.getItem("chatHTML") || "";
+			HtmlContent = await formatMsgTemplate(data, name);
+			stored = sessionStorage.getItem("public-chat") || "";
 			stored += HtmlContent;
-			sessionStorage.setItem("chatHTML", stored);
+			sessionStorage.setItem("public-chat", stored);
+			sessionStorage.setItem("current-room", "");
 			chatMessages.innerHTML = stored;
 			chatMessages.scrollTop = chatMessages.scrollHeight;
 		}
+		if (data.type === 'private') {
+			console.log(data)
+			if (data.message) {
+				HtmlContent = await formatMsgTemplate(data, name);
+			}
+			const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}") as Record<string, string>;
+			stored = privateChat[data.roomId] || "";
+			stored += HtmlContent || "";
+			privateChat[data.roomId] = stored || "";
+			sessionStorage.setItem("private-chat", JSON.stringify(privateChat));
+			sessionStorage.setItem("current-room", data.roomId);
+			chatMessages.innerHTML = stored || "";
+			chatMessages.scrollTop = chatMessages.scrollHeight;
+		}
 		if (data.type === 'connectedUsers') {
-			let HtmlContent = await formatConnectedUsersTemplate(data, name);
+			HtmlContent = await formatConnectedUsersTemplate(data, name);
 			HtmlContent = sortUsersAlphabetically(HtmlContent);
 			htmlUsersConnected = HtmlContent;
 			filterSearchUsers(inputKeyword);
@@ -107,13 +124,35 @@ function handleSocketError(socket: WebSocket): void {
 	}
 }
 
-export function retrieveConnectedUsers(socket: WebSocket){
+function retrieveConnectedUsers(socket: WebSocket) {
 
 	const message = {
 		type: 'status',
 		message: ''
 	};
 	socket.send(JSON.stringify(message));
+}
+
+export function handleSessionStorage(chatMessages: HTMLDivElement, socket: WebSocket | null): WebSocket {
+
+	const currentRoom = sessionStorage.getItem("current-room") || "";
+	const publicChat = sessionStorage.getItem("public-chat") || "";
+	const privateChat: Record<string, string> = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
+
+	if (!currentRoom && publicChat) {
+		chatMessages.innerHTML = publicChat;
+	}
+	if (currentRoom) {
+		chatMessages.innerHTML = privateChat[currentRoom];
+	}
+	chatMessages.scrollTop = chatMessages.scrollHeight;
+	if (!socket || socket.readyState === WebSocket.CLOSED) {
+		socket = new WebSocket("https://localhost:8443/back/ws/chat");
+	}
+	else {
+		retrieveConnectedUsers(socket);
+	}
+	return socket!;
 }
 
 export function handleSocket(socket: WebSocket, chatMessages: HTMLDivElement, items:HTMLDivElement , username: string): WebSocket {
@@ -133,13 +172,26 @@ export function handleTextareaKeydown(e: KeyboardEvent, form: HTMLFormElement) {
 }
 
 export function handleFormSubmit(e: SubmitEvent, textarea: HTMLTextAreaElement, socket: WebSocket) {
+	
 	e.preventDefault();
-	const chatMsg = textarea.value.trim();
-	if (chatMsg) {
-		const message = {
-			type: 'message',
-			message: chatMsg,
-		};
+	let message = {};
+	const currentRoom = sessionStorage.getItem("current-room") || "";
+	const msg = textarea.value.trim();
+	
+	if (msg) {
+		if (!currentRoom) {
+			message = {
+				type: 'message',
+				message: msg,
+			};
+		}
+		else {
+			message = {
+				type: 'private',
+				roomId: currentRoom,
+				message: msg,
+			}
+		}
 		socket.send(JSON.stringify(message));
 		textarea.value = '';
 	}
@@ -164,4 +216,18 @@ export function filterSearchUsers(keyword: string): void {
 			});
 		}
 	}
+}
+
+export function handlePrivateMsg(e:MouseEvent, items:HTMLDivElement, username:string, socket:WebSocket):void {
+
+	const target = e.target as HTMLElement;
+	const userDiv = target.closest('[data-id]') as HTMLElement | null;
+	if (!userDiv)
+		return;
+	const id = userDiv.dataset.id;
+	const message = {
+		type: 'private',
+		id: id,
+	};
+	socket.send(JSON.stringify(message));
 }

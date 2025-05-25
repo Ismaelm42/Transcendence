@@ -1,7 +1,9 @@
 import { parse } from 'cookie';
-import { extractUserFromToken } from '../auth/token.js';
+import { crud } from '../../crud/crud.js'
+import { extractUserFromToken } from '../../auth/token.js';
 
 const clients = new Map();
+const rooms = new Map();
 const connected = new Map();
 const usersTimeout = new Map();
 
@@ -17,17 +19,40 @@ function getTimeStamp() {
 	return timeString;
 }
 
-// Create a message JSON object to be sent to the clients
-function createMsgJSON(user, message) {
+// Create a message JSON object and sent it to the clients
+function sendJSON(user, partner, message, roomId) {
 
-	return {
-		type: "message",
-		imagePath: user.avatarPath,
-		username: user.username,
-		message: message,
-		timeStamp: getTimeStamp(),
+	console.log(message);
+	setTimer(user);
+	if (!partner) {
+		const response = {
+			type: "message",
+			imagePath: user.avatarPath,
+			username: user.username,
+			message: message,
+			timeStamp: getTimeStamp()
+		}
+		for (const [id, client] of clients) {
+			client.send(JSON.stringify(response));
+		}
+	}
+	else {
+		const response = {
+			type: "private",
+			imagePath: user.avatarPath,
+			username: user.username,
+			message: message || null,
+			timeStamp: getTimeStamp(),
+			partnerImagePath: partner.avatarPath,
+			partnerUsername: partner.username,
+			roomId: roomId,
+		}
+		// Maybe send to differente messages can be an idea
+		clients.get(user.id)?.send(JSON.stringify(response));
+		clients.get(partner.id)?.send(JSON.stringify(response));
 	}
 }
+
 
 // Update the connected users list
 function updateConnectedUsers(user, isConnected, status) {
@@ -74,6 +99,37 @@ function setTimer(user) {
 	usersTimeout.set(user.id, yellowTimer);
 }
 
+// Create a room for private message between two users
+async function handlePrivate(user, data) {
+
+	let partner;
+	if (data.id) {
+		const partnerId = parseInt(data.id, 10);
+		if (user.id !== partnerId) {
+			const [a, b] = [user.id, partnerId].sort((x, y) => x - y);
+			const roomId = `${a}:${b}`;
+			if (!rooms.has(roomId)) {
+				rooms.set(roomId, {
+					userSocket: clients.get(user.id),
+					partnerSocket: clients.get(partnerId)
+				})
+			}
+			partner = await crud.user.getUserById(partnerId);
+			sendJSON(user, partner, null, roomId);
+		}
+	}
+	else {
+		const ids = data.roomId.split(":");
+		if (parseInt(ids[0], 10) === user.id) {
+			partner = await crud.user.getUserById(parseInt(ids[1], 10));
+		}
+		else {
+			partner = await crud.user.getUserById(parseInt(ids[0], 10));
+		}
+		sendJSON(user, partner, data.message, data.roomId);
+	}
+}
+
 // Register a user when they connect to the WebSocket server
 export async function registerUser(request, socket) {
 
@@ -92,18 +148,14 @@ export function handleIncomingSocketMessage(user, socket) {
 	socket.on('message', message => {
 		try {
 			const data = JSON.parse(message.toString());
-			if (data.type === "handshake") {
-				return ;
-			}
-			else if (data.type === "message") {
-				setTimer(user);
-				const response = createMsgJSON(user, data.message);
-				for (const [id, client] of clients) {
-					client.send(JSON.stringify(response));
-				}
+			if (data.type === "message") {
+				sendJSON(user, null, data.message, null);
 			}
 			else if (data.type === "status") {
 				setTimer(user);
+			}
+			else if (data.type === "private") {
+				handlePrivate(user, data)
 			}
 		} catch (error) {
 			console.log("An error occured:", error);

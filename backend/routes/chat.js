@@ -1,4 +1,4 @@
-import { registerUser, handleIncomingSocketMessage, handleSocketClose, handleSocketError } from '../utils/wsChatUtils.js';
+import { registerUser, handleIncomingSocketMessage, handleSocketClose, handleSocketError } from '../websockets/chat/chat.js';
 
 export function configureChatRoutes(fastify) {
 
