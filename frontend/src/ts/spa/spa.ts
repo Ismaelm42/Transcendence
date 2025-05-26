@@ -6,17 +6,17 @@ export class SPA {
     private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
 
     private routes: { [key: string]: { module: string; protected: boolean } } = {
-        'home': { module: 'homeRender.js', protected: false },
-        'login': { module: 'loginRender.js', protected: false },
-        'register': { module: 'registerRender.js', protected: false },
-        'play-pong': { module: 'playPongRender.js', protected: true },
-        'play-tournament': { module: 'playTournamentRender.js', protected: true },
-        'friends': { module: 'friendsRender.js', protected: true },
-        'chat': { module: 'chatRender.js', protected: true },
-        'stats': { module: 'statsRender.js', protected: true },
-        'logout': { module: 'logoutRender.js', protected: true },
-		'profile': { module: 'userProfileRender.js', protected: true },
-		'test': { module: 'Game.js', protected: true }
+        'home': { module: '../home/homeRender.js', protected: false },
+        'login': { module: '../login/loginRender.js', protected: false },
+        'register': { module: '../login/registerRender.js', protected: false },
+        'play-pong': { module: '../game/playPongRender.js', protected: true },
+        'play-tournament': { module: '../tournament/playTournamentRender.js', protected: true },
+        'friends': { module: '../friends/friendsRender.js', protected: true },
+        'chat': { module: '../chat/chatRender.js', protected: true },
+        'stats': { module: '../stats/statsRender.js', protected: true },
+        'logout': { module: '../login/logoutRender.js', protected: true },
+		'profile': { module: '../profile/userProfileRender.js', protected: true },
+		'test': { module: '../game/Game.js', protected: true }
     };
 
     public constructor(containerId: string) {

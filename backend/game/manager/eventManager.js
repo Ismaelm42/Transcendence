@@ -3,7 +3,7 @@
  * Functions to set up the socket event listeners/handlers when connection is established
  */
 import { extractUserFromToken } from "../../auth/token.js";
-import { handleJoinGame, handlePlayerInput, handleLeaveGame } from "../handlers.js";
+import { handleJoinGame, handlePlayerInput, handleLeaveGame } from "./messageManager.js";
 export const gamesList = new Map();
 export const clients = new Map();
 
@@ -36,7 +36,7 @@ export async function	registerGameClient(request, connection)
             connection,
             roomId: null
         })
-        console.log("Connection socket object of registred user:\n", clients.get(user.id).connection);
+        //console.log("Connection socket object of registred user:\n", clients.get(user.id).connection);
         return ({user, connection});
     }
     else
@@ -77,7 +77,6 @@ export function	messageManager(client, connection)
 
     connection.on('message', (message) => {
         console.log("Received message from client");
-        console.log("RAW MESSAGE RECEIVED:", message);
         console.log("Message type:", typeof message);
         try
         {

@@ -25,8 +25,6 @@ export class GameUI
 				<canvas id="game-canvas" width="800" height="600" style="background-color: black; margin: 0 auto; display: block; max-width: 100%; height: auto;"></canvas>
 			</div>
 		`;
-		await this.game.connection.establishConnection();
-		this.setupEventListeners();
 	}
 
 	setupEventListeners()

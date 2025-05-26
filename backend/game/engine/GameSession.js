@@ -1,9 +1,10 @@
+import { resetState } from "./gameState.js";
 /**
  * GameSession.js file:
  * 	- GameSession class initial declaration (constructor)
  * 	- Aux/utils methods (getters/setters, debug) and core methods that don't fit elsewhere
  */
-export class GameSession
+export default class GameSession
 {
 	constructor(roomId, gameMode)
 	{

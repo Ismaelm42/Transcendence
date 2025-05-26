@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Step } from "./stepRender.js";
+import { Step } from "./spa/stepRender.js";
 export default class Game extends Step {
     constructor() {
         super(...arguments);

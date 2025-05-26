@@ -1,7 +1,8 @@
 /**
  * messageManager.js file: server-side handlers for websocket types of messages
  */
-import { GameSession, startGameLoop } from "../engine/GameSession.js"
+import GameSession from "../engine/index.js";
+import { startGameLoop } from "../engine/GameSession.js"
 import { gamesList, clients } from "./eventManager.js";
 
 /**

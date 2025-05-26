@@ -11,19 +11,6 @@ import { showMessage } from "../modal/showMessage.js";
 export class SPA {
     constructor(containerId) {
         this.routes = {
-<<<<<<< HEAD:frontend/src/js/spa.js
-            'home': { module: 'homeRender.js', protected: false },
-            'login': { module: 'loginRender.js', protected: false },
-            'register': { module: 'registerRender.js', protected: false },
-            'play-pong': { module: 'playPongRender.js', protected: true },
-            'play-tournament': { module: 'playTournamentRender.js', protected: true },
-            'friends': { module: 'friendsRender.js', protected: true },
-            'chat': { module: 'chatRender.js', protected: true },
-            'stats': { module: 'statsRender.js', protected: true },
-            'logout': { module: 'logoutRender.js', protected: true },
-            'profile': { module: 'userProfileRender.js', protected: true },
-            'test': { module: 'testGame.js', protected: true }
-=======
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
             'register': { module: '../login/registerRender.js', protected: false },
@@ -33,8 +20,8 @@ export class SPA {
             'chat': { module: '../chat/chatRender.js', protected: true },
             'stats': { module: '../stats/statsRender.js', protected: true },
             'logout': { module: '../login/logoutRender.js', protected: true },
-            'profile': { module: '../profile/userProfileRender.js', protected: true }
->>>>>>> main:frontend/src/js/spa/spa.js
+            'profile': { module: '../profile/userProfileRender.js', protected: true },
+            'test': { module: '../game/Game.js', protected: true }
         };
         this.container = document.getElementById(containerId);
         SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla

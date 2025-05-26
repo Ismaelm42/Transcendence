@@ -5,12 +5,12 @@
 import { GameConnection } from './GameConnection.js';
 import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
-import { Step } from "../stepRender.js";
+import { Step } from "../spa/stepRender.js";
 
 // Default container ID (must match your HTML)
 const DEFAULT_CONTAINER_ID = "game-container"; 
 
-class Game extends Step
+export default class Game extends Step
 {
 	protected connection: GameConnection;
 	protected renderer: GameRender;
@@ -19,6 +19,7 @@ class Game extends Step
 	constructor(containerId: string = DEFAULT_CONTAINER_ID)
 	{
 		super(containerId);
+		console.log("Game constructor called");
 		this.connection = new GameConnection(this);
 		this.renderer = new GameRender(this);
 		this.ui = new GameUI(this);
@@ -37,6 +38,3 @@ class Game extends Step
 		this.renderer.destroy();
 	}
 }
-
-const _default = new Game(); 
-export default _default;
