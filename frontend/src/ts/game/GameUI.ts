@@ -2,18 +2,21 @@
  * GameUI.ts -> UI setup and event listeners
  */
 
+import { GameControllers } from './GameControllers.js';
+
 export class GameUI
 {
 	private	game: any;
-	private	keydownListener: ((e: KeyboardEvent) => void) | null = null;
-	private keyupListener: ((e: KeyboardEvent) => void) | null = null;
+	private controllers: GameControllers;
 	
 	constructor(game: any)
 	{
 		this.game = game;
+		this.controllers = new GameControllers(game);
 	}
 
-	async initializeUI(appElement: HTMLElement): Promise<void> {
+	async initializeUI(appElement: HTMLElement): Promise<void>
+	{
 		appElement.innerHTML = `
 			<!-- Game setup - config -->
 			<div class="select-game" id="select-game" style="display: block;">
@@ -31,132 +34,23 @@ export class GameUI
 		`;
 	}
 
-	// Sets up event listeners for game mode buttons, which after will also set controllers event listeners
+	// Sets up event listeners for game mode buttons, which after will also set controllers
 	setupEventListeners()
 	{
 		// Game mode buttons
 		document.getElementById('play-ai')?.addEventListener('click', () => {
-			this.setupControllers('1vAI');
+			this.controllers.setupControllers('1vAI');
 			this.joinGame('1vAI');
 		});
 		document.getElementById('play-1v1')?.addEventListener('click', () => {
-			this.setupControllers('1v1');
+			this.controllers.setupControllers('1v1');
 			this.joinGame('1v1');
 		});
 		document.getElementById('play-online')?.addEventListener('click', () => {
-			this.setupControllers('remote');
+			this.controllers.setupControllers('remote');
 			this.joinGame('remote');
 		});
 		// Add tournament button listener if finally implemented here
-	}
-
-	// Sets up event listeners for game mode buttons, which after will also set controllers event listeners
-	setupControllers(mode: string)
-	{
-		// Clear previous listeners
-		if (this.keydownListener && this.keyupListener)
-		{
-			document.removeEventListener('keydown', this.keydownListener);
-			document.removeEventListener('keyup', this.keyupListener);
-		}
-	
-		// Track the state of all keys
-		const keyState = {
-			w: false,
-			s: false,
-			ArrowUp: false,
-			ArrowDown: false
-		};
-	
-		// Handler for key down events
-		this.keydownListener = (e: KeyboardEvent) => {
-			if (!this.game.connection.socket) return;
-			
-			const key = e.key.toLowerCase();
-			
-			// Only handle keys we care about
-			if (key === 'w' || key === 's' || key === 'arrowup' || key === 'arrowdown') {
-				// Update key state
-				if (key === 'arrowup') {
-					keyState.ArrowUp = true;  // Use dot notation with correct case
-				} else if (key === 'arrowdown') {
-					keyState.ArrowDown = true;  // Use dot notation with correct case
-				} else {
-					keyState[key] = true;  // For w and s, bracket notation is fine
-				}
-				
-				// Send updates for player 1 (W/S keys)
-				if (key === 'w' || key === 's') {
-					this.game.connection.socket.send(JSON.stringify({
-						type: 'PLAYER_INPUT',
-						input: {
-							player: 'player1',
-							up: keyState.w,
-							down: keyState.s
-						}
-					}));
-				}
-				
-				// Send updates for player 2 (Arrow keys) - only in 1v1 mode
-				if (mode === '1v1' && (key === 'arrowup' || key === 'arrowdown')) {
-					this.game.connection.socket.send(JSON.stringify({
-						type: 'PLAYER_INPUT',
-						input: {
-							player: 'player2',
-							up: keyState.ArrowUp,
-							down: keyState.ArrowDown
-						}
-					}));
-				}
-			}
-		};
-		
-		// Handler for key up events
-		this.keyupListener = (e: KeyboardEvent) => {
-			if (!this.game.connection.socket) return;
-			
-			const key = e.key.toLowerCase();
-			
-			// Only handle keys we care about
-			if (key === 'w' || key === 's' || key === 'arrowup' || key === 'arrowdown') {
-				// Update key state
-				if (key === 'arrowup') {
-					keyState.ArrowUp = false;  // Use dot notation with correct case
-				} else if (key === 'arrowdown') {
-					keyState.ArrowDown = false;  // Use dot notation with correct case
-				} else {
-					keyState[key] = false;  // For w and s, bracket notation is fine
-				}
-				
-				// Send updates for player 1 (W/S keys)
-				if (key === 'w' || key === 's') {
-					this.game.connection.socket.send(JSON.stringify({
-						type: 'PLAYER_INPUT',
-						input: {
-							player: 'player1',
-							up: keyState.w,
-							down: keyState.s
-						}
-					}));
-				}
-				
-				// Send updates for player 2 (Arrow keys) - only in 1v1 mode
-				if (mode === '1v1' && (key === 'arrowup' || key === 'arrowdown')) {
-					this.game.connection.socket.send(JSON.stringify({
-						type: 'PLAYER_INPUT',
-						input: {
-							player: 'player2',
-							up: keyState.ArrowUp,
-							down: keyState.ArrowDown
-						}
-					}));
-				}
-			}
-		};
-		
-		// Add both event listeners
-		document.addEventListener('keydown', this.keydownListener);
-		document.addEventListener('keyup', this.keyupListener);
 	}
 
 	joinGame(mode: string)
