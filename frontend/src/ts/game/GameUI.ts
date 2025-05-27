@@ -17,21 +17,19 @@ export class GameUI
 
 	async initializeUI(appElement: HTMLElement): Promise<void>
 	{
-		appElement.innerHTML = `
-			<!-- Game setup - config -->
-			<div class="select-game" id="select-game" style="display: block;">
-				<h1 class="text-center text-white mb-4 text-4xl font-bold font-[Tektur]">Select Game Mode</h1>
-				<div class="flex flex-col gap-4 items-center">
-					<button id="play-1v1" style="width: 200px" class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">Play 1v1</button>
-					<button id="play-ai" style="width: 200px" class="h-12 py-3 bg-blue-500 text-white border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">Play vs AI</button>
-					<button id="play-online" style="width: 200px" class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">Play Online</button>
-					<button id="play-ai" style="width: 200px" class="h-12 py-3 bg-blue-600 text-white border-none rounded hover:bg-blue-400 font-bold cursor-pointer text-base flex justify-center items-center">Tournament!</button>
-				</div>
-			</div>
-			<div class="game-container" id="game-container" style="display: none; width: 100%; max-width: 1200px; margin: 0 auto; text-align: center;">
-				<canvas id="game-canvas" width="800" height="600" style="background-color: black; margin: 0 auto; display: block; max-width: 100%; height: auto;"></canvas>
-			</div>
-		`;
+		try
+		{
+			const response = await fetch("../../html/game/gameUI.html");
+			if (!response.ok) throw new Error("Failed to load the game UI HTML file");
+			
+			const htmlContent = await response.text();
+			appElement.innerHTML = htmlContent;
+		}
+		catch (error)
+		{
+			console.error("Error loading game UI:", error);
+			appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
+		}
 	}
 
 	// Sets up event listeners for game mode buttons, which after will also set controllers

@@ -9,14 +9,13 @@ export class SPA {
         'home': { module: '../home/homeRender.js', protected: false },
         'login': { module: '../login/loginRender.js', protected: false },
         'register': { module: '../login/registerRender.js', protected: false },
-        'play-pong': { module: '../game/playPongRender.js', protected: true },
+        'play-pong': { module: '../game/Game.js', protected: true },
         'play-tournament': { module: '../tournament/playTournamentRender.js', protected: true },
         'friends': { module: '../friends/friendsRender.js', protected: true },
         'chat': { module: '../chat/chatRender.js', protected: true },
         'stats': { module: '../stats/statsRender.js', protected: true },
         'logout': { module: '../login/logoutRender.js', protected: true },
-		'profile': { module: '../profile/userProfileRender.js', protected: true },
-		'test': { module: '../game/Game.js', protected: true }
+		'profile': { module: '../profile/userProfileRender.js', protected: true }
     };
 
     public constructor(containerId: string) {
