@@ -45,19 +45,17 @@ export function handleJoinGame(client, data)
 }
 
 /**
- * When a player sends keys input (should be up/down arrow)
+ * When a player sends keys input (should be up/down for paddle movement)
  * Server updates the player's paddle position and this updated position is reflected in the next GAME_STATE broadcast
- * TODO: Set interface for controllers, so it will always be arrows, AWSD or AI (?)
  */
 export function handlePlayerInput(client, data)
 {
 	const { user } = client;
 	const clientData = clients.get(user.id);
-	// 1. Find the game session
 	const gameSession = gamesList.get(clientData.roomId);
-	// 2. Update the player's paddle position
-	if (gameSession)
-		gameSession.handleInput(user.id, data.input);
+	if (!gameSession)
+		return ;
+	gameSession.movePlayerPaddle(user.id, data.input);
 }
 
 /**

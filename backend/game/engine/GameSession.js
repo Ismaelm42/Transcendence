@@ -43,7 +43,7 @@ export default class GameSession
 	// Check if game should start
 	shouldStart()
 	{
-		if (this.gameMode === '1vAI')
+		if (this.gameMode === '1vAI' || this.gameMode === '1v1')
 			return (this.players.size === 1);
 		return (this.players.size === 2);
 	}

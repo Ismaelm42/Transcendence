@@ -65,13 +65,13 @@ export function startAI()
 }
 
 // Handle player input
-export function handleInput(playerId, input)
+export function movePlayerPaddle(playerId, input)
 {
 	const playerData = this.players.get(playerId);
 	if (!playerData)
 		return ;
 
-	const paddle = this.state.paddles[playerData.playerNumber];
+	const paddle = this.state.paddles[input.player];
 	const speed = 0.020;
 	const paddleHeight = 0.15;
 	// Paddle limit canvas boundaries
