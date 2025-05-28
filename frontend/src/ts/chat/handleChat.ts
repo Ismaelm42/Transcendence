@@ -181,34 +181,63 @@ function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent) {
 	if (oldMenu) {
 		oldMenu.remove();
 	}
-	const menu = createOptionMenu(event);
+	const menu = createOptionMenu(event, userElement);
 
 	document.body.appendChild(menu);
 
 	addMenuOptionsListeners(menu, userId, username, event);
 
 	// Cerrar el menú al hacer clic fuera de él
-	const handleClickOutside = (e: MouseEvent) => {
-		if (!menu.contains(e.target as Node)) {
-			menu.remove();
-			document.removeEventListener("click", handleClickOutside);
-		}
-	};
-	document.addEventListener("click", handleClickOutside);
+	// Cerrar el menú cuando el cursor sale del menú
+	menu.addEventListener("mouseleave", () => {
+		menu.remove();
+	});
 	event.stopPropagation();
 }
 
-function createOptionMenu (event: MouseEvent): HTMLDivElement {
+function createOptionMenu(event: MouseEvent, userElement: HTMLElement): HTMLDivElement {
 	const menu = document.createElement("div");
-    menu.id = "user-options-menu";
-    menu.className = "absolute bg-gray-900/80 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
-    menu.innerHTML = `
-        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
-        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
-    `;
-    menu.style.top = `${event.clientY + 5}px`;
-    menu.style.left = `${event.clientX + 5}px`;
-    return menu;
+	menu.id = "user-options-menu";
+	menu.className = "absolute bg-gray-900/95 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
+	menu.innerHTML = `
+		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
+		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
+	`;
+	const rect = userElement.getBoundingClientRect();
+
+	// Calcula la posición: debajo del usuario, alineado horizontalmente con el click, pero no fuera del usuario
+	let left = event.clientX - 10;
+	let top = rect.top + rect.height + window.scrollY - 10
+
+	// Limita el menú para que no se salga de la pantalla
+	document.body.appendChild(menu);
+	const menuRect = menu.getBoundingClientRect();
+	const viewportWidth = window.innerWidth;
+	const viewportHeight = window.innerHeight;
+
+	// Si el click está fuera del usuario, centra el menú respecto al usuario
+	if (event.clientX < rect.left || event.clientX > rect.right) {
+		left = rect.left + rect.width / 2 - menuRect.width / 2 + window.scrollX;
+	}
+
+	// Ajusta si se sale por la derecha
+	if (left + menuRect.width > viewportWidth) {
+		left = viewportWidth - menuRect.width - 10;
+	}
+	// Ajusta si se sale por la izquierda
+	if (left < 10) {
+		left = 10;
+	}
+	// Ajusta si se sale por abajo
+	if (top + menuRect.height > viewportHeight) {
+		top = viewportHeight - menuRect.height - 10;
+	}
+	// Nunca menos de 0
+	top = Math.max(top, 10);
+
+	menu.style.top = `${top}px`;
+	menu.style.left = `${left}px`;
+	return menu;
 }
 
 function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username: string, event: MouseEvent) {
@@ -274,14 +303,14 @@ async function showUserProfile(userId: string, username: string, event?: MouseEv
 		return;
 	}
 
-	const { isFriend, isPending, isBlocked} = await checkFriendStatus(userId, friendsEntries);
+	const { isFriend, isPending, isBlocked } = await checkFriendStatus(userId, friendsEntries);
 
-	const friendButton= getFriendButton(isFriend, isPending, isBlocked);
+	const friendButton = getFriendButton(isFriend, isPending, isBlocked);
 
- 	const blockUserButton = getBlockUserButton(isBlocked, userId);
+	const blockUserButton = getBlockUserButton(isBlocked, userId);
 
 	// Fondo semitransparente que NO cubre el header (ajusta top-[64px] si tu header es más alto o bajo)
-	const backdrop = createBackdrop(); 
+	const backdrop = createBackdrop();
 	// Modal centrado con transparencia
 	const modal = document.createElement("div");
 	modal.className = "bg-gray/900 backdrop-blur-md rounded-xl shadow-2xl p-10 w-full max-w-2xl border-1 border-blue-500 relative scale-95 opacity-0";
@@ -315,7 +344,7 @@ async function showUserProfile(userId: string, username: string, event?: MouseEv
 	addProfileModalListeners(userId, backdrop);
 }
 
-async function fetchUserData (userId: string) {
+async function fetchUserData(userId: string) {
 	try {
 		const response = await fetch(`https://localhost:8443/back/get_user_by_id/?id=${userId}`, {
 			method: "GET",
@@ -378,9 +407,9 @@ async function fetchFriendEntries(userId: string) {
 
 async function checkFriendStatus(userId: string, friendsEntries: any[]): Promise<{ isFriend: boolean; isPending: boolean; isBlocked: boolean }> {
 	const blockedFriends = friendsEntries.filter((entry: any) => entry.status === "blocked");
-	
+
 	const isBlocked = blockedFriends.some((entry: any) =>
-   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
+		String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
 	);
 
 	// Filtra solo los amigos aceptados
@@ -390,11 +419,11 @@ async function checkFriendStatus(userId: string, friendsEntries: any[]): Promise
 
 	// Comprueba si el userId mostrado es amigo
 	const isFriend = acceptedFriends.some((entry: any) =>
-   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
+		String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
 	);
 
 	const isPending = pendingFriends.some((entry: any) =>
-   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
+		String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
 	);
 
 	return { isFriend, isPending, isBlocked };
@@ -403,11 +432,11 @@ async function checkFriendStatus(userId: string, friendsEntries: any[]): Promise
 function getFriendButton(isFriend: boolean, isPending: boolean, isBlocked: boolean): string {
 	let friendButton = "";
 	if (isFriend && !isBlocked) {
-	friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
+		friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
 	} else if (isPending && !isBlocked) {
-	friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
+		friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
 	} else if (!isFriend && !isPending && !isBlocked) {
-	friendButton =`<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">➕ Add Friend</button>`;
+		friendButton = `<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">➕ Add Friend</button>`;
 	}
 	return friendButton;
 }
@@ -431,7 +460,7 @@ function createBackdrop(): HTMLDivElement {
 }
 
 function addProfileModalListeners(userId: string, backdrop: HTMLDivElement) {
-		document.getElementById("close-profile-modal")?.addEventListener("click", () => {
+	document.getElementById("close-profile-modal")?.addEventListener("click", () => {
 		backdrop.remove();
 	});
 
@@ -441,8 +470,8 @@ function addProfileModalListeners(userId: string, backdrop: HTMLDivElement) {
 	});
 
 	document.getElementById("cancel-friend-btn")?.addEventListener("click", async () => {
-    	await rejectFriendRequest(userId);
-    	backdrop.remove();
+		await rejectFriendRequest(userId);
+		backdrop.remove();
 	});
 
 	document.getElementById("del-friend-btn")?.addEventListener("click", () => {
@@ -464,77 +493,77 @@ function addProfileModalListeners(userId: string, backdrop: HTMLDivElement) {
 }
 
 async function rejectFriendRequest(userId: string): Promise<void> {
-    try {
-        const response = await fetch("https://localhost:8443/back/reject_friend_request", {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ friendId: userId }),
-        });
-        if (response.ok) {
-            alert("Solicitud de amistad cancelada.");
-        } else {
-            const errorMessage = await response.json();
-            alert("Error al cancelar la solicitud: " + errorMessage.error);
-        }
-    } catch (error) {
-        alert("Error al cancelar la solicitud: " + error);
-    }
+	try {
+		const response = await fetch("https://localhost:8443/back/reject_friend_request", {
+			method: "POST",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ friendId: userId }),
+		});
+		if (response.ok) {
+			alert("Solicitud de amistad cancelada.");
+		} else {
+			const errorMessage = await response.json();
+			alert("Error al cancelar la solicitud: " + errorMessage.error);
+		}
+	} catch (error) {
+		alert("Error al cancelar la solicitud: " + error);
+	}
 }
 
 async function deleteFriend(userId: string) {
 	try {
 		const response = await fetch(`https://localhost:8443/back/delete_friend`, {
-			method:  "POST",
+			method: "POST",
 			credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({friendId: userId}),
+			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
 			alert("Friend deleted");
 		} else {
-            const errorMessage = await response.json();
-            alert("Error al cancelar la solicitud: " + errorMessage.error);
-        }
-    } catch (error) {
-       	alert("Error al cancelar la solicitud: " + error);
-   	}
+			const errorMessage = await response.json();
+			alert("Error al cancelar la solicitud: " + errorMessage.error);
+		}
+	} catch (error) {
+		alert("Error al cancelar la solicitud: " + error);
+	}
 }
 
 async function blockUser(userId: string) {
 	try {
 		const response = await fetch(`https://localhost:8443/back/block_user`, {
-			method:  "POST",
+			method: "POST",
 			credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({friendId: userId}),
+			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
 			alert("Friend deleted");
 		} else {
-            const errorMessage = await response.json();
-            alert("Error al cancelar la solicitud: " + errorMessage.error);
-        }
-    } catch (error) {
-       	alert("Error al cancelar la solicitud: " + error);
-   	}
+			const errorMessage = await response.json();
+			alert("Error al cancelar la solicitud: " + errorMessage.error);
+		}
+	} catch (error) {
+		alert("Error al cancelar la solicitud: " + error);
+	}
 }
 
 async function unblockUser(userId: string) {
 	try {
 		const response = await fetch(`https://localhost:8443/back/unblock_user`, {
-			method:  "POST",
+			method: "POST",
 			credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({friendId: userId}),
+			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
 			alert("User unblocked");
@@ -543,6 +572,6 @@ async function unblockUser(userId: string) {
 			alert("Error al cancelar la solicitud: " + errorMessage.error);
 		}
 	} catch (error) {
-	   	alert("Error al cancelar la solicitud: " + error);
-   	}
+		alert("Error al cancelar la solicitud: " + error);
+	}
 }

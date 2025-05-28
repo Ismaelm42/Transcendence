@@ -180,29 +180,53 @@ function showUserOptionsMenu(userElement, event) {
     if (oldMenu) {
         oldMenu.remove();
     }
-    const menu = createOptionMenu(event);
+    const menu = createOptionMenu(event, userElement);
     document.body.appendChild(menu);
     addMenuOptionsListeners(menu, userId, username, event);
     // Cerrar el menú al hacer clic fuera de él
-    const handleClickOutside = (e) => {
-        if (!menu.contains(e.target)) {
-            menu.remove();
-            document.removeEventListener("click", handleClickOutside);
-        }
-    };
-    document.addEventListener("click", handleClickOutside);
+    // Cerrar el menú cuando el cursor sale del menú
+    menu.addEventListener("mouseleave", () => {
+        menu.remove();
+    });
     event.stopPropagation();
 }
-function createOptionMenu(event) {
+function createOptionMenu(event, userElement) {
     const menu = document.createElement("div");
     menu.id = "user-options-menu";
-    menu.className = "absolute bg-gray-900/80 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
+    menu.className = "absolute bg-gray-900/95 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
     menu.innerHTML = `
-        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
-        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
-    `;
-    menu.style.top = `${event.clientY + 5}px`;
-    menu.style.left = `${event.clientX + 5}px`;
+		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
+		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
+	`;
+    const rect = userElement.getBoundingClientRect();
+    // Calcula la posición: debajo del usuario, alineado horizontalmente con el click, pero no fuera del usuario
+    let left = event.clientX - 10;
+    let top = rect.top + rect.height + window.scrollY - 10;
+    // Limita el menú para que no se salga de la pantalla
+    document.body.appendChild(menu);
+    const menuRect = menu.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    // Si el click está fuera del usuario, centra el menú respecto al usuario
+    if (event.clientX < rect.left || event.clientX > rect.right) {
+        left = rect.left + rect.width / 2 - menuRect.width / 2 + window.scrollX;
+    }
+    // Ajusta si se sale por la derecha
+    if (left + menuRect.width > viewportWidth) {
+        left = viewportWidth - menuRect.width - 10;
+    }
+    // Ajusta si se sale por la izquierda
+    if (left < 10) {
+        left = 10;
+    }
+    // Ajusta si se sale por abajo
+    if (top + menuRect.height > viewportHeight) {
+        top = viewportHeight - menuRect.height - 10;
+    }
+    // Nunca menos de 0
+    top = Math.max(top, 10);
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
     return menu;
 }
 function addMenuOptionsListeners(menu, userId, username, event) {
