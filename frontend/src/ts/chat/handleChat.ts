@@ -182,18 +182,37 @@ function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent) {
 	if (oldMenu) {
 		oldMenu.remove();
 	}
-	const menu = document.createElement("div");
-	menu.id = "user-options-menu";
-	menu.className = "absolute bg-gray-900/80 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
-	menu.innerHTML = `
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
-	`
-	menu.style.top = `${event.clientY + 5}px`;
-	menu.style.left = `${event.clientX + 5}px`;
+	const menu = createOptionMenu(event);
 
 	document.body.appendChild(menu);
 
+	addMenuOptionsListeners(menu, userId, username, event);
+
+	// Cerrar el menú al hacer clic fuera de él
+	const handleClickOutside = (e: MouseEvent) => {
+		if (!menu.contains(e.target as Node)) {
+			menu.remove();
+			document.removeEventListener("click", handleClickOutside);
+		}
+	};
+	document.addEventListener("click", handleClickOutside);
+	event.stopPropagation();
+}
+
+function createOptionMenu (event: MouseEvent): HTMLDivElement {
+	const menu = document.createElement("div");
+    menu.id = "user-options-menu";
+    menu.className = "absolute bg-gray-900/80 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
+    menu.innerHTML = `
+        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
+        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
+    `;
+    menu.style.top = `${event.clientY + 5}px`;
+    menu.style.left = `${event.clientX + 5}px`;
+    return menu;
+}
+
+function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username: string, event: MouseEvent) {
 	menu.querySelectorAll("div").forEach((option) => {
 		option.addEventListener("click", () => {
 			const action = option.getAttribute("data-action");
@@ -212,15 +231,6 @@ function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent) {
 			menu.remove();
 		});
 	});
-	// Cerrar el menú al hacer clic fuera de él
-	const handleClickOutside = (e: MouseEvent) => {
-		if (!menu.contains(e.target as Node)) {
-			menu.remove();
-			document.removeEventListener("click", handleClickOutside);
-		}
-	};
-	document.addEventListener("click", handleClickOutside);
-	event.stopPropagation();
 }
 
 function openPrivateChat(username: string) {
@@ -261,64 +271,22 @@ async function showUserProfile(userId: string, username: string, event?: MouseEv
 	const existingProfile = document.getElementById("user-profile-modal-backdrop");
 	if (existingProfile) existingProfile.remove();
 
-	const userRes = await fetch(`https://localhost:8443/back/get_user_by_id/?id=${userId}`, {
-		method: "GET",
-		credentials: 'include',
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
-	const userData = await userRes.json();
-
-	const statsRes = await fetch(`https://localhost:8443/back/get_user_gamelogs/${userId}`, {
-		method: "GET",
-		credentials: 'include',
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
-	const userStats = await statsRes.json();
-
-	const friendRes = await fetch(`https://localhost:8443/back/get_all_friends_entries_from_an_id`, {
-    	method: "POST",
-    	credentials: 'include',
-    	headers: {
-        	"Content-Type": "application/json",
-    	},
-		body: JSON.stringify({})
-	});
-	const friendsEntries = await friendRes.json();
-
-	console.log("friendsEntries", friendsEntries);
-	// Filtra solo los amigos aceptados
-	const acceptedFriends = friendsEntries.filter((entry: any) => entry.status === "accepted");
-
-	const pendingFriends = friendsEntries.filter((entry: any) => entry.status === "pending");
-
-	// Comprueba si el userId mostrado es amigo
-	const isFriend = acceptedFriends.some((entry: any) =>
-   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
-	);
-
-	const isPending = pendingFriends.some((entry: any) =>
-   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
-	);
-
-
-	let friendButton= "";
-	if (isFriend) {
-	friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
-	} else if (isPending) {
-	friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
-	} else {
-	friendButton =`<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">➕ Add Friend</button>`;
+	const userData = await fetchUserData(userId);
+	const userStats = await fetchUserStats(userId);
+	const friendsEntries = await fetchFriendEntries(userId);
+	if (!userData || !userStats || !friendsEntries) {
+		console.log("Error fetching user data or stats.");
+		return;
 	}
-	// Fondo semitransparente que NO cubre el header (ajusta top-[64px] si tu header es más alto o bajo)
-	const backdrop = document.createElement("div");
-	backdrop.id = "user-profile-modal-backdrop";
-	backdrop.className = "fixed left-0 right-0 bottom-0 top-[64px] bg-black/50 flex items-center justify-center z-40";
-	backdrop.style.animation = "fadeIn 0.2s";
 
+	const { isFriend, isPending, isBlocked} = await checkFriendStatus(userId, friendsEntries);
+
+	const friendButton= getFriendButton(isFriend, isPending, isBlocked);
+
+ 	const blockUserButton = getBlockUserButton(isBlocked, userId);
+
+	// Fondo semitransparente que NO cubre el header (ajusta top-[64px] si tu header es más alto o bajo)
+	const backdrop = createBackdrop(); 
 	// Modal centrado con transparencia
 	const modal = document.createElement("div");
 	modal.className = "bg-gray/900 backdrop-blur-md rounded-xl shadow-2xl p-10 w-full max-w-2xl border-1 border-blue-500 relative scale-95 opacity-0";
@@ -336,7 +304,7 @@ async function showUserProfile(userId: string, username: string, event?: MouseEv
 			</ul>
 			<div class="flex gap-4 mt-2">
 				${friendButton}
-				<button id="block-user-btn" class="bg-red-800 hover:bg-red-500 text-white px-6 py-2 rounded-lg font-semibold shadow">🚫 Block User</button>
+				${blockUserButton}
 			</div>
 		</div>
 	`;
@@ -349,7 +317,126 @@ async function showUserProfile(userId: string, username: string, event?: MouseEv
 		modal.style.transform = "scale(1)";
 	}, 10);
 
-	document.getElementById("close-profile-modal")?.addEventListener("click", () => {
+	addProfileModalListeners(userId, backdrop);
+}
+
+async function fetchUserData (userId: string) {
+	try {
+		const response = await fetch(`https://localhost:8443/back/get_user_by_id/?id=${userId}`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		if (response.ok) {
+			return await response.json();
+		} else {
+			throw new Error("Error fetching user data");
+		}
+	} catch (error) {
+		console.error("Error fetching user data:", error);
+		return null;
+	}
+}
+
+async function fetchUserStats(userId: string) {
+	try {
+		const response = await fetch(`https://localhost:8443/back/get_user_gamelogs/${userId}`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		if (response.ok) {
+			return await response.json();
+		} else {
+			throw new Error("Error fetching user stats");
+		}
+	} catch (error) {
+		console.error("Error fetching user stats:", error);
+		return null;
+	}
+}
+
+async function fetchFriendEntries(userId: string) {
+	try {
+		const response = await fetch(`https://localhost:8443/back/get_all_friends_entries_from_an_id`, {
+			method: "POST",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ userId }),
+		});
+		if (response.ok) {
+			return await response.json();
+		} else {
+			throw new Error("Error fetching friend entries");
+		}
+	} catch (error) {
+		console.error("Error fetching friend entries:", error);
+		return null;
+	}
+}
+
+async function checkFriendStatus(userId: string, friendsEntries: any[]): Promise<{ isFriend: boolean; isPending: boolean; isBlocked: boolean }> {
+	const blockedFriends = friendsEntries.filter((entry: any) => entry.status === "blocked");
+	
+	const isBlocked = blockedFriends.some((entry: any) =>
+   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
+	);
+
+	// Filtra solo los amigos aceptados
+	const acceptedFriends = friendsEntries.filter((entry: any) => entry.status === "accepted");
+
+	const pendingFriends = friendsEntries.filter((entry: any) => entry.status === "pending");
+
+	// Comprueba si el userId mostrado es amigo
+	const isFriend = acceptedFriends.some((entry: any) =>
+   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
+	);
+
+	const isPending = pendingFriends.some((entry: any) =>
+   	 String(entry.friendId) === String(userId) || String(entry.userId) === String(userId)
+	);
+
+	return { isFriend, isPending, isBlocked };
+}
+
+function getFriendButton(isFriend: boolean, isPending: boolean, isBlocked: boolean): string {
+	let friendButton = "";
+	if (isFriend && !isBlocked) {
+	friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
+	} else if (isPending && !isBlocked) {
+	friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
+	} else if (!isFriend && !isPending && !isBlocked) {
+	friendButton =`<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">➕ Add Friend</button>`;
+	}
+	return friendButton;
+}
+
+function getBlockUserButton(isBlocked: boolean, userId: string): string {
+	let blockUserButton = "";
+	if (isBlocked) {
+		blockUserButton = `<button id="unblock-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔓 Unblock User</button>`;
+	} else {
+		blockUserButton = `<button id="block-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔒 Block User</button>`;
+	}
+	return blockUserButton;
+}
+
+function createBackdrop(): HTMLDivElement {
+	const backdrop = document.createElement("div");
+	backdrop.id = "user-profile-modal-backdrop";
+	backdrop.className = "fixed left-0 right-0 bottom-0 top-[160px] bg-black/50 flex items-center justify-center z-40";
+	backdrop.style.animation = "fadeIn 0.2s";
+	return backdrop;
+}
+
+function addProfileModalListeners(userId: string, backdrop: HTMLDivElement) {
+		document.getElementById("close-profile-modal")?.addEventListener("click", () => {
 		backdrop.remove();
 	});
 
@@ -369,6 +456,10 @@ async function showUserProfile(userId: string, username: string, event?: MouseEv
 	});
 	document.getElementById("block-user-btn")?.addEventListener("click", () => {
 		blockUser(userId);
+		backdrop.remove();
+	});
+	document.getElementById("unblock-user-btn")?.addEventListener("click", () => {
+		unblockUser(userId);
 		backdrop.remove();
 	});
 
@@ -437,5 +528,26 @@ async function blockUser(userId: string) {
         }
     } catch (error) {
        	alert("Error al cancelar la solicitud: " + error);
+   	}
+}
+
+async function unblockUser(userId: string) {
+	try {
+		const response = await fetch(`https://localhost:8443/back/unblock_user`, {
+			method:  "POST",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({friendId: userId}),
+		});
+		if (response.ok) {
+			alert("User unblocked");
+		} else {
+			const errorMessage = await response.json();
+			alert("Error al cancelar la solicitud: " + errorMessage.error);
+		}
+	} catch (error) {
+	   	alert("Error al cancelar la solicitud: " + error);
    	}
 }

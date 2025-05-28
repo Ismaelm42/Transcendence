@@ -181,16 +181,32 @@ function showUserOptionsMenu(userElement, event) {
     if (oldMenu) {
         oldMenu.remove();
     }
+    const menu = createOptionMenu(event);
+    document.body.appendChild(menu);
+    addMenuOptionsListeners(menu, userId, username, event);
+    // Cerrar el menú al hacer clic fuera de él
+    const handleClickOutside = (e) => {
+        if (!menu.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener("click", handleClickOutside);
+        }
+    };
+    document.addEventListener("click", handleClickOutside);
+    event.stopPropagation();
+}
+function createOptionMenu(event) {
     const menu = document.createElement("div");
     menu.id = "user-options-menu";
     menu.className = "absolute bg-gray-900/80 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
     menu.innerHTML = `
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
-	`;
+        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
+        <div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
+    `;
     menu.style.top = `${event.clientY + 5}px`;
     menu.style.left = `${event.clientX + 5}px`;
-    document.body.appendChild(menu);
+    return menu;
+}
+function addMenuOptionsListeners(menu, userId, username, event) {
     menu.querySelectorAll("div").forEach((option) => {
         option.addEventListener("click", () => {
             const action = option.getAttribute("data-action");
@@ -209,15 +225,6 @@ function showUserOptionsMenu(userElement, event) {
             menu.remove();
         });
     });
-    // Cerrar el menú al hacer clic fuera de él
-    const handleClickOutside = (e) => {
-        if (!menu.contains(e.target)) {
-            menu.remove();
-            document.removeEventListener("click", handleClickOutside);
-        }
-    };
-    document.addEventListener("click", handleClickOutside);
-    event.stopPropagation();
 }
 function openPrivateChat(username) {
     let privateChat = document.getElementById("private-chat");
@@ -255,57 +262,21 @@ function sendFriendRequest(userId) {
 }
 function showUserProfile(userId, username, event) {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e;
         const existingProfile = document.getElementById("user-profile-modal-backdrop");
         if (existingProfile)
             existingProfile.remove();
-        const userRes = yield fetch(`https://localhost:8443/back/get_user_by_id/?id=${userId}`, {
-            method: "GET",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const userData = yield userRes.json();
-        const statsRes = yield fetch(`https://localhost:8443/back/get_user_gamelogs/${userId}`, {
-            method: "GET",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const userStats = yield statsRes.json();
-        const friendRes = yield fetch(`https://localhost:8443/back/get_all_friends_entries_from_an_id`, {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({})
-        });
-        const friendsEntries = yield friendRes.json();
-        console.log("friendsEntries", friendsEntries);
-        // Filtra solo los amigos aceptados
-        const acceptedFriends = friendsEntries.filter((entry) => entry.status === "accepted");
-        const pendingFriends = friendsEntries.filter((entry) => entry.status === "pending");
-        // Comprueba si el userId mostrado es amigo
-        const isFriend = acceptedFriends.some((entry) => String(entry.friendId) === String(userId) || String(entry.userId) === String(userId));
-        const isPending = pendingFriends.some((entry) => String(entry.friendId) === String(userId) || String(entry.userId) === String(userId));
-        let friendButton = "";
-        if (isFriend) {
-            friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
+        const userData = yield fetchUserData(userId);
+        const userStats = yield fetchUserStats(userId);
+        const friendsEntries = yield fetchFriendEntries(userId);
+        if (!userData || !userStats || !friendsEntries) {
+            console.log("Error fetching user data or stats.");
+            return;
         }
-        else if (isPending) {
-            friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
-        }
-        else {
-            friendButton = `<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">➕ Add Friend</button>`;
-        }
+        const { isFriend, isPending, isBlocked } = yield checkFriendStatus(userId, friendsEntries);
+        const friendButton = getFriendButton(isFriend, isPending, isBlocked);
+        const blockUserButton = getBlockUserButton(isBlocked, userId);
         // Fondo semitransparente que NO cubre el header (ajusta top-[64px] si tu header es más alto o bajo)
-        const backdrop = document.createElement("div");
-        backdrop.id = "user-profile-modal-backdrop";
-        backdrop.className = "fixed left-0 right-0 bottom-0 top-[64px] bg-black/50 flex items-center justify-center z-40";
-        backdrop.style.animation = "fadeIn 0.2s";
+        const backdrop = createBackdrop();
         // Modal centrado con transparencia
         const modal = document.createElement("div");
         modal.className = "bg-gray/900 backdrop-blur-md rounded-xl shadow-2xl p-10 w-full max-w-2xl border-1 border-blue-500 relative scale-95 opacity-0";
@@ -322,7 +293,7 @@ function showUserProfile(userId, username, event) {
 			</ul>
 			<div class="flex gap-4 mt-2">
 				${friendButton}
-				<button id="block-user-btn" class="bg-red-800 hover:bg-red-500 text-white px-6 py-2 rounded-lg font-semibold shadow">🚫 Block User</button>
+				${blockUserButton}
 			</div>
 		</div>
 	`;
@@ -332,29 +303,150 @@ function showUserProfile(userId, username, event) {
             modal.style.opacity = "1";
             modal.style.transform = "scale(1)";
         }, 10);
-        (_a = document.getElementById("close-profile-modal")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+        addProfileModalListeners(userId, backdrop);
+    });
+}
+function fetchUserData(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch(`https://localhost:8443/back/get_user_by_id/?id=${userId}`, {
+                method: "GET",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.ok) {
+                return yield response.json();
+            }
+            else {
+                throw new Error("Error fetching user data");
+            }
+        }
+        catch (error) {
+            console.error("Error fetching user data:", error);
+            return null;
+        }
+    });
+}
+function fetchUserStats(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch(`https://localhost:8443/back/get_user_gamelogs/${userId}`, {
+                method: "GET",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.ok) {
+                return yield response.json();
+            }
+            else {
+                throw new Error("Error fetching user stats");
+            }
+        }
+        catch (error) {
+            console.error("Error fetching user stats:", error);
+            return null;
+        }
+    });
+}
+function fetchFriendEntries(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch(`https://localhost:8443/back/get_all_friends_entries_from_an_id`, {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId }),
+            });
+            if (response.ok) {
+                return yield response.json();
+            }
+            else {
+                throw new Error("Error fetching friend entries");
+            }
+        }
+        catch (error) {
+            console.error("Error fetching friend entries:", error);
+            return null;
+        }
+    });
+}
+function checkFriendStatus(userId, friendsEntries) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const blockedFriends = friendsEntries.filter((entry) => entry.status === "blocked");
+        const isBlocked = blockedFriends.some((entry) => String(entry.friendId) === String(userId) || String(entry.userId) === String(userId));
+        // Filtra solo los amigos aceptados
+        const acceptedFriends = friendsEntries.filter((entry) => entry.status === "accepted");
+        const pendingFriends = friendsEntries.filter((entry) => entry.status === "pending");
+        // Comprueba si el userId mostrado es amigo
+        const isFriend = acceptedFriends.some((entry) => String(entry.friendId) === String(userId) || String(entry.userId) === String(userId));
+        const isPending = pendingFriends.some((entry) => String(entry.friendId) === String(userId) || String(entry.userId) === String(userId));
+        return { isFriend, isPending, isBlocked };
+    });
+}
+function getFriendButton(isFriend, isPending, isBlocked) {
+    let friendButton = "";
+    if (isFriend && !isBlocked) {
+        friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
+    }
+    else if (isPending && !isBlocked) {
+        friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
+    }
+    else if (!isFriend && !isPending && !isBlocked) {
+        friendButton = `<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">➕ Add Friend</button>`;
+    }
+    return friendButton;
+}
+function getBlockUserButton(isBlocked, userId) {
+    let blockUserButton = "";
+    if (isBlocked) {
+        blockUserButton = `<button id="unblock-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔓 Unblock User</button>`;
+    }
+    else {
+        blockUserButton = `<button id="block-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔒 Block User</button>`;
+    }
+    return blockUserButton;
+}
+function createBackdrop() {
+    const backdrop = document.createElement("div");
+    backdrop.id = "user-profile-modal-backdrop";
+    backdrop.className = "fixed left-0 right-0 bottom-0 top-[160px] bg-black/50 flex items-center justify-center z-40";
+    backdrop.style.animation = "fadeIn 0.2s";
+    return backdrop;
+}
+function addProfileModalListeners(userId, backdrop) {
+    var _a, _b, _c, _d, _e, _f;
+    (_a = document.getElementById("close-profile-modal")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+        backdrop.remove();
+    });
+    (_b = document.getElementById("add-friend-btn")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
+        sendFriendRequest(userId);
+        backdrop.remove();
+    });
+    (_c = document.getElementById("cancel-friend-btn")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+        yield rejectFriendRequest(userId);
+        backdrop.remove();
+    }));
+    (_d = document.getElementById("del-friend-btn")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
+        deleteFriend(userId);
+        backdrop.remove();
+    });
+    (_e = document.getElementById("block-user-btn")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => {
+        blockUser(userId);
+        backdrop.remove();
+    });
+    (_f = document.getElementById("unblock-user-btn")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", () => {
+        unblockUser(userId);
+        backdrop.remove();
+    });
+    backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop)
             backdrop.remove();
-        });
-        (_b = document.getElementById("add-friend-btn")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
-            sendFriendRequest(userId);
-            backdrop.remove();
-        });
-        (_c = document.getElementById("cancel-friend-btn")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-            yield rejectFriendRequest(userId);
-            backdrop.remove();
-        }));
-        (_d = document.getElementById("del-friend-btn")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
-            deleteFriend(userId);
-            backdrop.remove();
-        });
-        (_e = document.getElementById("block-user-btn")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => {
-            blockUser(userId);
-            backdrop.remove();
-        });
-        backdrop.addEventListener("click", (e) => {
-            if (e.target === backdrop)
-                backdrop.remove();
-        });
     });
 }
 function rejectFriendRequest(userId) {
@@ -418,6 +510,30 @@ function blockUser(userId) {
             });
             if (response.ok) {
                 alert("Friend deleted");
+            }
+            else {
+                const errorMessage = yield response.json();
+                alert("Error al cancelar la solicitud: " + errorMessage.error);
+            }
+        }
+        catch (error) {
+            alert("Error al cancelar la solicitud: " + error);
+        }
+    });
+}
+function unblockUser(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch(`https://localhost:8443/back/unblock_user`, {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ friendId: userId }),
+            });
+            if (response.ok) {
+                alert("User unblocked");
             }
             else {
                 const errorMessage = yield response.json();
