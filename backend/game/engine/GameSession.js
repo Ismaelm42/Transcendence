@@ -1,9 +1,9 @@
-import { resetState } from "./gameState.js";
 /**
  * GameSession.js file:
  * 	- GameSession class initial declaration (constructor)
  * 	- Aux/utils methods (getters/setters, debug) and core methods that don't fit elsewhere
  */
+
 export default class GameSession
 {
 	constructor(roomId, gameMode)
@@ -17,17 +17,54 @@ export default class GameSession
 		this.aiInterval = null;
 		this.lastUpdateTime = Date.now();
 		this.isResetting = false;
+		this.winScore = 5;
+		this.difficulty = 'medium';
+		this.isFinished = false;
+		this.shouldCleanup = false;
+
+		// For game log and database storage
+		this.metadata = {
+			startTime: Date.now(),
+			endTime: null,
+			duration: 0,
+			tournamentId: null,
+			playerDetails: {
+				// Will be full user object - player1: {id, tournamentName,...}
+				player1: null,
+				player2: null
+			},
+			result: {
+				// Not sure how to store winner yet, maybe just ID? nick?
+				winner: null,
+				loser: null,
+				finalScore: [0, 0]
+			},
+			config: {
+				scoreLimit: this.winScore,
+				difficulty: this.difficulty
+			}
+		};
 	}
 
-	// Start the game loop
-	startGameLoop()
+	startGameLoop(gamesList)
 	{
+		let lastUpdateTime = Date.now();
 		this.gameLoop = setInterval(() => {
+			// 1. Check if game still exists, if not, clear and return
+			if (!gamesList.has(this.roomId) || this.isFinished || this.shouldCleanup)
+			{
+				clearInterval(this.gameLoop);
+				return ;
+			}
+			// 2. Calculate time since last update
 			const now = Date.now();
-			const deltaTime = 16 / 1000;
+			const deltaTime = (now - lastUpdateTime) / 1000;
+			lastUpdateTime = now;
+			// 3. Update game state (ball position, scores, etc.)
 			this.update(deltaTime);
+			// 4. Send updated state to all players in game
 			this.broadcastState();
-		}, 16);
+		}, 16); // ~60fps (1000ms/60 ≈ 16ms)
 	}
 
 	// Get game configuration
@@ -36,7 +73,10 @@ export default class GameSession
 		return {
 			roomId: this.roomId,
 			gameMode: this.gameMode,
-			playerCount: this.players.size
+			playerCount: this.players.size,
+			scoreLimit: this.winScore,
+			difficulty: this.difficulty,
+			ballSpeedMultiplier: this.ballSpeedMultiplier
 		};
 	}
 
@@ -60,34 +100,11 @@ export default class GameSession
 		clearInterval(this.gameLoop);
 		clearInterval(this.aiInterval);
 	}
+
+	// Method to set tournament ID if part of a tournament - not using yet, will move to tournament file later
+	setTournamentId(tournamentId)
+	{
+		this.metadata.tournamentId = tournamentId;
+	}
 }
 
-export function startGameLoop(gameSession, gamesList)
-{
-	let lastUpdateTime = Date.now();
-	const gameLoop = setInterval(() => {
-		// 1. Check if game still exists, if not, clear and return
-		if (!gamesList.has(gameSession.roomId))
-		{
-			clearInterval(gameLoop);
-			return ;
-		}
-		// 2. Calculate time since last update
-		const now = Date.now();
-		const deltaTime = (now - lastUpdateTime) / 1000;
-		lastUpdateTime = now;
-		// 3. Update game state (ball position, scores, etc.)
-		gameSession.update(deltaTime);
-		// 4. Send updated state to all players in game
-		gameSession.getConnections().forEach((connection, playerId) => {
-			if (connection.readyState === 1)
-			{ 
-				connection.send(JSON.stringify({
-					type: 'GAME_STATE',
-					state: gameSession.getPlayerView(playerId),
-					timestamp: now
-				}));
-			}
-		});
-	}, 16); // ~60fps (1000ms/60 ≈ 16ms)
-}

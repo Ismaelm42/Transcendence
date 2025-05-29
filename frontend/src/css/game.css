@@ -1,0 +1,103 @@
+.game-container {
+	position: relative;
+	width: 100%;
+	height: 70vh;
+	background: #000;
+	overflow: hidden;
+}
+
+.paddle {
+	position: absolute;
+	width: 15px;
+	height: 100px;
+	background: white;
+	left: 20px; /* Right paddle positioned via JS */
+	transition: top 0.1s ease-out;
+}
+
+.ball {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	background: white;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.score {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: white;
+	font-size: 2rem;
+}
+
+.controls {
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.game-results-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.results-modal {
+    background-color: #272727;
+    border: 3px solid #00ff99;
+    border-radius: 10px;
+    padding: 2rem;
+    width: 80%;
+    max-width: 500px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);
+}
+
+.results-modal h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #00ff99;
+}
+
+.result-content {
+    margin-bottom: 2rem;
+}
+
+.result-content p {
+    margin: 0.8rem 0;
+    font-size: 1.2rem;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.result-actions button {
+    background-color: #00ff99;
+    color: #272727;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.result-actions button:hover {
+    background-color: white;
+    transform: scale(1.05);
+}

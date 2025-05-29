@@ -2,7 +2,7 @@
  * players.js file: player managment methods + AI bot
  */
 
-// Add a player to the game
+// Add a player to the game session
 export function addPlayer(playerId, connection)
 {
 	if (this.players.size >= 2)
@@ -13,6 +13,12 @@ export function addPlayer(playerId, connection)
 	if (this.gameMode === '1vAI' && this.players.size === 1)
 		this.startAI();
 	return (playerNumber);
+}
+
+// Add a method to update player details
+export function setPlayerDetails(playerNumber, userDetails)
+{
+	this.metadata.playerDetails[playerNumber] = userDetails;
 }
 
 // Get state for a specific player
@@ -36,25 +42,27 @@ export function removePlayer(playerId)
 }
 
 // Start AI opponent which will track ball an move paddle to it
+// TODO: use aiErrorFactor from difficulty
 export function startAI()
 {
 	this.aiInterval = setInterval(() => {
-		const ballY = this.state.ball.y;
-		const paddle = this.state.paddles.player2;
+		const	speedAI = 0.15;
+		const 	ballY = this.state.ball.y;
+		const 	paddle = this.state.paddles.player2;
 		
 		// Store last position to track movement
 		if (!paddle.lastY)
 			paddle.lastY = paddle.y;
 		
 		// Old position
-		const oldY = paddle.y;
+		const	oldY = paddle.y;
 		// Tracking speed
-		paddle.y += (ballY - paddle.y) * 0.13;
+		paddle.y += (ballY - paddle.y) * speedAI;
 		
 		// Paddle boundries (so they don't move out of canvas)
-		const paddleHeight = 0.15;
-		const minY = paddleHeight / 2;
-		const maxY = 1 - (paddleHeight / 2);
+		const	paddleHeight = 0.15;
+		const	minY = paddleHeight / 2;
+		const	maxY = 1 - (paddleHeight / 2);
 		if (paddle.y < minY)
 			paddle.y = minY;
 		if (paddle.y > maxY)

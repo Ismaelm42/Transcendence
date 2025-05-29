@@ -39,8 +39,27 @@ export class GameConnection
 					console.log("Parsed server message:", data);
 					switch(data.type)
 					{
+						case 'GAME_INIT':
+							console.log("Game initialized:", data);
+							// if (data.playerNumber)
+							// 	this.playerNumber = data.playerNumber;
+							// if (data.config)
+							// 	console.log("Server confirmed game config:", data.config);
+							break ;
 						case 'GAME_STATE':
 							this.game.renderer.renderGameState(data.state);
+							break ;
+						case 'GAME_START':
+							// if (data.players && data.players.player1)
+							// 	this.game.setPlayerInfo('player1', data.players.player1);
+							// if (data.players && data.players.player2)
+							// 	this.game.setPlayerInfo('player2', data.players.player2);
+							console.log("Game started:", data);
+							this.game.startGameSession();
+							break ;
+						case 'GAME_END':
+							this.game.endGameSession(data.result);
+							this.game.ui.showGameResults(this.game.getGameLog());
 							break ;
 						case 'SERVER_TEST':
 							console.log("Server test message:", data.message);
@@ -74,6 +93,31 @@ export class GameConnection
 				this.connectionStat = false;
 			};
 		})
+	}
+
+	/**
+	 * Send game mode selection to server with optional metadata
+	 * @param mode Game mode
+	 * @param tournamentId Optional tournament ID
+	 */
+	public joinGame(mode: string, tournamentId?: number): void
+	{
+		if (!this.socket || !this.connectionStat)
+		{
+			console.error("Cannot join game: connection not ready");
+			return ;
+		}
+		this.game.setGameMode(mode);
+		if (tournamentId)
+			this.game.setTournamentId(tournamentId);
+		const	joinMsg: any = {
+			type: 'JOIN_GAME',
+			mode: mode,
+			config: this.game.log.config
+		};
+		if (tournamentId)
+			joinMsg.tournamentId = tournamentId;
+		this.socket.send(JSON.stringify(joinMsg));
 	}
 
 	public destroy()

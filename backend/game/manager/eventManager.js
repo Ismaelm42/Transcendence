@@ -92,6 +92,9 @@ export function	messageManager(client, connection)
 				case 'LEAVE_GAME':
 					handleLeaveGame(client);
 					break ;
+				case 'RESTART_GAME':
+					handleRestartGame(client, data);
+					break ;
 				case 'PING':
 					connection.send(JSON.stringify({ type: 'PONG' }));
 					break ;

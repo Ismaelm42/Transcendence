@@ -19,8 +19,8 @@ export function resetBall(scoringDirection)
 	this.state.ball = { 
 		x: centerX, 
 		y: centerY, 
-		dx: speed * direction, 
-		dy: 0.05 + angleVariance 
+		dx: (speed * this.ballSpeedMultiplier) * direction, 
+		dy: (0.05 + angleVariance) * this.ballSpeedMultiplier
 	};	
 }
 

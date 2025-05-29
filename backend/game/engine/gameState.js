@@ -1,8 +1,49 @@
 /**
  * gameState.js file:
  * 	- Game state elements managment related functions
- * TODO: Could set GameState as a class or interface to export/import?
  */
+
+import { gamesList } from "../manager/eventManager.js";
+
+//Set game difficulty which affects AI behavior and ball speed
+export function setDifficulty(level)
+{
+	this.difficulty = level;
+	this.metadata.config.difficulty = level;
+
+	switch (level)
+	{
+		case 'easy':
+			this.ballSpeedMultiplier = 0.7;
+			this.aiErrorFactor = 0.5; 
+			break;
+		case 'medium':
+			this.ballSpeedMultiplier = 1.0;
+			this.aiErrorFactor = 0.2;
+			break;
+		case 'hard':
+			this.ballSpeedMultiplier = 1.3;
+			this.aiErrorFactor = 0.05;
+			break;
+		default:
+			this.ballSpeedMultiplier = 1.0;
+			this.aiErrorFactor = 0.2;
+	}
+	// Update ball speed if game is in progress
+	if (this.state.ball)
+	{
+		const currentSpeed = Math.sqrt(this.state.ball.dx * this.state.ball.dx + 
+										this.state.ball.dy * this.state.ball.dy);
+		const normalizedDx = this.state.ball.dx / currentSpeed;
+		const normalizedDy = this.state.ball.dy / currentSpeed;
+		
+		const newSpeed = 0.2 * this.ballSpeedMultiplier;
+		this.state.ball.dx = normalizedDx * newSpeed;
+		this.state.ball.dy = normalizedDy * newSpeed;
+	}
+	
+	console.log(`Game ${this.roomId} difficulty set to: ${level}`);
+}
 
 // Initialize or reset game elements positions
 export function resetState()
@@ -37,11 +78,11 @@ export function update(deltaTime)
 	}
 	this.checkPaddleCollision('player1');
 	this.checkPaddleCollision('player2');
-	this.checkScoring();
+	this.checkScoring(gamesList);
 }
 
 // Check if ball has scored on one side and update players scores if so
-export function checkScoring()
+export function checkScoring(gamesList)
 {
 	// Skip scoring check if already in reset phase
 	if (this.isResetting)
@@ -76,4 +117,47 @@ export function checkScoring()
 			this.isResetting = false;
 		}, 1000);
 	}
+	// Check if the winScore has been reached to end the game
+	if (this.state.scores[0] >= this.winScore || this.state.scores[1] >= this.winScore)
+		this.endGame(gamesList);
+}
+
+// CLean finish for game + call logs/DB methods for storing and/or showing info on front side
+export function endGame(gamesList)
+{
+	this.isFinished = true;
+	// Final update of game logs
+	const gamelogData = this.finalizeGame();
+	// Save game logs in database
+	// POST /create_gamelog
+	// saveGameToDatabase(gamelogData);
+	
+	// Stop and clean up intervals
+	clearInterval(this.gameLoop);
+	clearInterval(this.aiInterval);
+	// Remove from gamesList if present
+	if (gamesList && gamesList.has(this.roomId))
+	{
+		console.log("endGame deleting gameSession from map!");
+		gamesList.delete(this.roomId);
+	}
+	// Notify players
+	this.getConnections().forEach((connection) => {
+		if (connection.readyState === 1)
+		{
+			connection.send(JSON.stringify({
+				type: 'GAME_END',
+				result: {
+					winner: this.metadata.result.winner,
+					loser: this.metadata.result.loser,
+					score: this.state.scores
+				},
+				stats: {
+					duration: this.metadata.duration,
+					score: this.state.scores
+				}
+			}));
+		}
+	});
+	this.shouldCleanup = true;
 }

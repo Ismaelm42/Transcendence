@@ -12,3 +12,29 @@ export interface    GameState
 	};
 	scores: [number, number];
 }
+
+// GameData refers later to gameLogs on backend
+// TODO: Implement GameID - join, rematch... 
+export interface	GameData
+{
+	mode: string;
+	player1: any;
+	player2: any;
+	startTime: number;
+	config?: GameConfig;
+	result?: {
+		winner: string;
+		loser: string;
+		score: [number, number];
+	};
+	duration?: number;
+	tournamentId?: number | null;
+}
+
+// Basic game configuration settings, may need to add more later
+export interface	GameConfig
+{
+	scoreLimit: number;
+	difficulty: 'easy' | 'medium' | 'hard';
+}
+
