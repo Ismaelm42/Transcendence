@@ -78,7 +78,7 @@ function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username:
 			if (action) {
 				switch (action) {
 					case "msg":
-						handlePrivateMsg(username);
+						openPrivateChat(username);
 						break;
 					case "play-game":
 						alert("Feature not implemented yet: Play Game with " + username);
