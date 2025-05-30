@@ -2,10 +2,12 @@ import { parse } from 'cookie';
 import { crud } from '../../crud/crud.js'
 import { extractUserFromToken } from '../../auth/token.js';
 
-const clients = new Map();
+let timerId = 0;
 const rooms = new Map();
+const clients = new Map();
 const connected = new Map();
 const usersTimeout = new Map();
+const userRequestId = new Map();
 
 // Get the current time in a specific format
 function getTimeStamp() {
@@ -58,7 +60,7 @@ function sendJSON(user, partner, message, roomId) {
 function updateConnectedUsers(user, isConnected, status) {
 
 	if (isConnected) {
-		connected.set(user.id, {id:user.id, username:user.username, imagePath:user.avatarPath, status:status});
+		connected.set(user.id, { id: user.id, username: user.username, imagePath: user.avatarPath, status: status });
 	}
 	if (!isConnected) {
 		connected.delete(user.id);
@@ -72,8 +74,7 @@ function updateConnectedUsers(user, isConnected, status) {
 
 function sendStatusToAllClients(user, status) {
 
-	if (clients.has(user.id))
-	{
+	if (clients.has(user.id)) {
 		const response = updateConnectedUsers(user, true, status);
 		for (const [id, client] of clients) {
 			client.send(JSON.stringify(response));
@@ -82,16 +83,26 @@ function sendStatusToAllClients(user, status) {
 }
 
 // Update the user's status connection 120000(2mn) 180000(3mn)
+// Timers will reset when the user sends a message or changes their status
 function setTimer(user) {
 
+	timerId += 1;
+	const request = timerId;
+	userRequestId.set(user.id, request);
 	const timeout = usersTimeout.get(user.id);
 	if (timeout) {
 		clearTimeout(timeout);
 	}
 	sendStatusToAllClients(user, "green");
 	const yellowTimer = setTimeout(() => {
+		if (userRequestId.get(user.id) !== request) {
+			return;
+		}
 		sendStatusToAllClients(user, "yellow");
 		const redTimer = setTimeout(() => {
+			if (userRequestId.get(user.id) !== request) {
+				return;
+			}
 			sendStatusToAllClients(user, "red");
 		}, 5000);
 		usersTimeout.set(user.id, redTimer);

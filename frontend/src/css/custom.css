@@ -77,10 +77,10 @@ body {
 
 @keyframes glow-green {
 	0%, 100% {
-	  box-shadow: 0 0 4px 2px rgba(34, 197, 94, 0.7);
+	  box-shadow: 0 0 6px 3px rgba(34, 197, 94, 0.7);
 	}
 	50% {
-	  box-shadow: 0 0 8px 4px rgba(34, 197, 94, 1);
+	  box-shadow: 0 0 12px 6px rgba(34, 197, 94, 1);
 	}
   }
   .glow-green {
@@ -89,10 +89,10 @@ body {
   
   @keyframes glow-yellow {
 	0%, 100% {
-	  box-shadow: 0 0 4px 2px rgba(245, 158, 11, 0.7);
+	  box-shadow: 0 0 6px 3px rgba(245, 158, 11, 0.7);
 	}
 	50% {
-	  box-shadow: 0 0 8px 4px rgba(245, 158, 11, 1);
+	  box-shadow: 0 0 12px 6px rgba(245, 158, 11, 1);
 	}
   }
   .glow-yellow {
@@ -101,10 +101,10 @@ body {
   
   @keyframes glow-red {
 	0%, 100% {
-	  box-shadow: 0 0 4px 2px rgba(239, 68, 68, 0.7);
+	  box-shadow: 0 0 6px 3px rgba(239, 68, 68, 0.7);
 	}
 	50% {
-	  box-shadow: 0 0 8px 4px rgba(239, 68, 68, 1);
+	  box-shadow: 0 0 12px 6px rgba(239, 68, 68, 1);
 	}
   }
   .glow-red {
