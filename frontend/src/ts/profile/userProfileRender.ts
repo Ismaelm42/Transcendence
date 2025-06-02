@@ -4,7 +4,7 @@ import  Stat from '../stats/statsRender.js';
 
 export default class Profile extends Step {
 	async render(appElement: HTMLElement): Promise<void>  {
-		console.log("En Profile render");
+		sessionStorage.setItem("current-view", "Profile");
 		try {
 
 			if (!this.username) {

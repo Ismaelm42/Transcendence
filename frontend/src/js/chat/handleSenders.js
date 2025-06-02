@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { removeNotificationAndUpdateHTML } from "./loadAndUpdateDOM.js";
 export function getUserId(username) {
     return __awaiter(this, void 0, void 0, function* () {
         const id = yield fetch("https://localhost:8443/back/getIdByUsername", {
@@ -66,13 +67,14 @@ export function handlePrivateMsg(e, socket) {
     };
     socket.send(JSON.stringify(message));
 }
-export function showPrivateChat(e, socket, userId) {
+export function showPrivateChat(e, socket, recentChats, userId) {
     const target = e.target;
     const chatDiv = target.closest('[id^="chat-item-"]');
     if (!chatDiv)
         return;
-    const roomId = (chatDiv.id).replace("chat-item-", "");
     const currentRoom = sessionStorage.getItem("current-room") || "";
+    const roomId = (chatDiv.id).replace("chat-item-", "");
+    removeNotificationAndUpdateHTML(roomId);
     if (currentRoom !== roomId) {
         const [id1, id2] = roomId.split("-");
         const id = id1 === userId ? id2 : id1;

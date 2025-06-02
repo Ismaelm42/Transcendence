@@ -12,7 +12,7 @@ import { handleProfile } from './handleProfile.js';
 export default class Profile extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("En Profile render");
+            sessionStorage.setItem("current-view", "Profile");
             try {
                 if (!this.username) {
                     this.username = yield this.checkAuth();

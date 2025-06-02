@@ -11,8 +11,9 @@ import { Step } from '../spa/stepRender.js';
 import { verifySocket } from './verifySocket.js';
 import { filterSearchUsers } from './filterSearch.js';
 import { handleSocketEvents } from './handleSocketEvents.js';
-import { handleContentStorage } from './handleContentStorage.js';
+import { handleContentStorage } from './loadAndUpdateDOM.js';
 import { showUserOptionsMenu } from './handleUserOptionsMenu.js';
+import { removeNotificationChatTab } from './loadAndUpdateDOM.js';
 import { getUserId, handleFormSubmit, handlePrivateMsg, showPrivateChat } from './handleSenders.js';
 export default class Chat extends Step {
     render(appElement) {
@@ -20,6 +21,7 @@ export default class Chat extends Step {
             if (!this.username) {
                 this.username = yield this.checkAuth();
             }
+            sessionStorage.setItem("current-view", "Chat");
             try {
                 const htmlContent = yield fetch("../../html/chat/chat.html");
                 if (!htmlContent.ok) {
@@ -34,6 +36,7 @@ export default class Chat extends Step {
                 const searchInput = document.getElementById("search-users-input");
                 const recentChats = document.getElementById("chat-item-list-container");
                 const userId = yield getUserId(this.username);
+                removeNotificationChatTab();
                 handleContentStorage(chatMessages, recentChats, this.username);
                 Step.socket = verifySocket(Step.socket);
                 handleSocketEvents(Step.socket, chatMessages, recentChats, this.username);
@@ -42,7 +45,7 @@ export default class Chat extends Step {
                 searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
                 searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
                 items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket));
-                recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket, userId));
+                recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket, recentChats, userId));
                 items.addEventListener("click", (event) => {
                     var _a;
                     const target = event.target;

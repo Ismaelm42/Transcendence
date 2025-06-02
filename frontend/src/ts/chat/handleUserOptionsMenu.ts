@@ -1,6 +1,5 @@
-import { handlePrivateMsg } from "./handleSenders.js";
-import { showUserProfile } from "./handleUserProfile.js";
 import {openPrivateChat} from "./userProfileActions.js";
+import { showUserProfile } from "./handleUserProfile.js";
 
 export function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent) {
 	const username = userElement.querySelector("span.text-sm")?.textContent?.trim();

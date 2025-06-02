@@ -4,8 +4,8 @@ export default class Tournament extends Step {
 	
 	async render(appElement: HTMLElement): Promise<void>  {
 		const menuContainer = document.getElementById("menu-container");
+		sessionStorage.setItem("current-view", "Tournament");
 		try {
-			console.log("En Play Tournament Step render");
 			const user = await this.checkAuth();
 			if (user) {		
 				// Retornar el contenido para usuarios autenticados

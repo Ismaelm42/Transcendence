@@ -1,6 +1,6 @@
+import { getFriendButton, getBlockUserButton } from "./userProfileButtons.js";
 import { fetchUserData, fetchUserStats, fetchFriendEntries, sendFriendRequest } from "./userProfileFetchers.js";
 import { checkFriendStatus, rejectFriendRequest, deleteFriend, blockUser, unblockUser } from "./userProfileActions.js";
-import { getFriendButton, getBlockUserButton } from "./userProfileButtons.js";
 
 export async function showUserProfile(userId: string, username: string, event?: MouseEvent) {
 	const existingProfile = document.getElementById("user-profile-modal-backdrop");

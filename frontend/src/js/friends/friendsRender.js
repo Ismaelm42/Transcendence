@@ -12,7 +12,7 @@ import { searchUsersFriends } from './friendsSearchUsers.js';
 export default class Friends extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("En Friend render");
+            sessionStorage.setItem("current-view", "Friends");
             if (!this.username) {
                 this.username = yield this.checkAuth();
             }

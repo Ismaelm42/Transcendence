@@ -1,7 +1,8 @@
-import { handleUserInfo, updatePartnerStatus } from "./handleUserInfo.js";
 import { filterSearchUsers } from "./filterSearch.js";
+import { removeNotificationAndUpdateHTML } from "./loadAndUpdateDOM.js";
+import { handleUserInfo, updatePartnerStatus } from "./handleUserInfo.js";
 import { inputKeyword, setHtmlUsersConnected } from "./state.js";
-import { formatMsgTemplate, formatRecentChatTemplate, formatConnectedUsersTemplate, sortUsersAlphabetically } from "./formatContent.js";
+import { soundNotification, formatMsgTemplate, formatRecentChatTemplate, formatConnectedUsersTemplate, sortUsersAlphabetically } from "./formatContent.js";
 
 function handleSocketOpen(socket: WebSocket) {
 	socket.onopen = () => {
@@ -27,8 +28,17 @@ async function handlePublicChatMsg(chatMessages: HTMLDivElement, data: any, name
 
 async function handlePrivateChatMsg(chatMessages: HTMLDivElement, recentChats: HTMLDivElement, data: any, name: string) {
 
+	if (name === data.partnerUsername && sessionStorage.getItem("current-room") !== data.roomId) {
+		soundNotification();
+	}
+	if (name === data.partnerUsername && sessionStorage.getItem("current-view") !== "Chat") {
+		const chatTab = document.querySelector('a[href="#chat"]');
+		chatTab?.classList.add('blink');	
+	}
 	const HtmlContent = await formatMsgTemplate(data, name);
-	await formatRecentChatTemplate(recentChats, data, name);
+	const HtmlChat= await formatRecentChatTemplate(recentChats, data, name);
+	recentChats.innerHTML = HtmlChat || "";
+	sessionStorage.setItem("recent-chats", HtmlChat || "");
 	const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
 	let stored = privateChat[data.roomId] || "";
 	stored += HtmlContent || "";
@@ -57,6 +67,7 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, re
 			handlePublicChatMsg(chatMessages, data, name);
 		}
 		if (data.type === 'private') {
+			removeNotificationAndUpdateHTML(data.roomId);
 			if (name === data.username) {
 				sessionStorage.setItem("JSONdata", JSON.stringify(data));
 			}

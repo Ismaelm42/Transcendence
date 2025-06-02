@@ -1,5 +1,5 @@
-import { showUserProfile } from "./handleUserProfile.js";
 import { openPrivateChat } from "./userProfileActions.js";
+import { showUserProfile } from "./handleUserProfile.js";
 export function showUserOptionsMenu(userElement, event) {
     var _a, _b;
     const username = (_b = (_a = userElement.querySelector("span.text-sm")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();

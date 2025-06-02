@@ -7,9 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { getFriendButton, getBlockUserButton } from "./userProfileButtons.js";
 import { fetchUserData, fetchUserStats, fetchFriendEntries, sendFriendRequest } from "./userProfileFetchers.js";
 import { checkFriendStatus, rejectFriendRequest, deleteFriend, blockUser, unblockUser } from "./userProfileActions.js";
-import { getFriendButton, getBlockUserButton } from "./userProfileButtons.js";
 export function showUserProfile(userId, username, event) {
     return __awaiter(this, void 0, void 0, function* () {
         const existingProfile = document.getElementById("user-profile-modal-backdrop");

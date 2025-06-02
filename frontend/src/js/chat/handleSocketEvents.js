@@ -7,10 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { handleUserInfo, updatePartnerStatus } from "./handleUserInfo.js";
 import { filterSearchUsers } from "./filterSearch.js";
+import { removeNotificationAndUpdateHTML } from "./loadAndUpdateDOM.js";
+import { handleUserInfo, updatePartnerStatus } from "./handleUserInfo.js";
 import { inputKeyword, setHtmlUsersConnected } from "./state.js";
-import { formatMsgTemplate, formatRecentChatTemplate, formatConnectedUsersTemplate, sortUsersAlphabetically } from "./formatContent.js";
+import { soundNotification, formatMsgTemplate, formatRecentChatTemplate, formatConnectedUsersTemplate, sortUsersAlphabetically } from "./formatContent.js";
 function handleSocketOpen(socket) {
     socket.onopen = () => {
         const handshake = {
@@ -34,8 +35,17 @@ function handlePublicChatMsg(chatMessages, data, name) {
 }
 function handlePrivateChatMsg(chatMessages, recentChats, data, name) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (name === data.partnerUsername && sessionStorage.getItem("current-room") !== data.roomId) {
+            soundNotification();
+        }
+        if (name === data.partnerUsername && sessionStorage.getItem("current-view") !== "Chat") {
+            const chatTab = document.querySelector('a[href="#chat"]');
+            chatTab === null || chatTab === void 0 ? void 0 : chatTab.classList.add('blink');
+        }
         const HtmlContent = yield formatMsgTemplate(data, name);
-        yield formatRecentChatTemplate(recentChats, data, name);
+        const HtmlChat = yield formatRecentChatTemplate(recentChats, data, name);
+        recentChats.innerHTML = HtmlChat || "";
+        sessionStorage.setItem("recent-chats", HtmlChat || "");
         const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
         let stored = privateChat[data.roomId] || "";
         stored += HtmlContent || "";
@@ -63,6 +73,7 @@ function handleSocketMessage(socket, chatMessages, recentChats, name) {
             handlePublicChatMsg(chatMessages, data, name);
         }
         if (data.type === 'private') {
+            removeNotificationAndUpdateHTML(data.roomId);
             if (name === data.username) {
                 sessionStorage.setItem("JSONdata", JSON.stringify(data));
             }

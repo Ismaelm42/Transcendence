@@ -7,6 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+export function soundNotification() {
+    const audio = new Audio("../../sounds/privateNotification.mp3");
+    audio.volume = 1.0;
+    audio.play().catch(error => {
+        console.error("Error playing notification sound:", error);
+    });
+}
 function formatTextToHtml(text) {
     let htmlText = text
         .replace(/&/g, "&amp;")
@@ -41,6 +48,7 @@ export function formatMsgTemplate(data, name) {
 export function formatRecentChatTemplate(recentChats, data, name) {
     return __awaiter(this, void 0, void 0, function* () {
         const chats = sessionStorage.getItem("recent-chats") || "";
+        const currentRoom = sessionStorage.getItem("current-room") || "";
         const container = document.createElement('div');
         container.innerHTML = chats;
         const roomId = data.roomId;
@@ -55,6 +63,10 @@ export function formatRecentChatTemplate(recentChats, data, name) {
             const timeDiv = existingChat.querySelector(".text-gray-500");
             if (timeDiv) {
                 timeDiv.textContent = data.timeStamp;
+            }
+            if (name !== data.username && currentRoom !== roomId) {
+                console.log("currentRoom", currentRoom, "roomId", roomId, "name", name, "data.username", data.username);
+                existingChat.classList.add('animate-flash-bg');
             }
             if (container.firstElementChild !== existingChat) {
                 container.removeChild(existingChat);
@@ -75,11 +87,13 @@ export function formatRecentChatTemplate(recentChats, data, name) {
             tmp.innerHTML = htmlText;
             const newChatItem = tmp.firstElementChild;
             if (newChatItem) {
+                if (currentRoom !== roomId && name !== data.username) {
+                    newChatItem.classList.add('animate-flash-bg');
+                }
                 container.insertBefore(newChatItem, container.firstChild);
             }
         }
-        recentChats.innerHTML = container.innerHTML || "";
-        sessionStorage.setItem("recent-chats", container.innerHTML);
+        return container.innerHTML || "";
     });
 }
 export function formatConnectedUsersTemplate(data) {
