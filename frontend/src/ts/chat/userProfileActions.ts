@@ -23,6 +23,17 @@ export async function checkFriendStatus(userId: string, friendsEntries: any[]): 
 	return { isFriend, isPending, isBlocked };
 }
 
+export function canAcceptRequest(userId: string, friendsEntries: any[], currentUserId: string): boolean {
+    const result = friendsEntries.some(
+        (entry: any) =>
+            entry.status === "pending" &&
+            String(entry.userId) === String(userId) &&
+            String(entry.friendId) === String(currentUserId)
+    );
+    console.log("canAcceptRequest", { userId, currentUserId, result });
+    return result;
+}
+
 export async function rejectFriendRequest(userId: string): Promise<void> {
 	try {
 		const response = await fetch("https://localhost:8443/back/reject_friend_request", {

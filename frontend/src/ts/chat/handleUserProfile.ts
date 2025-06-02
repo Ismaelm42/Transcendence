@@ -1,14 +1,15 @@
-import { fetchUserData, fetchUserStats, fetchFriendEntries, sendFriendRequest } from "./userProfileFetchers.js";
-import { checkFriendStatus, rejectFriendRequest, deleteFriend, blockUser, unblockUser } from "./userProfileActions.js";
+import { fetchUserData, fetchUserStats, fetchFriendEntries, sendFriendRequest, acceptFriendRequest } from "./userProfileFetchers.js";
+import { checkFriendStatus, rejectFriendRequest, deleteFriend, blockUser, unblockUser, canAcceptRequest} from "./userProfileActions.js";
 import { getFriendButton, getBlockUserButton } from "./userProfileButtons.js";
 
-export async function showUserProfile(userId: string, username: string, event?: MouseEvent) {
+export async function showUserProfile(currentUserId: string, userId: string, username: string, event?: MouseEvent) {
 	const existingProfile = document.getElementById("user-profile-modal-backdrop");
 	if (existingProfile) existingProfile.remove();
 
 	const userData = await fetchUserData(userId);
 	const userStats = await fetchUserStats(userId);
 	const friendsEntries = await fetchFriendEntries(userId);
+
 	if (!userData || !userStats || !friendsEntries) {
 		console.log("Error fetching user data or stats.");
 		return;
@@ -16,8 +17,30 @@ export async function showUserProfile(userId: string, username: string, event?: 
 
 	const { isFriend, isPending, isBlocked } = await checkFriendStatus(userId, friendsEntries);
 
-	const friendButton = getFriendButton(isFriend, isPending, isBlocked);
+console.log({
+  userId, // perfil que ves
+  currentUserId, // usuario logueado
+  friendsEntries
+});	
+const canAccept = isPending && canAcceptRequest(userId, friendsEntries, currentUserId);
 
+const acceptDeclineButton = canAccept
+    ? `
+        <button id="accept-friend-btn" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">
+		<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  		<path d="M7 22V10M7 10l5-7v7h5a2 2 0 0 1 2 2v2.5a2 2 0 0 1-2 2H7" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>Accept</button>
+        <button id="decline-friend-btn" class="flex items-center gap-2 bg-orange-600 hover:bg-orange-400 text-white px-6 py-2 rounded-lg font-semibold shadow">
+		<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  		<path d="M7 2v12m0 0l5 7v-7h5a2 2 0 0 0 2-2V9.5a2 2 0 0 0-2-2H7" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>Decline</button>
+        `
+    : "";
+
+const friendButton = !canAccept
+    ? getFriendButton(isFriend, isPending, isBlocked, canAccept)
+    : "";
+		
 	const playButton = !isBlocked
     ? `<button id="play-btn" class="bg-green-600 hover:bg-green-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🎮 Play Game</button>`
     : "";
@@ -44,6 +67,7 @@ export async function showUserProfile(userId: string, username: string, event?: 
 			<div class="flex gap-4 mt-2">
 				${playButton}
 				${friendButton}
+				${acceptDeclineButton}
 				${blockUserButton}
 			</div>
 		</div>
@@ -90,6 +114,15 @@ function addProfileModalListeners(userId: string, backdrop: HTMLDivElement) {
 	});
 	document.getElementById("add-friend-btn")?.addEventListener("click", () => {
 		sendFriendRequest(userId);
+		backdrop.remove();
+	});
+	document.getElementById("accept-friend-btn")?.addEventListener("click", async () => {
+ 	 	await acceptFriendRequest(userId);
+		backdrop.remove();
+	});
+
+	document.getElementById("decline-friend-btn")?.addEventListener("click", async () => {
+  		await rejectFriendRequest(userId);
 		backdrop.remove();
 	});
 

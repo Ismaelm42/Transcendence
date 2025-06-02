@@ -22,6 +22,28 @@ export async function sendFriendRequest(userId: string): Promise<void> {
 	}
 }
 
+export async function acceptFriendRequest(userId: string): Promise<void> {
+	try {
+		const response = await fetch("https://localhost:8443/back/accept_friend_request", {
+			method: "POST",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ friendId: userId }),
+		});
+		if (response.ok) {
+			const data = await response.json();
+			console.log("Friend request accepted successfully:", data);
+		} else {
+			const errorMessage = await response.json();
+			console.error("Error accepting friend request:", errorMessage);
+		}
+	} catch (error) {
+		console.error("Error accepting friend request:", error);
+	}
+}
+
 
 
 export async function fetchUserData(userId: string) {

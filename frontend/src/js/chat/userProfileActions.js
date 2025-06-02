@@ -20,6 +20,13 @@ export function checkFriendStatus(userId, friendsEntries) {
         return { isFriend, isPending, isBlocked };
     });
 }
+export function canAcceptRequest(userId, friendsEntries, currentUserId) {
+    const result = friendsEntries.some((entry) => entry.status === "pending" &&
+        String(entry.userId) === String(userId) &&
+        String(entry.friendId) === String(currentUserId));
+    console.log("canAcceptRequest", { userId, currentUserId, result });
+    return result;
+}
 export function rejectFriendRequest(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
