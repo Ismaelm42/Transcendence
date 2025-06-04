@@ -49,8 +49,8 @@ export default class Chat extends Step {
                     const usernameSpan = userItem.querySelector("span.text-sm");
                     const clickedUsername = (_a = usernameSpan === null || usernameSpan === void 0 ? void 0 : usernameSpan.textContent) === null || _a === void 0 ? void 0 : _a.trim();
                     const userId = yield getUserId(this.username);
-                    console.log("Clicked user:", clickedUsername, "User ID:", userId);
-                    if (clickedUsername && clickedUsername !== this.username) {
+                    const clickedUserId = yield getUserId(clickedUsername);
+                    if (clickedUserId && clickedUserId !== userId) {
                         showUserOptionsMenu(userItem, event, Step.socket, userId);
                     }
                 }));
