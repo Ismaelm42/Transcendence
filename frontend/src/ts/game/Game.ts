@@ -18,7 +18,6 @@ export default class Game extends Step
 	protected	ui: GameUI;
 	protected	log: GameData;
 	protected	gameConfig: GameConfig = {scoreLimit: 5, difficulty: 'medium'};
-	protected	playerDataGetter: GamePlayer | null;
 
 	constructor(containerId: string = DEFAULT_CONTAINER_ID)
 	{
@@ -27,8 +26,6 @@ export default class Game extends Step
 		this.connection = new GameConnection(this);
 		this.renderer = new GameRender(this);
 		this.ui = new GameUI(this);
-		this.playerDataGetter = null;
-		this.connection.parseUserInfo(null);
 		this.log = {
 			id: "game " + Date.now(),
 			mode: '',
@@ -74,10 +71,10 @@ export default class Game extends Step
 	 * @param playerKey 'player1' or 'player2'
 	 * @param playerData Player data object
 	 */
-	public setPlayerInfo(playerKey: 'player1' | 'player2', data: {email: string, password: string} | null = null): void
+	public async setPlayerInfo(playerKey: 'player1' | 'player2', data: {email: string, password: string} | null = null): Promise<void>
 	{
-		this.connection.parseUserInfo(data);
-		this.log[playerKey] = this.playerDataGetter;
+		const user = await this.connection.parseUserInfo(data) as GamePlayer;
+		this.log[playerKey] = user;
 	}
 
 	public setTempPlayerInfo(playerKey: 'player1' | 'player2', playerData: GamePlayer): void

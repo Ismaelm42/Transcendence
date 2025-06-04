@@ -49,23 +49,23 @@ export class GameUI {
     setupEventListeners() {
         var _a, _b, _c, _d, _e;
         // Game mode buttons
-        (_a = document.getElementById('play-1v1')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
-            this.game.setPlayerInfo('player1', null);
+        (_a = document.getElementById('play-1v1')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.game.setPlayerInfo('player1', null);
             this.game.setGameMode('1v1');
             this.showOnly('player2-login-panel');
             this.setupPlayer2LoginPanel();
-        });
-        (_b = document.getElementById('play-ai')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => {
-            this.game.setPlayerInfo('player1', null);
+        }));
+        (_b = document.getElementById('play-ai')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.game.setPlayerInfo('player1', null);
             this.game.setGameMode('1vAI');
             this.showOnly('config-panel');
-        });
-        (_c = document.getElementById('play-online')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => {
+        }));
+        (_c = document.getElementById('play-online')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
             // Lobby + diff player entry assignation
-            // this.game.setPlayerInfo('player1', null);
+            // await this.game.setPlayerInfo('player1', null);
             this.game.setGameMode('remote');
             this.showOnly('config-panel');
-        });
+        }));
         // Configuration panel elements
         this.setupConfigPanelListeners();
         // Start game button

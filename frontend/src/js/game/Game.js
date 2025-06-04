@@ -24,8 +24,6 @@ export default class Game extends Step {
         this.connection = new GameConnection(this);
         this.renderer = new GameRender(this);
         this.ui = new GameUI(this);
-        this.playerDataGetter = null;
-        this.connection.parseUserInfo(null);
         this.log = {
             id: "game " + Date.now(),
             mode: '',
@@ -66,9 +64,11 @@ export default class Game extends Step {
      * @param playerKey 'player1' or 'player2'
      * @param playerData Player data object
      */
-    setPlayerInfo(playerKey, data = null) {
-        this.connection.parseUserInfo(data);
-        this.log[playerKey] = this.playerDataGetter;
+    setPlayerInfo(playerKey_1) {
+        return __awaiter(this, arguments, void 0, function* (playerKey, data = null) {
+            const user = yield this.connection.parseUserInfo(data);
+            this.log[playerKey] = user;
+        });
     }
     setTempPlayerInfo(playerKey, playerData) {
         this.log[playerKey] = playerData;

@@ -3,6 +3,7 @@
  */
 import GameSession from "../engine/index.js";
 import { gamesList, clients } from "./eventManager.js";
+import { crud } from '../../crud/crud.js';
 
 /**
  * When a player JOINs the game
@@ -14,7 +15,7 @@ export function handleJoinGame(client, data)
 	const	gameMode = data.mode;
 	const	roomId = data.roomId || `game-${Date.now()}`;
 	const	config = data.config || { scoreLimit: 5, difficulty: 'medium' };
-
+	const	secondPlayerInfo = data.player2 || null;
 	// 1. Find or create the game session
 	let gameSession = gamesList.get(roomId);
 	if (!gameSession)
@@ -32,6 +33,7 @@ export function handleJoinGame(client, data)
 	}
 	// 2. Add player to the game
 	const playerNumber = gameSession.addPlayer(user.id, connection);
+	console.log("JOIN PLAYER NUMBER:", playerNumber);
 	if (!playerNumber)
 	{
 		connection.send(JSON.stringify({
@@ -50,7 +52,7 @@ export function handleJoinGame(client, data)
 		config: gameSession.getConfig()
 	}));
 	// 5. Start game if ready (e.g., 2 players connected + online mode, 1 player connected + 1vAI mode...)
-	if (gameSession.shouldStart(joinMsgData))
+	if (gameSession.shouldStart(secondPlayerInfo))
 	{
 		gameSession.state = gameSession.resetState();
 		// Change this for broadCastUniversal() when done
@@ -147,19 +149,10 @@ export async function	handlePlayerInfo(client, data)
 	{
 		try
 		{
-			const response = await fetch(`https://localhost:8443/back/get_user_by_email/?email=${encodeURIComponent(data.email)}`, {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(data),
-			});
-			if (response.ok)
-				user = await response.json();
-			else
+			user = await crud.user.getUserByEmail(data.email);
+			if (!user)
 			{
-				const result = await response.json();
-				console.log(`Error: ${result.message || result.error}`);
+				console.log(`Error: User not found for email ${data.email}`);
 				user = null;
 				return ;
 			}

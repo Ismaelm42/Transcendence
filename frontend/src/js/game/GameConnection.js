@@ -14,6 +14,7 @@ export class GameConnection {
     constructor(game) {
         this.socket = null;
         this.connectionStat = false;
+        this.pendingUserInfoResolve = null;
         this.game = game;
     }
     establishConnection() {
@@ -42,7 +43,10 @@ export class GameConnection {
                         console.log("Parsed server message:", data);
                         switch (data.type) {
                             case 'USER_INFO':
-                                this.game.playerDataGetter = data.user;
+                                if (this.pendingUserInfoResolve) {
+                                    this.pendingUserInfoResolve(data.user);
+                                    this.pendingUserInfoResolve = null;
+                                }
                                 break;
                             case 'GAME_INIT':
                                 console.log("Game initialized:", data);
@@ -96,6 +100,7 @@ export class GameConnection {
      * @param tournamentId Optional tournament ID
      */
     joinGame(mode, tournamentId) {
+        console.log("GAME LOG BEFORE JOIN SENDING: ", this.game.log);
         if (!this.socket || !this.connectionStat) {
             console.error("Cannot join game: connection not ready");
             return;
@@ -117,12 +122,10 @@ export class GameConnection {
     /**
      * Aux method to parse user main data from database, will use API endpoint
      * If email and pass are passed (through setPlayerInfo) will change mode for API message
-     * The GET_USER endpoint triggers backend method that will store user object info into
-     * 	this.game.playerDataGetter (aux attribute for later setting player details on game logs)
+     * The GET_USER endpoint triggers backend method that will store user object
      */
     parseUserInfo(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
             let mode = 'local';
             if (data) {
                 try {
@@ -133,11 +136,15 @@ export class GameConnection {
                     console.error("Error while checking external player:", error);
                 }
             }
-            (_a = this.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({
-                type: 'GET_USER',
-                mode: mode,
-                email: data === null || data === void 0 ? void 0 : data.email
-            }));
+            return new Promise((resolve) => {
+                var _a;
+                this.pendingUserInfoResolve = resolve;
+                (_a = this.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({
+                    type: 'GET_USER',
+                    mode: mode,
+                    email: data === null || data === void 0 ? void 0 : data.email
+                }));
+            });
         });
     }
     checkPlayer(data) {

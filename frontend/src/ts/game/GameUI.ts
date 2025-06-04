@@ -53,22 +53,22 @@ export class GameUI
 	setupEventListeners()
 	{
 		// Game mode buttons
-		document.getElementById('play-1v1')?.addEventListener('click', () => {
-			this.game.setPlayerInfo('player1', null);
+		document.getElementById('play-1v1')?.addEventListener('click', async () => {
+			await this.game.setPlayerInfo('player1', null);
 			this.game.setGameMode('1v1');
 			this.showOnly('player2-login-panel');
 			this.setupPlayer2LoginPanel();
 		});
 		
-		document.getElementById('play-ai')?.addEventListener('click', () => {
-			this.game.setPlayerInfo('player1', null);
+		document.getElementById('play-ai')?.addEventListener('click', async () => {
+			await this.game.setPlayerInfo('player1', null);
 			this.game.setGameMode('1vAI');
 			this.showOnly('config-panel');
 		});
 	
-		document.getElementById('play-online')?.addEventListener('click', () => {
+		document.getElementById('play-online')?.addEventListener('click', async () => {
 			// Lobby + diff player entry assignation
-			// this.game.setPlayerInfo('player1', null);
+			// await this.game.setPlayerInfo('player1', null);
 			this.game.setGameMode('remote');
 			this.showOnly('config-panel');
 		});

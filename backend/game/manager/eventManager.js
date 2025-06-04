@@ -58,10 +58,6 @@ export async function	registerGameClient(request, connection)
  */
 export function	messageManager(client, connection)
 {
-	console.log("STEPPED INTO -> messageManager");
-	console.log(`Setting up message handler for user: ${client.user.id}`);
-	console.log("Connection state:", connection._readyState);
-	console.log("Current connection event listeners:", Object.keys(connection._events));
 	try
 	{
 	setTimeout(() => {
@@ -76,11 +72,10 @@ export function	messageManager(client, connection)
 	}
 
 	connection.on('message', (message) => {
-		console.log("Received message from client");
 		try
 		{
 			const data = JSON.parse(message.toString());
-			console.log("JSON message:\n", data);
+			console.log("JSON message sent FRONT->BACK:\n", data);
 			switch (data.type)
 			{
 				case 'JOIN_GAME':

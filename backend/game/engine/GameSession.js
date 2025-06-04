@@ -81,12 +81,11 @@ export default class GameSession
 	}
 
 	// Check if game should start
-	shouldStart(joinMsgData)
+	shouldStart(secondPlayerInfo)
 	{
-		if (this.gameMode === '1vAI' || this.gameMode === '1v1')
+		if ((this.gameMode === '1vAI' || this.gameMode === '1v1') && secondPlayerInfo)
 		{	
-			const playerDetails = joinMsgData.player2;
-			this.setPlayerDetails(2, playerDetails);
+			this.setPlayerDetails('player2', secondPlayerInfo);
 			return (true);
 		}
 		return (this.players.size === 2);

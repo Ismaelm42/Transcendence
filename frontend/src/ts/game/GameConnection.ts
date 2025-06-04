@@ -7,6 +7,7 @@ export class GameConnection
 	private game: any;
 	private socket: WebSocket | null = null;
 	private connectionStat: boolean = false;
+	private pendingUserInfoResolve: ((user: any) => void) | null = null;
 
 	constructor(game: any)
 	{
@@ -40,7 +41,11 @@ export class GameConnection
 					switch(data.type)
 					{
 						case 'USER_INFO':
-							this.game.playerDataGetter = data.user;
+							if (this.pendingUserInfoResolve)
+							{
+								this.pendingUserInfoResolve(data.user);
+								this.pendingUserInfoResolve = null;
+							}
 							break ;
 						case 'GAME_INIT':
 							console.log("Game initialized:", data);
@@ -97,6 +102,7 @@ export class GameConnection
 	 */
 	public joinGame(mode: string, tournamentId?: number): void
 	{
+		console.log("GAME LOG BEFORE JOIN SENDING: ", this.game.log);
 		if (!this.socket || !this.connectionStat)
 		{
 			console.error("Cannot join game: connection not ready");
@@ -120,10 +126,9 @@ export class GameConnection
 	/**
 	 * Aux method to parse user main data from database, will use API endpoint
 	 * If email and pass are passed (through setPlayerInfo) will change mode for API message
-	 * The GET_USER endpoint triggers backend method that will store user object info into
-	 * 	this.game.playerDataGetter (aux attribute for later setting player details on game logs)
+	 * The GET_USER endpoint triggers backend method that will store user object
 	 */
-	public	async parseUserInfo(data: {email: string, password: string} | null)
+	public	async parseUserInfo(data: {email: string, password: string} | null) : Promise<any>
 	{
 		let	mode = 'local';
 		if (data)
@@ -137,11 +142,14 @@ export class GameConnection
 				console.error("Error while checking external player:", error);
 			}
 		}
-		this.socket?.send(JSON.stringify({
-			type: 'GET_USER',
-			mode: mode,
-			email: data?.email
-		}));
+		return new Promise((resolve) => {
+			this.pendingUserInfoResolve = resolve;
+			this.socket?.send(JSON.stringify({
+				type: 'GET_USER',
+				mode: mode,
+				email: data?.email
+			}));
+		});
 	}
 
 	public async	checkPlayer(data: {email: string, password: string})
