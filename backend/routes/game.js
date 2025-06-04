@@ -19,8 +19,6 @@ export function configureGameRoutes(fastify)
 			messageManager(client, connection);
 			handleGameDisconnect(client, connection);
 			handleGameError(client, connection);
-			console.log("client object: ", client);
-			console.log("All handlers registered:", Object.keys(connection._events));
 		})
 	})
 }
