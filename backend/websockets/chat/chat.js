@@ -29,6 +29,7 @@ function sendJSON(user, partner, message, roomId) {
 	if (!partner) {
 		const response = {
 			type: "message",
+			userId: String(user.id),
 			username: user.username,
 			imagePath: user.avatarPath,
 			message: message,
@@ -41,10 +42,10 @@ function sendJSON(user, partner, message, roomId) {
 	else {
 		const response = {
 			type: "private",
-			userId: user.id,
+			userId: String(user.id),
 			username: user.username,
 			imagePath: user.avatarPath,
-			partnerId: partner.id,
+			partnerId: String(partner.id),
 			partnerUsername: partner.username,
 			partnerImagePath: partner.avatarPath,
 			message: message || null,
@@ -62,7 +63,7 @@ function sendJSON(user, partner, message, roomId) {
 function updateConnectedUsers(user, isConnected, status) {
 
 	if (isConnected) {
-		connected.set(user.id, { id: user.id, username: user.username, imagePath: user.avatarPath, status: status });
+		connected.set(user.id, { userId: String(user.id), username: user.username, imagePath: user.avatarPath, status: status });
 	}
 	if (!isConnected) {
 		connected.delete(user.id);

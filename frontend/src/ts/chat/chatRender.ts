@@ -3,7 +3,6 @@ import { verifySocket } from './verifySocket.js';
 import { filterSearchUsers } from './filterSearch.js';
 import { handleSocketEvents } from './handleSocketEvents.js';
 import { handleContentStorage } from './loadAndUpdateDOM.js';
-import { showUserOptionsMenu } from './handleUserOptionsMenu.js';
 import { removeNotificationChatTab } from './loadAndUpdateDOM.js';
 import { getUserId, handleFormSubmit, handlePrivateMsg, showPrivateChat } from './handleSenders.js';
 
@@ -28,30 +27,18 @@ export default class Chat extends Step {
 			const searchInput = document.getElementById("search-users-input") as HTMLInputElement;
 			const recentChats = document.getElementById("chat-item-list-container") as HTMLDivElement;
 			const userId = await getUserId(this.username!);
-	
+			console.log(this.username!);
+
 			removeNotificationChatTab();
-			handleContentStorage(chatMessages, recentChats, this.username!);
+			handleContentStorage(chatMessages, recentChats, userId);
 			Step.socket = verifySocket(Step.socket);
-			handleSocketEvents(Step.socket!, chatMessages, recentChats, this.username!);
+			handleSocketEvents(Step.socket!, chatMessages, recentChats, userId);
 			textarea.addEventListener('keydown', e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), form.requestSubmit()));
 			form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket!));
 			searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
 			searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
 			items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket!));
 			recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket!, recentChats, userId));
-
-			items.addEventListener("click", (event) => {
-				const target = event.target as HTMLElement;
-				const userItem = target.closest(".item") as HTMLDivElement;
-				if (!userItem) return;
-
-				const usernameSpan = userItem.querySelector("span.text-sm");
-				const clickedUsername = usernameSpan?.textContent?.trim();
-
-				if (clickedUsername && clickedUsername !== this.username) {
-					showUserOptionsMenu(userItem, event as MouseEvent);
-				}
-			});
 		}
 		catch (error) {
 			appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

@@ -21,9 +21,9 @@ function handleSocketOpen(socket) {
         socket.send(JSON.stringify(handshake));
     };
 }
-function handlePublicChatMsg(chatMessages, data, name) {
+function handlePublicChatMsg(chatMessages, data, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const HtmlContent = yield formatMsgTemplate(data, name);
+        const HtmlContent = yield formatMsgTemplate(data, userId);
         let stored = sessionStorage.getItem("public-chat") || "";
         stored += HtmlContent;
         sessionStorage.setItem("public-chat", stored);
@@ -33,17 +33,17 @@ function handlePublicChatMsg(chatMessages, data, name) {
         }
     });
 }
-function handlePrivateChatMsg(chatMessages, recentChats, data, name) {
+function handlePrivateChatMsg(chatMessages, recentChats, data, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (name === data.partnerUsername && (sessionStorage.getItem("current-room") !== data.roomId || sessionStorage.getItem("current-view") !== "Chat")) {
+        if (userId === data.partnerId && (sessionStorage.getItem("current-room") !== data.roomId || sessionStorage.getItem("current-view") !== "Chat")) {
             soundNotification();
         }
-        if (name === data.partnerUsername && sessionStorage.getItem("current-view") !== "Chat") {
+        if (userId === data.partnerId && sessionStorage.getItem("current-view") !== "Chat") {
             const chatTab = document.querySelector('a[href="#chat"]');
             chatTab === null || chatTab === void 0 ? void 0 : chatTab.classList.add('blink');
         }
-        const HtmlContent = yield formatMsgTemplate(data, name);
-        const HtmlChat = yield formatRecentChatTemplate(recentChats, data, name);
+        const HtmlContent = yield formatMsgTemplate(data, userId);
+        const HtmlChat = yield formatRecentChatTemplate(recentChats, data, userId);
         recentChats.innerHTML = HtmlChat || "";
         sessionStorage.setItem("recent-chats", HtmlChat || "");
         const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
@@ -65,23 +65,23 @@ function handleConnectedUsers(data) {
         filterSearchUsers(inputKeyword);
     });
 }
-function handleSocketMessage(socket, chatMessages, recentChats, name) {
+function handleSocketMessage(socket, chatMessages, recentChats, userId) {
     socket.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
         const data = JSON.parse(event.data);
         if (data.type === 'message') {
             sessionStorage.setItem("JSONdata", JSON.stringify(data));
-            handlePublicChatMsg(chatMessages, data, name);
+            handlePublicChatMsg(chatMessages, data, userId);
         }
         if (data.type === 'private') {
             removeNotificationAndUpdateHTML(data.roomId);
-            if (name === data.username) {
+            if (userId === data.userId) {
                 sessionStorage.setItem("JSONdata", JSON.stringify(data));
             }
             if (!data.message) {
-                handleUserInfo(chatMessages, data, name);
+                handleUserInfo(chatMessages, data, userId);
             }
             else {
-                handlePrivateChatMsg(chatMessages, recentChats, data, name);
+                handlePrivateChatMsg(chatMessages, recentChats, data, userId);
             }
         }
         if (data.type === 'connectedUsers') {
@@ -105,9 +105,9 @@ function handleSocketError(socket) {
         // throw new Error("WebSocket error occurred.");
     };
 }
-export function handleSocketEvents(socket, chatMessages, recentChats, username) {
+export function handleSocketEvents(socket, chatMessages, recentChats, userId) {
     handleSocketOpen(socket);
-    handleSocketMessage(socket, chatMessages, recentChats, username);
+    handleSocketMessage(socket, chatMessages, recentChats, userId);
     handleSocketClose(socket);
     handleSocketError(socket);
     return socket;

@@ -12,7 +12,6 @@ import { verifySocket } from './verifySocket.js';
 import { filterSearchUsers } from './filterSearch.js';
 import { handleSocketEvents } from './handleSocketEvents.js';
 import { handleContentStorage } from './loadAndUpdateDOM.js';
-import { showUserOptionsMenu } from './handleUserOptionsMenu.js';
 import { removeNotificationChatTab } from './loadAndUpdateDOM.js';
 import { getUserId, handleFormSubmit, handlePrivateMsg, showPrivateChat } from './handleSenders.js';
 export default class Chat extends Step {
@@ -36,28 +35,17 @@ export default class Chat extends Step {
                 const searchInput = document.getElementById("search-users-input");
                 const recentChats = document.getElementById("chat-item-list-container");
                 const userId = yield getUserId(this.username);
+                console.log(this.username);
                 removeNotificationChatTab();
-                handleContentStorage(chatMessages, recentChats, this.username);
+                handleContentStorage(chatMessages, recentChats, userId);
                 Step.socket = verifySocket(Step.socket);
-                handleSocketEvents(Step.socket, chatMessages, recentChats, this.username);
+                handleSocketEvents(Step.socket, chatMessages, recentChats, userId);
                 textarea.addEventListener('keydown', e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), form.requestSubmit()));
                 form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket));
                 searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
                 searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
                 items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket));
                 recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket, recentChats, userId));
-                items.addEventListener("click", (event) => {
-                    var _a;
-                    const target = event.target;
-                    const userItem = target.closest(".item");
-                    if (!userItem)
-                        return;
-                    const usernameSpan = userItem.querySelector("span.text-sm");
-                    const clickedUsername = (_a = usernameSpan === null || usernameSpan === void 0 ? void 0 : usernameSpan.textContent) === null || _a === void 0 ? void 0 : _a.trim();
-                    if (clickedUsername && clickedUsername !== this.username) {
-                        showUserOptionsMenu(userItem, event);
-                    }
-                });
             }
             catch (error) {
                 appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

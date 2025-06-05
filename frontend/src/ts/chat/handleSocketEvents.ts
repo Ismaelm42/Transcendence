@@ -14,9 +14,9 @@ function handleSocketOpen(socket: WebSocket) {
 	}
 }
 
-async function handlePublicChatMsg(chatMessages: HTMLDivElement, data: any, name: string) {
+async function handlePublicChatMsg(chatMessages: HTMLDivElement, data: any, userId: string) {
 
-	const HtmlContent = await formatMsgTemplate(data, name);
+	const HtmlContent = await formatMsgTemplate(data, userId);
 	let stored = sessionStorage.getItem("public-chat") || "";
 	stored += HtmlContent;
 	sessionStorage.setItem("public-chat", stored);
@@ -26,17 +26,17 @@ async function handlePublicChatMsg(chatMessages: HTMLDivElement, data: any, name
 	}
 }
 
-async function handlePrivateChatMsg(chatMessages: HTMLDivElement, recentChats: HTMLDivElement, data: any, name: string) {
+async function handlePrivateChatMsg(chatMessages: HTMLDivElement, recentChats: HTMLDivElement, data: any, userId: string) {
 
-	if (name === data.partnerUsername && (sessionStorage.getItem("current-room") !== data.roomId || sessionStorage.getItem("current-view") !== "Chat")) {
+	if (userId === data.partnerId && (sessionStorage.getItem("current-room") !== data.roomId || sessionStorage.getItem("current-view") !== "Chat")) {
 		soundNotification();
 	}
-	if (name === data.partnerUsername && sessionStorage.getItem("current-view") !== "Chat") {
+	if (userId === data.partnerId && sessionStorage.getItem("current-view") !== "Chat") {
 		const chatTab = document.querySelector('a[href="#chat"]');
 		chatTab?.classList.add('blink');	
 	}
-	const HtmlContent = await formatMsgTemplate(data, name);
-	const HtmlChat= await formatRecentChatTemplate(recentChats, data, name);
+	const HtmlContent = await formatMsgTemplate(data, userId);
+	const HtmlChat= await formatRecentChatTemplate(recentChats, data, userId);
 	recentChats.innerHTML = HtmlChat || "";
 	sessionStorage.setItem("recent-chats", HtmlChat || "");
 	const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
@@ -58,24 +58,24 @@ async function handleConnectedUsers(data: any) {
 	filterSearchUsers(inputKeyword);
 }
 
-function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, recentChats: HTMLDivElement, name: string) {
+function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, recentChats: HTMLDivElement, userId: string) {
 
 	socket.onmessage = async (event: MessageEvent) => {
 		const data = JSON.parse(event.data);
 		if (data.type === 'message') {
 			sessionStorage.setItem("JSONdata", JSON.stringify(data));
-			handlePublicChatMsg(chatMessages, data, name);
+			handlePublicChatMsg(chatMessages, data, userId);
 		}
 		if (data.type === 'private') {
 			removeNotificationAndUpdateHTML(data.roomId);
-			if (name === data.username) {
+			if (userId === data.userId) {
 				sessionStorage.setItem("JSONdata", JSON.stringify(data));
 			}
 			if (!data.message) {
-				handleUserInfo(chatMessages, data, name);
+				handleUserInfo(chatMessages, data, userId);
 			}
 			else {
-				handlePrivateChatMsg(chatMessages, recentChats, data, name)
+				handlePrivateChatMsg(chatMessages, recentChats, data, userId)
 			}
 		}
 		if (data.type === 'connectedUsers') {
@@ -102,10 +102,10 @@ function handleSocketError(socket: WebSocket) {
 	}
 }
 
-export function handleSocketEvents(socket: WebSocket, chatMessages: HTMLDivElement, recentChats: HTMLDivElement, username: string): WebSocket {
+export function handleSocketEvents(socket: WebSocket, chatMessages: HTMLDivElement, recentChats: HTMLDivElement, userId: string): WebSocket {
 
 	handleSocketOpen(socket);
-	handleSocketMessage(socket, chatMessages, recentChats, username);
+	handleSocketMessage(socket, chatMessages, recentChats, userId);
 	handleSocketClose(socket);
 	handleSocketError(socket);
 	return socket;

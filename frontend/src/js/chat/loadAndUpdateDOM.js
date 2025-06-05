@@ -18,7 +18,7 @@ export function removeNotificationAndUpdateHTML(roomId) {
         }
     }
 }
-export function handleContentStorage(chatMessages, recentChats, username) {
+export function handleContentStorage(chatMessages, recentChats, userId) {
     const chats = sessionStorage.getItem("recent-chats") || "";
     const currentRoom = sessionStorage.getItem("current-room") || "";
     const publicChat = sessionStorage.getItem("public-chat") || "";
@@ -33,7 +33,7 @@ export function handleContentStorage(chatMessages, recentChats, username) {
         sessionStorage.setItem("current-room", "");
     }
     if (currentRoom) {
-        handleUserInfo(chatMessages, data, username);
+        handleUserInfo(chatMessages, data, userId);
     }
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }

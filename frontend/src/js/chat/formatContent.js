@@ -25,10 +25,10 @@ function formatTextToHtml(text) {
     htmlText = htmlText.replace(/  /g, " &nbsp;");
     return htmlText;
 }
-export function formatMsgTemplate(data, name) {
+export function formatMsgTemplate(data, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         let htmlContent;
-        if (data.username.toString() === name.toString()) {
+        if (data.userId.toString() === userId.toString()) {
             htmlContent = yield fetch("../../html/chat/msgTemplateUser.html");
         }
         else {
@@ -45,7 +45,7 @@ export function formatMsgTemplate(data, name) {
         return htmlText;
     });
 }
-export function formatRecentChatTemplate(recentChats, data, name) {
+export function formatRecentChatTemplate(recentChats, data, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         const chats = sessionStorage.getItem("recent-chats") || "";
         const currentRoom = sessionStorage.getItem("current-room") || "";
@@ -53,8 +53,8 @@ export function formatRecentChatTemplate(recentChats, data, name) {
         container.innerHTML = chats;
         const roomId = data.roomId;
         const existingChat = container.querySelector(`#chat-item-${roomId}`);
-        const username = (name === data.username ? data.partnerUsername : data.username).toString();
-        const imagePath = (name === data.username ? data.partnerImagePath : data.imagePath).toString();
+        const username = (userId === data.userId ? data.partnerUsername : data.username).toString();
+        const imagePath = (userId === data.userId ? data.partnerImagePath : data.imagePath).toString();
         if (existingChat) {
             const messageDiv = existingChat.querySelector(".text-gray-400");
             if (messageDiv) {
@@ -64,8 +64,7 @@ export function formatRecentChatTemplate(recentChats, data, name) {
             if (timeDiv) {
                 timeDiv.textContent = data.timeStamp;
             }
-            if (name !== data.username && currentRoom !== roomId) {
-                console.log("currentRoom", currentRoom, "roomId", roomId, "name", name, "data.username", data.username);
+            if (userId !== data.userId && currentRoom !== roomId) {
                 existingChat.classList.add('animate-flash-bg');
             }
             if (container.firstElementChild !== existingChat) {
@@ -87,7 +86,7 @@ export function formatRecentChatTemplate(recentChats, data, name) {
             tmp.innerHTML = htmlText;
             const newChatItem = tmp.firstElementChild;
             if (newChatItem) {
-                if (currentRoom !== roomId && name !== data.username) {
+                if (currentRoom !== roomId && userId !== data.userId) {
                     newChatItem.classList.add('animate-flash-bg');
                 }
                 container.insertBefore(newChatItem, container.firstChild);
@@ -106,8 +105,8 @@ export function formatConnectedUsersTemplate(data) {
             userHtmlContent = yield fetch("../../html/chat/userListItem.html");
             htmlContent = yield userHtmlContent.text();
             htmlContent = htmlContent
-                .replace("{{ userId }}", user.id.toString())
-                .replace("{{ id }}", user.id.toString())
+                .replace("{{ userId }}", user.userId.toString())
+                .replace("{{ id }}", user.userId.toString())
                 .replace("{{ username }}", user.username.toString())
                 .replace("{{ usernameImage }}", user.username.toString())
                 .replace("{{ imagePath }}", user.imagePath.toString())
@@ -140,7 +139,7 @@ export function sortUsersAlphabetically(htmlContent) {
 export function formatUserInfo(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const usersConnected = JSON.parse(sessionStorage.getItem("JSONusers") || "{}");
-        const user = usersConnected.object.find((user) => user.username === data.partnerUsername) || {};
+        const user = usersConnected.object.find((user) => user.userId === data.partnerId) || {};
         const color = user.status;
         sessionStorage.setItem("current-room", data.roomId);
         const htmlContent = yield fetch("../../html/chat/userInfo.html");
