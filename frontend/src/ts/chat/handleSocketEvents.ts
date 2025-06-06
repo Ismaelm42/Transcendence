@@ -75,11 +75,13 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, re
 				handleUserInfo(chatMessages, data, userId);
 			}
 			else {
+				handleUserInfo(chatMessages, data, userId);
 				handlePrivateChatMsg(chatMessages, recentChats, data, userId)
 			}
 		}
 		if (data.type === 'connectedUsers') {
-			sessionStorage.setItem("JSONusers", JSON.stringify(data));	
+			sessionStorage.setItem("JSONusers", JSON.stringify(data));
+			console.log(data)
 			handleConnectedUsers(data);
 			if (sessionStorage.getItem("current-room") !== "") {
 				updatePartnerStatus();

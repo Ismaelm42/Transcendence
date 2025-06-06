@@ -37,3 +37,11 @@ export function handleContentStorage(chatMessages, recentChats, userId) {
     }
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+export function preloadImg(imageUrl) {
+    return new Promise((resolve, reject) => {
+        const preloadedImg = new Image();
+        preloadedImg.src = imageUrl;
+        preloadedImg.onload = () => resolve();
+        preloadedImg.onerror = () => reject(new Error(`Error uploading img: ${imageUrl}`));
+    });
+}

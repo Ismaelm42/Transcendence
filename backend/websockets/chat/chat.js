@@ -8,6 +8,7 @@ const clients = new Map();
 const connected = new Map();
 const usersTimeout = new Map();
 const userRequestId = new Map();
+const blockedIds = new Map();
 
 // Get the current time in a specific format
 function getTimeStamp() {
@@ -21,10 +22,23 @@ function getTimeStamp() {
 	return timeString;
 }
 
+// Get blocked users list
+async function getBlockedUsers(user)
+{
+	const blockedUsers = await crud.friend.getAllFriendsEntriesFromUser(user.id, "blocked");
+
+	const blockedSet = new Set();
+	for (const blockedUser of blockedUsers) {
+		const data = blockedUser.dataValues;
+		const blockedId = data.userId === user.id ? data.friendId : data.userId;
+		blockedSet.add(blockedId);
+	}
+	blockedIds.set(user.id, blockedSet);
+}
+
 // Create a message JSON object and sent it to the clients
 function sendJSON(user, partner, message, roomId) {
 
-	console.log(message);
 	setTimer(user);
 	if (!partner) {
 		const response = {
@@ -36,7 +50,9 @@ function sendJSON(user, partner, message, roomId) {
 			timeStamp: getTimeStamp()
 		}
 		for (const [id, client] of clients) {
-			client.send(JSON.stringify(response));
+			if (!blockedIds.get(user.id)?.has(id)) {
+				client.send(JSON.stringify(response));
+			}
 		}
 	}
 	else {
@@ -52,18 +68,23 @@ function sendJSON(user, partner, message, roomId) {
 			timeStamp: getTimeStamp(),
 			roomId: roomId,
 		}
-		// Maybe send to differente messages can be an idea
 		clients.get(user.id)?.send(JSON.stringify(response));
-		clients.get(partner.id)?.send(JSON.stringify(response));
+		if (!blockedIds.get(user.id)?.has(partner.id)) {
+			clients.get(partner.id)?.send(JSON.stringify(response));
+		}
 	}
 }
-
 
 // Update the connected users list
 function updateConnectedUsers(user, isConnected, status) {
 
 	if (isConnected) {
-		connected.set(user.id, { userId: String(user.id), username: user.username, imagePath: user.avatarPath, status: status });
+		connected.set(user.id, {
+			userId: String(user.id),
+			username: user.username,
+			imagePath: user.avatarPath,
+			status: status
+		});
 	}
 	if (!isConnected) {
 		connected.delete(user.id);
@@ -75,11 +96,31 @@ function updateConnectedUsers(user, isConnected, status) {
 	};
 }
 
+// function sendStatusToAllClients(user, status) {
+
+// 	if (clients.has(user.id)) {
+// 		const response = updateConnectedUsers(user, true, status);
+// 		for (const [id, client] of clients) {
+// 			client.send(JSON.stringify(response));
+// 		}
+// 	}
+// }
+
+
 function sendStatusToAllClients(user, status) {
 
 	if (clients.has(user.id)) {
-		const response = updateConnectedUsers(user, true, status);
+		updateConnectedUsers(user, true, status);
 		for (const [id, client] of clients) {
+			let connectedArray = Array.from(connected.values());
+			const blockedSet = blockedIds.get(id) || new Set();
+			connectedArray = connectedArray.filter(
+				u => !blockedSet.has(Number(u.userId))
+			);
+			const response = {
+				type: "connectedUsers",
+				object: connectedArray
+			};
 			client.send(JSON.stringify(response));
 		}
 	}
@@ -162,19 +203,21 @@ export async function registerUser(request, socket) {
 }
 
 // Handle incoming messages from the WebSocket clients and broadcast them to all connected clients
-export function handleIncomingSocketMessage(user, socket) {
+export async function handleIncomingSocketMessage(user, socket) {
 
-	socket.on('message', message => {
+	socket.on('message', async message => {
 		try {
+			await getBlockedUsers(user);
+			const updatedUser = await crud.user.getUserById(user.id);
 			const data = JSON.parse(message.toString());
 			if (data.type === "message") {
-				sendJSON(user, null, data.message, null);
+				sendJSON(updatedUser, null, data.message, null);
 			}
 			else if (data.type === "status") {
-				setTimer(user);
+				setTimer(updatedUser);
 			}
 			else if (data.type === "private") {
-				handlePrivate(user, data)
+				handlePrivate(updatedUser, data)
 			}
 		} catch (error) {
 			console.log("An error occured:", error);
@@ -188,10 +231,7 @@ export function handleSocketClose(user, socket) {
 	socket.on('close', () => {
 		clients.delete(user.id);
 		usersTimeout.delete(user.id);
-		const response = updateConnectedUsers(user, false);
-		for (const [id, client] of clients) {
-			client.send(JSON.stringify(response));
-		}
+		sendStatusToAllClients(user, false);
 	});
 }
 
@@ -201,10 +241,8 @@ export function handleSocketError(user, socket) {
 	socket.on('error', (error) => {
 		clients.delete(user.id);
 		usersTimeout.delete(user.id);
-		const response = updateConnectedUsers(user, false);
-		for (const [id, client] of clients) {
-			client.send(JSON.stringify(response));
-		}
+		userRequestId.delete(user.id);
+		sendStatusToAllClients(user, false);
 		console.log(`${user.id} WebSocket error :`, error);
 	});
 }
@@ -216,9 +254,7 @@ export function disconnectUser(user) {
 		socket.close(1000, "Server closed connection");
 		clients.delete(user.id);
 		usersTimeout.delete(user.id);
-		const response = updateConnectedUsers(user, false);
-		for (const [id, client] of clients) {
-			client.send(JSON.stringify(response));
-		}
+		userRequestId.delete(user.id);
+		sendStatusToAllClients(user, false);
 	}
 }

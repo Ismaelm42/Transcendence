@@ -27,7 +27,6 @@ export default class Chat extends Step {
 			const searchInput = document.getElementById("search-users-input") as HTMLInputElement;
 			const recentChats = document.getElementById("chat-item-list-container") as HTMLDivElement;
 			const userId = await getUserId(this.username!);
-			console.log(this.username!);
 
 			removeNotificationChatTab();
 			handleContentStorage(chatMessages, recentChats, userId);

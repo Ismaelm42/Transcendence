@@ -35,7 +35,6 @@ export default class Chat extends Step {
                 const searchInput = document.getElementById("search-users-input");
                 const recentChats = document.getElementById("chat-item-list-container");
                 const userId = yield getUserId(this.username);
-                console.log(this.username);
                 removeNotificationChatTab();
                 handleContentStorage(chatMessages, recentChats, userId);
                 Step.socket = verifySocket(Step.socket);

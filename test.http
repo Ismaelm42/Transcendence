@@ -195,10 +195,10 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0N
 # Petición para bloquear un usuario:
 POST https://localhost:8443/back/block_user HTTP/1.1
 Content-Type: application/json
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NTkyMDY3NCwiZXhwIjoxNzQ1OTI0Mjc0fQ.1caxFQLJ4IEGrvmgXJfTK18X2CVaMRJLfpzMdl_PaTs
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0OTIwNDc2NiwiZXhwIjoxNzQ5MjA4MzY2fQ.aaXR5Tk5DVOWPehOUmEzrLbh8PZaDEcHySawUNcUCYA
 
 {
-  "friendId": "4"
+  "friendId": "3"
 }
 
 # Petición para desbloquear un usuario:

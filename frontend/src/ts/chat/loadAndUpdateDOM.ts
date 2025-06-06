@@ -44,3 +44,13 @@ export function handleContentStorage(chatMessages: HTMLDivElement, recentChats: 
 	}
 	chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
+export function preloadImg(imageUrl: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const preloadedImg = new Image();
+		preloadedImg.src = imageUrl;
+		preloadedImg.onload = () => resolve();
+		preloadedImg.onerror = () => reject(new Error(`Error uploading img: ${imageUrl}`));
+	});
+}
+
