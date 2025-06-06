@@ -7,24 +7,31 @@ import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
 import { Step } from "../spa/stepRender.js";
 import { GameData, GameConfig, GamePlayer} from './types.js';
+import GameMatch from './GameMatch.js';
 
 // Default container ID (must match your HTML)
-const DEFAULT_CONTAINER_ID = "game-container"; 
+const DEFAULT_CONTAINER_ID = "game-container";
 
 export default class Game extends Step
 {
+	/********** COMPONENTS ****************/
+	/*********** ATTRIBUTES ***************/
 	protected	connection: GameConnection;
 	protected	renderer: GameRender;
 	protected	ui: GameUI;
 	protected	log: GameData;
 	protected	gameConfig: GameConfig = {scoreLimit: 5, difficulty: 'medium'};
+	protected	match: GameMatch;
 
+	/***************************************/
+	/*********** CONSTRUCTOR ***************/
 	constructor(containerId: string = DEFAULT_CONTAINER_ID)
 	{
 		super(containerId);
 		this.connection = new GameConnection(this);
 		this.renderer = new GameRender(this);
 		this.ui = new GameUI(this);
+		this.match = new GameMatch(this);
 		this.log = {
 			id: "game " + Date.now(),
 			mode: '',
@@ -39,6 +46,8 @@ export default class Game extends Step
 		};
 	}
 
+	/************ CORE *****************/
+	/*********** METHODS ***************/
 	async render(appElement: HTMLElement): Promise<void>
 	{
 		await this.ui.initializeUI(appElement);
@@ -46,30 +55,44 @@ export default class Game extends Step
 		this.ui.setupEventListeners();
 	}
 
-	/**
-	 * Set game mode (1vAI, 1v1, remote)
-	 * @param mode Game mode
-	 */
+	public startGameSession(): void
+	{
+		this.log.startTime = Date.now();
+		console.log(`Starting game session. Mode: ${this.log.mode}`);
+	}
+
+	public endGameSession(result: { winner: string, loser: string, score: [number, number] }): void
+	{
+		this.log.duration = Date.now() - this.log.startTime;
+		this.log.result = result;
+		console.log("Game session ended:", this.log);
+		this.renderer.stopRenderLoop();
+		this.match.controllers.cleanup();
+	}
+
+	public destroy()
+	{
+		this.connection.destroy();
+		this.renderer.destroy();
+	}
+
+	/***********************************/
+	/*********** SETTERS ***************/
+	public setGameLog(log: GameData): void
+	{
+		this.log = log;
+	}
+	
 	public setGameMode(mode: string): void
 	{
 		this.log.mode = mode;
 	}
 
-	/**
-	 * Set game configuration options
-	 * @param config Game configuration object
-	 */
 	public setGameConfig(config: GameConfig): void
 	{
 		this.log.config = config;
-		console.log(`Game configuration set: Score limit=${config.scoreLimit}, Difficulty=${config.difficulty}`);
 	}
 
-	/**
-	 * Set player information
-	 * @param playerKey 'player1' or 'player2'
-	 * @param playerData Player data object
-	 */
 	public async setPlayerInfo(playerKey: 'player1' | 'player2', data: {email: string, password: string} | null = null): Promise<void>
 	{
 		const user = await this.connection.parseUserInfo(data) as GamePlayer;
@@ -88,49 +111,40 @@ export default class Game extends Step
 		this.log[playerKey] = tempUser;
 	}
 
-	/**
-	 * Set tournament ID if this game is part of a tournament
-	 * @param id Tournament ID
-	 */
 	public setTournamentId(id: number): void
 	{
 		this.log.tournamentId = id;
 	}
 
-	/**
-	 * Start tracking game session
-	 */
-	public startGameSession(): void
+	/***********************************/
+	/*********** GETTERS ***************/
+	public	getGameConfig(): GameConfig
 	{
-		this.log.startTime = Date.now();
-		console.log(`Starting game session. Mode: ${this.log.mode}`);
+		return (this.gameConfig);
 	}
-
-	/**
-	 * Handle game end - record final data
-	 * @param result Result data from server
-	 */
-	public endGameSession(result: { winner: string, loser: string, score: [number, number] }): void
-	{
-		this.log.duration = Date.now() - this.log.startTime;
-		this.log.result = result;
-		console.log("Game session ended:", this.log);
-		this.renderer.stopRenderLoop();
-		this.ui.controllers.cleanup();
-	}
-
-	/**
-	 * Get complete game log data
-	 * @returns GameData object
-	 */
+	
 	public getGameLog(): GameData
 	{
 		return (this.log);
 	}
 
-	public destroy()
+	public	getGameConnection(): GameConnection
 	{
-		this.connection.destroy();
-		this.renderer.destroy();
+		return (this.connection);
+	}
+
+	public	getGameRender(): GameRender
+	{
+		return (this.renderer);
+	}
+
+	public	getGameUI(): GameUI
+	{
+		return (this.ui);
+	}
+
+	public	getGameMatch(): GameMatch
+	{
+		return (this.match);
 	}
 }

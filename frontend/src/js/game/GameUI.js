@@ -10,11 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { GameControllers } from './GameControllers.js';
+import { SPA } from '../spa/spa.js';
 export class GameUI {
     constructor(game) {
         this.game = game;
-        this.controllers = new GameControllers(game);
     }
     showOnly(divId, displayStyle = "block") {
         const divIndex = [
@@ -57,7 +56,7 @@ export class GameUI {
         }));
         (_b = document.getElementById('play-ai')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
             yield this.game.setPlayerInfo('player1', null);
-            yield this.game.setGuestInfo('player2', 'ai');
+            this.game.setGuestInfo('player2', 'ai');
             this.game.setGameMode('1vAI');
             this.showOnly('config-panel');
         }));
@@ -71,7 +70,7 @@ export class GameUI {
         this.setupConfigPanelListeners();
         // Start game button
         (_d = document.getElementById('start-game')) === null || _d === void 0 ? void 0 : _d.addEventListener('click', () => {
-            this.launchGame(this.game.log.mode);
+            this.launchGame();
         });
         // Back button - returns to lobby
         (_e = document.getElementById('back-button')) === null || _e === void 0 ? void 0 : _e.addEventListener('click', () => {
@@ -89,7 +88,7 @@ export class GameUI {
             scoreSlider.addEventListener('input', () => {
                 const value = scoreSlider.value;
                 scoreValue.textContent = value;
-                this.game.gameConfig.scoreLimit = parseInt(value);
+                this.game.getGameConfig().scoreLimit = parseInt(value);
             });
         }
         // Difficulty slider
@@ -109,7 +108,7 @@ export class GameUI {
                     difficultyLevel = 'hard';
                 }
                 difficultyValue.textContent = difficultyText;
-                this.game.gameConfig.difficulty = difficultyLevel;
+                this.game.getGameConfig().difficulty = difficultyLevel;
             });
         }
     }
@@ -126,7 +125,7 @@ export class GameUI {
             e.preventDefault();
             const email = document.getElementById('player2-email').value;
             const password = document.getElementById('player2-password').value;
-            const success = yield this.game.connection.checkPlayer({ email, password });
+            const success = yield this.game.getGameConnection().checkPlayer({ email, password });
             if (!email || !password) {
                 if (errorMsg)
                     errorMsg.textContent = 'Please enter both email and password';
@@ -149,57 +148,13 @@ export class GameUI {
                 errorMsg.textContent = '';
         };
     }
-    launchGame(mode, tournamentId) {
-        if (!this.game.connection.socket || !this.game.connection.connectionStat) {
+    launchGame() {
+        if (!this.game.getGameConnection().socket || !this.game.getGameConnection().connectionStat) {
             console.error("Cannot join game: connection not ready");
             return;
         }
-        this.game.setGameConfig(this.game.gameConfig);
-        this.controllers.setupControllers(mode);
-        this.game.connection.joinGame(mode, tournamentId);
-        this.showOnly('game-container');
-        this.game.renderer.canvas = document.getElementById('game-canvas');
-        if (this.game.renderer.canvas)
-            this.game.renderer.ctx = this.game.renderer.canvas.getContext('2d');
-    }
-    /**
-     * Display game results when a game ends
-     * @param gameData Complete game data
-     */
-    showGameResults(gameData) {
-        var _a, _b, _c, _d;
-        // Update the HTML content with actual game data logs
-        const winnerElement = document.getElementById('winner-name');
-        const scoreElement = document.getElementById('final-score');
-        const durationElement = document.getElementById('game-duration');
-        if (winnerElement)
-            winnerElement.textContent = ((_a = gameData.result) === null || _a === void 0 ? void 0 : _a.winner) || 'Unknown';
-        if (scoreElement) {
-            const score = ((_b = gameData.result) === null || _b === void 0 ? void 0 : _b.score) || [0, 0];
-            scoreElement.textContent = `${score[0]} - ${score[1]}`;
-        }
-        if (durationElement) {
-            const duration = gameData.duration ? Math.floor(gameData.duration / 1000) : 0;
-            durationElement.textContent = duration.toString();
-        }
-        // Show the results overlay
-        this.showOnly('game-results', 'flex');
-        // Add event listeners for the buttons (these need to be set each time)
-        (_c = document.getElementById('play-again-btn')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => {
-            this.showOnly('game-container');
-            this.rematchGame();
-        });
-        (_d = document.getElementById('return-lobby-btn')) === null || _d === void 0 ? void 0 : _d.addEventListener('click', () => {
-            this.showOnly('select-game');
-        });
-    }
-    /**
-     * Reset the game to start a new one
-     */
-    rematchGame() {
-        this.game.log.startTime = 0;
-        this.game.log.duration = 0;
-        this.game.log.result = { winner: '', loser: '', score: [0, 0] };
-        this.launchGame(this.game.log.mode, this.game.log.tournamentId);
+        this.game.setGameConfig(this.game.getGameConfig());
+        this.game.getGameConnection().joinGame(this.game.getGameLog().mode);
+        SPA.getInstance().navigate('game-match');
     }
 }

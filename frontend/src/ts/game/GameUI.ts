@@ -2,18 +2,16 @@
  * GameUI.ts -> UI setup and event listeners
  */
 
-import { GameControllers } from './GameControllers.js';
-import { GameData } from './types.js';
+import { SPA } from '../spa/spa.js';
+import Game from './Game.js'
 
 export class GameUI
 {
-	private	game: any;
-	public	controllers: GameControllers;
+	private	game: Game;
 
-	constructor(game: any)
+	constructor(game: Game)
 	{
 		this.game = game;
-		this.controllers = new GameControllers(game);
 	}
 
 	showOnly(divId: string, displayStyle: string = "block") : void
@@ -37,8 +35,8 @@ export class GameUI
 		try
 		{
 			const response = await fetch("../../html/game/gameUI.html");
-			if (!response.ok) throw new Error("Failed to load the game UI HTML file");
-			
+			if (!response.ok)
+				throw new Error("Failed to load the game UI HTML file");
 			const htmlContent = await response.text();
 			appElement.innerHTML = htmlContent;
 		}
@@ -62,7 +60,7 @@ export class GameUI
 		
 		document.getElementById('play-ai')?.addEventListener('click', async () => {
 			await this.game.setPlayerInfo('player1', null);
-			await this.game.setGuestInfo('player2', 'ai');
+			this.game.setGuestInfo('player2', 'ai');
 			this.game.setGameMode('1vAI');
 			this.showOnly('config-panel');
 		});
@@ -79,7 +77,7 @@ export class GameUI
 		
 		// Start game button
 		document.getElementById('start-game')?.addEventListener('click', () => {
-			this.launchGame(this.game.log.mode);
+			this.launchGame();
 		});
 	
 		// Back button - returns to lobby
@@ -101,7 +99,7 @@ export class GameUI
 			scoreSlider.addEventListener('input', () => {
 				const value = scoreSlider.value;
 				scoreValue.textContent = value;
-				this.game.gameConfig.scoreLimit = parseInt(value);
+				this.game.getGameConfig().scoreLimit = parseInt(value);
 			});
 		}
 		
@@ -125,7 +123,7 @@ export class GameUI
 					difficultyLevel = 'hard';
 				}
 				difficultyValue.textContent = difficultyText;
-				this.game.gameConfig.difficulty = difficultyLevel;
+				this.game.getGameConfig().difficulty = difficultyLevel;
 			});
 		}
 	}
@@ -146,7 +144,7 @@ export class GameUI
 			e.preventDefault();
 			const email = (document.getElementById('player2-email') as HTMLInputElement).value;
 			const password = (document.getElementById('player2-password') as HTMLInputElement).value;
-			const success = await this.game.connection.checkPlayer({ email, password });
+			const success = await this.game.getGameConnection().checkPlayer({ email, password });
 			
 			if (!email || !password)
 			{
@@ -174,67 +172,15 @@ export class GameUI
 		};
 	}
 
-	launchGame(mode: string, tournamentId?: number): void 
+	launchGame(): void 
 	{
-		if (!this.game.connection.socket || !this.game.connection.connectionStat)
+		if (!this.game.getGameConnection().socket || !this.game.getGameConnection().connectionStat)
 		{
 			console.error("Cannot join game: connection not ready");
 			return ;
 		}
-		this.game.setGameConfig(this.game.gameConfig);
-		this.controllers.setupControllers(mode);
-		this.game.connection.joinGame(mode, tournamentId);
-	
-		this.showOnly('game-container');
-		this.game.renderer.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
-		if (this.game.renderer.canvas)
-			this.game.renderer.ctx = this.game.renderer.canvas.getContext('2d');
+		this.game.setGameConfig(this.game.getGameConfig());
+		this.game.getGameConnection().joinGame(this.game.getGameLog().mode);
+		SPA.getInstance().navigate('game-match');
 	}
-	
-	/**
-	 * Display game results when a game ends
-	 * @param gameData Complete game data
-	 */
-	public showGameResults(gameData: GameData): void
-	{
-		// Update the HTML content with actual game data logs
-		const winnerElement = document.getElementById('winner-name');
-		const scoreElement = document.getElementById('final-score');
-		const durationElement = document.getElementById('game-duration');
-		if (winnerElement)
-			winnerElement.textContent = gameData.result?.winner || 'Unknown';
-		if (scoreElement)
-		{
-			const score = gameData.result?.score || [0, 0];
-			scoreElement.textContent = `${score[0]} - ${score[1]}`;
-		}
-		if (durationElement)
-		{
-			const duration = gameData.duration ? Math.floor(gameData.duration / 1000) : 0;
-			durationElement.textContent = duration.toString();
-		}
-		
-		// Show the results overlay
-		this.showOnly('game-results', 'flex');
-		// Add event listeners for the buttons (these need to be set each time)
-		document.getElementById('play-again-btn')?.addEventListener('click', () => {
-			this.showOnly('game-container')
-			this.rematchGame();
-		});
-		
-		document.getElementById('return-lobby-btn')?.addEventListener('click', () => {
-			this.showOnly('select-game');
-		});
-	}
-	
-	/**
-	 * Reset the game to start a new one
-	 */
-	private rematchGame(): void
-	{
-		this.game.log.startTime = 0;
-		this.game.log.duration = 0;
-		this.game.log.result = { winner: '', loser: '', score: [0, 0] };
-		this.launchGame(this.game.log.mode, this.game.log.tournamentId);
-    }
 }

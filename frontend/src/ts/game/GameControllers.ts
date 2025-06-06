@@ -3,14 +3,16 @@
  * This is an auxiliar component to keep GameUI shorter and better readable
  */
 
+import Game from './Game.js'
+
 export class GameControllers
 {
-	private game: any;
+	private game: Game;
 	private keydownListener: ((e: KeyboardEvent) => void) | null = null;
 	private keyupListener: ((e: KeyboardEvent) => void) | null = null;
 	private inputInterval: number | null = null;
 
-	constructor(game: any)
+	constructor(game: Game)
 	{
 		this.game = game;
 	}
@@ -33,10 +35,10 @@ export class GameControllers
 				return;
 			// Send inputs (60fps)
 			inputInterval = window.setInterval(() => {
-				if (!this.game.connection.socket)
+				if (!this.game.getGameConnection().socket)
 					return ;
 				// Always send player1 input
-				this.game.connection.socket.send(JSON.stringify({
+				this.game.getGameConnection().socket?.send(JSON.stringify({
 					type: 'PLAYER_INPUT',
 					input: {
 						player: 'player1',
@@ -47,7 +49,7 @@ export class GameControllers
 				// Send player2 input if 1v1 mode
 				if (mode === '1v1')
 				{
-					this.game.connection.socket.send(JSON.stringify({
+					this.game.getGameConnection().socket?.send(JSON.stringify({
 						type: 'PLAYER_INPUT',
 						input: {
 							player: 'player2',
@@ -122,7 +124,7 @@ export class GameControllers
 	/**
 	 * Aux method to clean all controller listeners and resources such as intervals
 	 */
-	cleanup()
+	public cleanup()
 	{
 		if (this.inputInterval)
 		{

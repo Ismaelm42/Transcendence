@@ -60,7 +60,7 @@ export class GameConnection {
                                 console.log("Game initialized:", data);
                                 break;
                             case 'GAME_STATE':
-                                this.game.renderer.renderGameState(data.state);
+                                this.game.getGameRender().renderGameState(data.state);
                                 break;
                             case 'GAME_START':
                                 console.log("Game started:", data);
@@ -68,7 +68,7 @@ export class GameConnection {
                                 break;
                             case 'GAME_END':
                                 this.game.endGameSession(data.result);
-                                this.game.ui.showGameResults(this.game.getGameLog());
+                                this.game.getGameMatch().showGameResults(this.game.getGameLog());
                                 break;
                             case 'SERVER_TEST':
                                 console.log("Server test message:", data.message);
@@ -111,7 +111,7 @@ export class GameConnection {
      * @param tournamentId Optional tournament ID
      */
     joinGame(mode, tournamentId) {
-        console.log("GAME LOG BEFORE JOIN SENDING: ", this.game.log);
+        console.log("GAME LOG BEFORE JOIN SENDING: ", this.game.getGameLog());
         if (!this.socket || !this.connectionStat) {
             console.error("Cannot join game: connection not ready");
             return;
@@ -121,10 +121,10 @@ export class GameConnection {
         const joinMsg = {
             type: 'JOIN_GAME',
             mode: mode,
-            roomId: this.game.log.id,
-            player1: this.game.log.player1,
-            player2: this.game.log.player2,
-            config: this.game.log.config
+            roomId: this.game.getGameLog().id,
+            player1: this.game.getGameLog().player1,
+            player2: this.game.getGameLog().player2,
+            config: this.game.getGameLog().config
         };
         if (tournamentId)
             joinMsg.tournamentId = tournamentId;

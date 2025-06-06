@@ -2,17 +2,19 @@
  * GameRender.ts -> Rendering related methods
  */
 
+import Game from './Game.js'
+
 export class GameRender
 {
 	private game: any;
-	private canvas: HTMLCanvasElement | null = null;
-	private ctx: CanvasRenderingContext2D | null = null;
-	private animationFrameId: number | null = null;
-	private gameState: any | null = null;
-	private lastKnownState: any | null = null;
-	private stateTimestamp: number = 0;
+	public canvas: HTMLCanvasElement | null = null;
+	public ctx: CanvasRenderingContext2D | null = null;
+	public animationFrameId: number | null = null;
+	public gameState: any | null = null;
+	public lastKnownState: any | null = null;
+	public stateTimestamp: number = 0;
 
-	constructor(game: any)
+	constructor(game: Game)
 	{
 		this.game = game;
 	}

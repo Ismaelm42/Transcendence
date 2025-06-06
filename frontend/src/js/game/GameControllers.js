@@ -27,10 +27,11 @@ export class GameControllers {
                 return;
             // Send inputs (60fps)
             inputInterval = window.setInterval(() => {
-                if (!this.game.connection.socket)
+                var _a, _b;
+                if (!this.game.getGameConnection().socket)
                     return;
                 // Always send player1 input
-                this.game.connection.socket.send(JSON.stringify({
+                (_a = this.game.getGameConnection().socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({
                     type: 'PLAYER_INPUT',
                     input: {
                         player: 'player1',
@@ -40,7 +41,7 @@ export class GameControllers {
                 }));
                 // Send player2 input if 1v1 mode
                 if (mode === '1v1') {
-                    this.game.connection.socket.send(JSON.stringify({
+                    (_b = this.game.getGameConnection().socket) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({
                         type: 'PLAYER_INPUT',
                         input: {
                             player: 'player2',

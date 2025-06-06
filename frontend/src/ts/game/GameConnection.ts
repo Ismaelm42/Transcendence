@@ -2,6 +2,8 @@
  * GameConnection.ts -> WebSocket connection handling
  */
 
+import Game from './Game.js'
+
 // This is a variable to store the first websocket connection
 // so we can use the same one during the whole browser lifecycle
 // (if page close or reloaded, socket is closed and lost)
@@ -9,12 +11,12 @@ let globalGameSocket: WebSocket | null = null;
 
 export class GameConnection
 {
-	private game: any;
-	private socket: WebSocket | null = null;
-	private connectionStat: boolean = false;
-	private pendingUserInfoResolve: ((user: any) => void) | null = null;
+	private game: Game;
+	public	socket: WebSocket | null = null;
+	public connectionStat: boolean = false;
+	public pendingUserInfoResolve: ((user: any) => void) | null = null;
 
-	constructor(game: any)
+	constructor(game: Game)
 	{
 		this.game = game;
 	}
@@ -61,7 +63,7 @@ export class GameConnection
 							console.log("Game initialized:", data);
 							break ;
 						case 'GAME_STATE':
-							this.game.renderer.renderGameState(data.state);
+							this.game.getGameRender().renderGameState(data.state);
 							break ;
 						case 'GAME_START':
 							console.log("Game started:", data);
@@ -69,7 +71,7 @@ export class GameConnection
 							break ;
 						case 'GAME_END':
 							this.game.endGameSession(data.result);
-							this.game.ui.showGameResults(this.game.getGameLog());
+							this.game.getGameMatch().showGameResults(this.game.getGameLog());
 							break ;
 						case 'SERVER_TEST':
 							console.log("Server test message:", data.message);
@@ -115,7 +117,7 @@ export class GameConnection
 	 */
 	public joinGame(mode: string, tournamentId?: number): void
 	{
-		console.log("GAME LOG BEFORE JOIN SENDING: ", this.game.log);
+		console.log("GAME LOG BEFORE JOIN SENDING: ", this.game.getGameLog());
 		if (!this.socket || !this.connectionStat)
 		{
 			console.error("Cannot join game: connection not ready");
@@ -126,10 +128,10 @@ export class GameConnection
 		const	joinMsg: any = {
 			type: 'JOIN_GAME',
 			mode: mode,
-			roomId : this.game.log.id,
-			player1: this.game.log.player1,
-			player2: this.game.log.player2,
-			config: this.game.log.config
+			roomId : this.game.getGameLog().id,
+			player1: this.game.getGameLog().player1,
+			player2: this.game.getGameLog().player2,
+			config: this.game.getGameLog().config
 		};
 		if (tournamentId)
 			joinMsg.tournamentId = tournamentId;

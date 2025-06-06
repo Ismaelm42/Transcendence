@@ -14,15 +14,19 @@ import { GameConnection } from './GameConnection.js';
 import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
 import { Step } from "../spa/stepRender.js";
+import GameMatch from './GameMatch.js';
 // Default container ID (must match your HTML)
 const DEFAULT_CONTAINER_ID = "game-container";
 export default class Game extends Step {
+    /***************************************/
+    /*********** CONSTRUCTOR ***************/
     constructor(containerId = DEFAULT_CONTAINER_ID) {
         super(containerId);
         this.gameConfig = { scoreLimit: 5, difficulty: 'medium' };
         this.connection = new GameConnection(this);
         this.renderer = new GameRender(this);
         this.ui = new GameUI(this);
+        this.match = new GameMatch(this);
         this.log = {
             id: "game " + Date.now(),
             mode: '',
@@ -36,6 +40,8 @@ export default class Game extends Step {
             readyState: false
         };
     }
+    /************ CORE *****************/
+    /*********** METHODS ***************/
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.ui.initializeUI(appElement);
@@ -43,26 +49,32 @@ export default class Game extends Step {
             this.ui.setupEventListeners();
         });
     }
-    /**
-     * Set game mode (1vAI, 1v1, remote)
-     * @param mode Game mode
-     */
+    startGameSession() {
+        this.log.startTime = Date.now();
+        console.log(`Starting game session. Mode: ${this.log.mode}`);
+    }
+    endGameSession(result) {
+        this.log.duration = Date.now() - this.log.startTime;
+        this.log.result = result;
+        console.log("Game session ended:", this.log);
+        this.renderer.stopRenderLoop();
+        this.match.controllers.cleanup();
+    }
+    destroy() {
+        this.connection.destroy();
+        this.renderer.destroy();
+    }
+    /***********************************/
+    /*********** SETTERS ***************/
+    setGameLog(log) {
+        this.log = log;
+    }
     setGameMode(mode) {
         this.log.mode = mode;
     }
-    /**
-     * Set game configuration options
-     * @param config Game configuration object
-     */
     setGameConfig(config) {
         this.log.config = config;
-        console.log(`Game configuration set: Score limit=${config.scoreLimit}, Difficulty=${config.difficulty}`);
     }
-    /**
-     * Set player information
-     * @param playerKey 'player1' or 'player2'
-     * @param playerData Player data object
-     */
     setPlayerInfo(playerKey_1) {
         return __awaiter(this, arguments, void 0, function* (playerKey, data = null) {
             const user = yield this.connection.parseUserInfo(data);
@@ -79,40 +91,27 @@ export default class Game extends Step {
         };
         this.log[playerKey] = tempUser;
     }
-    /**
-     * Set tournament ID if this game is part of a tournament
-     * @param id Tournament ID
-     */
     setTournamentId(id) {
         this.log.tournamentId = id;
     }
-    /**
-     * Start tracking game session
-     */
-    startGameSession() {
-        this.log.startTime = Date.now();
-        console.log(`Starting game session. Mode: ${this.log.mode}`);
+    /***********************************/
+    /*********** GETTERS ***************/
+    getGameConfig() {
+        return (this.gameConfig);
     }
-    /**
-     * Handle game end - record final data
-     * @param result Result data from server
-     */
-    endGameSession(result) {
-        this.log.duration = Date.now() - this.log.startTime;
-        this.log.result = result;
-        console.log("Game session ended:", this.log);
-        this.renderer.stopRenderLoop();
-        this.ui.controllers.cleanup();
-    }
-    /**
-     * Get complete game log data
-     * @returns GameData object
-     */
     getGameLog() {
         return (this.log);
     }
-    destroy() {
-        this.connection.destroy();
-        this.renderer.destroy();
+    getGameConnection() {
+        return (this.connection);
+    }
+    getGameRender() {
+        return (this.renderer);
+    }
+    getGameUI() {
+        return (this.ui);
+    }
+    getGameMatch() {
+        return (this.match);
     }
 }
