@@ -50,22 +50,25 @@ export function handleJoinGame(client, data)
 		playerNumber,
 		config: gameSession.getConfig()
 	}));
-	// 5. Start game if ready (e.g., 2 players connected + online mode, 1 player connected + 1vAI mode...)
-	if (gameSession.shouldStart(secondPlayerInfo))
-	{
-		gameSession.state = gameSession.resetState();
-		// Change this for broadCastUniversal() when done
-		gameSession.getConnections().forEach((conn) => {
-			if (conn.readyState === 1)
-			{
-				conn.send(JSON.stringify({
-					type: 'GAME_START',
-					timestamp: Date.now()
-				}));
-			}
-		});
-		gameSession.startGameLoop(gamesList);
-	}
+	// 5. Set second playerInfo if 1v1 or 1vAI - no more connections needed
+	if (secondPlayerInfo && (gameMode === '1vAI' || gameMode === '1v1'))
+		gameSession.setPlayerDetails('player2', secondPlayerInfo);
+	// // 5. Start game if ready (e.g., 2 players connected + online mode, 1 player connected + 1vAI mode...)
+	// if (gameSession.shouldStart(secondPlayerInfo))
+	// {
+	// 	gameSession.state = gameSession.resetState();
+	// 	// Change this for broadCastUniversal() when done
+	// 	gameSession.getConnections().forEach((conn) => {
+	// 		if (conn.readyState === 1)
+	// 		{
+	// 			conn.send(JSON.stringify({
+	// 				type: 'GAME_START',
+	// 				timestamp: Date.now()
+	// 			}));
+	// 		}
+	// 	});
+	// 	gameSession.startGameLoop(gamesList);
+	// }
 }
 
 /**
@@ -165,4 +168,34 @@ export async function	handlePlayerInfo(client, data)
 			mode: data.mode,
 			user: user
 	}));
+}
+
+export function handleClientReady(client, data)
+{
+	const { user } = client;
+	const clientData = clients.get(user.id);
+	const gameSession = gamesList.get(clientData.roomId);
+	if (!gameSession)
+		return;
+	const player = gameSession.players.get(user.id);
+	if (player)
+		player.ready = true;
+
+	if (gameSession.shouldStart())
+	{
+		const allReady = Array.from(gameSession.players.values()).every(p => p.ready);
+		console.log("gameLoop = ", gameSession.gameLoop);
+		if (allReady && !gameSession.gameLoop)
+		{
+			gameSession.getConnections().forEach((conn) => {
+				if (conn.readyState === 1) {
+					conn.send(JSON.stringify({
+						type: 'GAME_START',
+						timestamp: Date.now()
+					}));
+				}
+			});
+			gameSession.startGameLoop(gamesList);
+		}
+	}
 }

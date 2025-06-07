@@ -21,7 +21,6 @@ export default class Game extends Step
 	protected	ui: GameUI;
 	protected	log: GameData;
 	protected	gameConfig: GameConfig = {scoreLimit: 5, difficulty: 'medium'};
-	protected	match: GameMatch;
 
 	/***************************************/
 	/*********** CONSTRUCTOR ***************/
@@ -31,7 +30,6 @@ export default class Game extends Step
 		this.connection = new GameConnection(this);
 		this.renderer = new GameRender(this);
 		this.ui = new GameUI(this);
-		this.match = new GameMatch(this);
 		this.log = {
 			id: "game " + Date.now(),
 			mode: '',
@@ -67,7 +65,6 @@ export default class Game extends Step
 		this.log.result = result;
 		console.log("Game session ended:", this.log);
 		this.renderer.stopRenderLoop();
-		this.match.controllers.cleanup();
 	}
 
 	public destroy()
@@ -141,10 +138,5 @@ export default class Game extends Step
 	public	getGameUI(): GameUI
 	{
 		return (this.ui);
-	}
-
-	public	getGameMatch(): GameMatch
-	{
-		return (this.match);
 	}
 }

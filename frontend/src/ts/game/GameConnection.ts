@@ -13,8 +13,8 @@ export class GameConnection
 {
 	private game: Game;
 	public	socket: WebSocket | null = null;
-	public connectionStat: boolean = false;
-	public pendingUserInfoResolve: ((user: any) => void) | null = null;
+	public	connectionStat: boolean = false;
+	public	pendingUserInfoResolve: ((user: any) => void) | null = null;
 
 	constructor(game: Game)
 	{
@@ -71,7 +71,7 @@ export class GameConnection
 							break ;
 						case 'GAME_END':
 							this.game.endGameSession(data.result);
-							this.game.getGameMatch().showGameResults(this.game.getGameLog());
+							//this.game.getGameMatch().showGameResults(this.game.getGameLog());
 							break ;
 						case 'SERVER_TEST':
 							console.log("Server test message:", data.message);

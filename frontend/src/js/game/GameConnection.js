@@ -68,7 +68,7 @@ export class GameConnection {
                                 break;
                             case 'GAME_END':
                                 this.game.endGameSession(data.result);
-                                this.game.getGameMatch().showGameResults(this.game.getGameLog());
+                                //this.game.getGameMatch().showGameResults(this.game.getGameLog());
                                 break;
                             case 'SERVER_TEST':
                                 console.log("Server test message:", data.message);

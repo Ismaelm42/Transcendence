@@ -8,7 +8,7 @@ export function addPlayer(playerId, connection)
 	if (this.players.size >= 2)
 		throw new Error('Game is full');
 	const playerNumber = this.players.size === 0 ? 'player1' : 'player2';
-	this.players.set(playerId, { connection, playerNumber });
+	this.players.set(playerId, { connection, playerNumber, ready: false });
 
 	if (this.gameMode === '1vAI' && this.players.size === 1)
 		this.startAI();

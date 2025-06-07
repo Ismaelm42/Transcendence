@@ -18,6 +18,7 @@ import { GameControllers } from './GameControllers.js';
 export default class GameMatch extends Step {
     constructor(game) {
         super('game-container');
+        console.log('GameMatch constructed with:', game, 'getGameRender:', typeof game.getGameRender);
         this.game = game;
         this.renderer = game.getGameRender();
         this.controllers = new GameControllers(game);
@@ -26,8 +27,9 @@ export default class GameMatch extends Step {
         this.ui = game.getGameUI();
         this.connection = game.getGameConnection();
     }
-    initHTML(appElement) {
+    render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             try {
                 const response = yield fetch("../../html/game/gameMatch.html");
                 if (!response.ok)
@@ -38,6 +40,12 @@ export default class GameMatch extends Step {
             catch (error) {
                 console.error("Error loading game UI:", error);
                 appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
+            }
+            const canvas = document.getElementById('game-canvas');
+            if (canvas) {
+                this.renderer.canvas = canvas;
+                this.renderer.ctx = canvas.getContext('2d');
+                (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: "CLIENT_READY" }));
             }
             this.controllers.cleanup();
             this.controllers.setupControllers(this.log.mode);

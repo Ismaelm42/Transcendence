@@ -1,9 +1,11 @@
 import { Step } from "./stepRender.js";
 import { showMessage } from "../modal/showMessage.js";
+import Game from "../game/Game.js"
 
 export class SPA {
     private container: HTMLElement;
     private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
+	public currentGame: Game | null = null;
 
     private routes: { [key: string]: { module: string; protected: boolean } } = {
         'home': { module: '../home/homeRender.js', protected: false },
@@ -96,8 +98,17 @@ export class SPA {
 		if (routeConfig) {
 			//importamos el módulo correspondiente
 			const module = await import(`./${routeConfig.module}`);
-			// Creamos una instancia del módulo
-			const stepInstance = new module.default('app-container');
+			// game-lobby <-> game-match communication
+			let stepInstance;
+			if (step === 'game-match')
+				stepInstance = new module.default(this.currentGame);
+			else if (step === 'game-lobby')
+			{
+				stepInstance = new module.default('app-container');
+				this.currentGame = stepInstance;
+			}
+			else
+				stepInstance = new module.default('app-container');
 			// Verificamos si el usuario está autenticado
 			const user = await stepInstance.checkAuth();
 			if (user) {

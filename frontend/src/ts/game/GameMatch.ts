@@ -26,6 +26,7 @@ export default class GameMatch extends Step
 	constructor(game: Game)
 	{
 		super('game-container');
+		console.log('GameMatch constructed with:', game, 'getGameRender:', typeof game.getGameRender);
 		this.game = game;
 		this.renderer = game.getGameRender();
 		this.controllers = new GameControllers(game);
@@ -35,7 +36,7 @@ export default class GameMatch extends Step
 		this.connection = game.getGameConnection();
 	}
 
-	async initHTML(appElement: HTMLElement): Promise<void>
+	async render(appElement: HTMLElement): Promise<void>
 	{
 		try
 		{
@@ -49,6 +50,13 @@ export default class GameMatch extends Step
 		{
 			console.error("Error loading game UI:", error);
 			appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
+		}
+		const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
+		if (canvas)
+		{
+			this.renderer.canvas = canvas;
+			this.renderer.ctx = canvas.getContext('2d');
+			this.connection.socket?.send(JSON.stringify({ type: "CLIENT_READY" }));
 		}
 		this.controllers.cleanup();
 		this.controllers.setupControllers(this.log.mode);

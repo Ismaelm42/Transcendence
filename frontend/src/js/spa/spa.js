@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { showMessage } from "../modal/showMessage.js";
 export class SPA {
     constructor(containerId) {
+        this.currentGame = null;
         this.routes = {
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
@@ -94,8 +95,16 @@ export class SPA {
             if (routeConfig) {
                 //importamos el módulo correspondiente
                 const module = yield import(`./${routeConfig.module}`);
-                // Creamos una instancia del módulo
-                const stepInstance = new module.default('app-container');
+                // game-lobby <-> game-match communication
+                let stepInstance;
+                if (step === 'game-match')
+                    stepInstance = new module.default(this.currentGame);
+                else if (step === 'game-lobby') {
+                    stepInstance = new module.default('app-container');
+                    this.currentGame = stepInstance;
+                }
+                else
+                    stepInstance = new module.default('app-container');
                 // Verificamos si el usuario está autenticado
                 const user = yield stepInstance.checkAuth();
                 if (user) {

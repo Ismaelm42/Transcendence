@@ -14,7 +14,6 @@ import { GameConnection } from './GameConnection.js';
 import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
 import { Step } from "../spa/stepRender.js";
-import GameMatch from './GameMatch.js';
 // Default container ID (must match your HTML)
 const DEFAULT_CONTAINER_ID = "game-container";
 export default class Game extends Step {
@@ -26,7 +25,6 @@ export default class Game extends Step {
         this.connection = new GameConnection(this);
         this.renderer = new GameRender(this);
         this.ui = new GameUI(this);
-        this.match = new GameMatch(this);
         this.log = {
             id: "game " + Date.now(),
             mode: '',
@@ -58,7 +56,6 @@ export default class Game extends Step {
         this.log.result = result;
         console.log("Game session ended:", this.log);
         this.renderer.stopRenderLoop();
-        this.match.controllers.cleanup();
     }
     destroy() {
         this.connection.destroy();
@@ -110,8 +107,5 @@ export default class Game extends Step {
     }
     getGameUI() {
         return (this.ui);
-    }
-    getGameMatch() {
-        return (this.match);
     }
 }
