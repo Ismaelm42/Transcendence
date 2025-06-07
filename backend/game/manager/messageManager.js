@@ -53,22 +53,6 @@ export function handleJoinGame(client, data)
 	// 5. Set second playerInfo if 1v1 or 1vAI - no more connections needed
 	if (secondPlayerInfo && (gameMode === '1vAI' || gameMode === '1v1'))
 		gameSession.setPlayerDetails('player2', secondPlayerInfo);
-	// // 5. Start game if ready (e.g., 2 players connected + online mode, 1 player connected + 1vAI mode...)
-	// if (gameSession.shouldStart(secondPlayerInfo))
-	// {
-	// 	gameSession.state = gameSession.resetState();
-	// 	// Change this for broadCastUniversal() when done
-	// 	gameSession.getConnections().forEach((conn) => {
-	// 		if (conn.readyState === 1)
-	// 		{
-	// 			conn.send(JSON.stringify({
-	// 				type: 'GAME_START',
-	// 				timestamp: Date.now()
-	// 			}));
-	// 		}
-	// 	});
-	// 	gameSession.startGameLoop(gamesList);
-	// }
 }
 
 /**
@@ -186,14 +170,7 @@ export function handleClientReady(client, data)
 		if (allReady && !gameSession.gameLoop)
 		{
 			gameSession.state = gameSession.resetState();
-			gameSession.getConnections().forEach((conn) => {
-				if (conn.readyState === 1) {
-					conn.send(JSON.stringify({
-						type: 'GAME_START',
-						timestamp: Date.now()
-					}));
-				}
-			});
+			gameSession.broadcastResponse('GAME_START');
 			gameSession.startGameLoop(gamesList);
 		}
 	}

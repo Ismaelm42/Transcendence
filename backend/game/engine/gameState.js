@@ -142,22 +142,6 @@ export function endGame(gamesList)
 		gamesList.delete(this.roomId);
 	}
 	// Notify players
-	this.getConnections().forEach((connection) => {
-		if (connection.readyState === 1)
-		{
-			connection.send(JSON.stringify({
-				type: 'GAME_END',
-				result: {
-					winner: this.metadata.result.winner,
-					loser: this.metadata.result.loser,
-					score: this.state.scores
-				},
-				stats: {
-					duration: this.metadata.duration,
-					score: this.state.scores
-				}
-			}));
-		}
-	});
+	this.broadcastResponse('GAME_END');
 	this.shouldCleanup = true;
 }

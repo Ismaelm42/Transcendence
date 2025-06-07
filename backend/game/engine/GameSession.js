@@ -63,7 +63,7 @@ export default class GameSession
 			// 3. Update game state (ball position, scores, etc.)
 			this.update(deltaTime);
 			// 4. Send updated state to all players in game
-			this.broadcastState();
+			this.broadcastResponse('GAME_STATE');
 		}, 16); // ~60fps (1000ms/60 ≈ 16ms)
 	}
 

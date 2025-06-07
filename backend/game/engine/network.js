@@ -13,18 +13,39 @@ export function	getConnections()
 }
 
 // Send game state to all players
-export function	broadcastState()
+export function	broadcastResponse(responseType)
 {
-	const connections = this.getConnections();
+	const	connections = this.getConnections();
+
 	connections.forEach((connection, playerId) => {
-		if (connection.readyState === 1)
+		if (connection.readyState !== 1)
+			return;
+		let response = {
+			type: responseType,
+			timestamp: Date.now(),
+		};
+		switch (responseType)
 		{
-			connection.send(JSON.stringify({
-				type: 'GAME_STATE',
-				state: this.getPlayerView(playerId),
-				timestamp: Date.now()
-			}));
+			case 'GAME_STATE':
+				response.state = this.getPlayerView(playerId);
+				break;
+			case 'GAME_END':
+				response.result = {
+					winner: this.metadata.result.winner,
+					loser: this.metadata.result.loser,
+					score: this.state.scores
+				},
+				response.stats = {
+					duration: this.metadata.duration,
+					score: this.state.scores
+				}
+				break;
+			case 'GAME_START':
+				break;
+			default:
+				console.error(`Unknown responseType to broadcast: ${responseType}`);
+				return;
 		}
+		connection.send(JSON.stringify(response));
 	});
 }
-
