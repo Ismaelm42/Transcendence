@@ -26,92 +26,95 @@ export class GameConnection {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 // 0. Check if there is already an existing socket, to avoid creating new one
-                //		if so, reset stats and skip rest (as configuration is already set)
                 if (globalGameSocket && globalGameSocket.readyState === WebSocket.OPEN) {
                     console.log("Websocket reused =)");
                     this.socket = globalGameSocket;
                     this.connectionStat = true;
+                    // Remove old handlers before assigning new ones
+                    this.socket.onmessage = null;
+                    this.socket.onopen = null;
+                    this.socket.onerror = null;
+                    this.socket.onclose = null;
                     resolve();
                     return;
                 }
                 // 1. Socket create/registred - ping test - buttons appear
                 this.socket = new WebSocket(`https://${window.location.host}/back/ws/game`);
                 globalGameSocket = this.socket;
-                // 1.1 Set what we want to happen on open socket (at first connected)
                 this.socket.onopen = () => {
                     console.log('New socket connected to game server');
                     this.connectionStat = true;
                     resolve();
                 };
-                // 2. Setting message received handler for all desired cases
-                this.socket.onmessage = (event) => {
-                    var _a, _b, _c, _d;
-                    console.log("Message received from server:", event.data);
-                    try {
-                        const data = JSON.parse(event.data);
-                        console.log("Parsed server message:", data);
-                        switch (data.type) {
-                            case 'USER_INFO':
-                                if (this.pendingUserInfoResolve) {
-                                    this.pendingUserInfoResolve(data.user);
-                                    this.pendingUserInfoResolve = null;
-                                }
-                                else
-                                    console.warn('No pendingUserInfoResolve to call!');
-                                break;
-                            case 'GAME_INIT':
-                                const spa = SPA.getInstance();
-                                if (window.location.hash === '#game-match' && ((_a = spa.currentGame) === null || _a === void 0 ? void 0 : _a.getGameMatch())) {
-                                    const appElement = document.getElementById('app-container');
-                                    if (appElement)
-                                        (_b = spa.currentGame.getGameMatch()) === null || _b === void 0 ? void 0 : _b.render(appElement);
-                                }
-                                else
-                                    spa.navigate('game-match');
-                                console.log("Game initialized:", data);
-                                break;
-                            case 'GAME_STATE':
-                                this.game.getGameRender().renderGameState(data.state);
-                                break;
-                            case 'GAME_START':
-                                console.log("Game started:", data);
-                                this.game.startGameSession();
-                                break;
-                            case 'GAME_END':
-                                this.game.endGameSession(data.result);
-                                (_c = this.game.getGameMatch()) === null || _c === void 0 ? void 0 : _c.showGameResults(this.game.getGameLog());
-                                break;
-                            case 'SERVER_TEST':
-                                console.log("Server test message:", data.message);
-                                (_d = this.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
-                                    type: 'PING',
-                                    message: 'Client response to server test'
-                                }));
-                                break;
-                            case 'PONG':
-                                console.log("Server responded to ping");
-                                break;
-                            default:
-                                console.log(`Received message with type: ${data.type}`);
-                        }
-                    }
-                    catch (error) {
-                        console.error("Error parsing server message:", error);
-                    }
-                };
-                // 3. Error handler
                 this.socket.onerror = (error) => {
                     console.error("WebSocket error:", error);
-                    reject(error); // Reject the promise on error
+                    reject(error);
                 };
-                // 4. Connection closed handler: set bool flag to false and hide play buttons
-                //		and set globalGameSocket to null so next time a new socket will get created
                 this.socket.onclose = (event) => {
                     console.log(`WebSocket connection closed: Code ${event.code}${event.reason ? ' - ' + event.reason : ''}`);
                     this.connectionStat = false;
                     if (globalGameSocket === this.socket)
                         globalGameSocket = null;
                 };
+            }).then(() => {
+                // Always assign the message handler after connection is established
+                if (this.socket) {
+                    this.socket.onmessage = (event) => {
+                        var _a, _b, _c, _d;
+                        console.log("Message received from server:", event.data);
+                        try {
+                            const data = JSON.parse(event.data);
+                            console.log("Parsed server message:", data);
+                            switch (data.type) {
+                                case 'USER_INFO':
+                                    if (this.pendingUserInfoResolve) {
+                                        this.pendingUserInfoResolve(data.user);
+                                        this.pendingUserInfoResolve = null;
+                                    }
+                                    else
+                                        console.warn('No pendingUserInfoResolve to call!');
+                                    break;
+                                case 'GAME_INIT':
+                                    const spa = SPA.getInstance();
+                                    if (window.location.hash === '#game-match' && ((_a = spa.currentGame) === null || _a === void 0 ? void 0 : _a.getGameMatch())) {
+                                        const appElement = document.getElementById('app-container');
+                                        if (appElement)
+                                            (_b = spa.currentGame.getGameMatch()) === null || _b === void 0 ? void 0 : _b.render(appElement);
+                                    }
+                                    else
+                                        spa.navigate('game-match');
+                                    console.log("Game initialized:", data);
+                                    break;
+                                case 'GAME_STATE':
+                                    this.game.getGameRender().renderGameState(data.state);
+                                    break;
+                                case 'GAME_START':
+                                    console.log("Game started:", data);
+                                    this.game.startGameSession();
+                                    break;
+                                case 'GAME_END':
+                                    this.game.endGameSession(data.result);
+                                    (_c = this.game.getGameMatch()) === null || _c === void 0 ? void 0 : _c.showGameResults(this.game.getGameLog());
+                                    break;
+                                case 'SERVER_TEST':
+                                    console.log("Server test message:", data.message);
+                                    (_d = this.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
+                                        type: 'PING',
+                                        message: 'Client response to server test'
+                                    }));
+                                    break;
+                                case 'PONG':
+                                    console.log("Server responded to ping");
+                                    break;
+                                default:
+                                    console.log(`Received message with type: ${data.type}`);
+                            }
+                        }
+                        catch (error) {
+                            console.error("Error parsing server message:", error);
+                        }
+                    };
+                }
             });
         });
     }
@@ -192,7 +195,13 @@ export class GameConnection {
     }
     ;
     destroy() {
-        if (this.socket)
+        if (this.socket) {
+            this.socket.onmessage = null;
+            this.socket.onopen = null;
+            this.socket.onerror = null;
+            this.socket.onclose = null;
             this.socket.close();
+        }
+        this.pendingUserInfoResolve = null;
     }
 }
