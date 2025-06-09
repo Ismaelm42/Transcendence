@@ -43,7 +43,7 @@ export async function formatMsgTemplate(data: any, userId: string): Promise<stri
 	return htmlText;
 }
 
-export async function formatRecentChatTemplate(recentChats: HTMLDivElement, data: any, userId: string): Promise<string> {
+export async function formatRecentChatTemplate(data: any, userId: string): Promise<string> {
 
 	const chats = sessionStorage.getItem("recent-chats") || "";
 	const currentRoom = sessionStorage.getItem("current-room") || "";

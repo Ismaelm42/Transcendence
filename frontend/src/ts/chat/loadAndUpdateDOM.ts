@@ -28,7 +28,6 @@ export function handleContentStorage(chatMessages: HTMLDivElement, recentChats: 
 	const chats = sessionStorage.getItem("recent-chats") || "";
 	const currentRoom = sessionStorage.getItem("current-room") || "";
 	const publicChat = sessionStorage.getItem("public-chat") || "";
-	const data = JSON.parse(sessionStorage.getItem("JSONdata") || "{}");
  
 	if (chats) {
 		recentChats.innerHTML = chats;
@@ -40,6 +39,7 @@ export function handleContentStorage(chatMessages: HTMLDivElement, recentChats: 
 		sessionStorage.setItem("current-room", "");
 	}
 	if (currentRoom) {
+		const data = JSON.parse(sessionStorage.getItem("JSONdata") || "{}");
 		handleUserInfo(chatMessages, data, userId);
 	}
 	chatMessages.scrollTop = chatMessages.scrollHeight;

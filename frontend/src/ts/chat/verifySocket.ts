@@ -8,5 +8,5 @@ export function verifySocket(socket: WebSocket | null): WebSocket {
 	else {
 		retrieveConnectedUsers(socket);
 	}
-	return socket!;
+	return socket;
 }

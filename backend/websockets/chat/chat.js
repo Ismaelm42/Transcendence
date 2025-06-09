@@ -25,8 +25,12 @@ function getTimeStamp() {
 // Get blocked users list
 async function getBlockedUsers(user)
 {
+	if (!user) {
+		const cookies = parse(request.headers.cookie || '');
+		const token = cookies.token;
+		user = await extractUserFromToken(token);	
+	}
 	const blockedUsers = await crud.friend.getAllFriendsEntriesFromUser(user.id, "blocked");
-
 	const blockedSet = new Set();
 	for (const blockedUser of blockedUsers) {
 		const data = blockedUser.dataValues;
@@ -37,9 +41,9 @@ async function getBlockedUsers(user)
 }
 
 // Create a message JSON object and sent it to the clients
-function sendJSON(user, partner, message, roomId) {
+async function sendJSON(user, partner, message, roomId) {
 
-	setTimer(user);
+	await setTimer(user);
 	if (!partner) {
 		const response = {
 			type: "message",
@@ -89,28 +93,14 @@ function updateConnectedUsers(user, isConnected, status) {
 	if (!isConnected) {
 		connected.delete(user.id);
 	}
-	const connectedArray = Array.from(connected.values());
-	return {
-		type: "connectedUsers",
-		object: connectedArray
-	};
 }
 
-// function sendStatusToAllClients(user, status) {
-
-// 	if (clients.has(user.id)) {
-// 		const response = updateConnectedUsers(user, true, status);
-// 		for (const [id, client] of clients) {
-// 			client.send(JSON.stringify(response));
-// 		}
-// 	}
-// }
-
-
-function sendStatusToAllClients(user, status) {
+// Updates user connection status and sends each client their filtered connected users list
+async function sendStatusToAllClients(user, isConnected, status) {
 
 	if (clients.has(user.id)) {
-		updateConnectedUsers(user, true, status);
+		await getBlockedUsers(user);
+		updateConnectedUsers(user, isConnected, status);
 		for (const [id, client] of clients) {
 			let connectedArray = Array.from(connected.values());
 			const blockedSet = blockedIds.get(id) || new Set();
@@ -126,9 +116,8 @@ function sendStatusToAllClients(user, status) {
 	}
 }
 
-// Update the user's status connection 120000(2mn) 180000(3mn)
-// Timers will reset when the user sends a message or changes their status
-function setTimer(user) {
+// Update the user's status connection
+async function setTimer(user) {
 
 	timerId += 1;
 	const request = timerId;
@@ -137,20 +126,20 @@ function setTimer(user) {
 	if (timeout) {
 		clearTimeout(timeout);
 	}
-	sendStatusToAllClients(user, "green");
+	await sendStatusToAllClients(user, true, "green");
 	const yellowTimer = setTimeout(() => {
 		if (userRequestId.get(user.id) !== request) {
 			return;
 		}
-		sendStatusToAllClients(user, "yellow");
+		sendStatusToAllClients(user, true, "yellow");
 		const redTimer = setTimeout(() => {
 			if (userRequestId.get(user.id) !== request) {
 				return;
 			}
-			sendStatusToAllClients(user, "red");
-		}, 5000);
+			sendStatusToAllClients(user, true, "red");
+		}, 180000);
 		usersTimeout.set(user.id, redTimer);
-	}, 5000);
+	}, 120000);
 	usersTimeout.set(user.id, yellowTimer);
 }
 
@@ -171,7 +160,7 @@ async function handlePrivate(user, data) {
 					})
 				}
 				partner = await crud.user.getUserById(partnerId);
-				sendJSON(user, partner, null, roomId);
+				await sendJSON(user, partner, null, roomId);
 			}
 		}
 		else {
@@ -182,7 +171,7 @@ async function handlePrivate(user, data) {
 			else {
 				partner = await crud.user.getUserById(parseInt(ids[0], 10));
 			}
-			sendJSON(user, partner, data.message, data.roomId);
+			await sendJSON(user, partner, data.message, data.roomId);
 		}
 	} catch (error) {
 		console.error("Error opening private message:", error);
@@ -198,7 +187,7 @@ export async function registerUser(request, socket) {
 	const user = await extractUserFromToken(token);
 	clients.set(user.id, socket);
 	usersTimeout.set(user.id, null)
-	setTimer(user);
+	await setTimer(user);
 	return user;
 }
 
@@ -207,14 +196,13 @@ export async function handleIncomingSocketMessage(user, socket) {
 
 	socket.on('message', async message => {
 		try {
-			await getBlockedUsers(user);
 			const updatedUser = await crud.user.getUserById(user.id);
 			const data = JSON.parse(message.toString());
 			if (data.type === "message") {
-				sendJSON(updatedUser, null, data.message, null);
+				await sendJSON(updatedUser, null, data.message, null);
 			}
 			else if (data.type === "status") {
-				setTimer(updatedUser);
+				await setTimer(updatedUser);
 			}
 			else if (data.type === "private") {
 				handlePrivate(updatedUser, data)
@@ -229,9 +217,11 @@ export async function handleIncomingSocketMessage(user, socket) {
 export function handleSocketClose(user, socket) {
 
 	socket.on('close', () => {
-		clients.delete(user.id);
 		usersTimeout.delete(user.id);
+		userRequestId.delete(user.id);
 		sendStatusToAllClients(user, false);
+		clients.delete(user.id);
+		blockedIds.delete(user.id);
 	});
 }
 
@@ -239,22 +229,25 @@ export function handleSocketClose(user, socket) {
 export function handleSocketError(user, socket) {
 
 	socket.on('error', (error) => {
-		clients.delete(user.id);
 		usersTimeout.delete(user.id);
 		userRequestId.delete(user.id);
 		sendStatusToAllClients(user, false);
+		clients.delete(user.id);
+		blockedIds.delete(user.id);
 		console.log(`${user.id} WebSocket error :`, error);
 	});
 }
 
+// Close the connection
 export function disconnectUser(user) {
 
 	const socket = clients.get(user.id);
 	if (socket) {
 		socket.close(1000, "Server closed connection");
-		clients.delete(user.id);
 		usersTimeout.delete(user.id);
 		userRequestId.delete(user.id);
 		sendStatusToAllClients(user, false);
+		clients.delete(user.id);
+		blockedIds.delete(user.id);
 	}
 }

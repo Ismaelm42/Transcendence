@@ -67,7 +67,7 @@ export function handlePrivateMsg(e, socket) {
     };
     socket.send(JSON.stringify(message));
 }
-export function showPrivateChat(e, socket, recentChats, userId) {
+export function showPrivateChat(e, socket, userId) {
     const target = e.target;
     const chatDiv = target.closest('[id^="chat-item-"]');
     if (!chatDiv)

@@ -23,7 +23,6 @@ export async function handleLoginSubmit(event: SubmitEvent) {
         } else {
             const result = await response.json();
             console.log("Login exitoso:", result);
-
             const app = SPA.getInstance();
             app.navigate("home");
         }

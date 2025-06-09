@@ -48,7 +48,7 @@ export function formatMsgTemplate(data, userId) {
         return htmlText;
     });
 }
-export function formatRecentChatTemplate(recentChats, data, userId) {
+export function formatRecentChatTemplate(data, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         const chats = sessionStorage.getItem("recent-chats") || "";
         const currentRoom = sessionStorage.getItem("current-room") || "";

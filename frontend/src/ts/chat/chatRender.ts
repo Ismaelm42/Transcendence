@@ -37,16 +37,10 @@ export default class Chat extends Step {
 			searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
 			searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
 			items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket!));
-			recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket!, recentChats, userId));
+			recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket!, userId));
 		}
 		catch (error) {
 			appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
 		}
 	}
 }
-
-// GESTIONAR EN EL BACKEND EL CASO DE QUE UN USUARIO SE DESCONECTE. ELIMINAR DEL ARRAY DE PRIVADOS.
-
-// Problema con la recarga de la página, se actualizan los contactos demasiadas veces y parpadea la foto, el hover y la luz del chat. Ver si se puede solucioanr.
-
-// Problema con el username como identificador de usuario cuando se cambia el nombre de usuario.

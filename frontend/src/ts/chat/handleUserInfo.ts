@@ -25,15 +25,12 @@ export async function handleUserInfo(chatMessages: HTMLDivElement, data:any, use
 	if (userId === data.userId) {
 		const UserInfo = document.getElementById("user-info-container") as HTMLDivElement;
 		UserInfo.innerHTML = await formatUserInfo(data);
-
 		const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}") as Record<string, string>;
 		const stored = privateChat[data.roomId] || "";
 		chatMessages.innerHTML = stored || "";
-		// Scroll to the bottom of the chat messages BUT it should be done after the content is read by the user.
 		requestAnimationFrame(() => {
 			chatMessages.scrollTop = chatMessages.scrollHeight;
 		});
-
 		const button = UserInfo.querySelector("#back-group-chat") as HTMLButtonElement;
 		button.addEventListener('click', (e) => {
 			e.preventDefault();

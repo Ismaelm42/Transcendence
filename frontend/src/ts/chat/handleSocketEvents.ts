@@ -36,7 +36,7 @@ async function handlePrivateChatMsg(chatMessages: HTMLDivElement, recentChats: H
 		chatTab?.classList.add('blink');	
 	}
 	const HtmlContent = await formatMsgTemplate(data, userId);
-	const HtmlChat= await formatRecentChatTemplate(recentChats, data, userId);
+	const HtmlChat= await formatRecentChatTemplate(data, userId);
 	recentChats.innerHTML = HtmlChat || "";
 	sessionStorage.setItem("recent-chats", HtmlChat || "");
 	const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
@@ -93,14 +93,12 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, re
 function handleSocketClose(socket: WebSocket) {
 	socket.onclose = (event: CloseEvent) => {
 		console.log(`CLIENT: Connection closed - Code: ${event.code}`);
-		// throw new Error("WebSocket connection closed unexpectedly.");
 	}
 }
 
 function handleSocketError(socket: WebSocket) {
 	socket.onerror = (event) => {
 		console.error("CLIENT: WebSocket error:", event);
-		// throw new Error("WebSocket error occurred.");
 	}
 }
 

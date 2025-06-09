@@ -33,7 +33,6 @@ export function handleUserInfo(chatMessages, data, userId) {
             const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}");
             const stored = privateChat[data.roomId] || "";
             chatMessages.innerHTML = stored || "";
-            // Scroll to the bottom of the chat messages BUT it should be done after the content is read by the user.
             requestAnimationFrame(() => {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             });
