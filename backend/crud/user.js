@@ -43,6 +43,19 @@ export const getUserById = async (userId) => {
 	}
 };
 
+export const getIdByUsername = async (username) => {
+	try {
+		const user = await User.findOne({ where: { username } });
+		if (user) {
+			return user.id;
+		} else {
+			throw new Error(`User with username ${username} not found`);
+		}
+	} catch (err) {
+		throw new Error(`Error fetching user ID by username: ${err.message}`);
+	}
+}
+
 export const updateUserbyId = async (userId, username, tournamentUsername, password, googleId, email, avatarPath) => {
 	try {
 		let user = await User.findByPk(userId);

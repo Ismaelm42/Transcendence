@@ -4,7 +4,7 @@ import { searchUsersFriends } from './friendsSearchUsers.js';
 export default class Friends extends Step {
 	
 	async render(appElement: HTMLElement): Promise<void>  {
-		console.log("En Friend render");
+		sessionStorage.setItem("current-view", "Friends");
 		if (!this.username) {
 			this.username = await this.checkAuth();
 		}

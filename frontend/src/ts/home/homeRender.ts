@@ -2,6 +2,7 @@ import { Step } from '../spa/stepRender.js';
 
 export default class Home extends Step {
 	async render(appElement: HTMLElement): Promise<void> {
+		sessionStorage.setItem("current-view", "Home");
 		const menuContainer = document.getElementById("menu-container");
 		try {
 			const user = await this.checkAuth();

@@ -13,7 +13,7 @@ export default class LoginRender extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.checkAuth();
-            console.log("En login render");
+            sessionStorage.setItem("current-view", "Login");
             if (user) {
                 showMessage("Usuario autenticado, redirigiendo a perfil", 3000);
                 window.location.hash = "#home";

@@ -4,7 +4,7 @@ import { showMessage } from '../modal/showMessage.js';
 export default class LoginRender extends Step {
 	async render(appElement: HTMLElement): Promise<void>  {
 		const user = await this.checkAuth();
-		console.log("En login render");
+		sessionStorage.setItem("current-view", "Login");
 		if (user) {
 			showMessage("Usuario autenticado, redirigiendo a perfil", 3000);
 			window.location.hash = "#home";

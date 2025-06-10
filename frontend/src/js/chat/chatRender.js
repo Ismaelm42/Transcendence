@@ -8,13 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from '../spa/stepRender.js';
-import { retrieveConnectedUsers, handleSocket, handleTextareaKeydown, handleFormSubmit, filterSearchUsers } from './handleChat.js';
+import { verifySocket } from './verifySocket.js';
+import { filterSearchUsers } from './filterSearch.js';
+import { handleSocketEvents } from './handleSocketEvents.js';
+import { handleContentStorage } from './loadAndUpdateDOM.js';
+import { showUserOptionsMenu } from './handleUserOptionsMenu.js';
+import { removeNotificationChatTab } from './loadAndUpdateDOM.js';
+import { getUserId, handleFormSubmit, handlePrivateMsg, showPrivateChat } from './handleSenders.js';
 export default class Chat extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.username) {
                 this.username = yield this.checkAuth();
             }
+            sessionStorage.setItem("current-view", "Chat");
             try {
                 const htmlContent = yield fetch("../../html/chat/chat.html");
                 if (!htmlContent.ok) {
@@ -25,25 +32,34 @@ export default class Chat extends Step {
                 const form = document.getElementById("chat-form");
                 const textarea = document.getElementById("chat-textarea");
                 const chatMessages = document.getElementById("chat-messages");
-                const items = document.getElementById("item-container");
-                const searchInput = document.getElementById("search-input");
-                const stored = sessionStorage.getItem("chatHTML") || "";
-                if (stored) {
-                    chatMessages.innerHTML = stored;
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-                if (!Step.socket || Step.socket.readyState === WebSocket.CLOSED) {
-                    console.log("new socket");
-                    Step.socket = new WebSocket("https://localhost:8443/back/ws/chat");
-                }
-                else {
-                    retrieveConnectedUsers(Step.socket);
-                }
-                handleSocket(Step.socket, chatMessages, items, this.username);
-                textarea.addEventListener('keydown', (e) => handleTextareaKeydown(e, form));
+                const items = document.getElementById("user-item-container");
+                const searchInput = document.getElementById("search-users-input");
+                const recentChats = document.getElementById("chat-item-list-container");
+                const userId = yield getUserId(this.username);
+                removeNotificationChatTab();
+                handleContentStorage(chatMessages, recentChats, userId);
+                Step.socket = verifySocket(Step.socket);
+                handleSocketEvents(Step.socket, chatMessages, recentChats, userId);
+                textarea.addEventListener('keydown', e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), form.requestSubmit()));
                 form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket));
                 searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
                 searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
+                items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket));
+                recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket, userId));
+                items.addEventListener("click", (event) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
+                    const target = event.target;
+                    const userItem = target.closest(".item");
+                    if (!userItem)
+                        return;
+                    const usernameSpan = userItem.querySelector("span.text-sm");
+                    const clickedUsername = (_a = usernameSpan === null || usernameSpan === void 0 ? void 0 : usernameSpan.textContent) === null || _a === void 0 ? void 0 : _a.trim();
+                    const userId = yield getUserId(this.username);
+                    const clickedUserId = yield getUserId(clickedUsername);
+                    if (clickedUserId && clickedUserId !== userId) {
+                        showUserOptionsMenu(userItem, event, Step.socket, userId);
+                    }
+                }));
             }
             catch (error) {
                 appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

@@ -12,7 +12,7 @@ import { handleStats } from './handleStats.js';
 export default class Stats extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("En Stats render");
+            sessionStorage.setItem("current-view", "Stats");
             // Removed unused variable menuContainer
             if (!this.username) {
                 this.username = yield this.checkAuth();

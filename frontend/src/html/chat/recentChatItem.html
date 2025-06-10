@@ -1,0 +1,12 @@
+<div id="chat-item-{{ roomId }}"
+	class="flex items-center w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 transition-colors duration-400 cursor-pointer border-b border-gray-500">
+	<img src="{{ imagePath }}" alt="{{ usernameImage }}"
+		class="w-12 h-12 rounded-full mr-4 border border-gray-600" />
+	<div class="flex-1 min-w-0">
+		<div class="text-white font-semibold text-sm truncate">{{ username }}</div>
+		<div class="flex justify-between items-center">
+			<div class="text-gray-400 text-sm truncate">{{ lastLine }}</div>
+			<div class="text-gray-500 text-xs ml-4 whitespace-nowrap flex-shrink-0">{{ timeStamp }}</div>
+		</div>
+	</div>
+</div>
