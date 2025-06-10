@@ -13,8 +13,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { GameConnection } from './GameConnection.js';
 import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
-import { Step } from "../spa/stepRender.js";
-// Default container ID (must match your HTML)
+import { Step } from '../spa/stepRender.js';
+// Default container ID (I think i should match HTML file)
 const DEFAULT_CONTAINER_ID = "game-container";
 export default class Game extends Step {
     /***************************************/

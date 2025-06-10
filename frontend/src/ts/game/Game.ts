@@ -5,11 +5,11 @@
 import { GameConnection } from './GameConnection.js';
 import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
-import { Step } from "../spa/stepRender.js";
+import { Step } from '../spa/stepRender.js';
 import { GameData, GameConfig, GamePlayer} from './types.js';
 import GameMatch from './GameMatch.js';
 
-// Default container ID (must match your HTML)
+// Default container ID (I think i should match HTML file)
 const DEFAULT_CONTAINER_ID = "game-container";
 
 export default class Game extends Step
