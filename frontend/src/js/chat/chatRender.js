@@ -12,6 +12,7 @@ import { verifySocket } from './verifySocket.js';
 import { filterSearchUsers } from './filterSearch.js';
 import { handleSocketEvents } from './handleSocketEvents.js';
 import { handleContentStorage } from './loadAndUpdateDOM.js';
+import { showUserOptionsMenu } from './handleUserOptionsMenu.js';
 import { removeNotificationChatTab } from './loadAndUpdateDOM.js';
 import { getUserId, handleFormSubmit, handlePrivateMsg, showPrivateChat } from './handleSenders.js';
 export default class Chat extends Step {
@@ -45,6 +46,20 @@ export default class Chat extends Step {
                 searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
                 items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket));
                 recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket, userId));
+                items.addEventListener("click", (event) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
+                    const target = event.target;
+                    const userItem = target.closest(".item");
+                    if (!userItem)
+                        return;
+                    const usernameSpan = userItem.querySelector("span.text-sm");
+                    const clickedUsername = (_a = usernameSpan === null || usernameSpan === void 0 ? void 0 : usernameSpan.textContent) === null || _a === void 0 ? void 0 : _a.trim();
+                    const userId = yield getUserId(this.username);
+                    const clickedUserId = yield getUserId(clickedUsername);
+                    if (clickedUserId && clickedUserId !== userId) {
+                        showUserOptionsMenu(userItem, event, Step.socket, userId);
+                    }
+                }));
             }
             catch (error) {
                 appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;

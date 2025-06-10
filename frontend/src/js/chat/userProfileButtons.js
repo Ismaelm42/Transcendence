@@ -1,9 +1,9 @@
-export function getFriendButton(isFriend, isPending, isBlocked) {
+export function getFriendButton(isFriend, isPending, isBlocked, canAccept) {
     let friendButton = "";
     if (isFriend && !isBlocked) {
-        friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow">✔️ Friend</button>`;
+        friendButton = `<button id="del-friend-btn" class="bg-gray-600 hover:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold shadow"> - Delete Friend</button>`;
     }
-    else if (isPending && !isBlocked) {
+    else if (isPending && !isBlocked && !canAccept) {
         friendButton = `<button id="cancel-friend-btn" class="bg-yellow-600 hover:bg-yellow-400 text-white px-6 py-2 rounded-lg font-semibold shadow">⏳ Pending</button>`;
     }
     else if (!isFriend && !isPending && !isBlocked) {
@@ -14,10 +14,10 @@ export function getFriendButton(isFriend, isPending, isBlocked) {
 export function getBlockUserButton(isBlocked, userId) {
     let blockUserButton = "";
     if (isBlocked) {
-        blockUserButton = `<button id="unblock-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔓 Unblock User</button>`;
+        blockUserButton = `<button id="unblock-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔓 Unblock </button>`;
     }
     else {
-        blockUserButton = `<button id="block-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔒 Block User</button>`;
+        blockUserButton = `<button id="block-user-btn" class="bg-red-600 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🔒 Block </button>`;
     }
     return blockUserButton;
 }

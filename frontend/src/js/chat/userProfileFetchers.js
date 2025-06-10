@@ -33,6 +33,31 @@ export function sendFriendRequest(userId) {
         }
     });
 }
+export function acceptFriendRequest(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch("https://localhost:8443/back/accept_friend_request", {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ friendId: userId }),
+            });
+            if (response.ok) {
+                const data = yield response.json();
+                console.log("Friend request accepted successfully:", data);
+            }
+            else {
+                const errorMessage = yield response.json();
+                console.error("Error accepting friend request:", errorMessage);
+            }
+        }
+        catch (error) {
+            console.error("Error accepting friend request:", error);
+        }
+    });
+}
 export function fetchUserData(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

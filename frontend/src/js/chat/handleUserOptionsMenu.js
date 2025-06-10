@@ -1,6 +1,6 @@
-import { openPrivateChat } from "./userProfileActions.js";
+import { handlePrivateMsg } from "./handleSenders.js";
 import { showUserProfile } from "./handleUserProfile.js";
-export function showUserOptionsMenu(userElement, event) {
+export function showUserOptionsMenu(userElement, event, socket, currentUserId) {
     var _a, _b;
     const username = (_b = (_a = userElement.querySelector("span.text-sm")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
     if (!username)
@@ -14,10 +14,19 @@ export function showUserOptionsMenu(userElement, event) {
     }
     const menu = createOptionMenu(event, userElement);
     document.body.appendChild(menu);
-    addMenuOptionsListeners(menu, userId, username, event);
+    addMenuOptionsListeners(menu, userId, username, event, socket, currentUserId);
     menu.addEventListener("mouseleave", () => {
         menu.remove();
     });
+    const handleClickOutside = (e) => {
+        if (!menu.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener("click", handleClickOutside);
+        }
+    };
+    setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+    }, 0);
     event.stopPropagation();
 }
 function createOptionMenu(event, userElement) {
@@ -25,54 +34,49 @@ function createOptionMenu(event, userElement) {
     menu.id = "user-options-menu";
     menu.className = "absolute bg-gray-900/95 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
     menu.innerHTML = `
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> • Private Message</div>
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="play-game"> ▶ Play Game</div>
-		<div class="text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> ≡ Show More</div>
+		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
+  		<rect x="2" y="4" width="12" height="8" rx="2"/>
+  		<path d="M2.5 4.5L8 9l5.5-4.5"/>
+		</svg> Private Message</div>
+		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="play-game"><svg width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
+  		<polygon points="5,3 13,8 5,13"/>
+		</svg> Play Game</div>
+		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
+  		<circle cx="8" cy="6" r="3"/>
+  		<path d="M3 13c0-2.2 2.2-4 5-4s5 1.8 5 4"/>
+		</svg> Show Profile</div>
 	`;
     const rect = userElement.getBoundingClientRect();
     // Calcula la posición: debajo del usuario, alineado horizontalmente con el click, pero no fuera del usuario
-    let left = event.clientX - 10;
-    let top = rect.top + rect.height + window.scrollY - 10;
+    let left = event.clientX; //el event clientX es la posición del click
+    let top = rect.top + rect.height + window.scrollY - 10; // Ajusta la posición vertical para que esté debajo del usuario
     // Limita el menú para que no se salga de la pantalla
     document.body.appendChild(menu);
-    const menuRect = menu.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    // Si el click está fuera del usuario, centra el menú respecto al usuario
-    if (event.clientX < rect.left || event.clientX > rect.right) {
-        left = rect.left + rect.width / 2 - menuRect.width / 2 + window.scrollX;
+    const viewportWidth = window.innerWidth; // Ancho de la ventana
+    const viewportHeight = window.innerHeight; // Alto de la ventana
+    if (left + rect.width > viewportWidth) {
+        left = viewportWidth - rect.width - 10; // Ajusta hacia la izquierda si se sale del viewport
     }
-    // Ajusta si se sale por la derecha
-    if (left + menuRect.width > viewportWidth) {
-        left = viewportWidth - menuRect.width - 10;
+    if (top + rect.height > viewportHeight) {
+        top = rect.top + window.scrollY - rect.height - 10; // Ajusta hacia arriba
     }
-    // Ajusta si se sale por la izquierda
-    if (left < 10) {
-        left = 10;
-    }
-    // Ajusta si se sale por abajo
-    if (top + menuRect.height > viewportHeight) {
-        top = viewportHeight - menuRect.height - 10;
-    }
-    // Nunca menos de 0
-    top = Math.max(top, 10);
     menu.style.top = `${top}px`;
     menu.style.left = `${left}px`;
     return menu;
 }
-function addMenuOptionsListeners(menu, userId, username, event) {
+function addMenuOptionsListeners(menu, userId, username, event, socket, currentUserId) {
     menu.querySelectorAll("div").forEach((option) => {
         option.addEventListener("click", () => {
             const action = option.getAttribute("data-action");
             if (action) {
                 switch (action) {
                     case "msg":
-                        openPrivateChat(username);
+                        handlePrivateMsg(event, socket);
                         break;
                     case "play-game":
                         alert("Feature not implemented yet: Play Game with " + username);
                     case "show-more":
-                        showUserProfile(userId, username, event);
+                        showUserProfile(currentUserId, userId, username, event);
                         break;
                 }
             }

@@ -7,10 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { fetchUserData, fetchUserStats, fetchFriendEntries, sendFriendRequest, acceptFriendRequest } from "./userProfileFetchers.js";
+import { checkFriendStatus, rejectFriendRequest, deleteFriend, blockUser, unblockUser, canAcceptRequest } from "./userProfileActions.js";
 import { getFriendButton, getBlockUserButton } from "./userProfileButtons.js";
-import { fetchUserData, fetchUserStats, fetchFriendEntries, sendFriendRequest } from "./userProfileFetchers.js";
-import { checkFriendStatus, rejectFriendRequest, deleteFriend, blockUser, unblockUser } from "./userProfileActions.js";
-export function showUserProfile(userId, username, event) {
+export function showUserProfile(currentUserId, userId, username, event) {
     return __awaiter(this, void 0, void 0, function* () {
         const existingProfile = document.getElementById("user-profile-modal-backdrop");
         if (existingProfile)
@@ -23,11 +23,34 @@ export function showUserProfile(userId, username, event) {
             return;
         }
         const { isFriend, isPending, isBlocked } = yield checkFriendStatus(userId, friendsEntries);
-        const friendButton = getFriendButton(isFriend, isPending, isBlocked);
+        const canAccept = isPending && canAcceptRequest(userId, friendsEntries, currentUserId);
+        const acceptDeclineButton = canAccept
+            ? `
+        <button id="accept-friend-btn" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold shadow">
+		<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  		<path d="M7 22V10M7 10l5-7v7h5a2 2 0 0 1 2 2v2.5a2 2 0 0 1-2 2H7" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>Accept</button>
+        <button id="decline-friend-btn" class="flex items-center gap-2 bg-orange-600 hover:bg-orange-400 text-white px-6 py-2 rounded-lg font-semibold shadow">
+		<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  		<path d="M7 2v12m0 0l5 7v-7h5a2 2 0 0 0 2-2V9.5a2 2 0 0 0-2-2H7" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>Decline</button>
+        `
+            : "";
+        const friendButton = !canAccept
+            ? getFriendButton(isFriend, isPending, isBlocked, canAccept)
+            : "";
         const playButton = !isBlocked
             ? `<button id="play-btn" class="bg-green-600 hover:bg-green-400 text-white px-6 py-2 rounded-lg font-semibold shadow">🎮 Play Game</button>`
             : "";
-        const blockUserButton = getBlockUserButton(isBlocked, userId);
+        const blockedByMe = isBlockedByCurrentUser(userId, friendsEntries, currentUserId);
+        const blockedByOther = isBlockedByOther(userId, friendsEntries, currentUserId);
+        let blockUserButton = "";
+        if (blockedByMe) {
+            blockUserButton = getBlockUserButton(isBlocked, userId); // Mostrar "Unblock"
+        }
+        else if (!blockedByOther) {
+            blockUserButton = getBlockUserButton(isBlocked, userId); // Mostrar "Block"
+        }
         // Fondo semitransparente que NO cubre el header (ajusta top-[64px] si tu header es más alto o bajo)
         const backdrop = createBackdrop();
         // Modal centrado con transparencia
@@ -47,6 +70,7 @@ export function showUserProfile(userId, username, event) {
 			<div class="flex gap-4 mt-2">
 				${playButton}
 				${friendButton}
+				${acceptDeclineButton}
 				${blockUserButton}
 			</div>
 		</div>
@@ -62,7 +86,7 @@ export function showUserProfile(userId, username, event) {
     });
 }
 function addProfileModalListeners(userId, backdrop) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     const closeModal = () => {
         backdrop.remove();
         window.removeEventListener("popstate", onPopState);
@@ -89,19 +113,27 @@ function addProfileModalListeners(userId, backdrop) {
         sendFriendRequest(userId);
         backdrop.remove();
     });
-    (_d = document.getElementById("cancel-friend-btn")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+    (_d = document.getElementById("accept-friend-btn")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+        yield acceptFriendRequest(userId);
+        backdrop.remove();
+    }));
+    (_e = document.getElementById("decline-friend-btn")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
         yield rejectFriendRequest(userId);
         backdrop.remove();
     }));
-    (_e = document.getElementById("del-friend-btn")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", () => {
+    (_f = document.getElementById("cancel-friend-btn")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+        yield rejectFriendRequest(userId);
+        backdrop.remove();
+    }));
+    (_g = document.getElementById("del-friend-btn")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", () => {
         deleteFriend(userId);
         backdrop.remove();
     });
-    (_f = document.getElementById("block-user-btn")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", () => {
+    (_h = document.getElementById("block-user-btn")) === null || _h === void 0 ? void 0 : _h.addEventListener("click", () => {
         blockUser(userId);
         backdrop.remove();
     });
-    (_g = document.getElementById("unblock-user-btn")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", () => {
+    (_j = document.getElementById("unblock-user-btn")) === null || _j === void 0 ? void 0 : _j.addEventListener("click", () => {
         unblockUser(userId);
         backdrop.remove();
     });
@@ -116,4 +148,16 @@ function createBackdrop() {
     backdrop.className = "fixed left-0 right-0 bottom-0 top-[160px] bg-black/50 flex items-center justify-center z-40";
     backdrop.style.animation = "fadeIn 0.2s";
     return backdrop;
+}
+export function isBlockedByCurrentUser(userId, friendsEntries, currentUserId) {
+    return friendsEntries.some((entry) => entry.status === "blocked" &&
+        String(entry.userId) === String(currentUserId) && // El usuario actual bloqueó
+        String(entry.friendId) === String(userId) // Al usuario del perfil
+    );
+}
+export function isBlockedByOther(userId, friendsEntries, currentUserId) {
+    return friendsEntries.some((entry) => entry.status === "blocked" &&
+        String(entry.userId) === String(userId) && // El usuario del perfil bloqueó
+        String(entry.friendId) === String(currentUserId) // Al usuario actual
+    );
 }
