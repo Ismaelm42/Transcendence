@@ -11,6 +11,7 @@ import { Step } from '../spa/stepRender.js';
 export default class Home extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
+            sessionStorage.setItem("current-view", "Home");
             const menuContainer = document.getElementById("menu-container");
             try {
                 const user = yield this.checkAuth();

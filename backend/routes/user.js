@@ -199,4 +199,17 @@ export function configureUserRoutes(fastify, sequelize) {
 			reply.status(400).send({ error: 'Error verifying user' + "an empty field has been found" });
 		}
 	});
+
+	fastify.post('/getIdByUsername', async (request, reply) => {
+		const { username } = request.body;
+		try {
+			const id = await crud.user.getIdByUsername(username);
+			reply.status(200).send(id);
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(400).send({ error: err.message});
+		}
+	});
+
+
 }

@@ -4,7 +4,7 @@ import { crud } from '../crud/crud.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { authenticateUser, signOutUser } from "../auth/user.js";
 import { extractUserFromToken, setTokenCookie } from "../auth/token.js";
-import { disconnectUser } from "../utils/wsChatUtils.js";
+import { disconnectUser } from "../websockets/chat/chat.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
