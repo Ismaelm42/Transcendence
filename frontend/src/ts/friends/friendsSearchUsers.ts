@@ -28,18 +28,18 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Eve
 	}
 	const requestBody = { keyword: searchValue };
 
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
-	console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
+	// console.log("searchValue antes del try :" + searchValue);
 	
-	console.log("requestBody antes del try :" + requestBody);;
+	// console.log("requestBody antes del try :" + requestBody);;
 	
 	try {
 		const response = await fetch("https://localhost:8443/back/get_all_users_coincidences", {
@@ -96,7 +96,7 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Eve
 			else if (status === "pending" && role === "active") statusCode = 3;
 			else if (status === "blocked" && role === "passive") statusCode = 4;
 			else if (status === "blocked" && role === "active") statusCode = 5;
-			console.log("user antes del SearchResultItem:", user);
+			//console.log("user antes del SearchResultItem:", user);
 			new SearchResultItem("search_results", [user.id, user.username], statusCode);
 		}
 	} catch (error) {
