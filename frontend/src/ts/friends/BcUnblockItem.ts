@@ -1,6 +1,8 @@
 import { BasicComponent } from './BasicComponent.js';
 import { showMessage } from '../modal/showMessage.js';
 import { searchUsersFriends } from './friendsSearchUsers.js';
+import { renderRelations } from './renderRelations.js';
+import { currentUserId } from './friendsRender.js';
 
 export class BcUnblockItem extends BasicComponent {
   constructor() {
@@ -34,6 +36,8 @@ export class BcUnblockItem extends BasicComponent {
 			if (response.ok) {
 				showMessage(`User unblocked successfully:`, null);
 				searchUsersFriends('codigo');
+				const relationsContainer = document.getElementById('relations-container');
+				await renderRelations(relationsContainer!, currentUserId!);
 			}
 			else {
 				const errorMessage = await response.json();
