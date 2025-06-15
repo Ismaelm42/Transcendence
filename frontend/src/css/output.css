@@ -2193,6 +2193,11 @@
       min-width: 300px;
     }
   }
+  .lg\:min-w-\[310px\] {
+    @media (width >= 64rem) {
+      min-width: 310px;
+    }
+  }
   .lg\:min-w-\[500px\] {
     @media (width >= 64rem) {
       min-width: 500px;
