@@ -28,6 +28,23 @@ export default class Chess extends Step {
                 const canvas = createCanvas(board);
                 setupChessboard(canvas);
                 handleEvents(canvas);
+                function drawPieceAt(square, image, canvas) {
+                    const ctx = canvas.getContext("2d");
+                    const squareSize = canvas.clientWidth / 8;
+                    // Convertir notación algebraica (como 'e1') a coordenadas (col, row)
+                    const col = square.charCodeAt(0) - 97; // 'a' → 0, 'h' → 7
+                    const row = 8 - parseInt(square[1]); // '1' → 7, '8' → 0
+                    const x = col * squareSize;
+                    const y = row * squareSize;
+                    // Desactiva suavizado si estás usando imágenes pixeladas
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(image, x, y, squareSize, squareSize);
+                }
+                const pieceImage = new Image();
+                pieceImage.src = "../pieces/wn.png";
+                pieceImage.onload = () => {
+                    drawPieceAt("e5", pieceImage, canvas);
+                };
             }
             catch (error) {
                 console.log(error);

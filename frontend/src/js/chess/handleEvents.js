@@ -21,6 +21,9 @@ export function handleEvents(canvas) {
         const square = getClickedSquare(event, canvas);
     });
     window.addEventListener("resize", () => {
-        setupChessboard(canvas);
+        console.log("HOLAAAA");
+        requestAnimationFrame(() => {
+            setupChessboard(canvas);
+        });
     });
 }
