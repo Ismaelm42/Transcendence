@@ -1,7 +1,9 @@
 import { acceptFriendRequest } from "../chat/userProfileFetchers.js";
-import { rejectFriendRequest, deleteFriend, unblockUser } from "../chat/userProfileActions.js";
+import { rejectFriendRequest, deleteFriend, unblockUser, blockUser } from "../chat/userProfileActions.js";
 
 export async function renderRelations(relationsContainer: HTMLElement, userId: string): Promise<void> {
+	console.log("Rendering relations for user ID:", userId, "Storage userConnected:", sessionStorage.getItem("userConnected"));
+
 	try {
 		if (!relationsContainer) {
 			console.error("El contenedor de relaciones no existe en el DOM");
@@ -64,7 +66,9 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
                 await deleteFriend(otherUserId);
             } else if (button.classList.contains("btnUnblockItem")) {
                 await unblockUser(otherUserId);
-            }
+            } else if (button.classList.contains("btnBlockItem")) {
+				await blockUser(otherUserId);
+			}
 
             // Recargar relaciones tras la acción
             await renderRelations(relationsContainer, userId);
