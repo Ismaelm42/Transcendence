@@ -21,6 +21,9 @@ export default class GameSession
 		this.difficulty = 'medium';
 		this.isFinished = false;
 		this.shouldCleanup = false;
+		this.ballSpeedMultiplier = 1.25;
+		this.ballSpeedIncrease = 1.05;
+		this.ballMaxSpeed = 0.75;
 
 		// For game log and database storage
 		this.metadata = {

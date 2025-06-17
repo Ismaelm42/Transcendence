@@ -65,9 +65,7 @@ export function checkPaddleCollision(playerNumber)
 		else
 			this.state.ball.x = collisionEdgeX - ballRadius - 0.001;
 			
-		// ATARI-STYLE BOUNCE PHYSICS:
-		// Base multiplier so each bounce will make the ball go faster
-		const speedMultiplier = 1.07;
+		// ATARI-STYLE BOUNCE PHYSICS + Ball Increasing Speed:
 		// 1. Calculate relative position on paddle (from -1 at top to +1 at bottom)
 		const hitPosition = (ball.y - paddle.y) / (paddleHeight / 2);
 		// 2. Base angle change - more pronounced angle when hitting near the edges
@@ -76,7 +74,7 @@ export function checkPaddleCollision(playerNumber)
 		const paddleMovementEffect = paddleVelocity * 3.0;
 		angleEffect += paddleMovementEffect;
 		// 4. Reverse horizontal direction with speed increase  
-		this.state.ball.dx *= -speedMultiplier;
+		this.state.ball.dx *= -1;
 		// 5. Apply the combined angle effect
 		this.state.ball.dy += angleEffect;
 		// 6. Edge cases - hitting extreme top/bottom of paddle creates extreme angles
@@ -86,11 +84,10 @@ export function checkPaddleCollision(playerNumber)
 		const newSpeed = Math.sqrt(
 			this.state.ball.dx * this.state.ball.dx + 
 			this.state.ball.dy * this.state.ball.dy
-		);
-		const maxSpeed = 0.6;
-		if (newSpeed > maxSpeed)
+		) * this.ballSpeedIncrease;
+		if (newSpeed > this.ballMaxSpeed)
 		{
-			const scaleFactor = maxSpeed / newSpeed;
+			const scaleFactor = this.ballMaxSpeed / newSpeed;
 			this.state.ball.dx *= scaleFactor;
 			this.state.ball.dy *= scaleFactor;
 		}	

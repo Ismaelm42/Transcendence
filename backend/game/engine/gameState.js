@@ -11,24 +11,11 @@ export function setDifficulty(level)
 	this.difficulty = level;
 	this.metadata.config.difficulty = level;
 
-	switch (level)
-	{
-		case 'easy':
-			this.ballSpeedMultiplier = 0.7;
-			this.aiErrorFactor = 0.5; 
-			break;
-		case 'medium':
-			this.ballSpeedMultiplier = 1.0;
-			this.aiErrorFactor = 0.2;
-			break;
-		case 'hard':
-			this.ballSpeedMultiplier = 1.3;
-			this.aiErrorFactor = 0.05;
-			break;
-		default:
-			this.ballSpeedMultiplier = 1.0;
-			this.aiErrorFactor = 0.2;
-	}
+	if (level === 'easy')
+		this.ballSpeedMultiplier = 1.0;
+	else if (level === 'hard')
+		this.ballSpeedMultiplier = 1.75;
+
 	// Update ball speed if game is in progress
 	if (this.state.ball)
 	{
