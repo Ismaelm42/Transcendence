@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "npm install && nodemon index.js",
-    "start_container": "tail -f /dev/null"
+    "start_container": "tail -f /dev/null",
+    "cli-game": "node backend/game/manager/gameCLI.js"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
