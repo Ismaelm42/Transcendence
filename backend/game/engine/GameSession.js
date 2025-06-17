@@ -35,8 +35,7 @@ export default class GameSession
 			tournamentId: null,
 			playerDetails: {
 				// Will be full user object - player1: {id, username, tournamentName,...}
-				player1: null
-				
+				player1: null,
 				player2: null
 			},
 			result: {

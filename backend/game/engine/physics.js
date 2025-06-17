@@ -80,16 +80,23 @@ export function checkPaddleCollision(playerNumber)
 		// 6. Edge cases - hitting extreme top/bottom of paddle creates extreme angles
 		if (Math.abs(hitPosition) > 0.8)
 			this.state.ball.dy += (hitPosition > 0 ? 0.1 : -0.1);
-		// 7. Cap maximum speed to prevent the game from becoming unplayable
-		const newSpeed = Math.sqrt(
-			this.state.ball.dx * this.state.ball.dx + 
-			this.state.ball.dy * this.state.ball.dy
-		) * this.ballSpeedIncrease;
-		if (newSpeed > this.ballMaxSpeed)
+		// 7. Increase ball speed
+		let	speed = Math.sqrt(this.state.ball.dx ** 2 + this.state.ball.dy ** 2) * this.ballSpeedIncrease;
+		// 8. Cap maximum speed to prevent the game from becoming unplayable
+		if (speed > this.ballMaxSpeed)
+			speed = this.ballMaxSpeed;
+		// 9. Recalculate dx/dy with new speed but same direction
+		const angle = Math.atan2(this.state.ball.dy, this.state.ball.dx);
+		let newDx = Math.cos(angle) * speed;
+		let newDy = Math.sin(angle) * speed;
+		// 10. Prevent dx from being too small (e.g., < 0.1 * speed)
+		const minDx = 0.1 * speed;
+		if (Math.abs(newDx) < minDx)
 		{
-			const scaleFactor = this.ballMaxSpeed / newSpeed;
-			this.state.ball.dx *= scaleFactor;
-			this.state.ball.dy *= scaleFactor;
-		}	
+			newDx = (newDx < 0 ? -1 : 1) * minDx;
+			newDy = (newDy < 0 ? -1 : 1) * Math.sqrt(speed ** 2 - minDx ** 2);
+		}
+		this.state.ball.dx = newDx;
+		this.state.ball.dy = newDy;
 	}
 }

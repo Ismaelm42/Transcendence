@@ -4,7 +4,7 @@ export class GameAI
 {
 	private		game: Game;
 	private		intervalId: number | null = null;
-	private		errorFactor: number = 0.05;
+	private		errorFactor: number = 0.08;
 
 	constructor(game: Game)
 	{
@@ -31,10 +31,10 @@ export class GameAI
 		if (!gameState || !this.game.getGameConnection().socket)
 			return ;
 		
-		if (this.game.log.difficulty === 'easy')
-			this.errorFactor = 0.08;
-		else if (this.game.log.difficulty === 'hard')
-			this.errorFactor = 0.02;
+		if (this.game.getGameLog().config?.difficulty === 'easy')
+			this.errorFactor = 0.09;
+		else if (this.game.getGameLog().config?.difficulty === 'hard')
+			this.errorFactor = 0.06;
 		const	ballY = gameState.ball?.y ?? 0.5;
 		const	paddleY = gameState.paddles.player2?.y ?? 0.5;
 		let		up = false, down = false;
