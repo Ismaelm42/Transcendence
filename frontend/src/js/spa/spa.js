@@ -15,7 +15,7 @@ export class SPA {
             'login': { module: '../login/loginRender.js', protected: false },
             'register': { module: '../login/registerRender.js', protected: false },
             'play-pong': { module: '../game/playPongRender.js', protected: true },
-            'play-chess': { module: '../chess/playChessRender.js', protected: true },
+            'play-chess': { module: '../chess/chessRender.js', protected: true },
             'play-tournament': { module: '../tournament/playTournamentRender.js', protected: true },
             'friends': { module: '../friends/friendsRender.js', protected: true },
             'chat': { module: '../chat/chatRender.js', protected: true },

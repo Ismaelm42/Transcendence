@@ -1,3 +1,4 @@
+const pieceImages = {};
 export function createCanvas(board) {
     const canvas = document.createElement("canvas");
     canvas.style.width = "100%";
@@ -6,22 +7,19 @@ export function createCanvas(board) {
     board.insertBefore(canvas, board.firstChild);
     return canvas;
 }
-// Correct function
 function resizeCanvas(canvas) {
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    // Tamaño interno real en píxeles
     canvas.width = Math.round(rect.width * dpr);
     canvas.height = Math.round(rect.height * dpr);
-    // Escala para que 1 unidad de coordenadas = 1 px visible
     const ctx = canvas.getContext("2d");
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset
-    ctx.scale(dpr, dpr); // Escala todo el sistema de coordenadas
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
 }
 function drawBoard(canvas) {
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     const squareSize = canvas.clientWidth / 8;
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
             const isLight = (row + col) % 2 === 0;
@@ -30,13 +28,43 @@ function drawBoard(canvas) {
         }
     }
 }
-export function setupChessboard(canvas) {
+function getPieceImage(piece) {
+    if (!pieceImages[piece]) {
+        const img = new Image();
+        img.src = `../pieces/${piece}.png`;
+        pieceImages[piece] = img;
+    }
+    return pieceImages[piece];
+}
+function drawPieceAt(row, col, piece, canvas) {
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = true;
+    const squareSize = canvas.clientWidth / 8;
+    const x = col * squareSize;
+    const y = row * squareSize;
+    const image = getPieceImage(piece);
+    if (image.complete) {
+        ctx.drawImage(image, x, y, squareSize, squareSize);
+    }
+    else {
+        image.onload = () => {
+            ctx.drawImage(image, x, y, squareSize, squareSize);
+        };
+    }
+}
+function drawPieces(chessboard, canvas) {
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const piece = chessboard.getPieceAt(`${row}${col}`);
+            if (piece) {
+                drawPieceAt(row, col, piece, canvas);
+            }
+        }
+    }
+}
+export function setupChessboard(chessboard, canvas) {
+    console.log("AQUIIII");
     resizeCanvas(canvas);
     drawBoard(canvas);
+    drawPieces(chessboard, canvas);
 }
-// function resizeCanvas(canvas: HTMLCanvasElement) {
-// 	const rect = canvas.getBoundingClientRect();
-// 	const size = Math.floor(rect.width / 8) * 8;
-// 	canvas.width = size;
-// 	canvas.height = size;
-// }

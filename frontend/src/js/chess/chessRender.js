@@ -8,8 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from '../spa/stepRender.js';
-import { createCanvas, setupChessboard } from './drawChessboard.js';
+import { Chessboard } from './chessboardClass.js';
+import { getUserId } from './handleFetchers.js';
 import { handleEvents } from './handleEvents.js';
+import { createCanvas, setupChessboard } from './drawChessboard.js';
 export default class Chess extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25,26 +27,12 @@ export default class Chess extends Step {
                 const htmlText = yield htmlContent.text();
                 appElement.innerHTML = htmlText;
                 const board = document.getElementById("board");
+                const userId = yield getUserId(this.username);
+                const chessboard = new Chessboard();
+                chessboard.init();
                 const canvas = createCanvas(board);
-                setupChessboard(canvas);
-                handleEvents(canvas);
-                function drawPieceAt(square, image, canvas) {
-                    const ctx = canvas.getContext("2d");
-                    const squareSize = canvas.clientWidth / 8;
-                    // Convertir notación algebraica (como 'e1') a coordenadas (col, row)
-                    const col = square.charCodeAt(0) - 97; // 'a' → 0, 'h' → 7
-                    const row = 8 - parseInt(square[1]); // '1' → 7, '8' → 0
-                    const x = col * squareSize;
-                    const y = row * squareSize;
-                    // Desactiva suavizado si estás usando imágenes pixeladas
-                    ctx.imageSmoothingEnabled = false;
-                    ctx.drawImage(image, x, y, squareSize, squareSize);
-                }
-                const pieceImage = new Image();
-                pieceImage.src = "../pieces/wn.png";
-                pieceImage.onload = () => {
-                    drawPieceAt("e5", pieceImage, canvas);
-                };
+                setupChessboard(chessboard, canvas);
+                handleEvents(chessboard, canvas);
             }
             catch (error) {
                 console.log(error);

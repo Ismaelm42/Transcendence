@@ -1,6 +1,7 @@
+import { Chessboard } from './chessboardClass.js'
 import { setupChessboard } from './drawChessboard.js'
 
-function getClickedSquare(event: MouseEvent, canvas: HTMLCanvasElement): string | null {
+function getSquare(event: MouseEvent, canvas: HTMLCanvasElement): string | null {
 
 	const rect = canvas.getBoundingClientRect();
 	const scaleX = canvas.width / rect.width;
@@ -13,21 +14,55 @@ function getClickedSquare(event: MouseEvent, canvas: HTMLCanvasElement): string 
 	if (col < 0 || col > 7 || row < 0 || row > 7) {
 		return null;
 	}
-	const file = String.fromCharCode(97 + col);
-	const rank = 8 - row;
-	console.log(`You clicked on: ${file}${rank}`);
-	return `${file}${rank}`;
+	console.log(`Square is: ${String.fromCharCode(97 + col)}${8 - row}`);
+	return `${row}${col}`;
 }
 
-export function handleEvents(canvas: HTMLCanvasElement) {
+function movePiece(event: MouseEvent, square: string, piece: string, copy: Chessboard, canvas: HTMLCanvasElement) {
 
-	canvas.addEventListener("click", (event) => {
-		const square = getClickedSquare(event, canvas);
+	copy.deletePiece(square);
+	setupChessboard(copy, canvas);
+	console.log("Aqui")
+	
+	
+}
+
+function dropPiece(event: MouseEvent) {
+
+}
+
+function activateMouseListeners(square: string, piece: string, copy: Chessboard, canvas: HTMLCanvasElement) {
+
+	function mouseMoveHandler(event: MouseEvent) {
+        movePiece(event, square, piece, copy, canvas);
+    }
+    function mouseUpHandler(event: MouseEvent) {
+        dropPiece(event);
+        window.removeEventListener("mousemove", mouseMoveHandler);
+        window.removeEventListener("mouseup", mouseUpHandler);
+    }
+
+    // Usar las mismas referencias al agregar y quitar
+    window.addEventListener("mousemove", mouseMoveHandler);
+    window.addEventListener("mouseup", mouseUpHandler);
+}
+
+
+export function handleEvents(chessboard: Chessboard, canvas: HTMLCanvasElement) {
+
+	canvas.addEventListener("mousedown", (event) => {
+		const square = getSquare(event, canvas);
+		if (square) {
+			const piece = chessboard.getPieceAt(square);
+			if (piece) {
+				activateMouseListeners(square, piece, chessboard.clone(), canvas);
+			}
+		}
 	});
+
 	window.addEventListener("resize", () => {
-		console.log("HOLAAAA")
 		requestAnimationFrame(() => {
-		setupChessboard(canvas);
+		setupChessboard(chessboard, canvas);
 		});	
 	});
 

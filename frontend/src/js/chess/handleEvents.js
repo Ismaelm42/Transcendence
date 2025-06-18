@@ -1,5 +1,5 @@
 import { setupChessboard } from './drawChessboard.js';
-function getClickedSquare(event, canvas) {
+function getSquare(event, canvas) {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -11,19 +11,42 @@ function getClickedSquare(event, canvas) {
     if (col < 0 || col > 7 || row < 0 || row > 7) {
         return null;
     }
-    const file = String.fromCharCode(97 + col);
-    const rank = 8 - row;
-    console.log(`You clicked on: ${file}${rank}`);
-    return `${file}${rank}`;
+    console.log(`Square is: ${String.fromCharCode(97 + col)}${8 - row}`);
+    return `${row}${col}`;
 }
-export function handleEvents(canvas) {
-    canvas.addEventListener("click", (event) => {
-        const square = getClickedSquare(event, canvas);
+function movePiece(event, square, piece, copy, canvas) {
+    copy.deletePiece(square);
+    setupChessboard(copy, canvas);
+    console.log("Aqui");
+}
+function dropPiece(event) {
+}
+function activateMouseListeners(square, piece, copy, canvas) {
+    function mouseMoveHandler(event) {
+        movePiece(event, square, piece, copy, canvas);
+    }
+    function mouseUpHandler(event) {
+        dropPiece(event);
+        window.removeEventListener("mousemove", mouseMoveHandler);
+        window.removeEventListener("mouseup", mouseUpHandler);
+    }
+    // Usar las mismas referencias al agregar y quitar
+    window.addEventListener("mousemove", mouseMoveHandler);
+    window.addEventListener("mouseup", mouseUpHandler);
+}
+export function handleEvents(chessboard, canvas) {
+    canvas.addEventListener("mousedown", (event) => {
+        const square = getSquare(event, canvas);
+        if (square) {
+            const piece = chessboard.getPieceAt(square);
+            if (piece) {
+                activateMouseListeners(square, piece, chessboard.clone(), canvas);
+            }
+        }
     });
     window.addEventListener("resize", () => {
-        console.log("HOLAAAA");
         requestAnimationFrame(() => {
-            setupChessboard(canvas);
+            setupChessboard(chessboard, canvas);
         });
     });
 }
