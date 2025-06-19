@@ -83,7 +83,7 @@ export class PlayerCard {
             });
         }
         const ErrorContainer = document.getElementById(`players-login-error-${this.player_index}`);
-        const AiplayerBtn = document.getElementById(`players-guest-btn-${this.player_index}`);
+        const AiplayerBtn = document.getElementById(`players-ai-btn-${this.player_index}`);
         if (AiplayerBtn) {
             AiplayerBtn.addEventListener('click', (event) => {
                 event.preventDefault();

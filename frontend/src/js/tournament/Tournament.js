@@ -113,6 +113,16 @@ export default class Tournament extends Step {
         this.tournamentPlayers[index].status = status;
         this.tournamentPlayers[index].gameplayer = player;
     }
+    addTournamentPlayer(player) {
+        if (this.tournamentPlayers.length < this.tournamentConfig.numberOfPlayers) {
+            player.Index = this.tournamentPlayers.length.toString(); // Assign an ID based on the current length
+            player.status = 'ready'; // Default status for new players
+            this.tournamentPlayers.push(player);
+        }
+        else {
+            console.warn("Cannot add more players, tournament is full.");
+        }
+    }
     getPendingPlayersCount() {
         return this.tournamentPendingPlayers;
     }
