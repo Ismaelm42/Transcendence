@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Step } from '../spa/stepRender.js';
 import { Chessboard } from './chessboardClass.js';
-import { getUserId } from './handleFetchers.js';
+import { getChessHtml, getUserId } from './handleFetchers.js';
 import { handleEvents } from './handleEvents.js';
-import { createCanvas, setupChessboard } from './drawChessboard.js';
+import { createCanvas, preloadImages, setupChessboard } from './drawChessboard.js';
 export default class Chess extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -20,19 +20,16 @@ export default class Chess extends Step {
                 this.username = yield this.checkAuth();
             }
             try {
-                const htmlContent = yield fetch("../../html/chess/chess.html");
-                if (!htmlContent.ok) {
-                    throw new Error("Failed to load the HTML file");
-                }
-                const htmlText = yield htmlContent.text();
-                appElement.innerHTML = htmlText;
+                appElement.innerHTML = yield getChessHtml();
                 const board = document.getElementById("board");
                 const userId = yield getUserId(this.username);
                 const chessboard = new Chessboard();
                 chessboard.init();
                 const canvas = createCanvas(board);
-                setupChessboard(chessboard, canvas);
-                handleEvents(chessboard, canvas);
+                preloadImages(() => {
+                    setupChessboard(chessboard, canvas, null, null);
+                    handleEvents(chessboard, canvas);
+                });
             }
             catch (error) {
                 console.log(error);

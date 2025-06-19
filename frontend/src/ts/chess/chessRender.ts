@@ -1,6 +1,6 @@
 import { Step } from '../spa/stepRender.js';
 import { Chessboard } from './chessboardClass.js'
-import { getUserId } from './handleFetchers.js';
+import { getChessHtml, getUserId } from './handleFetchers.js';
 import { handleEvents } from './handleEvents.js'
 import { createCanvas, preloadImages, setupChessboard } from './drawChessboard.js'
 
@@ -12,21 +12,18 @@ export default class Chess extends Step {
 			this.username = await this.checkAuth();
 		}
 		try {
-
-			const htmlContent = await fetch("../../html/chess/chess.html");
-			if (!htmlContent.ok) {
-				throw new Error("Failed to load the HTML file");
-			}
-			const htmlText = await htmlContent.text();
-			appElement.innerHTML = htmlText;
+			
+			appElement.innerHTML = await getChessHtml();
 			const board = document.getElementById("board") as HTMLDivElement;
 			const userId = await getUserId(this.username!);
 
 			const chessboard = new Chessboard();
 			chessboard.init();
 			const canvas = createCanvas(board);
-			setupChessboard(chessboard, canvas);
-			handleEvents(chessboard, canvas);
+			preloadImages(()=>{ 
+				setupChessboard(chessboard, canvas, null, null);
+				handleEvents(chessboard, canvas);
+			});
 		}
 		catch (error) {
 			console.log(error);

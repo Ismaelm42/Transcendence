@@ -44,7 +44,7 @@ export class Chessboard {
 		this.board[6][5] = "wp";
 		this.board[6][6] = "wp";
 		this.board[6][7] = "wp";
-		this.game.set(this.move++, this.board);
+		this.game.set(this.move, this.board);
 	}
 
     getPieceAt(square: string): string | null {
@@ -64,7 +64,8 @@ export class Chessboard {
     movePiece(fromSquare: string , toSquare: string) {
 
 		const piece = this.getPieceAt(fromSquare);
-        this.setPieceAt(fromSquare, null);
+		this.deletePiece(fromSquare);
+		this.deletePiece(toSquare);
         this.setPieceAt(toSquare, piece);
 		this.game.set(this.move++, this.board);
     }
