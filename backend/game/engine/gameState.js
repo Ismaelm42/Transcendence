@@ -12,7 +12,7 @@ export function setDifficulty(level)
 	this.metadata.config.difficulty = level;
 
 	if (level === 'easy')
-		this.ballSpeedMultiplier = 1.0;
+		this.ballSpeedMultiplier = 1.25;
 	else if (level === 'hard')
 		this.ballSpeedMultiplier = 1.75;
 
@@ -36,7 +36,7 @@ export function setDifficulty(level)
 export function resetState()
 {
 	return {
-		ball: { x: 0.5, y: 0.5, dx: 0.20, dy: 0.06 },
+		ball: { x: 0.5, y: 0.5, dx: 0.20 * this.ballSpeedMultiplier, dy: 0.06 * this.ballSpeedMultiplier },
 		paddles: {
 			player1: { y: 0.5 },
 			player2: { y: 0.5 }

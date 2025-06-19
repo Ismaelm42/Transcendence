@@ -24,6 +24,21 @@ export function resetBall(scoringDirection)
 	};	
 }
 
+function clampAngle(angle, minDeg = 15, maxDeg = 165)
+{
+	const min = (minDeg * Math.PI) / 180;
+	const max = (maxDeg * Math.PI) / 180;
+	if (angle > Math.PI)
+		angle -= 2 * Math.PI; // Normalize to [-PI, PI]
+	if (angle < 0)
+		angle = -angle; // Only need to clamp absolute value
+	if (angle < min)
+		angle = min;
+	if (angle > max)
+		angle = max;
+	return (angle);
+}
+
 // Main function to check for paddle-ball collisions
 // TODO: Reduce function size by getting some calculations out by using auxiliary functions
 export function checkPaddleCollision(playerNumber)
