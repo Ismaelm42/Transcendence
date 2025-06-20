@@ -27,7 +27,7 @@ export default class Chess extends Step {
                 chessboard.init();
                 const canvas = createCanvas(board);
                 preloadImages(() => {
-                    setupChessboard(chessboard, canvas, null, null, null);
+                    setupChessboard(chessboard, canvas, null, null, null, null);
                     handleEvents(chessboard, canvas);
                 });
             }

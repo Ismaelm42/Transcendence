@@ -12,7 +12,6 @@ export default class Chess extends Step {
 			this.username = await this.checkAuth();
 		}
 		try {
-			
 			appElement.innerHTML = await getChessHtml();
 			const board = document.getElementById("board") as HTMLDivElement;
 			const userId = await getUserId(this.username!);
@@ -20,8 +19,8 @@ export default class Chess extends Step {
 			const chessboard = new Chessboard();
 			chessboard.init();
 			const canvas = createCanvas(board);
-			preloadImages(()=>{ 
-				setupChessboard(chessboard, canvas, null, null, null);
+			preloadImages(()=>{
+				setupChessboard(chessboard, canvas, null, null, null, null);
 				handleEvents(chessboard, canvas);
 			});
 		}
