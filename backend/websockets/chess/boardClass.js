@@ -1,15 +1,9 @@
 
 export class Chessboard {
 
-    board: (string | null)[][];
-	game: Map<number, (string | null)[][]>;
-	lastMoveFrom: string | null;
-	lastMoveTo: string | null;
-	move: number;
-
     constructor() {
         this.board = Array.from({ length: 8 }, () => Array(8).fill(null));
-		this.game = new Map<number, (string | null)[][]>();
+		this.game = new Map;
 		this.lastMoveFrom = null;
 		this.lastMoveTo = null;
 		this.move = 0;
@@ -51,34 +45,34 @@ export class Chessboard {
 		this.game.set(this.move, this.board);
 	}
 
-    setPieceAt(square: string, piece: string | null) {
+    setPieceAt(square, piece) {
 
 		const row = parseInt(square[0]);
 		const col = parseInt(square[1]);
 		this.board[row][col] = piece;
 	}
 
-	setLastMoves(fromSquare: string | null, toSquare: string | null) {
+	setLastMoves(fromSquare, toSquare) {
 
 		this.lastMoveFrom = fromSquare;
 		this.lastMoveTo = toSquare;
 	}
 
-    getPieceAt(square: string): string | null {
+    getPieceAt(square) {
 
 		const row = parseInt(square[0]);
 		const col = parseInt(square[1]);
         return this.board[row][col];
     }
 
-	deletePiece(square: string) {
+	deletePiece(square) {
 
 		const row = parseInt(square[0]);
 		const col = parseInt(square[1]);
 		this.board[row][col] = null;
 	}
 
-    movePiece(fromSquare: string , toSquare: string) {
+    movePiece(fromSquare, toSquare) {
 
 		const piece = this.getPieceAt(fromSquare);
 		this.deletePiece(fromSquare);
@@ -102,7 +96,7 @@ export class Chessboard {
 		this.move = 0;
 	}
 
-	clone(): Chessboard {
+	clone() {
 
 		const newBoard = new Chessboard();
 		newBoard.board = this.board.map(row => row.slice());

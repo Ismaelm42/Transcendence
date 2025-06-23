@@ -26,15 +26,15 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
 	ctx.scale(dpr, dpr);
 }
 
-function drawBoard(fromSquare: string | null, toSquare: string | null, selectedSquares: Set<string> | null, arrows: Map<string, [string, string]> | null ,canvas: HTMLCanvasElement) {
+function drawBoard(chessboard: Chessboard, selectedSquares: Set<string> | null, arrows: Map<string, [string, string]> | null ,canvas: HTMLCanvasElement) {
 
 	const ctx = canvas.getContext("2d")!;
 	const squareSize = canvas.clientWidth / 8;
 
-	const fsRow = fromSquare ? parseInt(fromSquare[0]) : null;
-	const fsCol = fromSquare ? parseInt(fromSquare[1]) : null;
-	const tsRow = toSquare ? parseInt(toSquare[0]) : null;
-	const tsCol = toSquare ? parseInt(toSquare[1]) : null;
+	const fsRow = chessboard.lastMoveFrom ? parseInt(chessboard.lastMoveFrom[0]) : null;
+	const fsCol = chessboard.lastMoveFrom ? parseInt(chessboard.lastMoveFrom[1]) : null;
+	const tsRow = chessboard.lastMoveTo ? parseInt(chessboard.lastMoveTo[0]) : null;
+	const tsCol = chessboard.lastMoveTo ? parseInt(chessboard.lastMoveTo[1]) : null;
 
 	ctx.font = `bold ${squareSize / 5}px Arial`;
 	ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
@@ -206,9 +206,9 @@ export function drawArrow(fromSquare: string, toSquare: string, canvas: HTMLCanv
 	ctx.fill();
 }
 
-export function setupChessboard(chessboard: Chessboard, canvas: HTMLCanvasElement, fromSquare: string | null, toSquare: string | null, selectedSquares: Set<string> | null, arrows: Map<string, [string, string]> | null) {
+export function setupChessboard(chessboard: Chessboard, canvas: HTMLCanvasElement, selectedSquares: Set<string> | null, arrows: Map<string, [string, string]> | null) {
 
 	resizeCanvas(canvas);
-	drawBoard(fromSquare, toSquare, selectedSquares, arrows, canvas);
+	drawBoard(chessboard, selectedSquares, arrows, canvas);
 	drawPieces(chessboard, canvas);
 }
