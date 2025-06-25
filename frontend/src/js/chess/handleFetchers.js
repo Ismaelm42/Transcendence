@@ -7,12 +7,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+export function getLaunchGameHtml() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const htmlContent = yield fetch("../../html/chess/launchGame.html");
+        if (!htmlContent.ok)
+            throw new Error("Failed to load the HTML file");
+        const htmlText = yield htmlContent.text();
+        return htmlText;
+    });
+}
 export function getChessHtml() {
     return __awaiter(this, void 0, void 0, function* () {
         const htmlContent = yield fetch("../../html/chess/chess.html");
-        if (!htmlContent.ok) {
+        if (!htmlContent.ok)
             throw new Error("Failed to load the HTML file");
-        }
         const htmlText = yield htmlContent.text();
         return htmlText;
     });
@@ -28,9 +36,8 @@ export function getUserId(username) {
                 username: username
             }),
         });
-        if (!id.ok) {
+        if (!id.ok)
             throw new Error("Failed to fetch user ID");
-        }
         return id.text();
     });
 }

@@ -7,6 +7,12 @@ export class Chessboard {
 	lastMoveTo: string | null;
 	move: number;
 
+	color: string = "white";
+	time: string = "5|0";
+	mode: string = "local";
+	minRating: number = 0;
+	maxRating: number = 3500;
+
     constructor() {
         this.board = Array.from({ length: 8 }, () => Array(8).fill(null));
 		this.game = new Map<number, (string | null)[][]>();

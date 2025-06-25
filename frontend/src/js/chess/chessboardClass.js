@@ -1,5 +1,10 @@
 export class Chessboard {
     constructor() {
+        this.color = "white";
+        this.time = "5|0";
+        this.mode = "local";
+        this.minRating = 0;
+        this.maxRating = 3500;
         this.board = Array.from({ length: 8 }, () => Array(8).fill(null));
         this.game = new Map();
         this.lastMoveFrom = null;

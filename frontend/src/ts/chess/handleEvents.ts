@@ -15,9 +15,8 @@ function getSquare(event: MouseEvent, canvas: HTMLCanvasElement): string | null 
 	const squareSize = canvas.width / 8;
 	const col = Math.floor(x / squareSize);
 	const row = Math.floor(y / squareSize);
-	if (col < 0 || col > 7 || row < 0 || row > 7) {
+	if (col < 0 || col > 7 || row < 0 || row > 7)
 		return null;
-	}
 	// console.log(`Square is: ${String.fromCharCode(97 + col)}${8 - row}`);
 	return `${row}${col}`;
 }
@@ -28,9 +27,8 @@ function movePiece(event: MouseEvent, fromSquare: string, piece: string, copy: C
 	copy.deletePiece(fromSquare);
 	copy.setLastMoves(fromSquare, null);
 	setupChessboard(copy, canvas, null, null);
-	if (currentSquare) {
+	if (currentSquare)
 		highlightSquare(currentSquare, canvas);
-	}
 	drawMovingPiece(event, piece, canvas);
 }
 
@@ -40,9 +38,8 @@ function movePiece(event: MouseEvent, fromSquare: string, piece: string, copy: C
 function dropPiece(socket: WebSocket, userId: string, event: MouseEvent, fromSquare: string, piece: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
 
 	const toSquare = getSquare(event, canvas);
-	if (toSquare) {
+	if (toSquare)
 		sendPieceMove(socket, userId, fromSquare, toSquare, piece, chessboard);
-	}
 }
 
 function handleLeftClick(socket: WebSocket, userId: string, fromSquare: string, piece: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
@@ -71,26 +68,21 @@ function handleRightClick(fromSquare: string, chessboard: Chessboard, canvas: HT
 
 	function mouseUpHandler(event: MouseEvent) {
 
-		if (event.button !== 2) {
+		if (event.button !== 2)
 			return;
-		}
 		const toSquare = getSquare(event, canvas);
 		if (fromSquare === toSquare) {
-			if (selectedSquares.has(fromSquare)) {
+			if (selectedSquares.has(fromSquare))
 				selectedSquares.delete(fromSquare);
-			}
-			else {
+			else
 				selectedSquares.add(fromSquare);
-			}
 		}
 		else {
 			if (toSquare) {
-				if (arrows.has(`${fromSquare}${toSquare}`)) {
+				if (arrows.has(`${fromSquare}${toSquare}`))
 					arrows.delete(`${fromSquare}${toSquare}`);
-				}
-				else {
+				else
 					arrows.set(`${fromSquare}${toSquare}`, [fromSquare, toSquare]);
-				}
 			}
 		}
 		setupChessboard(chessboard, canvas, selectedSquares, arrows);
@@ -111,11 +103,10 @@ export function handleEvents(socket: WebSocket, userId: string, chessboard: Ches
 		const square = getSquare(event, canvas);
 		if (square) {
 			const piece = chessboard.getPieceAt(square);
-			if (piece) {
+			if (piece)
 				canvas.style.cursor = "pointer";
-			} else {
+			else
 				canvas.style.cursor = "default";
-			}
 		}
 	});
 
@@ -138,9 +129,8 @@ export function handleEvents(socket: WebSocket, userId: string, chessboard: Ches
 		}
 		if (event.button === 2 && (event.buttons & 1) === 0) {
 			const fromSquare = getSquare(event, canvas);
-			if (fromSquare) {
+			if (fromSquare)
 				handleRightClick(fromSquare, chessboard, canvas);
-			}
 		}
 	});
 	

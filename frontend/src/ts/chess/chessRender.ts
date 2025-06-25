@@ -2,8 +2,9 @@ import { Step } from '../spa/stepRender.js'
 import { handleEvents } from './handleEvents.js'
 import { verifySocket } from './verifySocket.js'
 import { Chessboard } from './chessboardClass.js'
-import { getChessHtml, getUserId } from './handleFetchers.js'
+import { checkIfGameIsRunning, launchGame, launchUI } from './launchGame.js'
 import { handleSocketEvents } from '../chess/handleSocketEvents.js'
+import { getLaunchGameHtml, getChessHtml, getUserId } from './handleFetchers.js'
 import { createCanvas, preloadImages, setupChessboard } from './drawChessboard.js'
 
 export default class Chess extends Step {
@@ -14,19 +15,13 @@ export default class Chess extends Step {
 			this.username = await this.checkAuth();
 		}
 		try {
-			appElement.innerHTML = await getChessHtml();
-			const board = document.getElementById("board") as HTMLDivElement;
+			const socket = verifySocket(Step.socket);
 			const userId = await getUserId(this.username!);
-			Step.chessSocket = verifySocket(Step.chessSocket);
-			
-			const chessboard = new Chessboard();
-			chessboard.init();
-			const canvas = createCanvas(board);
-			preloadImages(()=>{
-				setupChessboard(chessboard, canvas, null, null);
-				handleEvents(Step.chessSocket!, userId, chessboard, canvas);
-				handleSocketEvents(Step.chessSocket!, userId, chessboard, canvas);
-			});
+			const game = checkIfGameIsRunning();
+			if (!game)
+				launchUI(socket, userId, game, appElement);
+			else
+				launchGame(socket, userId, game, appElement);
 		}
 		catch (error) {
 			console.log(error);
@@ -34,3 +29,11 @@ export default class Chess extends Step {
 		}
 	}
 }
+
+
+// Verificación de socket
+// Obtener el ID
+// Verificar session.storage
+/////////// Si no hay una sesión de juego, abrir el menu y función para crear el chessboard y gestionar el juego (lo de gestionar el juego debe ser una función que se lance en el eventListener del clic del menú)
+/////////// Si hay una sesión de juego abierta, función para crear el chessboard y gestionar el juego
+// Gestionar la construcción del tablero

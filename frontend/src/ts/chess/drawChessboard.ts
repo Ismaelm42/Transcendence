@@ -41,15 +41,13 @@ function drawBoard(chessboard: Chessboard, selectedSquares: Set<string> | null, 
 	for (let row = 0; row < 8; row++) {
 		for (let col = 0; col < 8; col++) {
 			const isLight = (row + col) % 2 === 0;
-			if (selectedSquares && selectedSquares.has(`${row}${col}`)) {
+			if (selectedSquares && selectedSquares.has(`${row}${col}`))
 				ctx.fillStyle = "rgb(255, 139, 139)";
-			}
 			else if ((fsCol === col && fsRow === row) || (tsCol === col && tsRow === row)) {
 				ctx.fillStyle = "rgb(154, 234, 236)";
 			}
-			else {
+			else
 				ctx.fillStyle = isLight ? "rgb(255, 255, 255)" : "rgb(67, 128, 183)";
-			}
 			ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
 			if (col === 0) {
 				const number = 8 - row;
@@ -84,7 +82,8 @@ export function preloadImages(callback: () => void) {
 		img.src = `../pieces/${piece}.png`;
 		img.onload = () => {
 			loaded++;
-			if (loaded === pieces.length) callback();
+			if (loaded === pieces.length)
+				callback();
 		};
 		pieceImages[piece] = img;
 	}
@@ -108,9 +107,8 @@ function drawPieces(chessboard: Chessboard, canvas: HTMLCanvasElement) {
 	for (let row = 0; row < 8; row++) {
 		for (let col = 0; col < 8; col++) {
 			const piece = chessboard.getPieceAt(`${row}${col}`);
-			if (piece) {
+			if (piece)
 				drawPieceAt(row, col, piece, canvas);
-			}
 		}
 	}
 }

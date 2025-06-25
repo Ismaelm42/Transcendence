@@ -100,7 +100,7 @@ export class Chessboard {
 
 		const newBoard = new Chessboard();
 		newBoard.board = this.board.map(row => row.slice());
-		newBoard.game = new Map<number, (string | null)[][]>();
+		newBoard.game = new Map;
 		this.game.forEach((value, key) => {
 			newBoard.game.set(key, value.map(row => row.slice()));
 		});
