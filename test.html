@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pong Tournament Bracket</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+
+  <div id="tournamentBracketcontent" class="w-full flex flex-col items-center">
+    <!-- TODO: incluir placeholder para nuevo juego si se implementa -->
+    <div id="tournamentTitle" class="text-center mb-4 text-4xl font-bold font-[Tektur]">
+      PONG TOURNAMENT
+    </div>
+
+    <!-- Título de la ronda -->
+
+
+    <!-- Contenedor de partida -->
+    <div class="tournamentBracketMatch pt-4 pb-2 flex flex-col w-full max-w-2xl justify-evenly items-center text-yellow-800 rounded-sm dark:text-yellow-300 border border-yellow-300">
+		<div class="TBMTittle flex-none text-yellow-400 text-center bg-gray-900 p-2 -mt-1 relative z-20 -translate-y-8">
+			Final
+		</div>
+		<div class="flex flex-col lg:flex-row w-full max-w-2xl justify-evenly">
+      <!-- Jugador ganador -->
+      <div class="bracketPlayerWinner w-4/5 lg:w-1/3 flex flex-row items-center justify-center px-4 py-2 text-center">
+        winner match1
+      </div>
+
+      <!-- VS -->
+      <div class="versus text-xl font-bold mx-4">vs</div>
+
+      <!-- Jugador 2 -->
+      <div class="bracketPlayer w-4/5 lg:w-1/3 flex flex-row items-center justify-center mt-4 lg:mt-0">
+        <div class="bracketPlayerImage w-10 h-10 lg:w-14 lg:h-14 rounded-full overflow-hidden mr-2">
+          <img class="w-full h-full object-cover" src="backend/images/avatar-1.png" alt="Player 3 Avatar">
+        </div>
+        <div class="bracketPlayerName text-sm lg:text-base">TournamentName</div>
+      </div>
+		</div>
+    </div>
+
+    <!-- Título de la ronda -->
+
+
+<!-- Contenedor de partida -->
+ <div class="semifinal flex flex-col lg:flex-row">
+	<div class="TBMTittle text-yellow-400 text-center bg-gray-900 p-2 -mb-5 relative z-20">
+      Semifinal 1
+    </div>
+	<div class="TBMTittle text-yellow-400 text-center bg-gray-900 p-2 -mb-5 relative z-20">
+      Semifinal 1
+    </div>
+</div>
+	<div>
+	<div class="tournamentBracketMatch pt-6 pb-4 flex flex-col lg:flex-row w-full max-w-xl lg:max-w-md justify-evenly items-center text-yellow-800 rounded-sm dark:text-yellow-300 border border-yellow-300">
+
+	  <!-- Jugador 1 -->
+	  <div class="bracketPlayer w-4/5 lg:w-1/2 flex flex-row items-center justify-center mt-4 lg:mt-0">
+	    <div class="bracketPlayerImage w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden mr-2">
+	      <img class="w-full h-full object-cover" src="backend/images/avatar-1.png" alt="Player 1 Avatar">
+	    </div>
+	    <div class="bracketPlayerName text-sm lg:text-base">Player 1</div>
+	  </div>
+
+	  <!-- VS -->
+	  <div class="versus text-xl font-bold mx-2 lg:mx-4">vs</div>
+
+	  <!-- Jugador 2 -->
+	  <div class="bracketPlayer w-4/5 lg:w-1/2 flex flex-row items-center justify-center mt-4 lg:mt-0">
+	    <div class="bracketPlayerImage w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden mr-2">
+	      <img class="w-full h-full object-cover" src="backend/images/avatar-2.png" alt="Player 2 Avatar">
+	    </div>
+	    <div class="bracketPlayerName text-sm lg:text-base">Player 2</div>
+	  </div>
+	</div>
+	<div class="tournamentBracketMatch pt-6 pb-4 flex flex-col lg:flex-row w-full max-w-xl lg:max-w-md justify-evenly items-center text-yellow-800 rounded-sm dark:text-yellow-300 border border-yellow-300">
+
+	  <!-- Jugador 1 -->
+	  <div class="bracketPlayer w-4/5 lg:w-1/2 flex flex-row items-center justify-center mt-4 lg:mt-0">
+	    <div class="bracketPlayerImage w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden mr-2">
+	      <img class="w-full h-full object-cover" src="backend/images/avatar-1.png" alt="Player 1 Avatar">
+	    </div>
+	    <div class="bracketPlayerName text-sm lg:text-base">Player 1</div>
+	  </div>
+
+	  <!-- VS -->
+	  <div class="versus text-xl font-bold mx-2 lg:mx-4">vs</div>
+
+	  <!-- Jugador 2 -->
+	  <div class="bracketPlayer w-4/5 lg:w-1/2 flex flex-row items-center justify-center mt-4 lg:mt-0">
+	    <div class="bracketPlayerImage w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden mr-2">
+	      <img class="w-full h-full object-cover" src="backend/images/avatar-2.png" alt="Player 2 Avatar">
+	    </div>
+	    <div class="bracketPlayerName text-sm lg:text-base">Player 2</div>
+	  </div>
+	</div>
+	</div>
+
+	    <!-- Nombre del enfrentamiento -->
+	    <div class="flex flex-row items-center justify-center mt-8 text-xl">
+	      {{ player-1 }} vs {{ player-2 }}
+	    </div>
+
+	    <div class="bracketMatch flex flex-row items-center justify-center mt-4">
+	      <!-- Aquí podrías agregar más contenido relacionado con el match -->
+	    </div>
+	  </div>
+
+	</body>
+</html>

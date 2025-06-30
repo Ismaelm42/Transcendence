@@ -7,6 +7,8 @@ import { configureChatRoutes } from './chat.js';
 import { configureGameRoutes } from './game.js';
 import { configureTournamentRoutes } from './tournament.js';
 import { configureTempUserRoutes } from './tempuser.js';
+import { configureTournamentlogRoutes } from './tournamentlog.js';
+
 
 export default function configureRoutes(fastify, sequelize) {
 
@@ -33,4 +35,6 @@ export default function configureRoutes(fastify, sequelize) {
 	configureGameRoutes(fastify);
 	configureTournamentRoutes(fastify);
 	configureTempUserRoutes(fastify);	// todo: comentar en productivo para mayor seguridad
+	configureTournamentlogRoutes(fastify);
+
 }

@@ -7,12 +7,12 @@
 
 		<div class="round bg-gray-900 p-2 mb-1 flex flex-col items-center border-b-2 border-gray-800">
 				<div class="tournamentBracketMatch p-4 flex flex-col md:flex-row w-full max-w-xl justify-around 
-							items-center rounded-sm ">
+							items-center rounded-sm">
 		      		
 						<div class="p-4 md:hidden flex text-center text-sm text-white">
 							Final 
 						</div>
-
+					<!-- player 1 -->
 					<div class="bracketPlayer max-w-xs flex flex-col items-center justify-center md:mt-4 lg:mt-0 p-2">
 			        	<div class="bracketPlayerImage w-1/6 aspect-square h-auto rounded-full overflow-hidden hidden md:block">
 				        	<img class="w-full h-full object-cover" src="https://localhost:8443/back/images/winner.png" alt="Player 3 Avatar">
@@ -24,20 +24,18 @@
 
 				    <!-- VS -->
 					 <div class="flex flex-row md:flex-col items-center justify-center"> 
-						<div class="p-4 hidden md:block flex text-center text-sm text-white">
-							Final
+						<div class="p-4 hidden md:block flex text-center text-sm text-white-400">
+							Final 
 						</div>
 			    		<div class="versus text-center text-md text-white font-bold mx-4">vs</div>
-	      			<!-- Jugador 2 -->
 					</div>
-	      			<!-- Jugador 1 -->
-		      		<div class="bracketPlayer max-w-xs flex flex-col items-center justify-center md:mt-4 lg:mt-0 p-2">
-			       		<div class="bracketPlayerImage w-1/6 aspect-square h-auto rounded-full overflow-hidden hidden md:block">
-			          		<img class="w-full h-full object-cover" src="player-3.avatar" alt="Player 3 Avatar">
-			        	</div>
-
-			        	<div class="bracketPlayerName text-white w-full text-center text-xs md:text-xs truncate ...">
-							player-3.tounamentName
+	      			<!-- player 2 -->
+					<div class="bracketPlayer max-w-xs flex flex-col items-center justify-center md:mt-4 lg:mt-0 p-2">
+			        	<div class="bracketPlayerImage w-1/6 aspect-square h-auto rounded-full overflow-hidden hidden md:block">
+				        	<img class="w-full h-full object-cover" src="https://localhost:8443/back/images/winner.png" alt="Player 3 Avatar">
+				        </div>
+						<div class="bracketPlayerName w-full text-center text-xs md:text-xs text-yellow-500">
+							winner Match 2
 						</div>
 					</div>
 				</div>
@@ -49,6 +47,8 @@
 						<div class="block md:hidden p-2 flex text-center text-sm text-orange-500 ">
 								Match&nbsp;1
 						</div>
+
+						<!-- player 1 -->
 			      		<div class="bracketPlayer max-w-xs max-h-[64px] flex flex-col items-center justify-center md:mt-4 lg:mt-0 p-2">
 				       		<div class="bracketPlayerImage w-1/6 aspect-square h-auto rounded-full overflow-hidden hidden md:block">
 				          		<img class="w-full h-full object-cover" src="player-1.avatar" alt="Player 3 Avatar">
@@ -65,9 +65,9 @@
 								Match&nbsp;1
 							</div>
 				    		<div class="versus text-center text-md text-orange-500 font-bold mx-4">vs</div>
-		      			<!-- Jugador 2 -->
 						</div>
-		      			<!-- Jugador 1 -->
+
+						<!-- player 2 -->
 			      		<div class="bracketPlayer max-w-xs flex flex-col items-center justify-center md:mt-4 lg:mt-0 p-2">
 				       		<div class="bracketPlayerImage w-1/6 aspect-square h-auto rounded-full overflow-hidden hidden md:block">
 				          		<img class="w-full h-full object-cover" src="player-2.avatar" alt="Player 3 Avatar">
@@ -82,15 +82,13 @@
 					<!-- Línea separadora -->
 					<div class="bg-gray-800 w-[60%] h-px my-2 xl:w-px xl:self-stretch xl:h-auto xl:my-0 xl:mx-4"></div>
 
-
+					<!-- Match 2 -->
 					<div class="tournamentBracketMatch p-4 flex flex-col md:flex-row w-full max-w-xl place-content-center
 							items-center text-yellow-800 rounded-sm dark:text-yellow-300">
-						<div class="hidden md:block p-2 flex text-center text-sm text-yelllow-500 ">
-							Bye
+						<div class="block md:hidden p-2 flex text-center text-sm text-orange-500 ">
+							Match&nbsp;2
 						</div>
-			       		<div class="block md:hidden p-2 flex text-right text-sm text-yellow-500 ">
-									Bye
-						</div>
+						<!-- player 3 -->
 			      		<div class="bracketPlayer max-w-xs flex flex-col items-center justify-around md:mt-4 lg:mt-0 p-2">
 							<div class="bracketPlayerImage w-1/6 md:max-w-[214px] aspect-square h-auto rounded-full overflow-hidden hidden md:block">
 				          		<img class="w-full h-full object-cover" src="player-3.avatar" alt="Player 3 Avatar">
@@ -100,8 +98,23 @@
 								player-3.tounamentName
 							</div>
 						</div>
-						<div class="hidden md:block p-2 flex text-left text-sm text-yellow-500 ">
-								Bye
+
+					    <!-- VS -->
+						 <div class="flex flex-row md:flex-col items-center justify-center"> 
+							<div class="hidden md:block p-4 flex text-center text-sm text-ywllow-500 ">
+								Match&nbsp;2
+							</div>
+				    		<div class="versus text-center text-md text-yellow-500 font-bold mx-4">vs</div>
+						</div>
+						<!-- player 4 -->
+			      		<div class="bracketPlayer max-w-xs flex flex-col items-center justify-around md:mt-4 lg:mt-0 p-2">
+							<div class="bracketPlayerImage w-1/6 md:max-w-[214px] aspect-square h-auto rounded-full overflow-hidden hidden md:block">
+				          		<img class="w-full h-full object-cover" src="player-4.avatar" alt="Player 3 Avatar">
+				        	</div>
+
+				        	<div class="bracketPlayerName text-white w-full text-center text-xs md:text-xs truncate ...">
+								player-4.tounamentName
+							</div>
 						</div>
 				</div>
 		</div>

@@ -338,3 +338,5 @@ Content-Type: application/json
 
 DELETE https://localhost:8443/back/delete_all_temp_users HTTP/1.1
 
+
+GET https://localhost:8443/back/get_next_tournamentlog HTTP/1.1

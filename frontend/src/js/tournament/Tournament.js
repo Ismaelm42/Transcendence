@@ -24,6 +24,7 @@ export default class Tournament extends Step {
             this.tournamentId = id;
         });
         this.ui = new TournamentUI(this);
+        // todo: inicializarlo para usarlo como Gamedata
         // this.log = {
         // 	id: "tournament " + Date.now(),
         // 	mode: '',

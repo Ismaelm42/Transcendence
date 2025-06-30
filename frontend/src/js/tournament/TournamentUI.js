@@ -428,8 +428,8 @@ export class TournamentUI {
             console.error("Tournament bracket container not found");
             return;
         }
-        //   var html_Brackert_template = `../../html/tournament/bracket-template-${data.length}.html`;
-        var html_Brackert_template = `../../html/tournament/bracket-template-3.html`;
+        var html_Brackert_template = `../../html/tournament/bracket-template-${data.length}.html`;
+        // var html_Brackert_template =  `../../html/tournament/bracket-template-3.html`;
         this.loadTemplate(html_Brackert_template).then(BracketHtml => {
             let parsed = BracketHtml;
             for (let i = 0; i < data.length; i++) {
