@@ -1,7 +1,7 @@
 import { Step } from '../spa/stepRender.js'
-import { getUserId } from './handleFetchers.js'
-import { verifySocket } from './verifySocket.js'
+import { setAppContainer, setUserId, setSocket } from './state.js'
 import { checkIfGameIsRunning, launchGame, launchUI } from './launchGame.js'
+import { handleSocketEvents } from './handleSocketEvents.js'
 
 export default class Chess extends Step {
 
@@ -11,13 +11,15 @@ export default class Chess extends Step {
 			this.username = await this.checkAuth();
 		}
 		try {
-			const socket = verifySocket(Step.socket);
-			const userId = await getUserId(this.username!);
+			await setUserId(this.username!);
+			setAppContainer(appElement);
+			setSocket(Step.socket);
+			handleSocketEvents();
 			const data = checkIfGameIsRunning();
 			if (!data)
-				launchUI(socket, userId, appElement);
+				launchUI();
 			else
-				launchGame(socket, userId, data, appElement);
+				launchGame(data);
 		}
 		catch (error) {
 			console.log(error);

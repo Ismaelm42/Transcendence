@@ -1,26 +1,25 @@
 export class Chessboard {
     constructor(data) {
-        const chessData = JSON.parse(data);
-        this.playerColor = chessData.playerColor;
-        this.playerColorView = chessData.playerColor;
-        this.timeControl = chessData.timeControl;
-        this.gameMode = chessData.gameMode;
-        this.minRating = chessData.minRating;
-        this.maxRating = chessData.maxRating;
-        this.move = chessData.move || 0;
+        this.playerColor = data.playerColor;
+        this.playerColorView = data.playerColor;
+        this.timeControl = data.timeControl;
+        this.gameMode = data.gameMode;
+        this.minRating = data.minRating;
+        this.maxRating = data.maxRating;
+        this.move = data.move || 0;
         this.turn = this.move % 2 === 0;
-        this.lastMoveFrom = chessData.lastMoveFrom || null;
-        this.lastMoveTo = chessData.lastMoveTo || null;
-        if (chessData.game) {
-            this.game = new Map(chessData.game.map(([key, value]) => [
+        this.lastMoveFrom = data.lastMoveFrom || null;
+        this.lastMoveTo = data.lastMoveTo || null;
+        if (data.game) {
+            this.game = new Map(data.game.map(([key, value]) => [
                 Number(key),
                 value.map(row => row.slice()),
             ]));
         }
         else
             this.game = new Map();
-        if (chessData.board)
-            this.board = chessData.board.map((row) => row.slice());
+        if (data.board)
+            this.board = data.board.map((row) => row.slice());
         else {
             this.board = Array.from({ length: 8 }, () => Array(8).fill(null));
             this.initBoard();

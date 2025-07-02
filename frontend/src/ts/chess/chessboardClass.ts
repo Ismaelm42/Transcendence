@@ -14,22 +14,21 @@ export class Chessboard {
 	game: Map<number, (string | null)[][]>;
     board: (string | null)[][];
 
-	constructor(data: string) {
+	constructor(data: any) {
 
-		const chessData = JSON.parse(data);
-		this.playerColor = chessData.playerColor;
-		this.playerColorView = chessData.playerColor;
-		this.timeControl = chessData.timeControl;
-		this.gameMode = chessData.gameMode;
-		this.minRating = chessData.minRating;
-		this.maxRating = chessData.maxRating;
-		this.move = chessData.move || 0;
+		this.playerColor = data.playerColor;
+		this.playerColorView = data.playerColor;
+		this.timeControl = data.timeControl;
+		this.gameMode = data.gameMode;
+		this.minRating = data.minRating;
+		this.maxRating = data.maxRating;
+		this.move = data.move || 0;
 		this.turn = this.move % 2 === 0;
-		this.lastMoveFrom = chessData.lastMoveFrom || null;
-		this.lastMoveTo = chessData.lastMoveTo || null;
-		if (chessData.game) {
+		this.lastMoveFrom = data.lastMoveFrom || null;
+		this.lastMoveTo = data.lastMoveTo || null;
+		if (data.game) {
 			this.game = new Map<number, (string | null)[][]>(
-				chessData.game.map(([key, value]: [number, (string | null)[][]]) => [
+				data.game.map(([key, value]: [number, (string | null)[][]]) => [
 					Number(key),
 					value.map(row => row.slice()),
 				])
@@ -37,8 +36,8 @@ export class Chessboard {
 		}
 		else
 			this.game = new Map<number, (string | null)[][]>();
-		if (chessData.board)
-			this.board = chessData.board.map((row: (string | null)[]) => row.slice());
+		if (data.board)
+			this.board = data.board.map((row: (string | null)[]) => row.slice());
 		else {
 			this.board = Array.from({ length: 8 }, () => Array(8).fill(null));
 			this.initBoard();

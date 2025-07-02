@@ -1,3 +1,4 @@
+import { chessboard, canvas } from './state.js'
 import { Chessboard } from './chessboardClass.js'
 import { sendPieceMove } from './handleSenders.js'
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js'
@@ -5,14 +6,14 @@ import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessbo
 let selectedSquares = new Set<string>();
 let arrows = new Map<string, [string, string]>();
 
-function getSquare(playerColorView: string, event: MouseEvent, canvas: HTMLCanvasElement): string | null {
+function getSquare(playerColorView: string, event: MouseEvent): string | null {
 
-	const rect = canvas.getBoundingClientRect();
-	const scaleX = canvas.width / rect.width;
-	const scaleY = canvas.height / rect.height;
+	const rect = canvas!.getBoundingClientRect();
+	const scaleX = canvas!.width / rect.width;
+	const scaleY = canvas!.height / rect.height;
 	const x = (event.clientX - rect.left) * scaleX;
 	const y = (event.clientY - rect.top) * scaleY;
-	const squareSize = canvas.width / 8;
+	const squareSize = canvas!.width / 8;
 	let col = Math.floor(x / squareSize);
 	let row = Math.floor(y / squareSize);
 	if (col < 0 || col > 7 || row < 0 || row > 7)
@@ -25,39 +26,39 @@ function getSquare(playerColorView: string, event: MouseEvent, canvas: HTMLCanva
 	return `${row}${col}`;
 }
 
-function movePiece(event: MouseEvent, fromSquare: string, piece: string, copy: Chessboard, canvas: HTMLCanvasElement) {
+function movePiece(event: MouseEvent, fromSquare: string, piece: string, copy: Chessboard) {
 
-	const currentSquare = getSquare("white", event, canvas);
+	const currentSquare = getSquare("white", event);
 	copy.deletePiece(fromSquare);
 	copy.setLastMoves(fromSquare, null);
-	setupChessboard(copy, canvas, null, null);
+	setupChessboard(copy, null, null);
 	if (currentSquare)
-		highlightSquare(currentSquare, canvas);
-	drawMovingPiece(event, piece, canvas);
+		highlightSquare(currentSquare);
+	drawMovingPiece(event, piece);
 }
 
 // If move is ok from backend, then
 // fromSquare and toSquare are always set here. But it should set it only if they are valids.
 // If fromSquare === toSquare, response is false from backend
-function dropPiece(socket: WebSocket, userId: string, event: MouseEvent, fromSquare: string, piece: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
+function dropPiece(event: MouseEvent, fromSquare: string, piece: string) {
 
-	const toSquare = getSquare(chessboard.playerColorView, event, canvas);
+	const toSquare = getSquare(chessboard!.playerColorView, event);
 	if (toSquare)
-		sendPieceMove(socket, userId, fromSquare, toSquare, piece, chessboard);
+		sendPieceMove(fromSquare, toSquare, piece);
 }
 
-function handleLeftClick(socket: WebSocket, userId: string, fromSquare: string, piece: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
+function handleLeftClick(fromSquare: string, piece: string) {
 
 	function mouseMoveHandler(event: MouseEvent) {
-        movePiece(event, fromSquare!, piece, chessboard.clone(), canvas);
+        movePiece(event, fromSquare!, piece, chessboard!.clone());
     }
     function mouseUpHandler(event: MouseEvent) {
-        dropPiece(socket, userId, event, fromSquare, piece, chessboard, canvas);
+        dropPiece(event, fromSquare, piece);
         window.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("mouseup", mouseUpHandler);
     }
 	function mouseRightClickHandler(event: MouseEvent) {
-		setupChessboard(chessboard, canvas, null, null);
+		setupChessboard(chessboard!, null, null);
 		window.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("mouseup", mouseUpHandler);
 		window.removeEventListener("contextmenu", mouseRightClickHandler);
@@ -68,13 +69,13 @@ function handleLeftClick(socket: WebSocket, userId: string, fromSquare: string, 
 	window.addEventListener("contextmenu", mouseRightClickHandler);
 }
 
-function handleRightClick(fromSquare: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
+function handleRightClick(fromSquare: string) {
 
 	function mouseUpHandler(event: MouseEvent) {
 
 		if (event.button !== 2)
 			return;
-		const toSquare = getSquare("white", event, canvas);
+		const toSquare = getSquare("white", event);
 		if (fromSquare === toSquare) {
 			if (selectedSquares.has(fromSquare))
 				selectedSquares.delete(fromSquare);
@@ -89,59 +90,59 @@ function handleRightClick(fromSquare: string, chessboard: Chessboard, canvas: HT
 					arrows.set(`${fromSquare}${toSquare}`, [fromSquare, toSquare]);
 			}
 		}
-		setupChessboard(chessboard, canvas, selectedSquares, arrows);
+		setupChessboard(chessboard!, selectedSquares, arrows);
 		window.removeEventListener("mouseup", mouseUpHandler);
 	}
 	window.addEventListener("mouseup", mouseUpHandler);
 }
 
-export function handleEvents(socket: WebSocket, userId: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
+export function handleEvents() {
 
 	// To prevent right click context menu
-	canvas.addEventListener("contextmenu", (event) => {
+	canvas!.addEventListener("contextmenu", (event) => {
 		event.preventDefault();
 	});
 
 	// Event listener to change style cursor
-	canvas.addEventListener("mousemove", (event) => {
-		const square = getSquare(chessboard.playerColorView, event, canvas);
+	canvas!.addEventListener("mousemove", (event) => {
+		const square = getSquare(chessboard!.playerColorView, event);
 		if (square) {
-			const piece = chessboard.getPieceAt(square);
+			const piece = chessboard!.getPieceAt(square);
 			if (piece)
-				canvas.style.cursor = "pointer";
+				canvas!.style.cursor = "pointer";
 			else
-				canvas.style.cursor = "default";
+				canvas!.style.cursor = "default";
 		}
 	});
 
 	// Event listener to handle select and move a piece or select and highlight a square
-	canvas.addEventListener("mousedown", (event) => {
+	canvas!.addEventListener("mousedown", (event) => {
 		if (event.button === 0) {
 			arrows.clear();
 			if (selectedSquares) {
 				selectedSquares.clear();
-				setupChessboard(chessboard, canvas, null, null);
+				setupChessboard(chessboard!, null, null);
 			}
-			const fromSquare = getSquare(chessboard.playerColorView, event, canvas);
+			const fromSquare = getSquare(chessboard!.playerColorView, event);
 			if (fromSquare) {
-				const piece = chessboard.getPieceAt(fromSquare);
+				const piece = chessboard!.getPieceAt(fromSquare);
 				if (piece) {
-					movePiece(event, fromSquare, piece, chessboard.clone(), canvas);
-					handleLeftClick(socket, userId, fromSquare, piece, chessboard, canvas);
+					movePiece(event, fromSquare, piece, chessboard!.clone());
+					handleLeftClick(fromSquare, piece);
 				}
 			}
 		}
 		if (event.button === 2 && (event.buttons & 1) === 0) {
-			const fromSquare = getSquare("white", event, canvas);
+			const fromSquare = getSquare("white", event);
 			if (fromSquare)
-				handleRightClick(fromSquare, chessboard, canvas);
+				handleRightClick(fromSquare);
 		}
 	});
 	
 	// Event listener for resize window
 	window.addEventListener("resize", () => {
 		requestAnimationFrame(() => {
-		setupChessboard(chessboard, canvas, selectedSquares, arrows);
+		setupChessboard(chessboard!, selectedSquares, arrows);
 		});
 	});
 }

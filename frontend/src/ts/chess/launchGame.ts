@@ -1,9 +1,8 @@
 import { handleEvents } from './handleEvents.js'
-import { Chessboard } from './chessboardClass.js'
 import { sendGameConfig } from './handleSenders.js'
-import { handleSocketEvents } from '../chess/handleSocketEvents.js'
-import { createCanvas, preloadImages, setupChessboard } from './drawChessboard.js'
-import { getLaunchGameHtml, getChessHtml } from './handleFetchers.js'
+import { getConfigHtml, getChessHtml } from './handleFetchers.js'
+import { preloadImages, setupChessboard } from './drawChessboard.js'
+import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js'
 
 
 export function checkIfGameIsRunning() {
@@ -11,7 +10,7 @@ export function checkIfGameIsRunning() {
 	return sessionStorage.getItem("chessboard") || "";
 }
 
-function getConfig(userId: string): any {
+function getConfig(): any {
 	
 	const playerColor = (document.getElementById('color') as HTMLSelectElement).value;
 	const timeControl = (document.getElementById('time') as HTMLSelectElement).value;
@@ -37,9 +36,9 @@ function getConfig(userId: string): any {
 	return data;
 }
 
-export async function launchUI(socket: WebSocket, userId: string, appElement: HTMLElement) {
+async function launchConfig() {
 
-	appElement.innerHTML = await getLaunchGameHtml();
+	appContainer!.innerHTML = await getConfigHtml();
 	const start = document.getElementById('start-game') as HTMLButtonElement;
 	const modeContainer = document.getElementById('modeContainer') as HTMLDivElement;
 	const modeSelect = document.getElementById('mode') as HTMLSelectElement;
@@ -52,28 +51,32 @@ export async function launchUI(socket: WebSocket, userId: string, appElement: HT
 	}
 	modeSelect.addEventListener('change', () => toggleModeVisibility(modeContainer, modeSelect));
 	start.addEventListener('click', async () =>{
-		const data = getConfig(userId);
-		sendGameConfig(socket, data);
+		const data = getConfig();
+		sendGameConfig(data);
 
-		// await launchGame(socket, userId, data, appElement)
+		await launchGame(data)
 	});
+
 }
 
-export async function launchGame(socket: WebSocket, userId: string, data: string, appElement: HTMLElement) {
+async function launchLobby() {
 
-	const chessboard = new Chessboard(data);
-	
-	appElement.innerHTML = await getChessHtml();
-	const board = document.getElementById("board") as HTMLDivElement;
-	const canvas = createCanvas(board);
-	
+}
+
+export async function launchUI() {
+
+	await launchConfig();
+	await launchLobby();
+}
+
+export async function launchGame(data: any) {
+
+	appContainer!.innerHTML = await getChessHtml();
+	setCanvas();
+	setChessboard(data);
+
 	preloadImages(()=>{
-		setupChessboard(chessboard, canvas, null, null);
-		handleEvents(socket!, userId, chessboard, canvas);
-		handleSocketEvents(socket!, userId, chessboard, canvas);
+		setupChessboard(chessboard!, null, null);
+		handleEvents();
 	});
 }
-
-
-// Launch UI === LaunchConfig + LaunchLobby
-// Global: userId, socket, chessboard, canvas

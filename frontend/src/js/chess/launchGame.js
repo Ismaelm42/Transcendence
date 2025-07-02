@@ -8,15 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { handleEvents } from './handleEvents.js';
-import { Chessboard } from './chessboardClass.js';
 import { sendGameConfig } from './handleSenders.js';
-import { handleSocketEvents } from '../chess/handleSocketEvents.js';
-import { createCanvas, preloadImages, setupChessboard } from './drawChessboard.js';
-import { getLaunchGameHtml, getChessHtml } from './handleFetchers.js';
+import { getConfigHtml, getChessHtml } from './handleFetchers.js';
+import { preloadImages, setupChessboard } from './drawChessboard.js';
+import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js';
 export function checkIfGameIsRunning() {
     return sessionStorage.getItem("chessboard") || "";
 }
-function getConfig(userId) {
+function getConfig() {
     const playerColor = document.getElementById('color').value;
     const timeControl = document.getElementById('time').value;
     const gameMode = document.getElementById('mode').value;
@@ -38,9 +37,9 @@ function getConfig(userId) {
     };
     return data;
 }
-export function launchUI(socket, userId, appElement) {
+function launchConfig() {
     return __awaiter(this, void 0, void 0, function* () {
-        appElement.innerHTML = yield getLaunchGameHtml();
+        appContainer.innerHTML = yield getConfigHtml();
         const start = document.getElementById('start-game');
         const modeContainer = document.getElementById('modeContainer');
         const modeSelect = document.getElementById('mode');
@@ -52,24 +51,30 @@ export function launchUI(socket, userId, appElement) {
         }
         modeSelect.addEventListener('change', () => toggleModeVisibility(modeContainer, modeSelect));
         start.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-            const data = getConfig(userId);
-            sendGameConfig(socket, data);
-            // await launchGame(socket, userId, data, appElement)
+            const data = getConfig();
+            sendGameConfig(data);
+            yield launchGame(data);
         }));
     });
 }
-export function launchGame(socket, userId, data, appElement) {
+function launchLobby() {
     return __awaiter(this, void 0, void 0, function* () {
-        const chessboard = new Chessboard(data);
-        appElement.innerHTML = yield getChessHtml();
-        const board = document.getElementById("board");
-        const canvas = createCanvas(board);
+    });
+}
+export function launchUI() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield launchConfig();
+        yield launchLobby();
+    });
+}
+export function launchGame(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        appContainer.innerHTML = yield getChessHtml();
+        setCanvas();
+        setChessboard(data);
         preloadImages(() => {
-            setupChessboard(chessboard, canvas, null, null);
-            handleEvents(socket, userId, chessboard, canvas);
-            handleSocketEvents(socket, userId, chessboard, canvas);
+            setupChessboard(chessboard, null, null);
+            handleEvents();
         });
     });
 }
-// Launch UI === LaunchConfig + LaunchLobby
-// Global: userId, socket, chessboard, canvas

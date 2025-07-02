@@ -1,4 +1,5 @@
-export function sendPieceMove(socket, userId, fromSquare, toSquare, piece, chessboard) {
+import { userId, socket, chessboard } from './state.js';
+export function sendPieceMove(fromSquare, toSquare, piece) {
     const message = {
         type: 'move',
         userId: userId,
@@ -9,7 +10,7 @@ export function sendPieceMove(socket, userId, fromSquare, toSquare, piece, chess
     };
     socket.send(JSON.stringify(message));
 }
-export function sendGameConfig(socket, data) {
+export function sendGameConfig(data) {
     const message = {
         type: 'config',
         userId: data.userId,

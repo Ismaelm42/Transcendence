@@ -7,7 +7,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-export function getUserId(username) {
+import { Chessboard } from './chessboardClass.js';
+export let userId = null;
+export let socket = null;
+export let chessboard = null;
+export let canvas = null;
+export let appContainer = null;
+export function setAppContainer(appElement) {
+    appContainer = appElement;
+}
+export function setUserId(username) {
     return __awaiter(this, void 0, void 0, function* () {
         const id = yield fetch("https://localhost:8443/back/getIdByUsername", {
             method: "POST",
@@ -20,24 +29,25 @@ export function getUserId(username) {
         });
         if (!id.ok)
             throw new Error("Failed to fetch user ID");
-        return id.text();
+        userId = yield id.text();
     });
 }
-export function getConfigHtml() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const htmlContent = yield fetch("../../html/chess/launchGame.html");
-        if (!htmlContent.ok)
-            throw new Error("Failed to load the HTML file");
-        const htmlText = yield htmlContent.text();
-        return htmlText;
-    });
+export function setSocket(ws) {
+    if (!ws || ws.readyState === WebSocket.CLOSED) {
+        ws = new WebSocket("https://localhost:8443/back/ws/chess");
+        socket = ws;
+    }
+    else
+        socket = ws;
 }
-export function getChessHtml() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const htmlContent = yield fetch("../../html/chess/chess.html");
-        if (!htmlContent.ok)
-            throw new Error("Failed to load the HTML file");
-        const htmlText = yield htmlContent.text();
-        return htmlText;
-    });
+export function setChessboard(data) {
+    chessboard = new Chessboard(data);
+}
+export function setCanvas() {
+    const board = document.getElementById("board");
+    canvas = document.createElement("canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.display = "block";
+    board.insertBefore(canvas, board.firstChild);
 }

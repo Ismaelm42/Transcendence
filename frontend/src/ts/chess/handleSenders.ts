@@ -1,6 +1,6 @@
-import { Chessboard } from "./chessboardClass.js";
+import { userId, socket, chessboard} from './state.js'
 
-export function sendPieceMove(socket: WebSocket, userId: string, fromSquare: string, toSquare: string, piece: string, chessboard: Chessboard) {
+export function sendPieceMove(fromSquare: string, toSquare: string, piece: string) {
 
 	const message = {
 		type: 'move',
@@ -8,12 +8,12 @@ export function sendPieceMove(socket: WebSocket, userId: string, fromSquare: str
 		piece: piece,
 		moveFrom: fromSquare,
 		moveTo: toSquare,
-		board: chessboard.board
+		board: chessboard!.board
 	};
-	socket.send(JSON.stringify(message));
+	socket!.send(JSON.stringify(message));
 }
 
-export function sendGameConfig(socket: WebSocket, data: any) {
+export function sendGameConfig(data: any) {
 
 	const message = {
 		type: 'config',
@@ -24,5 +24,5 @@ export function sendGameConfig(socket: WebSocket, data: any) {
 		minRating: data.minRating,
 		maxRating: data.maxRating,
 	};
-	socket.send(JSON.stringify(message));
+	socket!.send(JSON.stringify(message));
 }

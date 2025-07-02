@@ -1,9 +1,8 @@
-import { chessboard, canvas } from './state.js';
 import { sendPieceMove } from './handleSenders.js';
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js';
 let selectedSquares = new Set();
 let arrows = new Map();
-function getSquare(playerColorView, event) {
+function getSquare(playerColorView, event, canvas) {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -21,34 +20,34 @@ function getSquare(playerColorView, event) {
     }
     return `${row}${col}`;
 }
-function movePiece(event, fromSquare, piece, copy) {
-    const currentSquare = getSquare("white", event);
+function movePiece(event, fromSquare, piece, copy, canvas) {
+    const currentSquare = getSquare("white", event, canvas);
     copy.deletePiece(fromSquare);
     copy.setLastMoves(fromSquare, null);
-    setupChessboard(copy, null, null);
+    setupChessboard(copy, canvas, null, null);
     if (currentSquare)
-        highlightSquare(currentSquare);
-    drawMovingPiece(event, piece);
+        highlightSquare(currentSquare, canvas);
+    drawMovingPiece(event, piece, canvas);
 }
 // If move is ok from backend, then
 // fromSquare and toSquare are always set here. But it should set it only if they are valids.
 // If fromSquare === toSquare, response is false from backend
-function dropPiece(event, fromSquare, piece) {
-    const toSquare = getSquare(chessboard.playerColorView, event);
+function dropPiece(socket, userId, event, fromSquare, piece, chessboard, canvas) {
+    const toSquare = getSquare(chessboard.playerColorView, event, canvas);
     if (toSquare)
-        sendPieceMove(fromSquare, toSquare, piece);
+        sendPieceMove(socket, userId, fromSquare, toSquare, piece, chessboard);
 }
-function handleLeftClick(fromSquare, piece) {
+function handleLeftClick(socket, userId, fromSquare, piece, chessboard, canvas) {
     function mouseMoveHandler(event) {
-        movePiece(event, fromSquare, piece, chessboard.clone());
+        movePiece(event, fromSquare, piece, chessboard.clone(), canvas);
     }
     function mouseUpHandler(event) {
-        dropPiece(event, fromSquare, piece);
+        dropPiece(socket, userId, event, fromSquare, piece, chessboard, canvas);
         window.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("mouseup", mouseUpHandler);
     }
     function mouseRightClickHandler(event) {
-        setupChessboard(chessboard, null, null);
+        setupChessboard(chessboard, canvas, null, null);
         window.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("mouseup", mouseUpHandler);
         window.removeEventListener("contextmenu", mouseRightClickHandler);
@@ -57,11 +56,11 @@ function handleLeftClick(fromSquare, piece) {
     window.addEventListener("mouseup", mouseUpHandler);
     window.addEventListener("contextmenu", mouseRightClickHandler);
 }
-function handleRightClick(fromSquare) {
+function handleRightClick(fromSquare, chessboard, canvas) {
     function mouseUpHandler(event) {
         if (event.button !== 2)
             return;
-        const toSquare = getSquare("white", event);
+        const toSquare = getSquare("white", event, canvas);
         if (fromSquare === toSquare) {
             if (selectedSquares.has(fromSquare))
                 selectedSquares.delete(fromSquare);
@@ -76,19 +75,19 @@ function handleRightClick(fromSquare) {
                     arrows.set(`${fromSquare}${toSquare}`, [fromSquare, toSquare]);
             }
         }
-        setupChessboard(chessboard, selectedSquares, arrows);
+        setupChessboard(chessboard, canvas, selectedSquares, arrows);
         window.removeEventListener("mouseup", mouseUpHandler);
     }
     window.addEventListener("mouseup", mouseUpHandler);
 }
-export function handleEvents() {
+export function handleEvents(socket, userId, chessboard, canvas) {
     // To prevent right click context menu
     canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
     });
     // Event listener to change style cursor
     canvas.addEventListener("mousemove", (event) => {
-        const square = getSquare(chessboard.playerColorView, event);
+        const square = getSquare(chessboard.playerColorView, event, canvas);
         if (square) {
             const piece = chessboard.getPieceAt(square);
             if (piece)
@@ -103,27 +102,27 @@ export function handleEvents() {
             arrows.clear();
             if (selectedSquares) {
                 selectedSquares.clear();
-                setupChessboard(chessboard, null, null);
+                setupChessboard(chessboard, canvas, null, null);
             }
-            const fromSquare = getSquare(chessboard.playerColorView, event);
+            const fromSquare = getSquare(chessboard.playerColorView, event, canvas);
             if (fromSquare) {
                 const piece = chessboard.getPieceAt(fromSquare);
                 if (piece) {
-                    movePiece(event, fromSquare, piece, chessboard.clone());
-                    handleLeftClick(fromSquare, piece);
+                    movePiece(event, fromSquare, piece, chessboard.clone(), canvas);
+                    handleLeftClick(socket, userId, fromSquare, piece, chessboard, canvas);
                 }
             }
         }
         if (event.button === 2 && (event.buttons & 1) === 0) {
-            const fromSquare = getSquare("white", event);
+            const fromSquare = getSquare("white", event, canvas);
             if (fromSquare)
-                handleRightClick(fromSquare);
+                handleRightClick(fromSquare, chessboard, canvas);
         }
     });
     // Event listener for resize window
     window.addEventListener("resize", () => {
         requestAnimationFrame(() => {
-            setupChessboard(chessboard, selectedSquares, arrows);
+            setupChessboard(chessboard, canvas, selectedSquares, arrows);
         });
     });
 }

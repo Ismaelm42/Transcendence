@@ -1,51 +1,52 @@
-import { Chessboard } from "./chessboardClass.js";
 import { setupChessboard } from "./drawChessboard.js";
+import { socket, chessboard } from "./state.js";
 
-function handleSocketOpen(socket: WebSocket, userId: string) {
-	socket.onopen = () => {
+function handleSocketOpen() {
+
+	socket!.onopen = () => {
 		const handshake = {
 			type: 'handshake',
 			message: ''
 		};
-		socket.send(JSON.stringify(handshake));
+		socket!.send(JSON.stringify(handshake));
 	}
 }
 
-function handleSocketMessage(socket: WebSocket, userId: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
+function handleSocketMessage() {
 
-	socket.onmessage = async (event: MessageEvent) => {
+	socket!.onmessage = async (event: MessageEvent) => {
 		const data = JSON.parse(event.data);
 		console.log(data);
 		if (data.type === 'config') {
 		}
 		else if (data.type === 'move') {
-			// if (data.return === 'true') {
-				chessboard.movePiece(data.moveFrom, data.moveTo);
-				setupChessboard(chessboard, canvas, null, null);
-			// }
-			// else {
-			// 	setupChessboard(chessboard, canvas, null, null);
-			// }
+			if (data.return === 'true') {
+				chessboard!.movePiece(data.moveFrom, data.moveTo);
+				setupChessboard(null, null);
+			}
+			else {
+				setupChessboard(null, null);
+			}
 		}
 	}
 }
 
-function handleSocketClose(socket: WebSocket, userId: string) {
-	socket.onclose = (event: CloseEvent) => {
+function handleSocketClose() {
+	socket!.onclose = (event: CloseEvent) => {
 		console.log(`CLIENT: Connection closed - Code: ${event.code}`);
 	}
 }
 
-function handleSocketError(socket: WebSocket, userId: string) {
-	socket.onerror = (event) => {
+function handleSocketError() {
+	socket!.onerror = (event) => {
 		console.error("CLIENT: WebSocket error:", event);
 	}
 }
 
-export function handleSocketEvents(socket: WebSocket, userId: string, chessboard: Chessboard, canvas: HTMLCanvasElement) {
+export function handleSocketEvents() {
 
-	handleSocketOpen(socket, userId);
-	handleSocketMessage(socket, userId, chessboard, canvas);
-	handleSocketClose(socket, userId);
-	handleSocketError(socket, userId);
+	handleSocketOpen();
+	handleSocketMessage();
+	handleSocketClose();
+	handleSocketError();
 }

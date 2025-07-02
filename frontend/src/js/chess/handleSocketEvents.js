@@ -8,7 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { setupChessboard } from "./drawChessboard.js";
-function handleSocketOpen(socket, userId) {
+import { socket, chessboard } from "./state.js";
+function handleSocketOpen() {
     socket.onopen = () => {
         const handshake = {
             type: 'handshake',
@@ -17,36 +18,36 @@ function handleSocketOpen(socket, userId) {
         socket.send(JSON.stringify(handshake));
     };
 }
-function handleSocketMessage(socket, userId, chessboard, canvas) {
+function handleSocketMessage() {
     socket.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
         const data = JSON.parse(event.data);
         console.log(data);
         if (data.type === 'config') {
         }
         else if (data.type === 'move') {
-            // if (data.return === 'true') {
-            chessboard.movePiece(data.moveFrom, data.moveTo);
-            setupChessboard(chessboard, canvas, null, null);
-            // }
-            // else {
-            // 	setupChessboard(chessboard, canvas, null, null);
-            // }
+            if (data.return === 'true') {
+                chessboard.movePiece(data.moveFrom, data.moveTo);
+                setupChessboard(null, null);
+            }
+            else {
+                setupChessboard(null, null);
+            }
         }
     });
 }
-function handleSocketClose(socket, userId) {
+function handleSocketClose() {
     socket.onclose = (event) => {
         console.log(`CLIENT: Connection closed - Code: ${event.code}`);
     };
 }
-function handleSocketError(socket, userId) {
+function handleSocketError() {
     socket.onerror = (event) => {
         console.error("CLIENT: WebSocket error:", event);
     };
 }
-export function handleSocketEvents(socket, userId, chessboard, canvas) {
-    handleSocketOpen(socket, userId);
-    handleSocketMessage(socket, userId, chessboard, canvas);
-    handleSocketClose(socket, userId);
-    handleSocketError(socket, userId);
+export function handleSocketEvents() {
+    handleSocketOpen();
+    handleSocketMessage();
+    handleSocketClose();
+    handleSocketError();
 }

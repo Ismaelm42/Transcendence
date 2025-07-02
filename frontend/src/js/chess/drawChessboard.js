@@ -1,13 +1,6 @@
+import { canvas } from './state.js';
 const pieceImages = {};
-export function createCanvas(board) {
-    const canvas = document.createElement("canvas");
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.display = "block";
-    board.insertBefore(canvas, board.firstChild);
-    return canvas;
-}
-function resizeCanvas(canvas) {
+function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(rect.width * dpr);
@@ -16,15 +9,15 @@ function resizeCanvas(canvas) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
 }
-function drawBoard(chessboard, selectedSquares, canvas) {
+function drawBoard(board, selectedSquares) {
     const ctx = canvas.getContext("2d");
     const squareSize = canvas.clientWidth / 8;
-    const fsRow = chessboard.lastMoveFrom ? parseInt(chessboard.lastMoveFrom[0]) : null;
-    const fsCol = chessboard.lastMoveFrom ? parseInt(chessboard.lastMoveFrom[1]) : null;
-    const tsRow = chessboard.lastMoveTo ? parseInt(chessboard.lastMoveTo[0]) : null;
-    const tsCol = chessboard.lastMoveTo ? parseInt(chessboard.lastMoveTo[1]) : null;
-    const logicToVisualRow = (r) => r === null ? null : (chessboard.playerColorView === "white" ? r : 7 - r);
-    const logicToVisualCol = (c) => c === null ? null : (chessboard.playerColorView === "white" ? c : 7 - c);
+    const fsRow = board.lastMoveFrom ? parseInt(board.lastMoveFrom[0]) : null;
+    const fsCol = board.lastMoveFrom ? parseInt(board.lastMoveFrom[1]) : null;
+    const tsRow = board.lastMoveTo ? parseInt(board.lastMoveTo[0]) : null;
+    const tsCol = board.lastMoveTo ? parseInt(board.lastMoveTo[1]) : null;
+    const logicToVisualRow = (r) => r === null ? null : (board.playerColorView === "white" ? r : 7 - r);
+    const logicToVisualCol = (c) => c === null ? null : (board.playerColorView === "white" ? c : 7 - c);
     ctx.font = `bold ${squareSize / 5}px Arial`;
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
     for (let row = 0; row < 8; row++) {
@@ -39,14 +32,14 @@ function drawBoard(chessboard, selectedSquares, canvas) {
                 ctx.fillStyle = isLight ? "rgb(255, 255, 255)" : "rgb(67, 128, 183)";
             ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
             if (col === 0) {
-                const number = chessboard.playerColorView === "white" ? 8 - row : row + 1;
+                const number = board.playerColorView === "white" ? 8 - row : row + 1;
                 ctx.textBaseline = "top";
                 ctx.textAlign = "left";
                 ctx.fillStyle = isLight ? "rgb(67, 128, 183)" : "rgb(255, 255, 255)";
                 ctx.fillText(number.toString(), col * squareSize + 4, row * squareSize + 4);
             }
             if (row === 7) {
-                const letter = chessboard.playerColorView === "white" ? String.fromCharCode(97 + col) : String.fromCharCode(97 + (7 - col));
+                const letter = board.playerColorView === "white" ? String.fromCharCode(97 + col) : String.fromCharCode(97 + (7 - col));
                 ctx.textBaseline = "bottom";
                 ctx.textAlign = "right";
                 ctx.fillStyle = isLight ? "rgb(67, 128, 183)" : "rgb(255, 255, 255)";
@@ -69,7 +62,7 @@ export function preloadImages(callback) {
         pieceImages[piece] = img;
     }
 }
-function drawPieceAt(row, col, piece, canvas, playerColorView) {
+function drawPieceAt(row, col, piece, playerColorView) {
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
     const squareSize = canvas.clientWidth / 8;
@@ -81,16 +74,16 @@ function drawPieceAt(row, col, piece, canvas, playerColorView) {
     const image = pieceImages[piece];
     ctx.drawImage(image, x, y, squareSize, squareSize);
 }
-function drawPieces(chessboard, canvas) {
+function drawPieces(board) {
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
-            const piece = chessboard.getPieceAt(`${row}${col}`);
+            const piece = board.getPieceAt(`${row}${col}`);
             if (piece)
-                drawPieceAt(row, col, piece, canvas, chessboard.playerColorView);
+                drawPieceAt(row, col, piece, board.playerColorView);
         }
     }
 }
-export function drawMovingPiece(event, piece, canvas) {
+export function drawMovingPiece(event, piece) {
     const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.clientWidth / rect.width;
@@ -101,7 +94,7 @@ export function drawMovingPiece(event, piece, canvas) {
     const squareSize = canvas.clientWidth / 8;
     ctx.drawImage(image, mouseX - squareSize / 2, mouseY - squareSize / 2, squareSize, squareSize);
 }
-export function highlightSquare(square, canvas) {
+export function highlightSquare(square) {
     const ctx = canvas.getContext("2d");
     const squareSize = canvas.clientWidth / 8;
     const squareCol = parseInt(square[1]);
@@ -112,7 +105,7 @@ export function highlightSquare(square, canvas) {
     ctx.strokeStyle = "rgb(94, 101, 134)";
     ctx.strokeRect(squareX + 2, squareY + 2, squareSize - 4, squareSize - 4);
 }
-export function drawArrows(arrows, canvas) {
+export function drawArrows(arrows) {
     if (!arrows)
         return;
     const ctx = canvas.getContext("2d");
@@ -163,9 +156,9 @@ export function drawArrows(arrows, canvas) {
         ctx.fill();
     }
 }
-export function setupChessboard(chessboard, canvas, selectedSquares, arrows) {
-    resizeCanvas(canvas);
-    drawBoard(chessboard, selectedSquares, canvas);
-    drawPieces(chessboard, canvas);
-    drawArrows(arrows, canvas);
+export function setupChessboard(board, selectedSquares, arrows) {
+    resizeCanvas();
+    drawBoard(board, selectedSquares);
+    drawPieces(board);
+    drawArrows(arrows);
 }
