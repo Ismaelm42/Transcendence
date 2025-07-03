@@ -1,5 +1,5 @@
 import { Chessboard } from './chessboardClass.js';
-import { chessboard, canvas } from './state.js'
+import { canvas } from './state.js'
 
 const pieceImages: { [key: string]: HTMLImageElement } = {};
 
@@ -84,7 +84,6 @@ function drawPieceAt(row: number, col: number, piece: string, playerColorView: s
 
 	const squareSize = canvas!.clientWidth / 8;
 
-	// Si el jugador está viendo con negras, invierte las coordenadas
 	const displayRow = playerColorView === "white" ? row : 7 - row;
 	const displayCol = playerColorView === "white" ? col : 7 - col;
 

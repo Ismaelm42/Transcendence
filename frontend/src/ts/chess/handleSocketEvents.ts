@@ -16,16 +16,16 @@ function handleSocketMessage() {
 
 	socket!.onmessage = async (event: MessageEvent) => {
 		const data = JSON.parse(event.data);
-		console.log(data);
 		if (data.type === 'config') {
+			console.log(data);
 		}
 		else if (data.type === 'move') {
 			if (data.return === 'true') {
 				chessboard!.movePiece(data.moveFrom, data.moveTo);
-				setupChessboard(null, null);
+				setupChessboard(chessboard!, null, null);
 			}
 			else {
-				setupChessboard(null, null);
+				setupChessboard(chessboard!, null, null);
 			}
 		}
 	}

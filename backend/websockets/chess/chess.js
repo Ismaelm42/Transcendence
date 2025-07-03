@@ -3,8 +3,9 @@ import { crud } from '../../crud/crud.js'
 import { extractUserFromToken } from '../../auth/token.js';
 
 const clients = new Map();
-const rooms = new Map();
-const chessboards = new Map();
+const lobby = new Map();
+// const games = new Map();
+// const chessboards = new Map();
 
 export async function registerUser(request, socket) {
 
@@ -17,14 +18,11 @@ export async function registerUser(request, socket) {
 
 function createGameLobby(user, data) {
 
-	if (data.gameMode === "online") {
-		for (const [id, client] of clients) {
+	lobby.set(user.id, data);
+	for (const [id, client] of clients) {
+		for (const [id, data] of lobby) {
 			client.send(JSON.stringify(data));
-			console.log(id);
 		}
-	}
-	else {
-
 	}
 }
 
@@ -34,10 +32,14 @@ export async function handleIncomingSocketMessage(user, socket) {
 		try {
 			const data = JSON.parse(message.toString());
 			if (data.type === 'config') {
-				createGameLobby(user, data);
+				if (data.gameMode === 'online') {
+					createGameLobby(user, data);
+					createOnlineGame();
+				}
+				else
+					createLocalGame();
 			}
 			if (data.type === 'move') {
-				// handleMove(user, data);
 			}
 		} catch (error) {
 			console.log("An error occured:", error);

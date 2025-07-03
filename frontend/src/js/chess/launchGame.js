@@ -13,7 +13,10 @@ import { getConfigHtml, getChessHtml } from './handleFetchers.js';
 import { preloadImages, setupChessboard } from './drawChessboard.js';
 import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js';
 export function checkIfGameIsRunning() {
-    return sessionStorage.getItem("chessboard") || "";
+    const data = sessionStorage.getItem("chessboard") || "";
+    if (data)
+        return JSON.parse(data);
+    return null;
 }
 function getConfig() {
     const playerColor = document.getElementById('color').value;
@@ -41,15 +44,15 @@ function launchConfig() {
     return __awaiter(this, void 0, void 0, function* () {
         appContainer.innerHTML = yield getConfigHtml();
         const start = document.getElementById('start-game');
-        const modeContainer = document.getElementById('modeContainer');
+        // const modeContainer = document.getElementById('modeContainer') as HTMLDivElement;
         const modeSelect = document.getElementById('mode');
-        function toggleModeVisibility(modeContainer, modeSelect) {
-            if (modeSelect.value === 'online')
-                modeContainer.classList.remove('hidden');
-            else
-                modeContainer.classList.add('hidden');
-        }
-        modeSelect.addEventListener('change', () => toggleModeVisibility(modeContainer, modeSelect));
+        // function toggleModeVisibility(modeContainer: HTMLDivElement, modeSelect: HTMLSelectElement) {
+        // 	if (modeSelect.value === 'online')
+        // 		modeContainer.classList.remove('hidden');
+        // 	else
+        // 		modeContainer.classList.add('hidden');
+        // }
+        // modeSelect.addEventListener('change', () => toggleModeVisibility(modeContainer, modeSelect));
         start.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
             const data = getConfig();
             sendGameConfig(data);
@@ -67,6 +70,7 @@ export function launchUI() {
         yield launchLobby();
     });
 }
+// Creo que data es un string y por eso no funciona. Hay que parsearlo a JSON
 export function launchGame(data) {
     return __awaiter(this, void 0, void 0, function* () {
         appContainer.innerHTML = yield getChessHtml();

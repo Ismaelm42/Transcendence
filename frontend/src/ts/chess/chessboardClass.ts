@@ -125,11 +125,9 @@ export class Chessboard {
 
 	clearBoard() {
 
-		for (let row = 0; row < 8; row++) {
-			for (let col = 0; col < 8; col++) {
+		for (let row = 0; row < 8; row++)
+			for (let col = 0; col < 8; col++)
 				this.board[row][col] = null;
-			}
-		}
 		this.move = 0;
 		this.lastMoveFrom = null;
 		this.lastMoveTo = null;
@@ -137,7 +135,7 @@ export class Chessboard {
 		this.deleteStorage();
 	}
 
-	getData(): string {
+	getData(): any {
 
 		const data = {
             playerColor: this.playerColor,
@@ -151,7 +149,7 @@ export class Chessboard {
             game: Array.from(this.game.entries()),
 			board: this.board.map(row => row.slice()),
 		}
-		return JSON.stringify(data);
+		return data;
 	}
 
 	clone(): Chessboard {
@@ -164,7 +162,7 @@ export class Chessboard {
 	saveToStorage() {
 
 		const data  = this.getData();
-		sessionStorage.setItem('chessboard', data);
+		sessionStorage.setItem('chessboard', JSON.stringify(data));
 	}
 
 	deleteStorage() {

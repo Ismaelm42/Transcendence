@@ -1,7 +1,7 @@
 import { Step } from '../spa/stepRender.js'
+import { handleSocketEvents } from './handleSocketEvents.js';
 import { setAppContainer, setUserId, setSocket } from './state.js'
 import { checkIfGameIsRunning, launchGame, launchUI } from './launchGame.js'
-import { handleSocketEvents } from './handleSocketEvents.js'
 
 export default class Chess extends Step {
 

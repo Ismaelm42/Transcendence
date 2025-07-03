@@ -14,7 +14,6 @@ function getSquare(playerColorView, event) {
     let row = Math.floor(y / squareSize);
     if (col < 0 || col > 7 || row < 0 || row > 7)
         return null;
-    // console.log(`Square is: ${String.fromCharCode(97 + col)}${8 - row}`);
     if (playerColorView === "black") {
         row = 7 - row;
         col = 7 - col;

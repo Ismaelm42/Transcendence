@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Step } from '../spa/stepRender.js';
+import { handleSocketEvents } from './handleSocketEvents.js';
 import { setAppContainer, setUserId, setSocket } from './state.js';
 import { checkIfGameIsRunning, launchGame, launchUI } from './launchGame.js';
-import { handleSocketEvents } from './handleSocketEvents.js';
 export default class Chess extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {

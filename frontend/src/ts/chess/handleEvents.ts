@@ -18,7 +18,6 @@ function getSquare(playerColorView: string, event: MouseEvent): string | null {
 	let row = Math.floor(y / squareSize);
 	if (col < 0 || col > 7 || row < 0 || row > 7)
 		return null;
-	// console.log(`Square is: ${String.fromCharCode(97 + col)}${8 - row}`);
 	if (playerColorView === "black") {
 		row = 7 - row;
 		col = 7 - col;
@@ -50,22 +49,22 @@ function dropPiece(event: MouseEvent, fromSquare: string, piece: string) {
 function handleLeftClick(fromSquare: string, piece: string) {
 
 	function mouseMoveHandler(event: MouseEvent) {
-        movePiece(event, fromSquare!, piece, chessboard!.clone());
-    }
-    function mouseUpHandler(event: MouseEvent) {
-        dropPiece(event, fromSquare, piece);
-        window.removeEventListener("mousemove", mouseMoveHandler);
-        window.removeEventListener("mouseup", mouseUpHandler);
-    }
+		movePiece(event, fromSquare!, piece, chessboard!.clone());
+	}
+	function mouseUpHandler(event: MouseEvent) {
+		dropPiece(event, fromSquare, piece);
+		window.removeEventListener("mousemove", mouseMoveHandler);
+		window.removeEventListener("mouseup", mouseUpHandler);
+	}
 	function mouseRightClickHandler(event: MouseEvent) {
 		setupChessboard(chessboard!, null, null);
 		window.removeEventListener("mousemove", mouseMoveHandler);
-        window.removeEventListener("mouseup", mouseUpHandler);
+		window.removeEventListener("mouseup", mouseUpHandler);
 		window.removeEventListener("contextmenu", mouseRightClickHandler);
 	}
 
-    window.addEventListener("mousemove", mouseMoveHandler);
-    window.addEventListener("mouseup", mouseUpHandler);
+	window.addEventListener("mousemove", mouseMoveHandler);
+	window.addEventListener("mouseup", mouseUpHandler);
 	window.addEventListener("contextmenu", mouseRightClickHandler);
 }
 
@@ -138,11 +137,11 @@ export function handleEvents() {
 				handleRightClick(fromSquare);
 		}
 	});
-	
+
 	// Event listener for resize window
 	window.addEventListener("resize", () => {
 		requestAnimationFrame(() => {
-		setupChessboard(chessboard!, selectedSquares, arrows);
+			setupChessboard(chessboard!, selectedSquares, arrows);
 		});
 	});
 }

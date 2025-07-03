@@ -4,14 +4,16 @@ import { getConfigHtml, getChessHtml } from './handleFetchers.js'
 import { preloadImages, setupChessboard } from './drawChessboard.js'
 import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js'
 
+export function checkIfGameIsRunning(): any {
 
-export function checkIfGameIsRunning() {
-
-	return sessionStorage.getItem("chessboard") || "";
+	const data = sessionStorage.getItem("chessboard") || "";
+	if (data)
+		return JSON.parse(data);
+	return null;
 }
 
 function getConfig(): any {
-	
+
 	const playerColor = (document.getElementById('color') as HTMLSelectElement).value;
 	const timeControl = (document.getElementById('time') as HTMLSelectElement).value;
 	const gameMode = (document.getElementById('mode') as HTMLSelectElement).value;
@@ -40,17 +42,17 @@ async function launchConfig() {
 
 	appContainer!.innerHTML = await getConfigHtml();
 	const start = document.getElementById('start-game') as HTMLButtonElement;
-	const modeContainer = document.getElementById('modeContainer') as HTMLDivElement;
+	// const modeContainer = document.getElementById('modeContainer') as HTMLDivElement;
 	const modeSelect = document.getElementById('mode') as HTMLSelectElement;
 
-	function toggleModeVisibility(modeContainer: HTMLDivElement, modeSelect: HTMLSelectElement) {
-		if (modeSelect.value === 'online')
-			modeContainer.classList.remove('hidden');
-		else
-			modeContainer.classList.add('hidden');
-	}
-	modeSelect.addEventListener('change', () => toggleModeVisibility(modeContainer, modeSelect));
-	start.addEventListener('click', async () =>{
+	// function toggleModeVisibility(modeContainer: HTMLDivElement, modeSelect: HTMLSelectElement) {
+	// 	if (modeSelect.value === 'online')
+	// 		modeContainer.classList.remove('hidden');
+	// 	else
+	// 		modeContainer.classList.add('hidden');
+	// }
+	// modeSelect.addEventListener('change', () => toggleModeVisibility(modeContainer, modeSelect));
+	start.addEventListener('click', async () => {
 		const data = getConfig();
 		sendGameConfig(data);
 
@@ -69,13 +71,14 @@ export async function launchUI() {
 	await launchLobby();
 }
 
+// Creo que data es un string y por eso no funciona. Hay que parsearlo a JSON
 export async function launchGame(data: any) {
 
 	appContainer!.innerHTML = await getChessHtml();
 	setCanvas();
 	setChessboard(data);
 
-	preloadImages(()=>{
+	preloadImages(() => {
 		setupChessboard(chessboard!, null, null);
 		handleEvents();
 	});

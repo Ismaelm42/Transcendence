@@ -66,7 +66,6 @@ function drawPieceAt(row, col, piece, playerColorView) {
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
     const squareSize = canvas.clientWidth / 8;
-    // Si el jugador está viendo con negras, invierte las coordenadas
     const displayRow = playerColorView === "white" ? row : 7 - row;
     const displayCol = playerColorView === "white" ? col : 7 - col;
     const x = displayCol * squareSize;
