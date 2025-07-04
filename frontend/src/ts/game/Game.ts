@@ -32,7 +32,7 @@ export default class Game extends Step
 		if (id)
 			this.gameId = id;
 		else
-			this.gameId = "game-" + Date.now();
+			this.gameId = "game-" + Date.now().toString(36);
 		this.connection = new GameConnection(this);
 		this.renderer = new GameRender(this);
 		this.ui = new GameUI(this);
@@ -124,7 +124,7 @@ export default class Game extends Step
 	public setGuestInfo(playerKey: 'player1' | 'player2', name: 'ai'| 'guest'): void
 	{
 		const tempUser : GamePlayer = {
-			id: `${name}-${Date.now()}`,
+			id: `${name}-${Date.now().toString(36)}`,
 			username: name,
 			tournamentUsername: 'name',
 			email: `${name}@email.com`,

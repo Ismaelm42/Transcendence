@@ -131,19 +131,17 @@ export default class Tournament extends Step {
     // "Recycle" game instance with current match data and launchGame, which will
     // start the game API workflow and go to match-render step
     launchNextMatch() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.bracket && this.currentMatchIndex < this.bracket.length && this.game) {
-                const matchData = this.bracket[this.currentMatchIndex];
-                this.game.setGameLog(matchData);
-                if (matchData.config)
-                    this.game.setGameConfig(matchData.config);
-                const spa = SPA.getInstance();
-                spa.currentGame = this.game;
-                this.game.getGameUI().launchGame();
-                this.currentMatchIndex++;
-                this.displayCurrentMatch();
-            }
-        });
+        if (this.bracket && this.currentMatchIndex < this.bracket.length && this.game) {
+            const matchData = this.bracket[this.currentMatchIndex];
+            this.game.setGameLog(matchData);
+            if (matchData.config)
+                this.game.setGameConfig(matchData.config);
+            const spa = SPA.getInstance();
+            spa.currentGame = this.game;
+            this.game.getGameUI().launchGame();
+            this.currentMatchIndex++;
+            this.displayCurrentMatch();
+        }
     }
     // Receive and gather game results - may need to improve gameMatch class to pass this info
     // Also, may need to call it or implement it on a wait/promise manner?

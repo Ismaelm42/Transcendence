@@ -13,7 +13,7 @@ export function handleJoinGame(client, data)
 	console.log("Launching handleJoinGame...");
 	const	{ user, connection } = client;
 	const	gameMode = data.mode;
-	const	roomId = data.roomId || `game-${Date.now()}`;
+	const	roomId = data.roomId || `game-${Date.now().toString(36)}`;
 	const	config = data.config || { scoreLimit: 5, difficulty: 'medium' };
 	const	secondPlayerInfo = data.player2 || null;
 	// 1. Find or create the game session
@@ -74,7 +74,7 @@ export function handleRestartGame(client, data)
 
 	// Create a new game with same config
 	const gameMode = data.mode || (oldGameSession ? oldGameSession.gameMode : '1v1');
-	const roomId = `game-${Date.now()}`;
+	const roomId = `game-${Date.now().toString(36)}`;
 	const config = data.config || { 
 		scoreLimit: oldGameSession ? oldGameSession.winScore : 5, 
 		difficulty: oldGameSession ? oldGameSession.difficulty : 'medium' 

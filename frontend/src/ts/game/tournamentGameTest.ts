@@ -141,7 +141,7 @@ export default class Tournament extends Step
 
 	// "Recycle" game instance with current match data and launchGame, which will
 	// start the game API workflow and go to match-render step
-	async launchNextMatch()
+	launchNextMatch()
 	{
 		if (this.bracket && this.currentMatchIndex < this.bracket.length && this.game)
 		{
