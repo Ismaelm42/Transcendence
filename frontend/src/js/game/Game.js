@@ -68,13 +68,33 @@ export default class Game extends Step {
     /***********************************/
     /*********** SETTERS ***************/
     setGameLog(log) {
-        this.log = log;
+        if (log.id !== undefined)
+            this.log.id = log.id;
+        if (log.mode !== undefined)
+            this.log.mode = log.mode;
+        if (log.playerDetails !== undefined)
+            this.log.playerDetails = log.playerDetails;
+        if (log.startTime !== undefined)
+            this.log.startTime = log.startTime;
+        if (log.config !== undefined)
+            this.log.config = log.config;
+        if (log.result !== undefined)
+            this.log.result = log.result;
+        if (log.duration !== undefined)
+            this.log.duration = log.duration;
+        if (log.tournamentId !== undefined)
+            this.log.tournamentId = log.tournamentId;
+        if (log.readyState !== undefined)
+            this.log.readyState = log.readyState;
     }
     setGameMode(mode) {
         this.log.mode = mode;
     }
     setGameConfig(config) {
-        this.log.config = config;
+        if (config.scoreLimit)
+            this.gameConfig.scoreLimit = config.scoreLimit;
+        if (config.difficulty)
+            this.gameConfig.difficulty = config.difficulty;
     }
     setPlayerInfo(playerKey_1) {
         return __awaiter(this, arguments, void 0, function* (playerKey, data = null) {

@@ -82,7 +82,24 @@ export default class Game extends Step
 	/*********** SETTERS ***************/
 	public setGameLog(log: GameData): void
 	{
-		this.log = log;
+		if (log.id !== undefined)
+			this.log.id = log.id;
+		if (log.mode !== undefined)
+			this.log.mode = log.mode;
+		if (log.playerDetails !== undefined)
+			this.log.playerDetails = log.playerDetails;
+		if (log.startTime !== undefined)
+			this.log.startTime = log.startTime;
+		if (log.config !== undefined)
+			this.log.config = log.config;
+		if (log.result !== undefined)
+			this.log.result = log.result;
+		if (log.duration !== undefined)
+			this.log.duration = log.duration;
+		if (log.tournamentId !== undefined)
+			this.log.tournamentId = log.tournamentId;
+		if (log.readyState !== undefined)
+			this.log.readyState = log.readyState;
 	}
 	
 	public setGameMode(mode: string): void
@@ -92,7 +109,10 @@ export default class Game extends Step
 
 	public setGameConfig(config: GameConfig): void
 	{
-		this.log.config = config;
+		if (config.scoreLimit)
+			this.gameConfig.scoreLimit = config.scoreLimit;
+		if (config.difficulty)
+			this.gameConfig.difficulty = config.difficulty;
 	}
 
 	public async setPlayerInfo(playerKey: 'player1' | 'player2', data: {email: string, password: string} | null = null): Promise<void>

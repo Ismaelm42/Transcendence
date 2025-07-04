@@ -28,7 +28,6 @@ export default class GameMatch extends Step
 	constructor(game: Game)
 	{
 		super('game-container');
-		console.log('GameMatch constructed with:', game);
 		this.game = game;
 		this.renderer = game.getGameRender();
 		this.controllers = new GameControllers(this.game);
@@ -105,7 +104,8 @@ export default class GameMatch extends Step
 			this.rematchGame(false);
 			this.controllers.cleanup();
 			this.controllers.destroy();
-			SPA.getInstance().navigate('game-lobby');
+			// TODO: change SPA route 'test' for 'tournament' when ready
+			SPA.getInstance().navigate(this.log.tournamentId ? 'test' : 'game-lobby');
 			this.destroy()
 		});
 	}
