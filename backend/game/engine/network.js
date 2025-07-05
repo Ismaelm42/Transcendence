@@ -31,8 +31,8 @@ export function	broadcastResponse(responseType)
 				break;
 			case 'GAME_END':
 				response.result = {
-					winner: this.metadata.result.winner,
-					loser: this.metadata.result.loser,
+					winner: this.metadata.result.winner?.username,
+					loser: this.metadata.result.loser?.username,
 					score: this.state.scores
 				},
 				response.stats = {

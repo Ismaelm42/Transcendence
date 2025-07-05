@@ -3,6 +3,16 @@ import pkg from '../database/models/index.cjs';
 const { Gamelog } = db;
 const { sequelize, Sequelize } = pkg;
 
+export const createGamelog = async (gamelogData) => {
+	try
+	{
+		const gamelog = await Gamelog.create(gamelogData);
+		return (gamelog);
+	} catch (err) {
+		throw new Error(`Error creating gamelog: ${err.message}`);
+	}
+};
+
 export const getGamelogs = async () => {
 	try {
 		const gamelogs = await Gamelog.findAll({});

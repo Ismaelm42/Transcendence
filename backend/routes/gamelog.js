@@ -42,4 +42,19 @@ export function configureGamelogRoutes(fastify, sequelize) {
 			reply.status(400).send({ error: 'Error fetching user gamelogs ' + err.message });
 		}
 	});
+
+	// Define a POST route to create a new gamelog
+	fastify.post('/post_gamelog', async (request, reply) => {
+		try
+		{
+			const gamelogData = request.body;
+			const gamelog = await crud.gamelog.createGamelog(gamelogData);
+			reply.status(201).send(gamelog);
+		}
+		catch (err)
+		{
+			fastify.log.error(err);
+			reply.status(400).send({ error: 'Error creating gamelog: ' + err.message });
+		}
+	});
 }

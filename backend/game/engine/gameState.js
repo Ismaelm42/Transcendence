@@ -4,6 +4,7 @@
  */
 
 import { gamesList } from "../manager/eventManager.js";
+import { createGamelog } from '../../crud/gamelog.js';
 
 //Set game difficulty which affects AI behavior and ball speed
 export function setDifficulty(level)
@@ -116,9 +117,14 @@ export function endGame(gamesList)
 	// Final update of game logs
 	const gamelogData = this.finalizeGame();
 	// Save game logs in database
-	// POST /create_gamelog
-	// saveGameToDatabase(gamelogData);
-	
+	fetch('https://localhost:8443/post_gamelog', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(gamelogData)
+	})
+	.catch(err => {
+		console.error("Error al guardar gamelog vía endpoint:", err);
+	});
 	// Stop and clean up intervals
 	clearInterval(this.gameLoop);
 	clearInterval(this.aiInterval);

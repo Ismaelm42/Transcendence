@@ -16,15 +16,14 @@ export function finalizeGame()
 	this.metadata.result.finalScore = [...this.state.scores];
 	if (p1Score > p2Score)
 	{
-		this.metadata.result.winner = this.metadata.playerDetails.player1?.username || 'Player 1';
-		this.metadata.result.loser = this.metadata.playerDetails.player2?.username || 'Player 2';
+		this.metadata.result.winner = this.metadata.playerDetails.player1;
+		this.metadata.result.loser = this.metadata.playerDetails.player2;
 	}
 	else
 	{
-		this.metadata.result.winner = this.metadata.playerDetails.player2?.username || 'Player 2';
-		this.metadata.result.loser = this.metadata.playerDetails.player1?.username || 'Player 1';
+		this.metadata.result.winner = this.metadata.playerDetails.player2;
+		this.metadata.result.loser = this.metadata.playerDetails.player1;
 	}
-	
 	return (this.getGamelogData());
 }
 
