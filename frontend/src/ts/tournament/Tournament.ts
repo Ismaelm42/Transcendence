@@ -1,7 +1,7 @@
 import { Step } from '../spa/stepRender.js';
 import { TournamentUI } from '../tournament/TournamentUI.js';
 import { TournamentData, TournamentConfig, TournamentPlayer} from './types.js';
-import { GamePlayer } from '../game/types.js';
+import { GameData, GamePlayer } from '../game/types.js';
 // import { game } from '../game/Game.js';
 
 // Default container ID (I think i should match HTML file)
@@ -14,6 +14,8 @@ export default class Tournament extends Step {
 	// protected games: game[] | null = null;
 	protected ui: TournamentUI;
 	protected tournamentConfig: TournamentConfig = {numberOfPlayers:4, scoreLimit: 5, difficulty: 'medium'};
+	protected bracket: GamePlayer[] = [];
+	protected gameDataArray: GameData[] = [];
 	protected tournamentPendingPlayers: number = this.tournamentConfig.numberOfPlayers;
 
 	/*********** CONSTRUCTOR ***************/
@@ -149,4 +151,93 @@ export default class Tournament extends Step {
 	public setPendingPlayersCount(count: number): void {
 		this.tournamentPendingPlayers = count;
 	}
+
+	public getGameDataArray(): GameData[] {
+		return this.gameDataArray;
+	}
+	
+	public addGameData(gameData: GameData): void {
+		if (!gameData || !gameData.id || !gameData.mode || !gameData.player1 || !gameData.player2) {
+			console.error("Invalid game data provided:", gameData);
+			return;
+		}
+		if (this.gameDataArray.length == this.tournamentConfig.numberOfPlayers) {
+			console.warn("Game data array is already full. Cannot add more game data.");
+			return;
+		}
+		this.gameDataArray.push(gameData);
+		console.log("Game data added to tournament:", gameData);
+		console.log("Current game data array length:", this.gameDataArray.length);
+	}
+
+	public returnMode(player1: GamePlayer, player2: GamePlayer): string {
+		console.log("Returning mode for players:", player1, player2);
+		if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
+				&& player2.email.includes('ai') && player2.email.includes('@transcendence.com') ) {
+			return 'auto';
+		} else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com')) 
+				|| ( player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
+			return '1vAI';
+		} else {
+			return '1v1';
+		}
+	}
+
+	private initialGameData(player1Index: number, player2Index: number){
+		let newGameData: GameData = {
+			id: this.tournamentId + "-match-"  + (this.gameDataArray.length + 1),
+			mode: this.returnMode(this.bracket[player1Index], this.bracket[player2Index]),
+			player1: this.bracket[player1Index],
+			player2: this.bracket[player2Index],
+			startTime: Date.now(),				
+			config: {
+				scoreLimit: this.tournamentConfig.scoreLimit,
+				difficulty: this.tournamentConfig.difficulty
+			},
+			result: {
+				winner: '',
+				loser: '',
+				score: [0, 0]
+			},
+			duration: 0,
+			tournamentId: this.tournamentId,
+			readyState: false
+		};
+		this.addGameData(newGameData);
+	}
+	
+	public setTournamentBracket(bracket: TournamentPlayer[]): void {
+
+		for (const player of bracket) {
+			if (!player.gameplayer) {
+				console.error("Invalid player data in bracket:", player);
+				return;
+			} else {
+				this.bracket.push(player.gameplayer);
+			}
+		}
+		console.log("Setting tournament bracket with players:", this.bracket);
+
+		switch (this.bracket.length) {
+			case 4:
+				this.initialGameData(0, 1);
+				this.initialGameData(2, 3);
+				break;
+			case 6:
+				this.initialGameData(0, 1);
+				this.initialGameData(2, 3);
+				this.initialGameData(4, 5);
+				break;
+			case 8:
+				this.initialGameData(0, 1);
+				this.initialGameData(2, 3);
+				this.initialGameData(4, 5);
+				this.initialGameData(6, 7);
+				break;
+		}
+	}
+
+	public updateBracket(){
+	}
+	
 }

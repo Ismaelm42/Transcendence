@@ -2,13 +2,16 @@
  * GameUI.ts -> UI setup and event listeners
  */
 
+import { SPA } from '../spa/spa.js';
 import Tournament from './Tournament.js'
 import { TournamentConfig, TournamentPlayer } from './types.js';
 import { PlayerCard } from './playerCard.js'; 
 import { GamePlayer } from '../game/types.js';
 import { showMessage } from '../modal/showMessage.js';
 import Game from '../game/Game.js';
+import { GameUI } from '../game/GameUI.js';
 
+const DEFAULT_CONTAINER_ID = "tournament-container";
 
 // Assuming you have a utility function to prepare players
 export class TournamentUI
@@ -138,58 +141,7 @@ export class TournamentUI
 					});
 				
 			}
-		}
-		);
-
-		// const preparePlayers = (numberOfPlayers: number): void => {
-		// 	this.tournament.setEmptyTournamentPlayers(numberOfPlayers);
-		// 	getFirstPlayer();
-		// 	console.log ("Pendingplayers desde prepare players: ", this.tournament.getPendingPlayersCount());
-		// 	console.log("Preparing players for tournament with number of players: ", numberOfPlayers);
-			
-		// 	for (let i : number = 1; i <= numberOfPlayers; i++) {
-				
-		// 		console.log("Preparing player card for player: ", i + 1);
-		// 		const playersContainer = document.getElementById('select-player-container');
-		// 		// // const playerContainer = document.getElementById('player-container');
-		// 		if (playersContainer )
-		// 		{				
-		// 			playersContainer.style.display = "block";
-		// 			new PlayerCard(i+1, playersContainer);
-		// 		}
-		// 	}	
-		// }
-	
-		// const getFirstPlayer = async (): Promise<void> => {
-		// 	try
-		// 	{
-		// 		const response = await fetch("https://localhost:8443/back//verify_first_player", {
-		// 			method: "POST",
-		// 			credentials: 'include',	
-		// 		});
-		// 		const result = await response.json();
-		// 		if (!response.ok)
-		// 		{
-		// 			console.log(`Error: ${result.message}`);
-		// 		}
-		// 		else{
-		// 			const playerOne: GamePlayer = {
-		// 				id: result.id,
-		// 				username: result.username,
-		// 				tournamentUsername: result.tournamentUsername,
-		// 				email: result.email,
-		// 				avatarPath: result.avatarPath
-		// 			};
-		// 			this.tournament.setTournamentPlayer( 0,'ready', playerOne);
-		// 			// Esta llamada hay que repetirla para cada jugador que se registre
-		// 			this.renderRegisteredPlayers(this.tournament.getTournamentPlayers());
-		// 		}
-		// 	}
-		// 	catch (error){
-		// 		console.error("Error while verifying:", error);
-		// 	}
-		// }
-
+		});
 		document.getElementById('remoteTournament')?.addEventListener('click', async () => {
 			// await this.game.setPlayerInfo('player1', null);
 			// this.game.setGuestInfo('player2', 'ai');
@@ -293,9 +245,9 @@ export class TournamentUI
 				} else if (selectedOption === 3) {// AI 
 					tournamentPlayer.gameplayer = {
 						id: '',
-						username: `AI Player ${tournamentPlayer.Index}`,
-						tournamentUsername: `AI Player ${tournamentPlayer.Index}`,
-						email: '',
+						username: `Ai${tournamentPlayer.Index}`,
+						tournamentUsername: `Ai${tournamentPlayer.Index}`,
+						email: `ai${tournamentPlayer.Index}@transcendence.com`,
 						avatarPath: `https://localhost:8443/back/images/avatar-1${i}.png`
 					};
 					tournamentPlayer.status = 'ready';
@@ -352,13 +304,88 @@ export class TournamentUI
 			  if(response.ok) {
 				// const FirsGameui = new GameUI(new Game());
 				console.log("Tournament bracket prepared successfully:", data);
+				this.tournament.setTournamentBracket(data);
 				this.renderBracket(data);
 				
 				await new Promise(resolve => setTimeout(resolve, 5000));
-				// const firstGame = new Game();
+				console.log("Antes de new GameFirst game log set:");
+				
+				console.log("this.tournament.getGameDataArray", JSON.stringify(this.tournament.getGameDataArray()));
+				// let gameconfig 
 
-				// firstGame.setTournamentId(tounamentData.Tid? tounamentData.Tid : 0);
-				}
+				// // const firstGame = new Game();
+				// const firstGame = new Game(DEFAULT_CONTAINER_ID, "tournament-game");
+				// firstGame.setGameMode('1v1');
+				// const firstGameData=
+				// {
+				// 	id: "game-" + Date.now(),
+				// 	mode: '1v1',
+				// 	player1: this.tournament.getTournamentPlayers()[0].gameplayer,
+				// 	player2: this.tournament.getTournamentPlayers()[1].gameplayer,
+				// 	startTime: Date.now(),
+				// 	config: tounamentData.Tconfig,
+				// 	result: {winner: '', loser: '', score: [0, 0] as [number, number]},
+				// 	duration: 0,
+				// 	tournamentId: tounamentData.Tid ? tounamentData.Tid : 0,
+				// 	readyState: true
+				// }
+				// firstGame.setGameLog(firstGameData);
+				// firstGame.setGameConfig({
+				// 	scoreLimit: tounamentData.Tconfig.scoreLimit,
+				// 	difficulty: tounamentData.Tconfig.difficulty
+				// });
+				// const	spa = SPA.getInstance();
+				// spa.currentGame = firstGame;
+				// firstGame.getGameUI().launchGame();
+
+
+				// 	const panel = document.getElementById('current-match-panel');
+				// 	if (!panel || !this.tournament.getGameDataArray())
+				// 		return;
+				// 	const match = firstGameData;
+				// 	if (!match)
+				// 	{
+				// 		panel.innerHTML = "<p>No more matches.</p>";
+				// 		return;
+				// 	}
+				// 	panel.innerHTML = `
+				// 	<div class="bg-gray-800 border-2 border-[#00ff99] rounded-xl shadow-lg p-6 max-w-md mx-auto my-8 text-white">
+				// 		<h3 class="text-[#00ff99] text-xl font-bold mb-4 text-center tracking-wide">Current Match</h3>
+				// 		<div class="flex items-center justify-center gap-8 mb-4">
+				// 			<div class="flex flex-col items-center">
+				// 				<img src="${match.player1?.avatarPath || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
+				// 				<span class="font-semibold">${match.player1?.username}</span>
+				// 			</div>
+				// 			<span class="text-2xl font-bold text-[#00ff99]">VS</span>
+				// 			<div class="flex flex-col items-center">
+				// 				<img src="${match.player2?.avatarPath || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
+				// 				<span class="font-semibold">${match.player2?.username}</span>
+				// 			</div>
+				// 		</div>
+				// 		<div class="flex justify-between text-sm text-gray-300 mb-2">
+				// 			<span>Match ID:</span>
+				// 			<span class="font-medium text-white">${match.id}</span>
+				// 		</div>
+				// 		<div class="flex justify-between text-sm text-gray-300">
+				// 			<span>Score Limit:</span>
+				// 			<span class="font-medium text-white">${match.config?.scoreLimit}</span>
+				// 			<span class="ml-4">Difficulty:</span>
+				// 			<span class="font-medium text-white">${match.config?.difficulty}</span>
+				// 		</div>
+				// 	</div>
+				// `;
+
+				// this.showOnly('game-container');
+				// await firstGame.getGameConnection().establishConnection().then(() => {
+				// 	console.log("Game connection established for first game.");
+				// 	firstGame.getGameUI().launchGame();
+				// 	console.log("First game launched with players:", firstGame.getGameLog().player1, firstGame.getGameLog().player2);
+				// });
+				// console.log("First game log set:", firstGame.getGameLog());
+				// // firstGame.setTournamentId(tounamentData.Tid? tounamentData.Tid : 0);
+				// firstGame.setTournamentPlayers(
+				// 	tounamentData.Players[0].gameplayer, tounamentData.Players[1].gameplayer);
+				// }
 			// if (!response.ok) {
 			// 	console.error("Error preparing tournament bracket:", data.message);
 			// 	showMessage(`Error: ${data.message}`, null);
@@ -379,6 +406,7 @@ export class TournamentUI
 			// 		</div>
 			// 	</div>
 			// `;
+			}
 		} catch (error) {
 		     console.error("Error while preparing the tournament bracket:", error);
 		} finally {
@@ -431,11 +459,8 @@ export class TournamentUI
 					wrapper.innerHTML = parsed;
 					appElement.appendChild(wrapper);
 				});
-			}
+	}
 				
-			
-
-
 	async getFirstPlayer(): Promise<void> {
 		try {
 			const response = await fetch("https://localhost:8443/back//verify_first_player", {

@@ -26,7 +26,7 @@ export default class Game extends Step
 	protected	match: GameMatch | null = null;
 	/***************************************/
 	/*********** CONSTRUCTOR ***************/
-	constructor(containerId: string = DEFAULT_CONTAINER_ID)
+	constructor(containerId: string = DEFAULT_CONTAINER_ID, id?: string)
 	{
 		super(containerId);
 		this.connection = new GameConnection(this);
@@ -44,6 +44,8 @@ export default class Game extends Step
 			tournamentId: null,
 			readyState: false
 		};
+		console.log("Game instance created with container ID:", containerId);
+		console.log("Game log initialized:", this.log);
 	}
 
 	/************ CORE *****************/

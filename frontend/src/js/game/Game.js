@@ -19,7 +19,7 @@ const DEFAULT_CONTAINER_ID = "game-container";
 export default class Game extends Step {
     /***************************************/
     /*********** CONSTRUCTOR ***************/
-    constructor(containerId = DEFAULT_CONTAINER_ID) {
+    constructor(containerId = DEFAULT_CONTAINER_ID, id) {
         super(containerId);
         this.gameConfig = { scoreLimit: 5, difficulty: 'medium' };
         this.match = null;
@@ -38,6 +38,8 @@ export default class Game extends Step {
             tournamentId: null,
             readyState: false
         };
+        console.log("Game instance created with container ID:", containerId);
+        console.log("Game log initialized:", this.log);
     }
     /************ CORE *****************/
     /*********** METHODS ***************/
