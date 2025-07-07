@@ -111,20 +111,18 @@ export function checkScoring(gamesList)
 }
 
 // CLean finish for game + call logs/DB methods for storing and/or showing info on front side
-export function endGame(gamesList)
+export async function endGame(gamesList)
 {
 	this.isFinished = true;
 	// Final update of game logs
 	const gamelogData = this.finalizeGame();
-	// Save game logs in database
-	fetch('https://localhost:8443/post_gamelog', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(gamelogData)
-	})
-	.catch(err => {
-		console.error("Error al guardar gamelog vía endpoint:", err);
-	});
+	try
+	{
+		await createGamelog(gamelogData);
+		console.log('Gamelog saved directly to DB');
+	} catch (err) {
+		console.error('Error saving gamelog:', err);
+	}
 	// TODO: add another logic for tournament games if needed
 	// Stop and clean up intervals
 	clearInterval(this.gameLoop);
