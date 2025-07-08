@@ -14,6 +14,7 @@ export default class GameSession
 		this.state = this.resetState();
 		this.resetBall();
 		this.gameLoop = null;
+		this.isPaused = false;
 		this.aiInterval = null;
 		this.lastUpdateTime = Date.now();
 		this.isResetting = false;
@@ -69,6 +70,25 @@ export default class GameSession
 			// 4. Send updated state to all players in game
 			this.broadcastResponse('GAME_STATE');
 		}, 16); // ~60fps (1000ms/60 ≈ 16ms)
+	}
+
+	pauseGame()
+	{
+		if (this.gameLoop)
+		{
+			clearInterval(this.gameLoop);
+			this.gameLoop = null;
+			this.isPaused = true;
+		}
+	}
+
+	resumeGame(gameList)
+	{
+		if (!this.gameLoop && this.isPaused)
+		{
+			this.startGameLoop(gameList);
+			this.isPaused = false;
+		}
 	}
 
 	// Get game configuration

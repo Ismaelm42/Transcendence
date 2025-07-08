@@ -182,7 +182,7 @@ export function handleClientReady(client, data)
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
-	const COUNTDOWN_SECONDS = 5;
+	const COUNTDOWN_SECONDS = 3;
 
 	if (!gameSession)
 		return;
@@ -238,4 +238,26 @@ export function handleGetReadyState(client)
 		playerDetails,
 		readyStates
 	}));
+}
+
+export function handlePauseGame(client, data)
+{
+	const { user } = client;
+	const clientData = clients.get(user.id);
+	const gameSession = gamesList.get(clientData.roomId);
+	if (!gameSession)
+		return ;
+	gameSession.pauseGame();
+	gameSession.broadcastResponse('GAME_PAUSED');
+}
+
+export function handleResumeGame(client, data)
+{
+	const { user } = client;
+	const clientData = clients.get(user.id);
+	const gameSession = gamesList.get(clientData.roomId);
+	if (!gameSession)
+		return ;
+	gameSession.resumeGame(gamesList);
+	gameSession.broadcastResponse('GAME_RESUMED');
 }

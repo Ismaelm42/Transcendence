@@ -113,6 +113,7 @@
     --leading-tight: 1.25;
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
     --drop-shadow-lg: 0 4px 4px rgb(0 0 0 / 0.15);
     --blur-md: 12px;
     --default-transition-duration: 150ms;
@@ -466,6 +467,9 @@
   }
   .hidden {
     display: none;
+  }
+  .inline-block {
+    display: inline-block;
   }
   .inline-flex {
     display: inline-flex;
@@ -833,6 +837,9 @@
   }
   .rounded {
     border-radius: 0.25rem;
+  }
+  .rounded-2xl {
+    border-radius: var(--radius-2xl);
   }
   .rounded-full {
     border-radius: calc(infinity * 1px);
@@ -1359,6 +1366,9 @@
   .text-yellow-400 {
     color: var(--color-yellow-400);
   }
+  .text-yellow-500 {
+    color: var(--color-yellow-500);
+  }
   .uppercase {
     text-transform: uppercase;
   }
@@ -1387,6 +1397,10 @@
   }
   .shadow-md {
     --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .shadow-xl {
+    --tw-shadow: 0 20px 25px -5px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .ring-offset-gray-800 {
@@ -1633,6 +1647,13 @@
       }
     }
   }
+  .hover\:bg-yellow-500 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-yellow-500);
+      }
+    }
+  }
   .hover\:bg-yellow-800 {
     &:hover {
       @media (hover: hover) {
@@ -1742,6 +1763,11 @@
       --tw-ring-color: var(--color-green-300);
     }
   }
+  .focus\:ring-green-600 {
+    &:focus {
+      --tw-ring-color: var(--color-green-600);
+    }
+  }
   .focus\:ring-indigo-300 {
     &:focus {
       --tw-ring-color: var(--color-indigo-300);
@@ -1770,6 +1796,11 @@
   .focus\:ring-yellow-300 {
     &:focus {
       --tw-ring-color: var(--color-yellow-300);
+    }
+  }
+  .focus\:ring-yellow-600 {
+    &:focus {
+      --tw-ring-color: var(--color-yellow-600);
     }
   }
   .focus\:outline {

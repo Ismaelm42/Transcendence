@@ -126,7 +126,13 @@ export class GameConnection
 									this.game.getGameMatch()?.stopReadyStatePolling();
 								}
 								this.game.getGameMatch()?.showCountdown(data.seconds || 3);
-								break;
+								break ;
+							case 'GAME_PAUSED':
+								// Show pause overlay, stop rendering/inputs
+								break ;
+							case 'GAME_RESUMED':
+								// Hide pause overlay, resume rendering/inputs
+								break ;
 							default:
 								console.log(`Received message with type: ${data.type}`);
 						}

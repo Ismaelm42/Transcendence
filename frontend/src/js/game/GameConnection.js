@@ -122,6 +122,12 @@ export class GameConnection {
                                     }
                                     (_g = this.game.getGameMatch()) === null || _g === void 0 ? void 0 : _g.showCountdown(data.seconds || 3);
                                     break;
+                                case 'GAME_PAUSED':
+                                    // Show pause overlay, stop rendering/inputs
+                                    break;
+                                case 'GAME_RESUMED':
+                                    // Hide pause overlay, resume rendering/inputs
+                                    break;
                                 default:
                                     console.log(`Received message with type: ${data.type}`);
                             }

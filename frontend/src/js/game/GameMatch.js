@@ -49,30 +49,52 @@ export default class GameMatch extends Step {
                 this.renderer.canvas = canvas;
                 this.renderer.ctx = canvas.getContext('2d');
             }
-            // Modal to select and send CLIENT_READY message
-            const readyModal = document.getElementById('ready-modal');
-            const readyBtn = document.getElementById('ready-btn');
-            const waitingMsg = document.getElementById('waiting-msg');
-            const player1 = this.log.playerDetails.player1;
-            const player2 = this.log.playerDetails.player2;
-            document.getElementById('player1-name').textContent = (player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
-            document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
-            document.getElementById('player2-name').textContent = (player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
-            document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
-            if (readyBtn && waitingMsg) {
-                readyBtn.onclick = () => {
+            this.showReadyModal();
+            const pauseModal = document.getElementById('pause-modal');
+            const pauseBtn = document.getElementById('pause-btn');
+            if (pauseModal && pauseBtn) {
+                pauseBtn.onclick = () => {
                     var _a;
-                    readyBtn.disabled = true;
-                    waitingMsg.textContent = "Waiting for opponent confirmation...";
-                    (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'CLIENT_READY' }));
-                    if (this.ai)
-                        this.ai.start();
-                    this.controllers.setupControllers();
+                    (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'PAUSE_GAME' }));
+                    pauseModal.style.display = 'flex';
                 };
             }
-            if (this.log.mode === 'remote' && readyModal)
-                this.startReadyStatePolling();
+            const resumeBtn = document.getElementById('resume-btn');
+            if (pauseModal && resumeBtn) {
+                resumeBtn.onclick = () => {
+                    var _a;
+                    (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'RESUME_GAME' }));
+                    pauseModal.style.display = 'none';
+                };
+            }
         });
+    }
+    /**
+     * Display player waiting/ready status modal when game created
+     */
+    showReadyModal() {
+        const readyModal = document.getElementById('ready-modal');
+        const readyBtn = document.getElementById('ready-btn');
+        const waitingMsg = document.getElementById('waiting-msg');
+        const player1 = this.log.playerDetails.player1;
+        const player2 = this.log.playerDetails.player2;
+        document.getElementById('player1-name').textContent = (player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
+        document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
+        document.getElementById('player2-name').textContent = (player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
+        document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
+        if (readyBtn && waitingMsg) {
+            readyBtn.onclick = () => {
+                var _a;
+                readyBtn.disabled = true;
+                waitingMsg.textContent = "Waiting for opponent confirmation...";
+                (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'CLIENT_READY' }));
+                if (this.ai)
+                    this.ai.start();
+                this.controllers.setupControllers();
+            };
+        }
+        if (this.log.mode === 'remote' && readyModal)
+            this.startReadyStatePolling();
     }
     /**
      * Display game results when a game ends

@@ -1,14 +1,21 @@
 <!-- Game canvas, by default-->
 <div
-  id="game-container"
-  class="w-full max-w-[1200px] mx-auto text-center flex flex-col items-center"
+	id="game-container"
+	class="w-full max-w-[1200px] mx-auto text-center flex flex-col items-center"
 >
-  <canvas
-	id="game-canvas"
-	width="800"
-	height="600"
-	class="bg-black mx-auto block max-w-full h-auto"
+	<canvas
+		id="game-canvas"
+		width="800"
+		height="600"
+		class="bg-black mx-auto block max-w-full h-auto"
   ></canvas>
+	<button
+		id="pause-btn"
+		class="mt-6 bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-yellow-600"
+		type="button"
+	>
+	⏸ Pause
+	</button>
 </div>
 
 <!-- Ready-waiting players modal overlay -->
@@ -67,4 +74,21 @@
 	</div>
 
 	</div>
+</div>
+
+<!-- Game Paused overlay, hidden by default -->
+<div id="pause-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+  style="display: none;">
+  <div class="bg-white rounded-lg px-8 py-6 flex flex-col items-center shadow-xl">
+	<span class="text-4xl font-bold text-yellow-500 mb-6 font-[Tektur] flex items-center gap-2">
+	  <svg class="w-8 h-8 text-yellow-500 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+	  Game Paused
+	</span>
+	<button id="resume-btn"
+	  class="mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+	  type="button">
+	  ▶ Resume
+	</button>
+  </div>
 </div>

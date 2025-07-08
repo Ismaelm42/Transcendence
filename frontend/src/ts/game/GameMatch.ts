@@ -61,7 +61,31 @@ export default class GameMatch extends Step
 			this.renderer.canvas = canvas;
 			this.renderer.ctx = canvas.getContext('2d');
 		}
-		// Modal to select and send CLIENT_READY message
+		this.showReadyModal();
+		const	pauseModal = document.getElementById('pause-modal');
+		const	pauseBtn = document.getElementById('pause-btn');
+		if (pauseModal && pauseBtn)
+		{
+			pauseBtn.onclick = () => {
+				this.connection.socket?.send(JSON.stringify({ type: 'PAUSE_GAME' }));
+				pauseModal.style.display = 'flex';
+			};
+		}
+		const	resumeBtn = document.getElementById('resume-btn');
+		if (pauseModal && resumeBtn)
+		{
+			resumeBtn.onclick = () => {
+				this.connection.socket?.send(JSON.stringify({ type: 'RESUME_GAME' }));
+				pauseModal.style.display = 'none';
+			};
+		}
+	}
+	
+	/**
+	 * Display player waiting/ready status modal when game created
+	 */
+	public	showReadyModal() : void
+	{
 		const readyModal = document.getElementById('ready-modal');
 		const readyBtn = document.getElementById('ready-btn') as HTMLButtonElement;
 		const waitingMsg = document.getElementById('waiting-msg');
@@ -86,7 +110,8 @@ export default class GameMatch extends Step
 
 		if (this.log.mode === 'remote' && readyModal)
 			this.startReadyStatePolling();
-	}	
+	}
+
 	/**
 	 * Display game results when a game ends
 	 * @param gameData Complete game data
