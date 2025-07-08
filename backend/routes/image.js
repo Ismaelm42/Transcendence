@@ -45,4 +45,33 @@ export function configureImageRoutes(fastify, sequelize) {
 			return reply.send({ status: 'ok', message: 'Image deleted successfully' });
 		}
 	});
+
+	// Route to get the path a random avatar on images folder
+	// fastify.get('/random_avatar', async (request, reply) => {
+	// 	const imagesDir = path.join(process.cwd(), 'backend/images');
+	// 	const files = fs.readdirSync(imagesDir).filter(file =>
+	// 		file.startsWith('avatar-') && file.endsWith('.png')
+	// 	);
+	// 	if (files.length === 0)
+	// 		return (reply.status(404).send({ error: 'No avatars found' }));
+	// 	const randomIndex = Math.floor(Math.random() * files.length);
+	// 	const avatarPath = `https://localhost:8443/back/images/${files[randomIndex]}`;
+	// 	reply.send({ avatarPath });
+	// });
+	fastify.get('/random_avatar', async (request, reply) => {
+		const imagesDir = path.join(process.cwd(), '/images');
+		if (!fs.existsSync(imagesDir)) {
+			
+			return reply.status(404).send({ error: 'Avatar images directory not found' });
+		}
+		const files = fs.readdirSync(imagesDir).filter(file =>
+			file.startsWith('avatar-') && file.endsWith('.png')
+		);
+		if (files.length === 0) {
+			return reply.status(404).send({ error: 'No avatars found' });
+		}
+		const randomIndex = Math.floor(Math.random() * files.length);
+		const avatarPath = `https://localhost:8443/back/images/${files[randomIndex]}`;
+		reply.send({ avatarPath });
+	});
 }

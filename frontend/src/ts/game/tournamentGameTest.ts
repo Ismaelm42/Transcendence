@@ -5,6 +5,7 @@ import Game from '../game/Game.js';
 import { SPA } from '../spa/spa.js';
 import { Step } from "../spa/stepRender.js";
 import { GamePlayer, GameConfig, GameData } from '../game/types.js';
+import { fetchRandomAvatarPath } from '../game/utils.js'
 
 // Default container ID (I think it must match HTML file)
 const DEFAULT_CONTAINER_ID = "tournament-container";
@@ -96,13 +97,15 @@ export default class Tournament extends Step
 	}
 
 	// Matchmaking first (or random) and then fill each game.log (metadata) of the array
-	generateTestBracket(count : number)
+	async generateTestBracket(count : number)
 	{
 		if (!this.bracket)
 			this.bracket = [];
 		for (let i = 0; i < count; i++)
 		{
-			const matchData: GameData = {
+			const	avatarPlayer1 : string = await fetchRandomAvatarPath();
+			const	avatarPlayer2 : string = await fetchRandomAvatarPath();
+			const	matchData : GameData = {
 				id: `test-match-${i + 1}`,
 				mode: '1v1',
 				playerDetails: {
@@ -111,14 +114,14 @@ export default class Tournament extends Step
 						username: `Player${i * 2 + 1}`,
 						tournamentUsername: `Player${i * 2 + 1}`,
 						email: `player${i * 2 + 1}@test.com`,
-						avatarPath: 'https://localhost:8443/back/images/avatar-4.png'
+						avatarPath: avatarPlayer1
 					},
 					player2: {
 						id: 40 + (i * 2 + 2),
 						username: `Player${i * 2 + 2}`,
 						tournamentUsername: `Player${i * 2 + 2}`,
 						email: `player${i * 2 + 2}@test.com`,
-						avatarPath: 'https://localhost:8443/back/images/avatar-19.png'
+						avatarPath: avatarPlayer2
 					}
 				},
 				startTime: Date.now(),

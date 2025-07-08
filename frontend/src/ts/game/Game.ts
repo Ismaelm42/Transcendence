@@ -8,6 +8,7 @@ import { GameUI } from './GameUI.js';
 import { Step } from '../spa/stepRender.js';
 import { GameData, GameConfig, GamePlayer} from './types.js';
 import GameMatch from './GameMatch.js';
+import { fetchRandomAvatarPath } from './utils.js'
 
 // Default container ID (I think i should match HTML file)
 const DEFAULT_CONTAINER_ID = "game-container";
@@ -123,15 +124,17 @@ export default class Game extends Step
 		this.log.playerDetails[playerKey] = user;
 	}
 
-	public setGuestInfo(playerKey: 'player1' | 'player2', name: 'ai'| 'guest'): void
+	public async setGuestInfo(playerKey: 'player1' | 'player2', name: 'ai'| 'guest'): Promise<void>
 	{
 		const	wildcardID : number = name === 'guest' ? -1 : -2;
-		const tempUser : GamePlayer = {
+		const	avatarPath : string = await fetchRandomAvatarPath();
+		
+		const	tempUser : GamePlayer = {
 			id: wildcardID,
 			username: `${name}-${Date.now().toString(36)}`,
 			tournamentUsername: 'name',
 			email: `${name}-${Date.now().toString(36)}@email.com`,
-			avatarPath: '/images/default-avatar.png'
+			avatarPath: avatarPath
 		};
 		this.log.playerDetails[playerKey] = tempUser;
 	}

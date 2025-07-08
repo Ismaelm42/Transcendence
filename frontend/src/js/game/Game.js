@@ -14,6 +14,7 @@ import { GameConnection } from './GameConnection.js';
 import { GameRender } from './GameRender.js';
 import { GameUI } from './GameUI.js';
 import { Step } from '../spa/stepRender.js';
+import { fetchRandomAvatarPath } from './utils.js';
 // Default container ID (I think i should match HTML file)
 const DEFAULT_CONTAINER_ID = "game-container";
 export default class Game extends Step {
@@ -105,15 +106,18 @@ export default class Game extends Step {
         });
     }
     setGuestInfo(playerKey, name) {
-        const wildcardID = name === 'guest' ? -1 : -2;
-        const tempUser = {
-            id: wildcardID,
-            username: `${name}-${Date.now().toString(36)}`,
-            tournamentUsername: 'name',
-            email: `${name}-${Date.now().toString(36)}@email.com`,
-            avatarPath: '/images/default-avatar.png'
-        };
-        this.log.playerDetails[playerKey] = tempUser;
+        return __awaiter(this, void 0, void 0, function* () {
+            const wildcardID = name === 'guest' ? -1 : -2;
+            const avatarPath = yield fetchRandomAvatarPath();
+            const tempUser = {
+                id: wildcardID,
+                username: `${name}-${Date.now().toString(36)}`,
+                tournamentUsername: 'name',
+                email: `${name}-${Date.now().toString(36)}@email.com`,
+                avatarPath: avatarPath
+            };
+            this.log.playerDetails[playerKey] = tempUser;
+        });
     }
     setTournamentId(id) {
         this.log.tournamentId = id;

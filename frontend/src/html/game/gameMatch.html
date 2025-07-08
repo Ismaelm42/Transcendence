@@ -3,24 +3,27 @@
 	<canvas id="game-canvas" width="800" height="600" style="background-color: black; margin: 0 auto; display: block; max-width: 100%; height: auto;"></canvas>
 </div>
 
-<!-- Modal multiusos de estado de jugadores -->
-<div id="ready-modal" class="modal" style="display: flex;">
-	<div class="modal-content flex gap-8 items-center justify-center">
-		<div class="player-status" id="player1-status">
-			<img id="player1-avatar" src="/images/default-avatar.png" class="w-16 h-16 rounded-full border-2 mb-2" />
-			<div id="player1-name">Esperando jugador 1...</div>
-			<div id="player1-ready" class="text-green-400 font-bold"></div>
-		</div>
-		<div class="flex flex-col items-center">
-			<button id="ready-btn" class="bg-green-500 text-white px-4 py-2 rounded font-bold">¡Estoy listo!</button>
-			<div id="waiting-msg" class="text-gray-400 mt-2"></div>
-		</div>
-		<div class="player-status" id="player2-status">
-			<img id="player2-avatar" src="/images/default-avatar.png" class="w-16 h-16 rounded-full border-2 mb-2" />
-			<div id="player2-name">Esperando jugador 2...</div>
-			<div id="player2-ready" class="text-green-400 font-bold"></div>
-		</div>
+<div id="ready-modal"
+	class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+	style="display: flex;">
+	<div class="flex flex-col items-center min-w-[140px]">
+		<img id="player1-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
+		<div id="player1-name" class="text-white text-lg font-semibold mb-1">Waiting for player 1...</div>
+		<div id="player1-ready" class="text-green-400 font-bold"></div>
 	</div>
+	<div class="flex flex-col items-center gap-2">
+	  <button id="ready-btn"
+			  class="bg-green-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-green-600 transition">
+		Ready to play!
+	  </button>
+	  <div id="waiting-msg" class="text-gray-300 text-center min-h-[1.5em]"></div>
+	</div>
+	<div class="flex flex-col items-center min-w-[140px]">
+	  <img id="player2-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
+	  <div id="player2-name" class="text-white text-lg font-semibold mb-1">Waiting for player 2...</div>
+	  <div id="player2-ready" class="text-green-400 font-bold"></div>
+	</div>
+  </div>
 </div>
 
 <!-- Game results overlay, hidden by default -->

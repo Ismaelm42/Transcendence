@@ -13,6 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import Game from '../game/Game.js';
 import { SPA } from '../spa/spa.js';
 import { Step } from "../spa/stepRender.js";
+import { fetchRandomAvatarPath } from '../game/utils.js';
 // Default container ID (I think it must match HTML file)
 const DEFAULT_CONTAINER_ID = "tournament-container";
 export default class Tournament extends Step {
@@ -89,44 +90,48 @@ export default class Tournament extends Step {
     }
     // Matchmaking first (or random) and then fill each game.log (metadata) of the array
     generateTestBracket(count) {
-        if (!this.bracket)
-            this.bracket = [];
-        for (let i = 0; i < count; i++) {
-            const matchData = {
-                id: `test-match-${i + 1}`,
-                mode: '1v1',
-                playerDetails: {
-                    player1: {
-                        id: 40 + (i * 2 + 1),
-                        username: `Player${i * 2 + 1}`,
-                        tournamentUsername: `Player${i * 2 + 1}`,
-                        email: `player${i * 2 + 1}@test.com`,
-                        avatarPath: 'https://localhost:8443/back/images/avatar-4.png'
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.bracket)
+                this.bracket = [];
+            for (let i = 0; i < count; i++) {
+                const avatarPlayer1 = yield fetchRandomAvatarPath();
+                const avatarPlayer2 = yield fetchRandomAvatarPath();
+                const matchData = {
+                    id: `test-match-${i + 1}`,
+                    mode: '1v1',
+                    playerDetails: {
+                        player1: {
+                            id: 40 + (i * 2 + 1),
+                            username: `Player${i * 2 + 1}`,
+                            tournamentUsername: `Player${i * 2 + 1}`,
+                            email: `player${i * 2 + 1}@test.com`,
+                            avatarPath: avatarPlayer1
+                        },
+                        player2: {
+                            id: 40 + (i * 2 + 2),
+                            username: `Player${i * 2 + 2}`,
+                            tournamentUsername: `Player${i * 2 + 2}`,
+                            email: `player${i * 2 + 2}@test.com`,
+                            avatarPath: avatarPlayer2
+                        }
                     },
-                    player2: {
-                        id: 40 + (i * 2 + 2),
-                        username: `Player${i * 2 + 2}`,
-                        tournamentUsername: `Player${i * 2 + 2}`,
-                        email: `player${i * 2 + 2}@test.com`,
-                        avatarPath: 'https://localhost:8443/back/images/avatar-19.png'
-                    }
-                },
-                startTime: Date.now(),
-                config: {
-                    scoreLimit: 2,
-                    difficulty: 'medium'
-                },
-                result: {
-                    winner: '',
-                    loser: '',
-                    score: [0, 0]
-                },
-                duration: 0,
-                tournamentId: 1,
-                readyState: true
-            };
-            this.bracket.push(matchData);
-        }
+                    startTime: Date.now(),
+                    config: {
+                        scoreLimit: 2,
+                        difficulty: 'medium'
+                    },
+                    result: {
+                        winner: '',
+                        loser: '',
+                        score: [0, 0]
+                    },
+                    duration: 0,
+                    tournamentId: 1,
+                    readyState: true
+                };
+                this.bracket.push(matchData);
+            }
+        });
     }
     // "Recycle" game instance with current match data and launchGame, which will
     // start the game API workflow and go to match-render step

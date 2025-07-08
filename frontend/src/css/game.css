@@ -1,103 +1,88 @@
-.game-container {
-	position: relative;
-	width: 100%;
-	height: 70vh;
-	background: #000;
-	overflow: hidden;
-}
+/*Not sure if I can add any .css index.html beside output.css and custom.css*/
 
-.paddle {
-	position: absolute;
-	width: 15px;
-	height: 100px;
-	background: white;
-	left: 20px; /* Right paddle positioned via JS */
-	transition: top 0.1s ease-out;
-}
-
-.ball {
-	position: absolute;
-	width: 20px;
-	height: 20px;
-	background: white;
-	border-radius: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.score {
-	position: absolute;
-	top: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	color: white;
-	font-size: 2rem;
-}
-
-.controls {
-	position: absolute;
-	bottom: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.game-results-overlay {
+/* Modal overlay: dims background and centers modal */
+#ready-modal.modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
-}
-
-.results-modal {
-    background-color: #272727;
-    border: 3px solid #00ff99;
-    border-radius: 10px;
-    padding: 2rem;
-    width: 80%;
-    max-width: 500px;
-    color: white;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);
-}
-
-.results-modal h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    color: #00ff99;
-}
-
-.result-content {
-    margin-bottom: 2rem;
-}
-
-.result-content p {
-    margin: 0.8rem 0;
-    font-size: 1.2rem;
-}
-
-.result-actions {
-    display: flex;
     justify-content: center;
+}
+
+/* Modal content: rounded, centered, flex row */
+#ready-modal .modal-content {
+    background: #1a2233;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    padding: 2rem 3rem;
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Player avatar and status */
+#ready-modal .player-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 160px;
+}
+
+#ready-modal .player-status img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+    background: #eee;
+}
+
+#ready-modal .player-status div {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+}
+
+#ready-modal .player-status .text-green-400 {
+    color: #22c55e;
+    font-weight: bold;
+}
+
+/* Center section (button and message) */
+#ready-modal .center-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 1rem;
 }
 
-.result-actions button {
-    background-color: #00ff99;
-    color: #272727;
+#ready-modal #ready-btn {
+    background: #22c55e;
+    color: #fff;
     border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s;
 }
 
-.result-actions button:hover {
-    background-color: white;
-    transform: scale(1.05);
+#ready-modal #ready-btn:disabled {
+    background: #16a34a;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+#ready-modal #waiting-msg {
+    color: #aaa;
+    margin-top: 0.5rem;
+    min-height: 1.5em;
+    text-align: center;
 }
