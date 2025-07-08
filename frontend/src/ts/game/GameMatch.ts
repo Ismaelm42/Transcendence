@@ -24,6 +24,7 @@ export default class GameMatch extends Step
 	private	ui: GameUI;
 	private	connection: GameConnection;
 	private	ai: GameAI | null = null;
+	private readyStateInterval: number | null = null;
 
 	constructor(game: Game)
 	{
@@ -66,25 +67,26 @@ export default class GameMatch extends Step
 		const waitingMsg = document.getElementById('waiting-msg');
 		const player1 = this.log.playerDetails.player1;
 		const player2 = this.log.playerDetails.player2;
-		(document.getElementById('player1-name') as HTMLElement).textContent = player1?.username || "Esperando jugador 1...";
-		(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || "/images/default-avatar.png";
-		(document.getElementById('player2-name') as HTMLElement).textContent = player2?.username || "Esperando jugador 2...";
-		(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || "/images/default-avatar.png";
+		(document.getElementById('player1-name') as HTMLElement).textContent = player1?.username || "Waiting player 1...";
+		(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || "https://localhost:8443/back/images/7.png";
+		(document.getElementById('player2-name') as HTMLElement).textContent = player2?.username || "Waiting player 2...";
+		(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || "https://localhost:8443/back/images/7.png";
 
-		// Solo muestra el botón si es el jugador local
 		if (readyBtn && waitingMsg)
 		{
 			readyBtn.onclick = () => {
 				readyBtn.disabled = true;
-				waitingMsg.textContent = "Esperando confirmación del rival...";
+				waitingMsg.textContent = "Waiting for opponent confirmation...";
 				this.connection.socket?.send(JSON.stringify({ type: 'CLIENT_READY' }));
 				if (this.ai)
 					this.ai.start();
 				this.controllers.setupControllers();
 			};
 		}
-	}
-	
+
+		if (this.log.mode === 'remote' && readyModal)
+			this.startReadyStatePolling();
+	}	
 	/**
 	 * Display game results when a game ends
 	 * @param gameData Complete game data
@@ -123,11 +125,11 @@ export default class GameMatch extends Step
 			this.rematchGame(false);
 			this.controllers.cleanup();
 			this.controllers.destroy();
-			// TODO: change SPA route 'test' for 'tournament' when ready
 			this.destroy();
 			const spa = SPA.getInstance();
 			spa.currentGame = null;
 			spa.navigate(this.log.tournamentId ? 'test' : 'game-lobby');
+			// TODO: change SPA route 'test' for 'tournament' when ready
 		});
 	}
 	
@@ -143,6 +145,42 @@ export default class GameMatch extends Step
 			}));
 		}
     }
+
+	public startReadyStatePolling()
+	{
+		if (this.readyStateInterval)
+			return ;
+		this.readyStateInterval = window.setInterval(() => {
+			this.connection.socket?.send(JSON.stringify({ type: 'GET_READY_STATE' }));
+		}, 1000);
+	}
+
+	public stopReadyStatePolling()
+	{
+		if (this.readyStateInterval)
+		{
+			clearInterval(this.readyStateInterval);
+			this.readyStateInterval = null;
+		}
+	}
+
+	public updateReadyModal(playerDetails: any, readyStates: any)
+	{
+		const player1Name = document.getElementById('player1-name') as HTMLElement;
+		const player1Avatar = document.getElementById('player1-avatar') as HTMLImageElement;
+		const player2Name = document.getElementById('player2-name') as HTMLElement;
+		const player2Avatar = document.getElementById('player2-avatar') as HTMLImageElement;
+		const player1Ready = document.getElementById('player1-ready') as HTMLElement;
+		const player2Ready = document.getElementById('player2-ready') as HTMLElement;
+
+		player1Name.textContent = playerDetails.player1?.username || "Waiting player 1...";
+		player1Avatar.src = playerDetails.player1?.avatarPath || "https://localhost:8443/back/images/7.png";
+		player2Name.textContent = playerDetails.player2?.username || "Waiting player 2...";
+		player2Avatar.src = playerDetails.player2?.avatarPath || "https://localhost:8443/back/images/7.png";
+
+		player1Ready.textContent = readyStates.player1 ? "Ready" : "";
+		player2Ready.textContent = readyStates.player2 ? "Ready" : "";
+	}
 
 	public destroy()
 	{

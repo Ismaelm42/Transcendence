@@ -98,7 +98,10 @@ export class GameConnection
 								console.log("Game started:", data);
 								const readyModal = document.getElementById('ready-modal');
 								if (readyModal)
+								{
 									readyModal.style.display = 'none';
+									this.game.getGameMatch()?.stopReadyStatePolling();
+								}
 								this.game.startGameSession();
 								break ;
 							case 'GAME_END':
@@ -117,6 +120,9 @@ export class GameConnection
 								break ;
 							case 'GAMES_LIST':
 								this.game.getGameUI().updateLobby(data.games || []);
+								break ;
+							case 'READY_STATE':
+								this.game.getGameMatch()?.updateReadyModal(data.playerDetails, data.readyStates);
 								break ;
 							default:
 								console.log(`Received message with type: ${data.type}`);

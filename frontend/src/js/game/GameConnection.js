@@ -60,7 +60,7 @@ export class GameConnection {
                 // Always assign the message handler after connection is established
                 if (this.socket) {
                     this.socket.onmessage = (event) => {
-                        var _a, _b, _c, _d;
+                        var _a, _b, _c, _d, _e, _f;
                         console.log("Message received from server:", event.data);
                         try {
                             const data = JSON.parse(event.data);
@@ -93,17 +93,19 @@ export class GameConnection {
                                 case 'GAME_START':
                                     console.log("Game started:", data);
                                     const readyModal = document.getElementById('ready-modal');
-                                    if (readyModal)
+                                    if (readyModal) {
                                         readyModal.style.display = 'none';
+                                        (_c = this.game.getGameMatch()) === null || _c === void 0 ? void 0 : _c.stopReadyStatePolling();
+                                    }
                                     this.game.startGameSession();
                                     break;
                                 case 'GAME_END':
                                     this.game.endGameSession(data.result);
-                                    (_c = this.game.getGameMatch()) === null || _c === void 0 ? void 0 : _c.showGameResults(this.game.getGameLog());
+                                    (_d = this.game.getGameMatch()) === null || _d === void 0 ? void 0 : _d.showGameResults(this.game.getGameLog());
                                     break;
                                 case 'SERVER_TEST':
                                     console.log("Server test message:", data.message);
-                                    (_d = this.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
+                                    (_e = this.socket) === null || _e === void 0 ? void 0 : _e.send(JSON.stringify({
                                         type: 'PING',
                                         message: 'Client response to server test'
                                     }));
@@ -113,6 +115,9 @@ export class GameConnection {
                                     break;
                                 case 'GAMES_LIST':
                                     this.game.getGameUI().updateLobby(data.games || []);
+                                    break;
+                                case 'READY_STATE':
+                                    (_f = this.game.getGameMatch()) === null || _f === void 0 ? void 0 : _f.updateReadyModal(data.playerDetails, data.readyStates);
                                     break;
                                 default:
                                     console.log(`Received message with type: ${data.type}`);

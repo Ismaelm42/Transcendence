@@ -4,24 +4,25 @@
 </div>
 
 <div id="ready-modal"
-	class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
-	style="display: flex;">
-	<div class="flex flex-col items-center min-w-[140px]">
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+  style="display: flex;">
+  <div class="flex flex-row items-center justify-center w-full max-w-xl px-4">
+	<div class="flex flex-col items-center flex-1 min-w-0">
 		<img id="player1-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
-		<div id="player1-name" class="text-white text-lg font-semibold mb-1">Waiting for player 1...</div>
+		<div id="player1-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 1...</div>
 		<div id="player1-ready" class="text-green-400 font-bold"></div>
 	</div>
-	<div class="flex flex-col items-center gap-2">
-	  <button id="ready-btn"
-			  class="bg-green-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-green-600 transition">
-		Ready to play!
-	  </button>
+	<div class="flex flex-col items-center mx-4">
+		<button id="ready-btn"
+			class="bg-green-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-green-600 transition">
+			Ready to play!
+		</button>
 	  <div id="waiting-msg" class="text-gray-300 text-center min-h-[1.5em]"></div>
 	</div>
-	<div class="flex flex-col items-center min-w-[140px]">
-	  <img id="player2-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
-	  <div id="player2-name" class="text-white text-lg font-semibold mb-1">Waiting for player 2...</div>
-	  <div id="player2-ready" class="text-green-400 font-bold"></div>
+	<div class="flex flex-col items-center flex-1 min-w-0">
+		<img id="player2-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
+		<div id="player2-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 2...</div>
+		<div id="player2-ready" class="text-green-400 font-bold"></div>
 	</div>
   </div>
 </div>

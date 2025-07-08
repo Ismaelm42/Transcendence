@@ -213,3 +213,22 @@ export function handleGamesList(client)
 		games: games
 	}));
 }
+
+export function handleGetReadyState(client)
+{
+	const { user } = client;
+	const clientData = clients.get(user.id);
+	const gameSession = gamesList.get(clientData.roomId);
+	if (!gameSession)
+		return;
+	const playerDetails = gameSession.metadata.playerDetails;
+	const readyStates = {};
+	gameSession.players.forEach((p, id) => {
+		readyStates[p.playerNumber] = p.ready;
+	});
+	client.connection.send(JSON.stringify({
+		type: 'READY_STATE',
+		playerDetails,
+		readyStates
+	}));
+}
