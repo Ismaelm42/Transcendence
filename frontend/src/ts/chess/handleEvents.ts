@@ -27,7 +27,6 @@ function getSquare(playerColorView: string, event: MouseEvent): string | null {
 
 function movePiece(event: MouseEvent, fromSquare: string, piece: string, copy: Chessboard) {
 
-	console.log(copy)	
 	const currentSquare = getSquare("white", event);
 	copy.deletePiece(fromSquare);
 	copy.setLastMoves(fromSquare, null);
@@ -42,6 +41,8 @@ function dropPiece(event: MouseEvent, fromSquare: string) {
 	const toSquare = getSquare(chessboard!.playerColorView, event);
 	if (toSquare)
 		sendPieceMove(fromSquare, toSquare);
+	else
+		setupChessboard(chessboard!, null, null);
 }
 
 function handleLeftClick(fromSquare: string, piece: string) {
