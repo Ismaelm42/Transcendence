@@ -24,6 +24,7 @@ export default class Game extends Step {
         super(containerId);
         this.gameConfig = { scoreLimit: 5, difficulty: 'medium' };
         this.match = null;
+        this.onlineId = null;
         if (id)
             this.gameId = id;
         else
@@ -55,12 +56,14 @@ export default class Game extends Step {
     startGameSession() {
         this.log.startTime = Date.now();
         console.log(`Starting game session. Mode: ${this.log.mode}`);
+        this.log.readyState = true;
     }
     endGameSession(result) {
         this.log.duration = Date.now() - this.log.startTime;
         this.log.result = result;
         console.log("Game session ended:", this.log);
         this.renderer.stopRenderLoop();
+        this.log.readyState = false;
     }
     destroy() {
         this.connection.destroy();
@@ -128,6 +131,9 @@ export default class Game extends Step {
     setGameIsHost(state) {
         this.isHost = state;
     }
+    setOnlineId(id) {
+        this.onlineId = id;
+    }
     /***********************************/
     /*********** GETTERS ***************/
     getGameConfig() {
@@ -150,5 +156,11 @@ export default class Game extends Step {
     }
     getGameIsHost() {
         return (this.isHost);
+    }
+    isGameActive() {
+        return (this.log.readyState);
+    }
+    getOnlineId() {
+        return (this.onlineId);
     }
 }

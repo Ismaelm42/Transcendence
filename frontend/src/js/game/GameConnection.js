@@ -60,7 +60,7 @@ export class GameConnection {
                 // Always assign the message handler after connection is established
                 if (this.socket) {
                     this.socket.onmessage = (event) => {
-                        var _a, _b, _c, _d, _e, _f, _g;
+                        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
                         console.log("Message received from server:", event.data);
                         try {
                             const data = JSON.parse(event.data);
@@ -70,6 +70,7 @@ export class GameConnection {
                                     if (this.pendingUserInfoResolve) {
                                         this.pendingUserInfoResolve(data.user);
                                         this.pendingUserInfoResolve = null;
+                                        this.game.setOnlineId(data.user.id);
                                     }
                                     else
                                         console.warn('No pendingUserInfoResolve to call!');
@@ -123,10 +124,10 @@ export class GameConnection {
                                     (_g = this.game.getGameMatch()) === null || _g === void 0 ? void 0 : _g.showCountdown(data.seconds || 3);
                                     break;
                                 case 'GAME_PAUSED':
-                                    // Show pause overlay, stop rendering/inputs
+                                    (_h = this.game.getGameMatch()) === null || _h === void 0 ? void 0 : _h.showPauseModal(data.reason, data.userId);
                                     break;
                                 case 'GAME_RESUMED':
-                                    // Hide pause overlay, resume rendering/inputs
+                                    (_j = this.game.getGameMatch()) === null || _j === void 0 ? void 0 : _j.hidePauseModal();
                                     break;
                                 default:
                                     console.log(`Received message with type: ${data.type}`);

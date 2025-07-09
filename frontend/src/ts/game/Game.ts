@@ -25,6 +25,7 @@ export default class Game extends Step
 	protected	match: GameMatch | null = null;
 	protected	isHost: boolean;
 	protected	gameId: string;
+	protected	onlineId: string | null = null;
 	/***************************************/
 	/*********** CONSTRUCTOR ***************/
 	constructor(containerId: string = DEFAULT_CONTAINER_ID, id?: string)
@@ -63,6 +64,7 @@ export default class Game extends Step
 	{
 		this.log.startTime = Date.now();
 		console.log(`Starting game session. Mode: ${this.log.mode}`);
+		this.log.readyState = true;
 	}
 
 	public endGameSession(result: { winner: string, loser: string, score: [number, number] }): void
@@ -71,6 +73,7 @@ export default class Game extends Step
 		this.log.result = result;
 		console.log("Game session ended:", this.log);
 		this.renderer.stopRenderLoop();
+		this.log.readyState = false;
 	}
 
 	public destroy()
@@ -154,6 +157,10 @@ export default class Game extends Step
 		this.isHost = state;
 	}
 
+	public setOnlineId(id: string): void
+	{
+		this.onlineId = id;
+	}
 	/***********************************/
 	/*********** GETTERS ***************/
 	public	getGameConfig(): GameConfig
@@ -189,5 +196,15 @@ export default class Game extends Step
 	public	getGameIsHost() : boolean
 	{
 		return (this.isHost);
+	}
+
+	public	isGameActive() : boolean
+	{
+		return (this.log.readyState);
+	}
+
+	public	getOnlineId() : string | null
+	{
+		return (this.onlineId);
 	}
 }

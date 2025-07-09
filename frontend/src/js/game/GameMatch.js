@@ -54,9 +54,18 @@ export default class GameMatch extends Step {
             const pauseBtn = document.getElementById('pause-btn');
             if (pauseModal && pauseBtn) {
                 pauseBtn.onclick = () => {
-                    var _a;
-                    (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'PAUSE_GAME' }));
-                    pauseModal.style.display = 'flex';
+                    var _a, _b;
+                    if (this.log.mode === 'remote') {
+                        (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({
+                            type: 'PAUSE_GAME',
+                        }));
+                    }
+                    else {
+                        (_b = this.connection.socket) === null || _b === void 0 ? void 0 : _b.send(JSON.stringify({
+                            type: 'PAUSE_GAME',
+                            reason: "A player has paused the game"
+                        }));
+                    }
                 };
             }
             const resumeBtn = document.getElementById('resume-btn');
@@ -64,7 +73,6 @@ export default class GameMatch extends Step {
                 resumeBtn.onclick = () => {
                     var _a;
                     (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'RESUME_GAME' }));
-                    pauseModal.style.display = 'none';
                 };
             }
         });
@@ -95,6 +103,26 @@ export default class GameMatch extends Step {
         }
         if (this.log.mode === 'remote' && readyModal)
             this.startReadyStatePolling();
+    }
+    showPauseModal(reason, pauserId) {
+        console.warn("pauserID", pauserId);
+        const pauseModal = document.getElementById('pause-modal');
+        const pauseReason = document.getElementById('pause-reason');
+        const resumeBtn = document.getElementById('resume-btn');
+        if (pauseModal)
+            pauseModal.style.display = 'flex';
+        if (pauseReason)
+            pauseReason.textContent = reason || '';
+        if (this.log.mode === 'remote' && resumeBtn && pauserId) {
+            console.warn("onlineid = ", this.game.getOnlineId());
+            console.warn("pauserId = ", pauserId);
+            resumeBtn.style.display = (this.game.getOnlineId() === pauserId) ? 'inline-block' : 'none';
+        }
+    }
+    hidePauseModal() {
+        const pauseModal = document.getElementById('pause-modal');
+        if (pauseModal)
+            pauseModal.style.display = 'none';
     }
     /**
      * Display game results when a game ends

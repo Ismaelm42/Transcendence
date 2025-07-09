@@ -42,13 +42,8 @@ export function	broadcastResponse(responseType, payload = {})
 				}
 				// TODO: maybe add another logic for tournament games if needed
 				break ;
-			case 'GAME_START':
-				break ;
-			case 'GAME_COUNTDOWN':
-				break ;
 			default:
-				console.error(`Unknown responseType to broadcast: ${responseType}`);
-				return ;
+				break ;
 		}
 		connection.send(JSON.stringify(response));
 	});

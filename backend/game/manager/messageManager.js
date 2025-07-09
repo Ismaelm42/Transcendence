@@ -248,7 +248,12 @@ export function handlePauseGame(client, data)
 	if (!gameSession)
 		return ;
 	gameSession.pauseGame();
-	gameSession.broadcastResponse('GAME_PAUSED');
+	const reason = data?.reason || `${user.username} paused the game`;
+	gameSession.broadcastResponse('GAME_PAUSED', { 
+		reason,
+		username: user.username, 
+		userId: user.id 
+	});
 }
 
 export function handleResumeGame(client, data)

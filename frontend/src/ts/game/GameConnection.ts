@@ -73,6 +73,7 @@ export class GameConnection
 								{
 									this.pendingUserInfoResolve(data.user);
 									this.pendingUserInfoResolve = null;
+									this.game.setOnlineId(data.user.id);
 								}
 								else
 									console.warn('No pendingUserInfoResolve to call!');
@@ -128,10 +129,10 @@ export class GameConnection
 								this.game.getGameMatch()?.showCountdown(data.seconds || 3);
 								break ;
 							case 'GAME_PAUSED':
-								// Show pause overlay, stop rendering/inputs
+								this.game.getGameMatch()?.showPauseModal(data.reason, data.userId);
 								break ;
 							case 'GAME_RESUMED':
-								// Hide pause overlay, resume rendering/inputs
+								this.game.getGameMatch()?.hidePauseModal();
 								break ;
 							default:
 								console.log(`Received message with type: ${data.type}`);

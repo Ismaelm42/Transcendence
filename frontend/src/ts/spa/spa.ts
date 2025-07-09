@@ -6,6 +6,7 @@ export class SPA {
     private container: HTMLElement;
     private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
 	public currentGame: Game | null = null;
+	private currentStep: string | null = null;
 
     private routes: { [key: string]: { module: string; protected: boolean } } = {
         'home': { module: '../home/homeRender.js', protected: false },
@@ -29,7 +30,7 @@ export class SPA {
 		this.loadStep();
         window.onpopstate = () => this.loadStep();
 		// this.navigate('home');
-
+		this.currentStep = null;
 		window.addEventListener("pageshow", (event) => {
 			if (event.persisted && location.hash === '#login') {
 				console.log("Recargando el step de login" );
@@ -95,6 +96,25 @@ export class SPA {
 		// // Actualizar la URL sin recargar la página
 		// history.replaceState(null, '', newUrl);
 
+		// Handle leaving game-match step on active game
+		if (this.currentStep === 'game-match' && step !== 'game-match' &&
+				this.currentGame && this.currentGame.getGameConnection() &&
+				this.currentGame.getGameConnection().socket &&
+				this.currentGame.isGameActive())
+		{
+			const	log = this.currentGame.getGameLog();
+			const	username = this.currentGame.getGameIsHost()
+				? log.playerDetails.player1?.username
+				: log.playerDetails.player2?.username;
+			this.currentGame.getGameConnection()?.socket?.send(
+				JSON.stringify({
+					type: 'PAUSE_GAME',
+					reason: `${username} left the game`
+				 })
+			);
+		}
+        this.currentStep = step;
+		
 		const routeConfig = this.routes[step];
 		if (routeConfig) {
 			//importamos el módulo correspondiente
