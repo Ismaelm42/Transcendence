@@ -287,16 +287,6 @@ export class TournamentUI {
                 }
             });
         }
-        // numberOfPlayers
-        // for (let i = 1; i <= numberOfPlayers; i++) {
-        // 	console.log("Preparing player card for player:", i + 1);
-        // 	const playersContainer = document.getElementById('select-player-container');
-        // 	if (playersContainer) {
-        // 		playersContainer.style.display = "block";
-        // 		new PlayerCard(i + 1, playersContainer);
-        // 		}
-        // 	}
-        // }
     }
     // Todo: pendiente de probar en la final
     getTournamentRoundName() {

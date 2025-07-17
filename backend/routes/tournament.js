@@ -156,51 +156,31 @@ export function configureTournamentRoutes(fastify) {
 	});
 
 	fastify.post('/updateBracket', async (request, reply) => {
+
 		fastify.log.info('En /updateBracket: ');
-		// fastify.log.info(request.body);
+		console.log('Request body:', request.body);
+		// This block save the Gamelog in
+		const { gamesData , playerscount} = request.body;
+		console.log('gamesData:', gamesData);
+		if (!gamesData || !Array.isArray(gamesData)) {
+			fastify.log.error('Missing or invalid gamesData in request body');
+			return reply.status(400).send({ error: 'Missing or invalid gamesData in request body' });
+		}
+		const tournamentId = gamesData[0].tournamentId;
+		let config;
+		let users;
+		let winner;
+		try {
+			// const updatedTournamentlog = await crud.tournamentlog.updateTournamentlog(tournamentId, gamesData) 
+			const updatedTournamentlog = await crud.tournamentlog.updateTournamentlog(tournamentId, playerscount, config, users, gamesData, winner) 
+			fastify.log.info('Tournamentlog updated successfully:', updatedTournamentlog);
+			// reply.status(200).send({ message: 'Tournamentlog updated successfully', players: updatedTournamentlog.users , gamesData: updatedTournamentlog.gamesData });
+			reply.status(200).send({ message: 'Tournamentlog updated successfully', gamesData: updatedTournamentlog.gamesData });
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(500).send({ error: 'Error updating tournamentlog' + err.message });
+		}
 
-
-
-		const players = [
-			{
-				id: "2 + 5",
-				username: "Ai002",
-				tournamentUsername: "Ai002",
-				email: "ai2@transcendence.com",
-				avatarPath: "https://localhost:8443/back/images/avatar-12.png"
-			},
-			{
-				id: "3 + 5",
-				username: "Ai003",
-				tournamentUsername: "Ai003",
-				email: "ai3@transcendence.com",
-				avatarPath: "https://localhost:8443/back/images/avatar-13.png"
-			},
-			{
-				id: 2,
-				username: "alfonso",
-				tournamentUsername: "alfonso",
-				email: "alfonso@gmail.com",
-				avatarPath: "https://localhost:8443/back/images/avatar-18.png"
-			},
-			{
-				id: "4 + 5",
-				username: "Ai004",
-				tournamentUsername: "Ai004",
-				email: "ai4@transcendence.com",
-				avatarPath: "https://localhost:8443/back/images/avatar-14.png"
-			},
-			{
-				id: "3 + 5",
-				username: "Ai003",
-				tournamentUsername: "Ai003",
-				email: "ai3@transcendence.com",
-				avatarPath: "https://localhost:8443/back/images/avatar-13.png"
-			}
-		];
-
-		console.log('players isArray:', Array.isArray(players));
-		reply.status(200).send({ players });
 	});
 	
 }

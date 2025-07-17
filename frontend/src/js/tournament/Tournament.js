@@ -204,14 +204,16 @@ export default class Tournament extends Step {
         return this.gameDataArray;
     }
     addGameData(gameData) {
-        if (!gameData || !gameData.id || !gameData.mode || !gameData.player1 || !gameData.player2) {
-            console.error("Invalid game data provided:", gameData);
-            return;
-        }
-        if (this.gameDataArray.length == this.tournamentConfig.numberOfPlayers) {
-            console.warn("Game data array is already full. Cannot add more game data.");
-            return;
-        }
+        //TODO: Comproar si es necesario limitarlo y si se así hacerlo por case de 4 6 8 y elnúmero de partidas 
+        // (3 para 4 ; 5 o 6 Si el jugador que pasa cuanta como game data; 7)
+        // if (!gameData || !gameData.id || !gameData.mode || !gameData.player1 || !gameData.player2) {
+        // 	console.error("Invalid game data provided:", gameData);
+        // 	return;
+        // }
+        // if (this.gameDataArray.length == this.tournamentConfig.numberOfPlayers) {
+        // 	console.warn("Game data array is already full. Cannot add more game data.");
+        // 	return;
+        // }
         this.gameDataArray.push(gameData);
         console.log("Game data added to tournament:", gameData);
         console.log("Current game data array length:", this.gameDataArray.length);
@@ -232,11 +234,27 @@ export default class Tournament extends Step {
         }
     }
     initialGameData(player1Index, player2Index) {
+        if (player1Index > -1) {
+            var mode = this.returnMode(this.bracket[player1Index], this.bracket[player2Index]);
+            var player1 = this.bracket[player1Index];
+            var player2 = this.bracket[player2Index];
+        }
+        else {
+            mode = '';
+            player1 = { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' };
+            player2 = { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' };
+        }
+        var id = this.tournamentId + "-match-" + (this.gameDataArray.length + 1);
+        // id correction to control rare matches
+        if (player1Index === -42)
+            id = this.tournamentId + '-final';
+        if (player1Index === -21)
+            id = this.tournamentId + '-Bye';
         let newGameData = {
-            id: this.tournamentId + "-match-" + (this.gameDataArray.length + 1),
-            mode: this.returnMode(this.bracket[player1Index], this.bracket[player2Index]),
-            player1: this.bracket[player1Index],
-            player2: this.bracket[player2Index],
+            id: id,
+            mode: mode,
+            player1: player1,
+            player2: player2,
             startTime: Date.now(),
             config: {
                 scoreLimit: this.tournamentConfig.scoreLimit,
@@ -285,17 +303,24 @@ export default class Tournament extends Step {
                             console.log('tournamentId', this.tournamentId);
                             this.initialGameData(0, 1);
                             this.initialGameData(2, 3);
+                            this.initialGameData(-42, -1); //Final match
                             break;
                         case 6:
                             this.initialGameData(0, 1);
                             this.initialGameData(2, 3);
                             this.initialGameData(4, 5);
+                            this.initialGameData(-1, -1);
+                            this.initialGameData(-21, -1); // Bye game 
+                            this.initialGameData(-42, -1); //Final match
                             break;
                         case 8:
                             this.initialGameData(0, 1);
                             this.initialGameData(2, 3);
                             this.initialGameData(4, 5);
                             this.initialGameData(6, 7);
+                            this.initialGameData(-1, -1);
+                            this.initialGameData(-1, -1);
+                            this.initialGameData(-42, -1); //Final match
                             break;
                     }
                 }
@@ -468,21 +493,21 @@ export default class Tournament extends Step {
         }
         console.log("Handling match result:", result);
         console.log("el array de partidas es", this.gameDataArray);
-        this.updateTournamentBracket();
+        this.updateTournamentBracket(result);
     }
     /** todo: esta función de actualizar se podría modificar para que solo hiciera la llamada
     * 	y obtuviera la información de la base de datos si con la partida se puede actualizar sin
     *   que esto dependa del front de esa manera seŕia más dificil que se modificaran los resultados
     *   con llamadas post ,es decir el backend se encargaría de actualizar info y el front solo de mostrarlo
     */
-    updateTournamentBracket() {
+    updateTournamentBracket(result) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // Sanitize gameDataArray to ensure all objects are serializable
-                const sanitizedGameDataArray = this.gameDataArray.map(game => (Object.assign(Object.assign({}, game), { player1: Object.assign({}, game.player1), player2: Object.assign({}, game.player2), config: game.config ? Object.assign({}, game.config) : undefined, result: game.result ? Object.assign({}, game.result) : undefined })));
-                console.log("Updating tournament bracket with sanitized game data:", sanitizedGameDataArray);
+                const gamesData = this.gameDataArray.map(game => (Object.assign(Object.assign({}, game), { player1: Object.assign({}, game.player1), player2: Object.assign({}, game.player2), config: game.config ? Object.assign({}, game.config) : undefined, result: game.result ? Object.assign({}, game.result) : undefined })));
+                console.log("Updating tournament bracket with sanitized game data:", gamesData);
                 // Ensure the backend expects an object, not an array
-                const payload = { games: sanitizedGameDataArray };
+                const payload = { gamesData: gamesData, playerscount: this.tournamentConfig.numberOfPlayers };
                 const response = yield fetch("https://localhost:8443/back/updateBracket", {
                     method: "POST",
                     headers: {
@@ -495,9 +520,19 @@ export default class Tournament extends Step {
                     // const FirsGameui = new GameUI(new Game());
                     console.log("Tournament bracket updated successfully:", data);
                     //todo: crear funcion para actualizar el bracket o modificar esta funcion - se recibe el array de GamePlayers
-                    yield this.setTournamentBracket(this.gamePlayersToTournamentPlayers(data.players));
-                    console.log("Tournament bracket set successfully:", this.getBracket());
-                    this.ui.updateRenderBracket(data.players);
+                    let winnerPlayer = null;
+                    if (result.result && result.result.winner) {
+                        winnerPlayer = this.bracket.find(player => player.id === result.result.winner);
+                        console.log("Winner player:", winnerPlayer);
+                        if (winnerPlayer) {
+                            this.bracket.push(winnerPlayer);
+                        }
+                    }
+                    console.log("Trying to update the bracket with :", this.getBracket());
+                    this.gameDataArray = data.gamesData;
+                    // await this.setTournamentBracket(this.gamePlayersToTournamentPlayers(this.bracket));
+                    // console.log("Tournament bracket set successfully:", this.getBracket());
+                    this.ui.updateRenderBracket(this.bracket);
                     yield new Promise(resolve => setTimeout(resolve, 5000));
                     const launchBtn = document.getElementById('launch-match-btn');
                     if (launchBtn)
