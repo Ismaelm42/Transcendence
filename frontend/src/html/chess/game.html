@@ -2,8 +2,25 @@
 	<div id="container" class="flex flex-col lg:flex-row w-full justify-center items-center">
 
 		<div id="board"
-			class="w-[44vh] h-[44vh] lg:w-[64vh] lg:h-[64vh] lg:min-w-[500px] lg:min-h-[500px] min-w-[300px] min-h-[300px]">
+			class="relative w-[44vh] h-[44vh] lg:w-[64vh] lg:h-[64vh] lg:min-w-[500px] lg:min-h-[500px] min-w-[300px] min-h-[300px]">
+			<div id="overlay" class="absolute inset-0 bg-black/50 z-40 hidden">
+			</div>
+
+			<div id="modal"
+				class="absolute flex items-center justify-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900/80 text-black text-xl rounded-lg shadow-lg z-50 px-4 py-2 min-w-[80%] lg:min-w-[60%] hidden">
+				<button id="closeModal"
+					class="absolute top-1 right-1 text-gray-500 hover:text-white text-2xl leading-none font-bold cursor-pointer">&times;
+				</button>
+				<div class="flex justify-center items-center gap-1">
+					<img id= "q" src="../../pieces/wq.png" alt="Queen" class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+					<img id= "r" src="../../pieces/wr.png" alt="Rook" class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+					<img id= "b" src="../../pieces/wb.png" alt="Bishop" class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+					<img id= "n" src="../../pieces/wn.png" alt="Knight" class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+				</div>	
+			</div>
+
 			<!-- Chessboard drawn here on the canvas -->
+
 		</div>
 
 		<!-- Sidebar -->

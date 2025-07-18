@@ -13,6 +13,7 @@ export let socket = null;
 export let chessboard = null;
 export let canvas = null;
 export let appContainer = null;
+export let data = null;
 export function setAppContainer(appElement) {
     appContainer = appElement;
 }
@@ -50,4 +51,7 @@ export function setCanvas() {
     canvas.style.height = "100%";
     canvas.style.display = "block";
     board.insertBefore(canvas, board.firstChild);
+}
+export function setData(newData) {
+    data = newData;
 }

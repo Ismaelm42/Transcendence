@@ -98,7 +98,7 @@ function createOnlineGame(user, data) {
 		inGame: true,
 		lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
 		lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
-    	board: board.getBoard(),
+		board: board.getBoard(),
 	}
 	sendMsgToClient(Number(data.id), { ...message, playerColorView: board.hostColorView, });
 	sendMsgToClient(user.id, { ...message, playerColorView: board.guestColorView, });
@@ -144,24 +144,27 @@ function createLocalGame(user, data) {
 		playerColorView: board.hostColorView,
 		lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
 		lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
-    	board: board.getBoard(),
+		board: board.getBoard(),
 	}
 	sendMsgToClient(user.id, message);
 }
 
+
 function movePiece(user, data) {
+
+	let message;
 
 	if (chessboard.has(user.id)) {
 		const board = chessboard.get(user.id);
-		board.handleMove(data.moveFrom, data.moveTo, user.id);
-		const message = {
-			type: 'move',
-			lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
-			lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
-    		board: board.getBoard(),
+		message = board.handleMove(data, user.id);
+		if (message.type === 'promote')
+			sendMsgToClient(user.id, { ...message, playerColorView: user.id === board.hostId ? board.hostColorView : board.guestColorView });
+
+		else {
+			sendMsgToClient(board.hostId, { ...message, playerColorView: board.hostColorView, });
+			if (board.gameMode === 'online')
+				sendMsgToClient(board.guestId, { ...message, playerColorView: board.guestColorView, });
 		}
-		sendMsgToClient(board.hostId, { ...message, playerColorView: board.hostColorView, });
-		sendMsgToClient(board.guestId, { ...message, playerColorView: board.guestColorView, });
 	}
 }
 
@@ -170,27 +173,31 @@ export function handleIncomingSocketMessage(user, socket) {
 	socket.on('message', async message => {
 		try {
 			const data = JSON.parse(message.toString());
-			if (data.type === 'info')
-				sendInfoToClient(user, data);
-			if (data.type === 'lobby')
-				sendLobbyToAllClients();
-			if (data.type === 'config') {
-				if (data.gameMode === 'online') {
-					createLobby(user, data);
-				}
-				else {
+
+			switch (data.type) {
+				case 'info':
+					sendInfoToClient(user, data);
+					break;
+				case 'lobby':
+					sendLobbyToAllClients();
+					break;
+				case 'config':
+					if (data.gameMode === 'online')
+						createLobby(user, data);
+					else {
+						deleteLobby(user.id);
+						createLocalGame(user, data);
+					}
+					break;
+				case 'join':
+					createOnlineGame(user, data);
+					break;
+				case 'cancel':
 					deleteLobby(user.id);
-					createLocalGame(user, data);
-				}
-			}
-			if (data.type === 'join') {
-				createOnlineGame(user, data);
-			}
-			if (data.type === 'cancel') {
-				deleteLobby(user.id);
-			}
-			if (data.type === 'move') {
-				movePiece(user, data);
+					break;
+				case 'move':
+					movePiece(user, data);
+					break;
 			}
 		} catch (error) {
 			console.log("An error occured:", error);

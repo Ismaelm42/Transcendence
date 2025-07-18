@@ -52,7 +52,3 @@ export class Chessboard {
         return newBoard;
     }
 }
-//// Los datos de la partida deberían guardarse en el servidor, no en sessionStorage.
-//// Chessboard debería ser una clase que solo maneje la visualización del tablero y las piezas.
-//// Chessboard debería poder edirtarse de esta manera: chessboard.set(data); data sería la información mandada del backend.
-//// Dentro de data debería estar playerColorView, lastMoveFrom, lastMoveTo y board.

@@ -13,11 +13,11 @@ export async function formatLobbyList(data: any): Promise<string> {
 
 		const minutes = parseInt(lobby.timeControl.split('|')[0], 10);
 		if (minutes === 1 || minutes === 2)
-		    mode = "Bullet";
+		    mode = "bullet";
 		else if (minutes === 3 || minutes === 5)
-		    mode = "Blitz";
+		    mode = "blitz";
 		else
-		    mode = "Rapid";
+		    mode = "rapid";
 
 		lobbyHtmlContent = await fetch("../../html/chess/lobbyItem.html");
 		htmlContent = await lobbyHtmlContent.text();

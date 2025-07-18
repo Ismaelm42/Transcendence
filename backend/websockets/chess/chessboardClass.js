@@ -36,38 +36,38 @@ export class Chessboard {
 
 	initBoard() {
 
-		this.board[0][0] = new Rook('black', '00');
-		this.board[0][1] = new Knight('black', '01');
-		this.board[0][2] = new Bishop('black', '02');
-		this.board[0][3] = new Queen('black', '03');
-		this.board[0][4] = new King('black', '04');
-		this.board[0][5] = new Bishop('black', '05');
-		this.board[0][6] = new Knight('black', '06');
-		this.board[0][7] = new Rook('black', '07');
-		this.board[1][0] = new Pawn('black', '10');
-		this.board[1][1] = new Pawn('black', '11');
-		this.board[1][2] = new Pawn('black', '12');
-		this.board[1][3] = new Pawn('black', '13');
-		this.board[1][4] = new Pawn('black', '14');
-		this.board[1][5] = new Pawn('black', '15');
-		this.board[1][6] = new Pawn('black', '16');
-		this.board[1][7] = new Pawn('black', '17');
-		this.board[7][0] = new Rook('white', '70');
-		this.board[7][1] = new Knight('white', '71');
-		this.board[7][2] = new Bishop('white', '72');
-		this.board[7][3] = new Queen('white', '73');
-		this.board[7][4] = new King('white', '74');
-		this.board[7][5] = new Bishop('white', '75');
-		this.board[7][6] = new Knight('white', '76');
-		this.board[7][7] = new Rook('white', '77');
-		this.board[6][0] = new Pawn('white', '60');
-		this.board[6][1] = new Pawn('white', '61');
-		this.board[6][2] = new Pawn('white', '62');
-		this.board[6][3] = new Pawn('white', '63');
-		this.board[6][4] = new Pawn('white', '64');
-		this.board[6][5] = new Pawn('white', '65');
-		this.board[6][6] = new Pawn('white', '66');
-		this.board[6][7] = new Pawn('white', '67');
+		this.board[0][0] = new Rook('black', 0);
+		this.board[0][1] = new Knight('black', 1);
+		this.board[0][2] = new Bishop('black', 2);
+		this.board[0][3] = new Queen('black', 3);
+		this.board[0][4] = new King('black', 4);
+		this.board[0][5] = new Bishop('black', 5);
+		this.board[0][6] = new Knight('black', 6);
+		this.board[0][7] = new Rook('black', 7);
+		this.board[1][0] = new Pawn('black', 10);
+		this.board[1][1] = new Pawn('black', 11);
+		this.board[1][2] = new Pawn('black', 12);
+		this.board[1][3] = new Pawn('black', 13);
+		this.board[1][4] = new Pawn('black', 14);
+		this.board[1][5] = new Pawn('black', 15);
+		this.board[1][6] = new Pawn('white', 16);
+		this.board[1][7] = new Pawn('black', 17);
+		this.board[7][0] = new Rook('white', 70);
+		this.board[7][1] = new Knight('white', 71);
+		this.board[7][2] = new Bishop('white', 72);
+		this.board[7][3] = new Queen('white', 73);
+		this.board[7][4] = new King('white', 74);
+		this.board[7][5] = new Bishop('white', 75);
+		this.board[7][6] = new Knight('white', 76);
+		this.board[7][7] = new Rook('white', 77);
+		this.board[6][0] = new Pawn('white', 60);
+		this.board[6][1] = new Pawn('white', 61);
+		this.board[6][2] = new Pawn('white', 62);
+		this.board[6][3] = new Pawn('white', 63);
+		this.board[6][4] = new Pawn('white', 64);
+		this.board[6][5] = new Pawn('white', 65);
+		this.board[6][6] = new Pawn('white', 66);
+		this.board[6][7] = new Pawn('white', 67);
 		this.game.set(this.move++, this.board);
 	}
 
@@ -107,6 +107,61 @@ export class Chessboard {
 		return this.board[row][col];
 	}
 
+	movePiece(piece, fromSquare, toSquare) {
+
+		this.deletePieceAt(fromSquare);
+		this.deletePieceAt(toSquare);
+		this.setPieceAt(toSquare, piece);
+	}
+
+	buildClientMessage(type, fromSquare, toSquare) {
+
+		return {
+			type: type,
+			moveFrom: fromSquare,
+			moveTo: toSquare,
+			lastMoveFrom: this.lastMoveFrom === null ? null : this.lastMoveFrom.toString(),
+			lastMoveTo: this.lastMoveTo === null ? null : this.lastMoveTo.toString(),
+			board: this.getBoard(),
+		};
+	}
+
+	isPromotion(piece, toSquare) {
+
+		if (piece.getNotation()[1] === 'p' && piece.isPromotion(toSquare))
+			return true;
+		return false;
+	}
+
+	isEnPassant(piece, fromSquare, toSquare) {
+
+		if (piece.getNotation()[1] === 'p' && piece.isEnPassant(fromSquare, toSquare, this.board, this.lastMoveFrom, this.lastMoveTo))
+			return true;
+		return false;
+	}
+
+	isCastling(piece, fromSquare, toSquare) {
+
+		if (piece.getNotation()[1] === 'k' && (piece.isKingSideCastle(fromSquare, toSquare, this.board) || piece.isQueenSideCastle(fromSquare, toSquare, this.board)))
+			return true;
+		return false;
+	}
+
+	isValidMove(fromSquare, toSquare, piece, color, id) {
+
+		const playerColor = (id === this.hostId ? this.hostColor : this.guestColor);
+
+		if (color !== piece.color)
+			return false;
+		if (this.gameMode === 'online' && (playerColor !== color))
+			return false;
+		if (!piece.isLegalMove(fromSquare, toSquare, this.board, this.lastMoveFrom, this.lastMoveTo))
+			return false;
+		if (this.isCheck(fromSquare, toSquare, color))
+			return false;
+		return true;
+	}
+
 	findKing(color, board) {
 
 		const notation = (color === 'white' ? 'wk' : 'bk');
@@ -125,7 +180,7 @@ export class Chessboard {
 
 		const steps = Math.abs(toSquare - fromSquare);
 		const isKingRow = Math.floor(fromSquare / 10);
-		const isKingCol = fromSquare % 10;;
+		const isKingCol = fromSquare % 10;
 		const isKing = this.board[isKingRow][isKingCol];
 
 		if (isKing.getNotation()[1] === 'k' && isKing.castle === true && steps === 2)
@@ -134,65 +189,107 @@ export class Chessboard {
 
 		const copy = this.clone();
 		const board = copy.board;
-		copy.movePiece(fromSquare, toSquare);
+		copy.movePiece(copy.getPieceAt(fromSquare), fromSquare, toSquare);
+		copy.saveMove(fromSquare, toSquare);
 		const kingPiece = copy.findKing(color, board);
 		const square = kingPiece.getSquare();
 
 		for (let row = 0; row < board.length; row++) {
 			for (let col = 0; col < board[row].length; col++) {
 				const piece = board[row][col];
-				if (piece && piece.getColor() !== color) {
-					if (piece.isLegalMove(piece.getSquare(), square, copy.board, copy.lastMoveFrom, copy.lastMoveTo)) 
+				if (piece && piece.getColor() !== color)
+					if (piece.isLegalMove(piece.getSquare(), square, copy.board, copy.lastMoveFrom, copy.lastMoveTo))
 						return true;
-				}
 			}
 		}
 		return false;
 	}
 
-	isCheckMate(fromSquare, toSquare, color) {
+	isCheckMateOrStaleMate(fromSquare, toSquare, color) {
 
-		if (this.isCheck(fromSquare, toSquare, color === 'white' ? 'black' : 'white')) {
-			console.log("ennemy is in check")
+		const mateType = this.isCheck(fromSquare, toSquare, color) === true ? 'checkmate' : 'stalemate';
 
+		const copy = this.clone()
+		copy.movePiece(copy.getPieceAt(fromSquare), fromSquare, toSquare);
+		copy.saveMove(fromSquare, toSquare);
+		for (let row = 0; row < copy.board.length; row++) {
+			for (let col = 0; col < copy.board[row].length; col++) {
+				const piece = copy.board[row][col];
+				if (piece && piece.getColor() === color) {
+					const legalMoves = piece.legalMoves(piece.getSquare(), copy.board, copy.lastMoveFrom, copy.lastMoveTo);
+					for (const move of legalMoves)
+						if (!copy.isCheck(piece.getSquare(), move, color))
+							return (mateType === 'checkmate' ? 'check' : null);
+				}
+			}
 		}
-		return false;
+		return mateType;
 	}
 
-	handleMove(fSquare, tSquare, id) {
+	saveMove(fromSquare, toSquare) {
 
-		const fromSquare = Number(fSquare);
-		const toSquare = Number(tSquare);
-		const piece = this.getPieceAt(fromSquare);
-		const color = this.getTurn();
-
-		if (color !== piece.color)
-			return;
-		if (this.gameMode === 'online' && ((id === this.hostId ? this.hostColor : this.guestColor) !== color))
-			return;
-		if (!piece.isLegalMove(fromSquare, toSquare, this.board, this.lastMoveFrom, this.lastMoveTo))
-			return;
-		// isPromotion();
-		if (this.isCheck(fromSquare, toSquare, color))
-			return;
-		if (this.isCheckMate(fromSquare, toSquare, color))
-			console.log("")
-		// if (this.isStaleMate(fromSquare, toSquare))
-		// 	console.log("ennemy is in stalemate")
-		this.movePiece(fromSquare, toSquare);
-	}
-
-	movePiece(fromSquare, toSquare) {
-
-		const piece = this.getPieceAt(fromSquare);
-		this.deletePieceAt(fromSquare);
-		this.deletePieceAt(toSquare);
-		this.setPieceAt(toSquare, piece);
 		this.lastMoveFrom = fromSquare;
 		this.lastMoveTo = toSquare;
 		this.game.set(this.move, this.board);
 		this.move++;
 		this.turn = this.move % 2 === 0;
+	}
+
+	handlePromotion(fromSquare, toSquare, promoteTo) {
+
+		const color = this.getTurn();
+		let piece;
+
+		if (promoteTo === 'q')
+			piece = new Queen(color, toSquare);
+		else if (promoteTo === 'r')
+			piece = new Rook(color, toSquare);
+		else if (promoteTo === 'b')
+			piece = new Bishop(color, toSquare);
+		else if (promoteTo === 'n')
+			piece = new Knight(color, toSquare);
+		this.deletePieceAt(fromSquare);
+		this.setPieceAt(fromSquare, piece);
+	}
+
+	makeMove(fromSquare, toSquare) {
+
+		const piece = this.getPieceAt(fromSquare);
+
+		if (this.isEnPassant(piece, fromSquare, toSquare))
+			this.deletePieceAt(this.lastMoveTo);
+		else if (this.isCastling(piece, fromSquare, toSquare)) {
+			if (toSquare - fromSquare > 0)
+				this.movePiece(this.getPieceAt(toSquare + 1), toSquare + 1, fromSquare + 1);
+			else
+				this.movePiece(this.getPieceAt(toSquare - 2), toSquare - 2, toSquare + 1);
+		}
+		if (piece.getNotation()[1] === 'k' ||  piece.getNotation()[1] === 'r')
+			piece.invalidCastling();
+		this.movePiece(piece, fromSquare, toSquare);
+	}
+
+	handleMove(data, id) {
+
+		const fromSquare = Number(data.moveFrom);
+		const toSquare = Number(data.moveTo);
+		const piece = this.getPieceAt(fromSquare);
+		const color = this.getTurn();
+		const opponentColor = color === 'white' ? 'black' : 'white';
+
+		if (data.promoteTo)
+			this.handlePromotion(fromSquare, toSquare, data.promoteTo);
+		else {
+			if (!this.isValidMove(fromSquare, toSquare, piece, color, id))
+				return this.buildClientMessage('move', data.moveFrom, data.moveTo);
+			if (this.isPromotion(piece, toSquare))
+				return this.buildClientMessage('promote', data.moveFrom, data.moveTo);
+		}
+		const result = this.isCheckMateOrStaleMate(fromSquare, toSquare, opponentColor);
+		const type = result ? result : 'move';
+		this.makeMove(fromSquare, toSquare);
+		this.saveMove(fromSquare, toSquare);
+		return this.buildClientMessage(type, data.moveFrom, data.moveTo);
 	}
 
 	getBoard() {
@@ -230,9 +327,3 @@ export class Chessboard {
 		return newBoard;
 	}
 }
-
-
-// Primero, comprobar si la pieza que se intenta mover es del color que corresponde el turno
-// Segundo, comprobar si es un movimiento legal
-// Tercero, comprobar si no se está en jaque después del movimiento legal
-// Cuarto, comprobar si se hace jaque al contrario (si se hace jaque, comprobar si se hace jaque mate)

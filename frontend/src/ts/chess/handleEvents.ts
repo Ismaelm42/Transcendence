@@ -1,7 +1,9 @@
-import { chessboard, canvas } from './state.js'
+import { chessboard, canvas, data } from './state.js'
 import { Chessboard } from './chessboardClass.js'
 import { sendPieceMove } from './handleSenders.js'
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js'
+import { hidePromotionOptions } from './handlePromotion.js'
+import { promoteToPiece } from './handleSenders.js'
 
 let selectedSquares = new Set<string>();
 let arrows = new Map<string, [string, string]>();
@@ -136,6 +138,19 @@ export function handleEvents() {
 				handleRightClick(fromSquare);
 		}
 	});
+
+	// Event listener to handle promotion
+	document.getElementById("modal")?.addEventListener("click", (event) => {
+		const target = event.target as HTMLElement;
+		if (target.id === 'closeModal')
+			hidePromotionOptions();
+		else if (target.id === 'q' || target.id === 'r' || target.id === 'b' || target.id === 'n') {
+			const piece = target.id;
+			hidePromotionOptions();
+			promoteToPiece(data.moveFrom, data.moveTo, piece);
+		}
+	});
+
 
 	// Event listener for resize window
 	window.addEventListener("resize", () => {

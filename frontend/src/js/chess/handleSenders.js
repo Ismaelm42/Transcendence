@@ -62,3 +62,13 @@ export function sendPieceMove(fromSquare, toSquare) {
     };
     socket.send(JSON.stringify(message));
 }
+export function promoteToPiece(fromSquare, toSquare, piece) {
+    const message = {
+        type: 'move',
+        promoteTo: piece,
+        userId: userId,
+        moveFrom: fromSquare,
+        moveTo: toSquare,
+    };
+    socket.send(JSON.stringify(message));
+}

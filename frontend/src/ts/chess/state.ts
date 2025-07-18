@@ -5,6 +5,7 @@ export let socket: WebSocket | null = null;
 export let chessboard: Chessboard | null = null;
 export let canvas: HTMLCanvasElement | null = null;
 export let appContainer: HTMLElement | null = null;
+export let data: any | null = null;
 
 export function setAppContainer(appElement: HTMLElement) {
 
@@ -38,8 +39,6 @@ export function setSocket(ws: WebSocket | null) {
 		socket = ws
 }
 
-
-
 export function setChessboard(data: any) {
 
 	chessboard = new Chessboard(data);
@@ -53,4 +52,9 @@ export function setCanvas() {
 	canvas.style.height = "100%";
 	canvas.style.display = "block";
 	board.insertBefore(canvas, board.firstChild);
+}
+
+export function setData(newData: any) {
+
+	data = newData;
 }

@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { setupChessboard } from "./drawChessboard.js";
 import { launchUI, launchGame } from "./launchGame.js";
 import { updateLobbyList } from "./lobby.js";
-import { socket, chessboard } from "./state.js";
+import { socket, chessboard, setData } from "./state.js";
+import { showPromotionOptions } from "./handlePromotion.js";
 function handleSocketOpen() {
     socket.onopen = () => {
         const handshake = {
@@ -24,20 +25,25 @@ function handleSocketMessage() {
     socket.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
         const data = JSON.parse(event.data);
         console.log(data);
-        if (data.type === 'info') {
-            if (data.inGame === false)
-                launchUI();
-            else {
-                console.log(data);
-                launchGame(data);
-            }
-        }
-        if (data.type === 'lobby') {
-            updateLobbyList(data);
-        }
-        else if (data.type === 'move') {
-            chessboard.set(data);
-            setupChessboard(chessboard, null, null);
+        setData(data);
+        switch (data.type) {
+            case 'info':
+                if (data.inGame === false)
+                    launchUI();
+                else
+                    launchGame(data);
+                break;
+            case 'lobby':
+                updateLobbyList(data);
+                break;
+            case 'move':
+                chessboard.set(data);
+                setupChessboard(chessboard, null, null);
+                break;
+            case 'promote':
+                setupChessboard(chessboard, null, null);
+                showPromotionOptions();
+                break;
         }
     });
 }

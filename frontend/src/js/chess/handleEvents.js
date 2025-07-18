@@ -1,6 +1,8 @@
-import { chessboard, canvas } from './state.js';
+import { chessboard, canvas, data } from './state.js';
 import { sendPieceMove } from './handleSenders.js';
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js';
+import { hidePromotionOptions } from './handlePromotion.js';
+import { promoteToPiece } from './handleSenders.js';
 let selectedSquares = new Set();
 let arrows = new Map();
 function getSquare(playerColorView, event) {
@@ -80,6 +82,7 @@ function handleRightClick(fromSquare) {
     window.addEventListener("mouseup", mouseUpHandler);
 }
 export function handleEvents() {
+    var _a;
     // To prevent right click context menu
     canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
@@ -116,6 +119,17 @@ export function handleEvents() {
             const fromSquare = getSquare("white", event);
             if (fromSquare)
                 handleRightClick(fromSquare);
+        }
+    });
+    // Event listener to handle promotion
+    (_a = document.getElementById("modal")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.id === 'closeModal')
+            hidePromotionOptions();
+        else if (target.id === 'q' || target.id === 'r' || target.id === 'b' || target.id === 'n') {
+            const piece = target.id;
+            hidePromotionOptions();
+            promoteToPiece(data.moveFrom, data.moveTo, piece);
         }
     });
     // Event listener for resize window
