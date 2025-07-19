@@ -37,3 +37,4 @@ export async function formatLobbyList(data: any): Promise<string> {
 	return htmlText;
 }
 
+

@@ -16,6 +16,8 @@ export class Chessboard {
 		this.turn = this.getTurn();
 		this.lastMoveFrom = data.lastMoveFrom || null;
 		this.lastMoveTo = data.lastMoveTo || null;
+		this.wk = data.wk || null;
+		this.bk = data.bk || null;
 		if (data.game) {
 			this.game = new Map(
 				data.game.map(([key, value]) => [
@@ -50,7 +52,7 @@ export class Chessboard {
 		this.board[1][3] = new Pawn('black', 13);
 		this.board[1][4] = new Pawn('black', 14);
 		this.board[1][5] = new Pawn('black', 15);
-		this.board[1][6] = new Pawn('white', 16);
+		this.board[1][6] = new Pawn('black', 16);
 		this.board[1][7] = new Pawn('black', 17);
 		this.board[7][0] = new Rook('white', 70);
 		this.board[7][1] = new Knight('white', 71);
@@ -69,6 +71,8 @@ export class Chessboard {
 		this.board[6][6] = new Pawn('white', 66);
 		this.board[6][7] = new Pawn('white', 67);
 		this.game.set(this.move++, this.board);
+		this.wk = this.board[7][4];
+		this.bk = this.board[0][4];
 	}
 
 	getGuestColor() {
@@ -112,6 +116,13 @@ export class Chessboard {
 		this.deletePieceAt(fromSquare);
 		this.deletePieceAt(toSquare);
 		this.setPieceAt(toSquare, piece);
+	}
+
+	getKing(color) {
+
+		if (color === 'white')
+			return this.wk;
+		return this.bk;
 	}
 
 	buildClientMessage(type, fromSquare, toSquare) {
@@ -162,26 +173,12 @@ export class Chessboard {
 		return true;
 	}
 
-	findKing(color, board) {
-
-		const notation = (color === 'white' ? 'wk' : 'bk');
-
-		for (let row = 0; row < board.length; row++) {
-			for (let col = 0; col < board[row].length; col++) {
-				const piece = board[row][col];
-				if (piece && piece.getNotation() === notation)
-					return piece;
-			}
-		}
-		return null;
-	}
-
 	isCheck(fromSquare, toSquare, color) {
 
 		const steps = Math.abs(toSquare - fromSquare);
-		const isKingRow = Math.floor(fromSquare / 10);
-		const isKingCol = fromSquare % 10;
-		const isKing = this.board[isKingRow][isKingCol];
+		const row = Math.floor(fromSquare / 10);
+		const col = fromSquare % 10;
+		const isKing = this.board[row][col];
 
 		if (isKing.getNotation()[1] === 'k' && isKing.castle === true && steps === 2)
 			if (this.isCheck(fromSquare, fromSquare, color) || this.isCheck(fromSquare, fromSquare < toSquare ? fromSquare + 1 : fromSquare - 1, color))
@@ -189,9 +186,9 @@ export class Chessboard {
 
 		const copy = this.clone();
 		const board = copy.board;
-		copy.movePiece(copy.getPieceAt(fromSquare), fromSquare, toSquare);
+		copy.makeMove(fromSquare, toSquare);
 		copy.saveMove(fromSquare, toSquare);
-		const kingPiece = copy.findKing(color, board);
+		const kingPiece = copy.getKing(color);
 		const square = kingPiece.getSquare();
 
 		for (let row = 0; row < board.length; row++) {
@@ -210,7 +207,7 @@ export class Chessboard {
 		const mateType = this.isCheck(fromSquare, toSquare, color) === true ? 'checkmate' : 'stalemate';
 
 		const copy = this.clone()
-		copy.movePiece(copy.getPieceAt(fromSquare), fromSquare, toSquare);
+		copy.makeMove(fromSquare, toSquare);
 		copy.saveMove(fromSquare, toSquare);
 		for (let row = 0; row < copy.board.length; row++) {
 			for (let col = 0; col < copy.board[row].length; col++) {
@@ -266,6 +263,10 @@ export class Chessboard {
 		}
 		if (piece.getNotation()[1] === 'k' ||  piece.getNotation()[1] === 'r')
 			piece.invalidCastling();
+		if (piece.getNotation() === 'wk')
+			this.wk = piece;
+		if (piece.getNotation() === 'bk')
+			this.bk = piece;
 		this.movePiece(piece, fromSquare, toSquare);
 	}
 
@@ -314,6 +315,8 @@ export class Chessboard {
 			turn: this.turn,
 			lastMoveFrom: this.lastMoveFrom,
 			lastMoveTo: this.lastMoveTo,
+			wk: this.wk,
+			bk: this.bk,
 			game: Array.from(this.game.entries()),
 			board: this.board.map(row => row.map(piece => piece ? piece.clone() : null)),
 		}

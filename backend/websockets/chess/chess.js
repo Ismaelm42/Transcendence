@@ -84,26 +84,6 @@ function deleteLobby(id) {
 	}
 }
 
-function createOnlineGame(user, data) {
-
-	const config = lobby.get(Number(data.id));
-	const board = createBoard(user, config);
-
-	chessboard.set(user.id, board);
-	chessboard.set(Number(data.id), board);
-	deleteLobby(Number(data.id));
-
-	const message = {
-		type: 'info',
-		inGame: true,
-		lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
-		lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
-		board: board.getBoard(),
-	}
-	sendMsgToClient(Number(data.id), { ...message, playerColorView: board.hostColorView, });
-	sendMsgToClient(user.id, { ...message, playerColorView: board.guestColorView, });
-}
-
 function createBoard(user, data) {
 
 	let board;
@@ -133,6 +113,26 @@ function createBoard(user, data) {
 	return board;
 }
 
+function createOnlineGame(user, data) {
+
+	const config = lobby.get(Number(data.id));
+	const board = createBoard(user, config);
+
+	chessboard.set(user.id, board);
+	chessboard.set(Number(data.id), board);
+	deleteLobby(Number(data.id));
+
+	const message = {
+		type: 'info',
+		inGame: true,
+		lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
+		lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
+		board: board.getBoard(),
+	}
+	sendMsgToClient(Number(data.id), { ...message, playerColorView: board.hostColorView, });
+	sendMsgToClient(user.id, { ...message, playerColorView: board.guestColorView, });
+}
+
 function createLocalGame(user, data) {
 
 	const board = createBoard(user, data);
@@ -148,7 +148,6 @@ function createLocalGame(user, data) {
 	}
 	sendMsgToClient(user.id, message);
 }
-
 
 function movePiece(user, data) {
 
