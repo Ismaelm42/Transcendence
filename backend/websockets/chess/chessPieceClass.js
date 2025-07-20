@@ -1,4 +1,3 @@
-
 export class ChessPiece {
 
 	constructor(color, square) {

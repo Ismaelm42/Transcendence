@@ -8,9 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { userId } from './state.js';
+import { getChessHtml, getLobbyItemHtml } from './handleFetchers.js';
 export function formatLobbyList(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        let htmlText = '', htmlContent, lobbyHtmlContent, option, color, mode;
+        let htmlText = '', htmlContent, option, color, mode;
         const lobbies = Object.values(data.object);
         for (const lobby of lobbies) {
             lobby.userId.toString() === userId ? option = "Cancel" : option = "Join";
@@ -22,8 +23,7 @@ export function formatLobbyList(data) {
                 mode = "blitz";
             else
                 mode = "rapid";
-            lobbyHtmlContent = yield fetch("../../html/chess/lobbyItem.html");
-            htmlContent = yield lobbyHtmlContent.text();
+            htmlContent = yield getLobbyItemHtml();
             htmlContent = htmlContent
                 .replace("{{ userId }}", lobby.userId.toString())
                 .replace("{{ id }}", lobby.userId.toString())
@@ -39,4 +39,28 @@ export function formatLobbyList(data) {
         }
         return htmlText;
     });
+}
+export function formatChessGame(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(data);
+        let htmlContent = yield getChessHtml();
+        htmlContent = htmlContent
+            .replace("{{ playerName }}", data.playerName)
+            .replace("{{ playerElo }}", data.playerElo)
+            .replace("{{ playerImagePath }}", data.playerImagePath)
+            .replace("{{ playerTime }}", data.playerTime)
+            .replace("{{ opponentName }}", data.opponentName)
+            .replace("{{ opponentElo }}", data.opponentElo)
+            .replace("{{ opponentImagePath }}", data.opponentImagePath)
+            .replace("{{ opponentTime }}", data.opponentTime);
+        return htmlContent;
+    });
+}
+export function updateTime(data) {
+    const playerTime = document.getElementById("player-time");
+    const opponentTime = document.getElementById("opponent-time");
+    if (playerTime)
+        playerTime.textContent = data.playerTime;
+    if (opponentTime)
+        opponentTime.textContent = data.opponentTime;
 }

@@ -32,6 +32,15 @@ export function getLobbyHtml() {
         return htmlText;
     });
 }
+export function getLobbyItemHtml() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const htmlContent = yield fetch("../../html/chess/lobbyItem.html");
+        if (!htmlContent.ok)
+            throw new Error("Failed to load the HTML file");
+        const htmlText = yield htmlContent.text();
+        return htmlText;
+    });
+}
 export function getChessHtml() {
     return __awaiter(this, void 0, void 0, function* () {
         const htmlContent = yield fetch("../../html/chess/game.html");

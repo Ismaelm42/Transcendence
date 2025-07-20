@@ -1,4 +1,5 @@
-import { Pawn, Knight, Bishop, Rook, Queen, King, ChessPiece } from './chessPieceClass.js'
+import { Clock } from './clock.js'
+import { Pawn, Knight, Bishop, Rook, Queen, King } from './chessPieceClass.js'
 
 export class Chessboard {
 
@@ -6,18 +7,30 @@ export class Chessboard {
 
 		this.hostId = data.hostId;
 		this.guestId = data.guestId;
+		this.hostName = data.hostName;
+		this.guestName = data.guestName;
+		this.hostElo = data.hostElo;
+		this.guestElo = data.guestElo;
+		this.hostImagePath = data.hostImagePath;
+		this.guestImagePath = data.guestImagePath;
 		this.hostColor = data.hostColor;
 		this.guestColor = this.getGuestColor();
 		this.hostColorView = data.hostColorView || this.hostColor;
 		this.guestColorView = data.guestColorView || this.guestColor;
 		this.gameMode = data.gameMode;
+		this.clock = new Clock();
+		this.intervalId = data.intervalId || null;
 		this.timeControl = data.timeControl;
+		this.hostTime = this.setTime();
+		this.guestTime = this.setTime()
+		this.timeIncrement = this.setIncrement();
 		this.move = data.move || 0;
 		this.turn = this.getTurn();
 		this.lastMoveFrom = data.lastMoveFrom || null;
 		this.lastMoveTo = data.lastMoveTo || null;
 		this.wk = data.wk || null;
 		this.bk = data.bk || null;
+		this.gameOver = data.gameOver || false;
 		if (data.game) {
 			this.game = new Map(
 				data.game.map(([key, value]) => [
@@ -81,6 +94,14 @@ export class Chessboard {
 
 	getTurn() {
 		return (this.move % 2 !== 0) ? 'white' : 'black';
+	}
+
+	setTime() {
+		return Number(this.timeControl.split('|')[0]) * 60 * 1000;
+	}
+
+	setIncrement() {
+		return Number(this.timeControl.split('|')[1]) * 1000;
 	}
 
 	setPieceAt(square, piece) {
@@ -223,6 +244,12 @@ export class Chessboard {
 		return mateType;
 	}
 
+	updateTime() {
+
+		this.clock.stop();
+		this.clock.start(this);
+	}
+
 	saveMove(fromSquare, toSquare) {
 
 		this.lastMoveFrom = fromSquare;
@@ -290,6 +317,7 @@ export class Chessboard {
 		const type = result ? result : 'move';
 		this.makeMove(fromSquare, toSquare);
 		this.saveMove(fromSquare, toSquare);
+		this.updateTime();
 		return this.buildClientMessage(type, data.moveFrom, data.moveTo);
 	}
 
@@ -305,12 +333,22 @@ export class Chessboard {
 		const data = {
 			hostId: this.hostId,
 			guestId: this.guestId,
+			hostName: this.hostName,
+			guestName: this.guestName,
+			hostElo: this.hostElo,
+			guestElo: this.guestElo,
+			hostImagePath: this.hostImagePath,
+			guestImagePath: this.guestImagePath,
 			hostColor: this.hostColor,
 			guestColor: this.guestColor,
 			hostColorView: this.hostColorView,
 			guestColorView: this.guestColorView,
 			gameMode: this.gameMode,
+			intervalId: this.intervalId,
 			timeControl: this.timeControl,
+			hostTime: this.hostTime,
+			guestTime: this.guestTime,
+			timeIncrement: this.timeIncrement,
 			move: this.move,
 			turn: this.turn,
 			lastMoveFrom: this.lastMoveFrom,

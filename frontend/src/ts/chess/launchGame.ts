@@ -1,8 +1,9 @@
 import { handleEvents } from './handleEvents.js'
-import { getLobbyHtml, getChessHtml } from './handleFetchers.js'
+import { getLobbyHtml } from './handleFetchers.js'
 import { preloadImages, setupChessboard } from './drawChessboard.js'
 import { requestLobbyList, sendGameConfig } from './handleSenders.js'
 import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js'
+import { formatChessGame } from './formatContent.js'
 
 function getConfig(): any {
 
@@ -57,15 +58,13 @@ export async function launchUI() {
 	start.addEventListener('click', async () => {
 		const data = getConfig();
 		sendGameConfig(data);
-
-		// await launchGame(data)
 	});
 
 }
 
 export async function launchGame(data: any) {
 
-	appContainer!.innerHTML = await getChessHtml();
+	appContainer!.innerHTML = await formatChessGame(data);
 	setCanvas();
 	setChessboard(data);
 

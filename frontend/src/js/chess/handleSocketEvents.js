@@ -7,9 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { updateLobbyList } from "./lobby.js";
+import { updateTime } from "./formatContent.js";
 import { setupChessboard } from "./drawChessboard.js";
 import { launchUI, launchGame } from "./launchGame.js";
-import { updateLobbyList } from "./lobby.js";
 import { socket, chessboard, setData } from "./state.js";
 import { showPromotionOptions } from "./handlePromotion.js";
 function handleSocketOpen() {
@@ -39,6 +40,9 @@ function handleSocketMessage() {
             case 'move':
                 chessboard.set(data);
                 setupChessboard(chessboard, null, null);
+                break;
+            case 'time':
+                updateTime(data);
                 break;
             case 'promote':
                 setupChessboard(chessboard, null, null);

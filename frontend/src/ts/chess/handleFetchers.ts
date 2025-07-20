@@ -23,6 +23,15 @@ export async function getLobbyHtml(): Promise<string> {
 	return htmlText;
 }
 
+export async function getLobbyItemHtml(): Promise<string> {
+
+	const htmlContent = await fetch("../../html/chess/lobbyItem.html");
+	if (!htmlContent.ok)
+		throw new Error("Failed to load the HTML file");
+	const htmlText = await htmlContent.text();
+	return htmlText;
+}
+
 export async function getChessHtml(): Promise<string> {
 
 	const htmlContent = await fetch("../../html/chess/game.html");
