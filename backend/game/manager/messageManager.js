@@ -247,13 +247,22 @@ export function handlePauseGame(client, data)
 	const gameSession = gamesList.get(clientData.roomId);
 	if (!gameSession)
 		return ;
-	gameSession.pauseGame();
-	const reason = data?.reason || `${user.username} paused the game`;
-	gameSession.broadcastResponse('GAME_PAUSED', { 
-		reason,
-		username: user.username, 
-		userId: user.id 
-	});
+	if (!gameSession.isPaused && gameSession.gameLoop)
+	{
+		gameSession.pauseGame();
+		gameSession.pauseStartTime = Date.now();
+		// Set timeout to auto-check players
+		gameSession.pauseTimer = setTimeout(() => {
+			gameSession.checkPlayersStatus(gamesList);
+		}, gameSession.maxPauseDuration);
+		// Notify or pass to client-frontside pause status and reason
+		const reason = data?.reason || `${user.username} paused the game`;
+		gameSession.broadcastResponse('GAME_PAUSED', { 
+			reason,
+			username: user.username, 
+			userId: user.id 
+		});
+	}
 }
 
 export function handleResumeGame(client, data)
@@ -261,8 +270,15 @@ export function handleResumeGame(client, data)
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
-	if (!gameSession)
+	if (!gameSession || !gameSession.isPaused)
 		return ;
+	if (gameSession.pauseTimer)
+	{
+		clearTimeout(gameSession.pauseTimer);
+		gameSession.pauseTimer = null;
+	}
 	gameSession.resumeGame(gamesList);
-	gameSession.broadcastResponse('GAME_RESUMED');
+	gameSession.broadcastResponse('GAME_RESUMED', {
+		reason: data?.reason || `${user.username} resumed the game`
+	});
 }

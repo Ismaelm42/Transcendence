@@ -7,15 +7,15 @@ import GameSession from './GameSession.js';
 import { resetState, update, checkScoring, endGame, setDifficulty } from './gameState.js';
 import { resetBall, checkPaddleCollision } from './physics.js';
 import { addPlayer, removePlayer, getPlayerView, movePlayerPaddle, setPlayerDetails } from './players.js';
-import { broadcastResponse, getConnections } from './network.js';
+import { broadcastResponse, getConnections, checkPlayersStatus } from './network.js';
 import { finalizeGame, getGamelogData } from './gameLogs.js';
 
 // From gameState.js
 GameSession.prototype.resetState = resetState;
 GameSession.prototype.update = update;
+GameSession.prototype.setDifficulty = setDifficulty;
 GameSession.prototype.checkScoring = checkScoring;
 GameSession.prototype.endGame = endGame;
-GameSession.prototype.setDifficulty = setDifficulty;
 
 // From physics.js
 GameSession.prototype.checkPaddleCollision = checkPaddleCollision;
@@ -31,6 +31,7 @@ GameSession.prototype.setPlayerDetails = setPlayerDetails;
 // From network.js
 GameSession.prototype.getConnections = getConnections;
 GameSession.prototype.broadcastResponse = broadcastResponse;
+GameSession.prototype.checkPlayersStatus = checkPlayersStatus;
 
 // From gameLogs.js
 GameSession.prototype.finalizeGame = finalizeGame;

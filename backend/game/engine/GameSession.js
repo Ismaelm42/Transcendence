@@ -26,6 +26,11 @@ export default class GameSession
 		this.ballSpeedIncrease = 1.10;
 		this.ballMaxSpeed = 0.75;
 
+		// Timer values and variables
+		this.pauseTimer = null;
+		this.maxPauseDuration = 60000; // 1 minute
+		this.pauseStartTime = null;
+
 		// For game log and database storage
 		this.metadata = {
 			id: this.roomId,
@@ -79,6 +84,7 @@ export default class GameSession
 			clearInterval(this.gameLoop);
 			this.gameLoop = null;
 			this.isPaused = true;
+			this.pauseStartTime = Date.now()
 		}
 	}
 
@@ -88,6 +94,7 @@ export default class GameSession
 		{
 			this.startGameLoop(gameList);
 			this.isPaused = false;
+			this.pauseStartTime = null;
 		}
 	}
 
