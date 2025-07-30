@@ -12,18 +12,33 @@ export function showMessage(message: string, time: number | null): void {
 	messageContent.innerHTML = message;
 	messageContainer.classList.remove("hidden");
 
+	// Focus the close button so Enter will trigger it
+	closeButton.focus();
+
 	// Close button event listener
-	const closeHandler = () => {
+	const closeHandler = (event: Event) => {
+		event.preventDefault();
 		messageContainer.classList.add("hidden");
 		closeButton.removeEventListener("click", closeHandler);
+		closeButton.removeEventListener("keydown", keydownHandler);
 	};
 	closeButton.addEventListener("click", closeHandler);
+
+	// Allow closing with Enter key
+	const keydownHandler = (event: KeyboardEvent) => {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			closeHandler(event);
+		}
+	};
+	closeButton.addEventListener("keydown", keydownHandler);
 
 	// If a time is provided, hide the message after the specified time
 	if (time !== null) {
 		setTimeout(() => {
 			messageContainer.classList.add("hidden");
 			closeButton.removeEventListener("click", closeHandler);
+			closeButton.removeEventListener("keydown", keydownHandler);
 		}, time);
 	}
 }
@@ -43,12 +58,25 @@ export function showWinnerMessage(message: string, time: number | null): void {
 	messageContent.innerHTML = message;
 	messageContainer.classList.remove("hidden");
 
+	// Focus the close button so Enter will trigger it
+	closeButton.focus();
+
 	// Close button event listener
-	const closeHandler = () => {
+	const closeHandler = (event: Event) => {
+		event?.preventDefault();
 		messageContainer.classList.add("hidden");
 		closeButton.removeEventListener("click", closeHandler);
 	};
 	closeButton.addEventListener("click", closeHandler);
+
+		// Allow closing with Enter key
+	const keydownHandler = (event: KeyboardEvent) => {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			closeHandler(event);
+		}
+	};
+	closeButton.addEventListener("keydown", keydownHandler);
 
 	// If a time is provided, hide the message after the specified time
 	if (time !== null) {

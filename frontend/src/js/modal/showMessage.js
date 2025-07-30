@@ -9,17 +9,30 @@ export function showMessage(message, time) {
     // Set the message content and make the container visible
     messageContent.innerHTML = message;
     messageContainer.classList.remove("hidden");
+    // Focus the close button so Enter will trigger it
+    closeButton.focus();
     // Close button event listener
-    const closeHandler = () => {
+    const closeHandler = (event) => {
+        event.preventDefault();
         messageContainer.classList.add("hidden");
         closeButton.removeEventListener("click", closeHandler);
+        closeButton.removeEventListener("keydown", keydownHandler);
     };
     closeButton.addEventListener("click", closeHandler);
+    // Allow closing with Enter key
+    const keydownHandler = (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            closeHandler(event);
+        }
+    };
+    closeButton.addEventListener("keydown", keydownHandler);
     // If a time is provided, hide the message after the specified time
     if (time !== null) {
         setTimeout(() => {
             messageContainer.classList.add("hidden");
             closeButton.removeEventListener("click", closeHandler);
+            closeButton.removeEventListener("keydown", keydownHandler);
         }, time);
     }
 }
@@ -35,12 +48,23 @@ export function showWinnerMessage(message, time) {
     // Set the message content and make the container visible
     messageContent.innerHTML = message;
     messageContainer.classList.remove("hidden");
+    // Focus the close button so Enter will trigger it
+    closeButton.focus();
     // Close button event listener
-    const closeHandler = () => {
+    const closeHandler = (event) => {
+        event === null || event === void 0 ? void 0 : event.preventDefault();
         messageContainer.classList.add("hidden");
         closeButton.removeEventListener("click", closeHandler);
     };
     closeButton.addEventListener("click", closeHandler);
+    // Allow closing with Enter key
+    const keydownHandler = (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            closeHandler(event);
+        }
+    };
+    closeButton.addEventListener("keydown", keydownHandler);
     // If a time is provided, hide the message after the specified time
     if (time !== null) {
         setTimeout(() => {

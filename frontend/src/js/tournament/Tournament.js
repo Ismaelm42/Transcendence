@@ -27,6 +27,7 @@ export default class Tournament extends Step {
         this.tournamentPendingPlayers = this.tournamentConfig.numberOfPlayers;
         this.nextGameIndex = 0; // Index to track the next game to be played
         this.TournamentWinner = null; // To store the tournament winner
+        this.LeaveWithoutWarningFLAG = false;
         this.ui = new TournamentUI(this);
         // todo: check and complete. at thismoment is initialized as empty object and filled in saveTournament()
         this.log = {};
@@ -37,6 +38,9 @@ export default class Tournament extends Step {
     }
     getTournamentId() {
         return this.tournamentId;
+    }
+    getTournamentUI() {
+        return this.ui;
     }
     findNextTournamentId() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -530,6 +534,7 @@ export default class Tournament extends Step {
                         if (appContainer) {
                             appContainer.innerHTML = '';
                             this.navigate('tournament-lobby');
+                            this.ui.disableTournamentHashGuard();
                         }
                         return;
                     }
@@ -584,5 +589,52 @@ export default class Tournament extends Step {
                 console.error("Error while deleting temporary users:", error);
             }
         });
+    }
+    static deleteTournamentTempUsers(TournamentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Deleting temporary users for Tournament ID:", TournamentId);
+            if (TournamentId === -42) {
+                return;
+            }
+            try {
+                const response = yield fetch("https://localhost:8443/back/delete_user_by_tournament_id", {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ TournamentId: TournamentId.toString() }),
+                });
+                if (response.ok) {
+                    console.log("Temporary users deleted successfully for Tournament ID:", TournamentId);
+                }
+                else {
+                    console.error("Failed to delete temporary users for Tournament ID:", TournamentId);
+                }
+            }
+            catch (error) {
+                console.error("Error while deleting temporary users:", error);
+            }
+        });
+    }
+    resetTournament() {
+        this.deleteTempUsers(this.tournamentId).then(() => {
+            console.log("Temporary users deleted successfully.");
+        }).catch((error) => {
+            console.error("Error while deleting temporary users:", error);
+        });
+        console.log("Resetting tournament...");
+        this.tournamentId = -42;
+        this.tournamentPlayers = [];
+        // TODO_GAME: check if this is necessary
+        this.game = new Game(DEFAULT_CONTAINER_ID, "tournament-game");
+        //TODO_GAME: check if this is necessary
+        // this.ui = new TournamentUI(this);
+        this.tournamentConfig = { numberOfPlayers: 4, scoreLimit: 5, difficulty: 'medium' };
+        this.bracket = [];
+        this.gameDataArray = [];
+        this.tournamentPendingPlayers = this.tournamentConfig.numberOfPlayers;
+        this.nextGameIndex = 0; // Reset the next game index
+        this.TournamentWinner = null; // Reset the tournament Winner
+        this.log = {};
     }
 }

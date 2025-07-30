@@ -335,6 +335,13 @@ Content-Type: application/json
 	"TournamentId": "26"
 }
 
+POST https://localhost:8443/back/clean_temp_user_after_closing HTTP/1.1
+
+Content-Type: application/json
+{
+	"tournamentId": "26"
+}
+
 DELETE https://localhost:8443/back/delete_all_temp_users HTTP/1.1
 
 // ***************************************************************//

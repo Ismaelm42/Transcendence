@@ -1,11 +1,13 @@
 import { Step } from "./stepRender.js";
 import { showMessage } from "../modal/showMessage.js";
 import Game from "../game/Game.js"
+import Tournament from "../tournament/Tournament.js";
 
 export class SPA {
     private container: HTMLElement;
     private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
 	public currentGame: Game | null = null;
+	public currentTournament: Tournament | null = null;
 
     private routes: { [key: string]: { module: string; protected: boolean } } = {
         'home': { module: '../home/homeRender.js', protected: false },
@@ -26,7 +28,38 @@ export class SPA {
 		SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
         this.loadHEaderAndFooter();	
 		this.loadStep();
-        window.onpopstate = () => this.loadStep();
+		// Changes to advise the user when they leave a tournament in progress
+		//it will reset the tournament guards and delete TempUsers
+		window.onpopstate = () => {
+			if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
+				const tournamentId = this.currentTournament.getTournamentId();
+				const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
+				if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
+					&& warningFlag!== true) {
+					showMessage("Tournament in progress aborted?", 5000);
+					const tournamentUI = this.currentTournament.getTournamentUI?.();
+					if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
+						tournamentUI.resetTournament();
+					}
+					const messageContainer = document.getElementById("message-container");
+
+						// En lugar de usar async/await, puedes usar un setInterval para comprobar periódicamente si el modal está oculto y luego ejecutar el código necesario.
+						const intervalId = setInterval(() => {
+							if (messageContainer?.style.display === 'none') {
+								clearInterval(intervalId);
+								// Aquí puedes colocar el código que quieras ejecutar después de que el modal se cierre
+							}
+						}, 1000);
+					
+				}
+				const step = location.hash.replace('#', '') || 'home';
+				this.loadStep();
+			}else {
+				const step = location.hash.replace('#', '') || 'home';
+				this.loadStep();
+				}
+			}
+		
 		// this.navigate('home');
 
 		window.addEventListener("pageshow", (event) => {
@@ -93,6 +126,7 @@ export class SPA {
 
 		// // Actualizar la URL sin recargar la página
 		// history.replaceState(null, '', newUrl);
+		console.log('loadStep currentTournament: ', this.currentTournament);
 
 		const routeConfig = this.routes[step];
 		if (routeConfig) {
@@ -110,6 +144,12 @@ export class SPA {
 			{
 				stepInstance = new module.default('app-container');
 				this.currentGame = stepInstance;
+			}
+			else if (step === 'tournament-lobby')
+			{
+				stepInstance = new module.default('app-container');
+				this.currentTournament = stepInstance;
+				console.log('tournament-lobby currentTournament: ', this.currentTournament);
 			}
 			else
 				stepInstance = new module.default('app-container');
@@ -146,7 +186,6 @@ export class SPA {
 	public static getInstance(): SPA {
 		return SPA.instance;
 	}
-
 
 }
 

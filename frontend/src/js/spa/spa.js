@@ -11,6 +11,7 @@ import { showMessage } from "../modal/showMessage.js";
 export class SPA {
     constructor(containerId) {
         this.currentGame = null;
+        this.currentTournament = null;
         this.routes = {
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
@@ -28,7 +29,37 @@ export class SPA {
         SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
         this.loadHEaderAndFooter();
         this.loadStep();
-        window.onpopstate = () => this.loadStep();
+        // Changes to advise the user when they leave a tournament in progress
+        //it will reset the tournament guards and delete TempUsers
+        window.onpopstate = () => {
+            var _a, _b;
+            if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
+                const tournamentId = this.currentTournament.getTournamentId();
+                const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
+                if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
+                    && warningFlag !== true) {
+                    showMessage("Tournament in progress aborted?", 5000);
+                    const tournamentUI = (_b = (_a = this.currentTournament).getTournamentUI) === null || _b === void 0 ? void 0 : _b.call(_a);
+                    if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
+                        tournamentUI.resetTournament();
+                    }
+                    const messageContainer = document.getElementById("message-container");
+                    // En lugar de usar async/await, puedes usar un setInterval para comprobar periódicamente si el modal está oculto y luego ejecutar el código necesario.
+                    const intervalId = setInterval(() => {
+                        if ((messageContainer === null || messageContainer === void 0 ? void 0 : messageContainer.style.display) === 'none') {
+                            clearInterval(intervalId);
+                            // Aquí puedes colocar el código que quieras ejecutar después de que el modal se cierre
+                        }
+                    }, 1000);
+                }
+                const step = location.hash.replace('#', '') || 'home';
+                this.loadStep();
+            }
+            else {
+                const step = location.hash.replace('#', '') || 'home';
+                this.loadStep();
+            }
+        };
         // this.navigate('home');
         window.addEventListener("pageshow", (event) => {
             if (event.persisted && location.hash === '#login') {
@@ -91,6 +122,7 @@ export class SPA {
             // let newUrl = baseUrl + '#home';
             // // Actualizar la URL sin recargar la página
             // history.replaceState(null, '', newUrl);
+            console.log('loadStep currentTournament: ', this.currentTournament);
             const routeConfig = this.routes[step];
             if (routeConfig) {
                 //importamos el módulo correspondiente
@@ -105,6 +137,11 @@ export class SPA {
                 else if (step === 'game-lobby') {
                     stepInstance = new module.default('app-container');
                     this.currentGame = stepInstance;
+                }
+                else if (step === 'tournament-lobby') {
+                    stepInstance = new module.default('app-container');
+                    this.currentTournament = stepInstance;
+                    console.log('tournament-lobby currentTournament: ', this.currentTournament);
                 }
                 else
                     stepInstance = new module.default('app-container');

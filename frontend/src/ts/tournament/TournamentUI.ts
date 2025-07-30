@@ -21,7 +21,7 @@ export class TournamentUI
 	constructor(tournament: Tournament)
 	{
 		this.tournament = tournament;
-		this.boundOnLeavingTournamentLobby = this.onLeavingTournamentLobby.bind(this);
+		// this.boundOnLeavingTournamentLobby = this.onLeavingTournamentLobby.bind(this);
 	}
 
 
@@ -100,9 +100,13 @@ export class TournamentUI
 					difficultyValue.textContent = difficultyLabels[parseInt(difficultySlider.value) - 1];
 				});
 			}
+
+			// Show the select players 				
 			const selectPlayers = document.getElementById("select-players") as HTMLButtonElement | null;
 			if (selectPlayers) {
-				selectPlayers.addEventListener("click", (e) => {
+			    selectPlayers.replaceWith(selectPlayers.cloneNode(true)); // Delete previous listeners 
+			    const newSelectPlayers = document.getElementById("select-players") as HTMLButtonElement | null;
+			    newSelectPlayers?.addEventListener("click", (e) => {
 					e.preventDefault();
 					let numberOfPlayers = parseInt(numberSlider?.value || "4");
 					let scoreLimit = parseInt(scoreSlider?.value || "5");
@@ -121,13 +125,8 @@ export class TournamentUI
 						difficultyLevel = 'hard';
 					}
 					let tConfig = {numberOfPlayers:numberOfPlayers, scoreLimit: scoreLimit, difficulty: difficultyLevel} as TournamentConfig;							
-					console.log("Tconfig set:", JSON.stringify(tConfig));
 					this.tournament.setTournamentConfig(tConfig);
 					this.tournament.setPendingPlayersCount(numberOfPlayers);
-					console.log("numberOfPlayers set to:", numberOfPlayers);
-					console.log("scoreLimit set to:", scoreLimit);
-					console.log("Difficulty set to:", this.tournament.getTournamentConfig().difficulty);
-					console.log("Tournament config set:", JSON.stringify(this.tournament.getTournamentConfig()));
 					this.showOnly('tournament-info-container');
 					
 					const sumaryPlayersHtml = document.getElementById('summary-players')
@@ -140,49 +139,79 @@ export class TournamentUI
 					} else {
 						console.error("Summary elements not found");
 					}
-					console.log("Preparing players for tournament with number of players: ", numberOfPlayers);
+					console.log("InAddEevnlisteners - Preparing players for tournament with number of players: ", numberOfPlayers);
 						this.preparePlayers(numberOfPlayers);
+					this.enableTournamentHashGuard();
 					});
+
+				const goBackButton = document.getElementById('tournament-back-button') as HTMLButtonElement | null;	
+
+				if (goBackButton) {
+					goBackButton.addEventListener('click', (e) => {
+						e.preventDefault();
+						this.showOnly('select-tournament');
+					});
+				}
+
+				// function handleEvent(event: MouseEvent | KeyboardEvent) {
+				//   event.preventDefault();
+
+				//   if (event instanceof MouseEvent) {
+				// 	const target = event.target as HTMLElement;
+				// 	console.log(`Click detected on: ${target.tagName}`);
+				// 	console.log(`Event target:`, target);	  
+				// 	const targetElement = event.target as HTMLElement;
+				// 	if (targetElement.tagName === 'A') {
+				// 		const href = (targetElement as HTMLAnchorElement).href;
+				// 		alert(`Click detectado en: ${targetElement.tagName}\nHref: ${href}`);
+				// 	} else {
+				// 		alert(`Click detectado en: ${targetElement.tagName}`);
+				// 	}
+
+				//   } else if (event instanceof KeyboardEvent) {
+				//     alert(`Tecla presionada: ${event.key}`);
+				//   }
+				// }
+
 				
 			}
-				this.enableTournamentHashGuard();
 		});
+
 		document.getElementById('remoteTournament')?.addEventListener('click', async () => {
+			showMessage("Remote tournament comming soon...", 5000);
 			// await this.game.setPlayerInfo('player1', null);
 			// this.game.setGuestInfo('player2', 'ai');
 			// this.game.setGameMode('1vAI');
-			this.showOnly('tournament-config-panel');
+			// this.showOnly('tournament-config-panel');
 		});
 	
 		document.getElementById('searchTournament')?.addEventListener('click', async () => {
+			showMessage("Search tournament comming soon...", 5000);
 			// Lobby + diff player entry assignation
 			// await this.game.setPlayerInfo('player1', null);
 			// this.game.setGameMode('remote');
-			this.showOnly('tournament-config-panel');
+			// this.showOnly('tournament-config-panel');
 		});
-		// window.onhashchange = function (event) {
-		// 	const confirmChange = confirm("Estás seguro de que quieres cambiar de sección?");
-		// 	if (!confirmChange) {
-		// 		// Revertir el cambio de hash
-		// 		history.pushState(null, '', event.oldURL);
-		// 	} else {
-		// 		// Proseguir con el cambio
-		// 		console.log("Hash actual:", location.hash);
-		// 	}
-		// };
-		// Asumiendo que ya agregaste algo al historial con pushState
-
 	}
 
 	async preparePlayers(numberOfPlayers: number): Promise<void> {
 		// this.tournament.setEmptyTournamentPlayers(numberOfPlayers);
-		await this.getFirstPlayer();
-		console.log("Pending players desde preparePlayers:", this.tournament.getPendingPlayersCount());
-		console.log("Preparing players for tournament with number of players:", numberOfPlayers);
-		this.getNextPlayer();
+		if (this.tournament.getTournamentPlayers().length < 1) {
+			await this.getFirstPlayer();
+						console.log("Pending players desde preparePlayers:", this.tournament.getPendingPlayersCount());
+			console.log("Preparing players for tournament with number of players:", numberOfPlayers);
+			this.getNextPlayer();
+		}else {
+			console.log("Tournament players already prepared, skipping getFirstPlayer.");
+			this.getNextPlayer();
+		}
+
 	}
 
 	getNextPlayer(): void {
+		console.log("Getting next player for tournament");
+		const trutru = this.tournament.getTournamentPlayers();
+		console.log("Tournament players:", trutru);
 		const numberOfPlayers = this.tournament.getTournamentConfig().numberOfPlayers;
 		const numberOfPendingPlayers = this.tournament.getPendingPlayersCount();
 		if (numberOfPendingPlayers === 0) {
@@ -272,7 +301,9 @@ export class TournamentUI
 
 			};
 		}
-	
+		console.log("going out next player for tournament");
+		const tritri = this.tournament.getTournamentPlayers();
+		console.log("Tournament players:", tritri);
 	}
 
 	// Todo: pendiente de probar en la final
@@ -410,6 +441,7 @@ export class TournamentUI
 	}
 
 	async getFirstPlayer(): Promise<void> {
+		console.log("en getFirstPlayrer tournament:Gameplayers: " + JSON.stringify(this.tournament.getTournamentPlayers()));
 		try {
 			const response = await fetch("https://localhost:8443/back//verify_first_player", {
 				method: "POST",
@@ -576,46 +608,329 @@ export class TournamentUI
 	  	const response = await fetch(template);
 	  return await response.text();
 	}
-	
-	private boundOnLeavingTournamentLobby: (event: HashChangeEvent) => void;
 
-	onLeavingTournamentLobby(event: HashChangeEvent) {
-		const fromHash = new URL(event.oldURL).hash;
-		const toHash = new URL(event.newURL).hash;
-		console.log("onLeavingTournamentLobby called");
-		// Solo si salimos de #tournament-lobby
-		if (fromHash === "#tournament-lobby") {
-			const confirmChange = confirm("Estás saliendo del lobby del torneo. ¿Quieres continuar?");
-			if (!confirmChange) {
-				// Revertir al lobby
-				location.hash = fromHash;
-			}
-			else {
-				// Si el torneo tiene un ID válido, eliminar los usuarios temporales
-				console.log("En else Confirm change to:", toHash);
-				if (this.tournament){
-					console.log("En if antes de getTournamentId");
-					let Tid = this.tournament.getTournamentId()?? -42;
-					console.log("Deleting temp users for tournamentId:", Tid);
-					try {
-						this.tournament.deleteTempUsers(Tid);
-					} catch (error) {
-						console.error("Error deleting temp users by tournamentId:", error);
-					}
+	/**
+	 * 	resets the tournament configuration sliders to their default values.
+	 *  keeping the html structure intact.
+	 */
+	resetConfigSliders(): void {
+    const numberSlider = document.getElementById("tournament-number-of-players") as HTMLInputElement | null;
+    const numberValue = document.getElementById("tournament-number-of-players-value") as HTMLElement | null;
+    if (numberSlider) {
+        numberSlider.value = "4"; // Valor por defecto
+        if (numberValue) numberValue.textContent = "4";
+    }
+
+    const scoreSlider = document.getElementById("tournament-score-limit") as HTMLInputElement | null;
+    const scoreValue = document.getElementById("tournament-score-value") as HTMLElement | null;
+    if (scoreSlider) {
+        scoreSlider.value = "5"; // Valor por defecto
+        if (scoreValue) scoreValue.textContent = "5";
+    }
+
+    const difficultySlider = document.getElementById("tournament-difficulty") as HTMLInputElement | null;
+    const difficultyValue = document.getElementById("tournament-difficulty-value") as HTMLElement | null;
+    const difficultyLabels = ["Easy", "Medium", "Hard"];
+    if (difficultySlider) {
+        difficultySlider.value = "2"; // Valor por defecto (Medium)
+        if (difficultyValue) difficultyValue.textContent = difficultyLabels[1];
+    }
+	}
+	/**
+	 * Resets the tournament HTML containers to their initial state.
+	 * This method clears the content of the tournament bracket, next match, and results containers.
+	 * that get fullfill with every update of the tournament
+	 */
+	resetTournamentHTML(): void {
+	    const containers = [
+	        'tournament-bracket-container',
+	        'next-match-bracket',
+	        'tournament-results'
+	    ];
+	    containers.forEach(id => {
+	        const el = document.getElementById(id);
+	        if (el) el.innerHTML = '';
+	    });
+	}
+
+	/**
+	 * Resets the tournament state, including the tournament configuration and player containers.
+	 * This method clears the registered players and select player containers, 
+	 * resets the tournament, delete the temporary players,and disables the tournament hash guard.
+	 */
+	resetTournament(): void {
+		this.showOnly('select-tournament');
+		this.tournament.resetTournament();
+		// this.tournament = new Tournament();
+		this.disableTournamentHashGuard();
+
+		// Limpia los contenedores de jugadores
+		const registeredPlayers = document.getElementById('registered-players');
+		if (registeredPlayers) registeredPlayers.innerHTML = '';
+		const selectPlayerContainer = document.getElementById('select-player-container');
+		if (selectPlayerContainer) selectPlayerContainer.innerHTML = '';
+		this.resetConfigSliders();
+		this.resetTournamentHTML();
+	}
+
+//////////////////////////////////////////////////////////
+
+
+	private handleAnchorClick(anchor: HTMLAnchorElement) {
+		const href = anchor.getAttribute('href') || '';
+		if (href.startsWith('#')) {
+			// Previene el comportamiento predeterminado
+			// (esto se hace fuera del handler original ya)
+			if (href.includes('#tournament-lobby')) {
+				const confirmChange = confirm("you are leaving the tournament lobby. Do you want to continue?");
+				if (confirmChange) {
+					this.resetTournament();
+					this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
+					window.location.hash = href;
+					this.disableTournamentHashGuard(); // disables the hash guard
 				}
-				this.disableTournamentHashGuard();
+			} else {
+				const confirmOther = confirm("Are you sure you want to leave the tournament?");
+				if (confirmOther) {
+					this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
+					this.resetTournament();
+					window.location.hash = href;
+					this.disableTournamentHashGuard(); // si quieres desactivar protección desde H1
+				//todo: INCLUIR AQUÍ ELIMINADO LOS TEMP USERS
+				}
 			}
+		}
+	}
+
+	evaluarMovimiento(event: MouseEvent | KeyboardEvent) {
+		const isClick = event instanceof MouseEvent;
+		const isKey = event instanceof KeyboardEvent;
+
+		if (isClick) {
+			const target = (event as MouseEvent).target as HTMLElement;
+			console.log(`Click detected on: ${target.tagName}`);
+
+			// guard for the title H1 "TRANSCENDENCE" inside an A element
+			if (target.tagName === 'H1') {
+				const closestAnchor = target.closest('a') as HTMLAnchorElement | null;
+				if (closestAnchor) {
+					console.log("Click on H1 inside A; rerouting to A element.");
+					event.preventDefault();
+					this.handleAnchorClick(closestAnchor);
+					return;
+				}
+			}
+
+			if (target.tagName === 'A') {
+				this.handleAnchorClick(target as HTMLAnchorElement);
+				event.preventDefault(); // solo si realmente fue necesario
+			}
+		} else if (isKey) {
+			const keyboardEvent = event as KeyboardEvent;
+			// Prevent Alt+F4 and Ctrl+F5 to avoid accidental exit/reload
+
+			if (keyboardEvent.ctrlKey && keyboardEvent.key === "F5") {
+				alert("This key combination is disabled during the tournament.");
+				keyboardEvent.preventDefault();
+				return;
+			}
+
+
+			if (keyboardEvent.key === "F5") {
+				keyboardEvent.preventDefault();
+				const confirmExit = confirm("Are you sure you want to reload and reset the tournament?");
+				if (confirmExit && keyboardEvent.key === "F5") {
+					this.resetTournament(); // Reset the tournament state
+					location.reload();
+				}
+			}
+			if (keyboardEvent.key === "Escape") {
+				keyboardEvent.preventDefault();
+				const confirmExit = confirm("this will lead yo to Home. Are you sure you want to exit the tournament?");
+				if (confirmExit && keyboardEvent.key === "Escape") {
+					// lógica personalizada, si deseas redirigir
+					console.log("Escape pressed, user confirmed exit.");
+					this.resetTournament(); // Reset the tournament state
+					window.location.href = "#home";
+				}
+			}
+		}
+	}
+
+	private boundClickHandler: ((event: MouseEvent) => void) | null = null;
+	private boundKeyHandler: ((event: KeyboardEvent) => void) | null = null;
+
+	enableTournamentHashGuard() {
+		window.addEventListener("pagehide", () => {
+			const tournamentId = this.tournament.getTournamentId();
+			if (tournamentId !== null && tournamentId !== undefined) {
+				fetch('https://localhost:8443/back/delete_user_by_tournament_id', {
+					method: 'DELETE',
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ TournamentId: tournamentId.toString() }),
+					keepalive: true
+				});
+			}
+		});
+
+		if (!this.boundClickHandler) {
+			this.boundClickHandler = this.evaluarMovimiento.bind(this);
+			document.addEventListener('click', this.boundClickHandler, true); // `true` para capturar antes del default
+		}
+
+		if (!this.boundKeyHandler) {
+			this.boundKeyHandler = this.evaluarMovimiento.bind(this);
+			document.addEventListener('keydown', this.boundKeyHandler, true);
 		}
 
 	}
 
-	// Activar protección
-	enableTournamentHashGuard() {
-		window.addEventListener('hashchange', this.boundOnLeavingTournamentLobby);
-	}
-
-	// Desactivar protección
 	disableTournamentHashGuard() {
-		window.removeEventListener('hashchange', this.boundOnLeavingTournamentLobby);
+		if (this.boundClickHandler) {
+			document.removeEventListener('click', this.boundClickHandler, true);
+			this.boundClickHandler = null;
+		}
+		if (this.boundKeyHandler) {
+			document.removeEventListener('keydown', this.boundKeyHandler, true);
+			this.boundKeyHandler = null;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+
+
+	// private boundOnLeavingTournamentLobby: (event: HashChangeEvent) => void;
+
+	// onLeavingTournamentLobby(event: HashChangeEvent) {
+	// 	const fromHash = new URL(event.oldURL).hash;
+	// 	const toHash = new URL(event.newURL).hash;
+	// 	console.log("onLeavingTournamentLobby called");
+	// 	// Solo si salimos de #tournament-lobby
+	// 	if (fromHash === "#tournament-lobby") {
+	// 		const confirmChange = confirm("Estás saliendo del lobby del torneo. ¿Quieres continuar?");
+	// 		if (!confirmChange) {
+	// 			// Revertir al lobby
+	// 			location.hash = fromHash;
+	// 		}
+	// 		else {
+	// 			// Si el torneo tiene un ID válido, eliminar los usuarios temporales
+	// 			console.log("En else Confirm change to:", toHash);
+	// 			if (this.tournament){
+	// 				console.log("En if antes de getTournamentId");
+	// 				let Tid = this.tournament.getTournamentId()?? -42;
+	// 				console.log("Deleting temp users for tournamentId:", Tid);
+	// 				try {
+	// 					this.tournament.deleteTempUsers(Tid);
+	// 				} catch (error) {
+	// 					console.error("Error deleting temp users by tournamentId:", error);
+	// 				}
+	// 			}
+	// 			this.disableTournamentHashGuard();
+	// 		}
+	// 	}
+
+	// }
+
+
+	// evaluarMovimiento(event: MouseEvent) {
+	// 	const target = event.target as HTMLElement;
+	// 	console.log(`Click detected on: ${target.tagName}`);
+
+	// 	if (target.tagName === 'H1') 
+	// 		this.disableTournamentHashGuard();
+	// 	if (target.tagName === 'A' && (target as HTMLAnchorElement).href.includes('#tournament-lobby')) {
+	// 		const confirmChange = confirm("You are leaving the tournament lobby. Do you want to continue?");
+	// 		if (!confirmChange) {
+	// 			return// Revertir el cambio de Hash
+	// 		}
+	// 	}
+	// }
+
+	// // Activar protección
+	// private boundClickHandler: ((event: MouseEvent) => void) | null = null;
+	// private boundKeyHandler: ((event: KeyboardEvent) => void) | null = null;
+
+
+	// enableTournamentHashGuard() {
+	// 	// Guarda el handler para poder eliminarlo después
+	// 	this.boundClickHandler = (event: MouseEvent) => {
+	// 		event.preventDefault();
+	// 		this.evaluarMovimiento(event);
+	// 	};
+	// 	this.boundKeyHandler = (event: KeyboardEvent) => {
+	// 		// Add your key handling logic here if needed
+	// 		// For now, just prevent default as a placeholder
+	// 		event.preventDefault();
+	// 	};
+	// }
+
+	// disableTournamentHashGuard() {
+	// 	if (this.boundClickHandler) {
+	// 		document.removeEventListener('click', this.boundClickHandler);
+	// 		this.boundClickHandler = null;
+	// 	}
+	// 	if (this.boundKeyHandler) {
+	// 		document.removeEventListener('keydown', this.boundKeyHandler);
+	// 		this.boundKeyHandler = null;
+	// 	}
+	// }
+
+
+
+
+
+		// window.onhashchange = function (event) {
+		// 	const confirmChange = confirm("Estás seguro de que quieres cambiar de sección?");
+		// 	if (!confirmChange) {
+		// 		// Revertir el cambio de hash
+		// 		history.pushState(null, '', event.oldURL);
+		// 	} else {
+		// 		// Proseguir con el cambio
+		// 		console.log("Hash actual:", location.hash);
+		// 	}
+		// };
+		// Asumiendo que ya agregaste algo al historial con pushState
+
+				// Captura clicks en toda la página
+				// document.addEventListener('click', (event: MouseEvent) => {
+				//   const target = event.target as HTMLElement;
+
+				//   // Subimos hasta el <a> más cercano si existe
+				//   const anchor = target.closest('a');
+
+				//   if (anchor && anchor instanceof HTMLAnchorElement && anchor.href.includes('#')) {
+				//     handleEvent(event);
+				//   }
+				//   else if (target.tagName === 'A' && (target as HTMLAnchorElement).href.includes('#')) {
+				//     handleEvent(event);
+				//   }
+				// });
+
+				// // Captura cualquier tecla presionada
+				// document.addEventListener('keydown', (event: KeyboardEvent) => {
+				//   handleEvent(event);
+				// });

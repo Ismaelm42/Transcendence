@@ -189,7 +189,7 @@ export function configureTournamentRoutes(fastify) {
 	// // Define a POST route to create a new user
 	// fastify.post('/create_tournament', async (request, reply) => {
 	// 	// include the necesary code to get the next tournament Id available
-	// 	// dependnig on the torunament type reques the necesary data
+	// 	// dependnig on the Tournament type reques the necesary data
 
 
 	// 	const { username, password, googleId, email, avatarPath } = request.body;
