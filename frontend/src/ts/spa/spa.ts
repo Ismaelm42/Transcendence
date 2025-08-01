@@ -145,6 +145,7 @@ export class SPA {
 				return;
 			}
 			await stepInstance.init();
+		} else {
 			showMessage('url does not exist', 2000);
 			window.location.hash = '#home'; 
 		}

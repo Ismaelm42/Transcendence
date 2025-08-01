@@ -145,6 +145,8 @@ export class SPA {
                     return;
                 }
                 yield stepInstance.init();
+            }
+            else {
                 showMessage('url does not exist', 2000);
                 window.location.hash = '#home';
             }
