@@ -46,7 +46,7 @@ function formatTime(time) {
 	}
 }
 
-function sendInfoToClient(user, data) {
+function sendInfoToClient(user) {
 
 	let message;
 
@@ -94,10 +94,12 @@ function createLobby(user, data) {
 	const newLobby = {
 		userId: user.id,
 		username: user.username,
-		rating: "1200",
 		playerColor: data.playerColor,
 		timeControl: data.timeControl,
 		gameMode: 'online',
+		minRating: 'any',
+		maxRating: 'any',
+		rating: '4000',
 	}
 	lobby.set(user.id, newLobby);
 	sendLobbyToAllClients();
@@ -115,7 +117,7 @@ async function createBoard(user, data) {
 
 	let board;
 	let config;
-	const hostColor = (data.playerColor === "random") ? (Math.random() < 0.5 ? "white" : "black") : data.playerColor;
+	const hostColor = (data.playerColor === 'random') ? (Math.random() < 0.5 ? 'white' : 'black') : data.playerColor;
 	const host = await crud.user.getUserById(Number(data.userId));
 
 	if (data.gameMode === 'local') {
@@ -123,9 +125,9 @@ async function createBoard(user, data) {
 			hostId: user.id,
 			guestId: user.id,
 			hostName: user.username,
-			guestName: "Guest",
-			hostElo: "2000",
-			guestElo: "N/A",
+			guestName: 'Guest',
+			hostElo: '2000',
+			guestElo: 'N/A',
 			hostImagePath: user.avatarPath,
 			guestImagePath: user.avatarPath,
 			hostColor: hostColor,
@@ -140,8 +142,8 @@ async function createBoard(user, data) {
 			guestId: user.id,
 			hostName: host.username,
 			guestName: user.username,
-			hostElo: "2000",
-			guestElo: "2500",
+			hostElo: '2000',
+			guestElo: '2500',
 			hostImagePath: host.avatarPath,
 			guestImagePath: user.avatarPath,
 			hostColor: hostColor,
@@ -153,18 +155,20 @@ async function createBoard(user, data) {
 	return board;
 }
 
-async function createOnlineGame(user, data) {
+async function createOnlineGame(user, opponentId) {
 
-	const config = lobby.get(Number(data.id));
+	const config = lobby.get(Number(opponentId));
 	const board = await createBoard(user, config);
 
 	chessboard.set(user.id, board);
-	chessboard.set(Number(data.id), board);
-	deleteLobby(Number(data.id));
+	chessboard.set(Number(opponentId), board);
+	deleteLobby(user.id);
+	deleteLobby(Number(opponentId));
 
 	const hostMessage = {
 		type: 'info',
 		inGame: true,
+		isNewGame: true,
 		playerName: board.hostName,
 		opponentName: board.guestName,
 		playerElo: board.hostElo,
@@ -178,11 +182,12 @@ async function createOnlineGame(user, data) {
 		lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
 		board: board.getBoard(),
 	}
-	sendMsgToClient(Number(data.id), hostMessage);
+	sendMsgToClient(Number(opponentId), hostMessage);
 
 	const guestMessage = {
 		type: 'info',
 		inGame: true,
+		isNewGame: true,
 		playerName: board.guestName,
 		opponentName: board.hostName,
 		playerElo: board.guestElo,
@@ -208,6 +213,7 @@ async function createLocalGame(user, data) {
 	const message = {
 		type: 'info',
 		inGame: true,
+		isNewGame: true,
 		playerName: board.hostName,
 		opponentName: board.guestName,
 		playerElo: board.hostElo.toString(),
@@ -284,15 +290,144 @@ function movePiece(user, data) {
 	}
 }
 
+function deleteGame(id) {
+
+	const board = chessboard.get(id);
+	if (board)
+		clearInterval(board.intervalId);
+	chessboard.delete(id);
+}
+
+function isOpponentAvailable(user) {
+
+	const board = chessboard.get(user.id);
+	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+	const opponentBoard = chessboard.get(opponentId);
+	if (!clients.has(opponentId)) {
+		const message = {
+			type: 'cancelRematch',
+			opponentName: opponentId === board.hostId ? board.hostName : board.guestName,
+			reason: 'is not connected',
+		}
+		sendMsgToClient(user.id, message);
+		return false;
+	}
+	else if (user.id !== opponentBoard.hostId && user.id !== opponentBoard.guestId) {
+		const message = {
+			type: 'cancelRematch',
+			opponentName: opponentId === board.hostId ? board.hostName : board.guestName,
+			reason: 'is in game',
+		}
+		sendMsgToClient(user.id, message);
+		return false;
+	}
+	return true;
+}
+
+function isLocalRematch(user) {
+
+	const board = chessboard.get(user.id);
+	if (board.gameMode === 'local') {
+		const data = {
+			type: 'config',
+			userId: user.id,
+			playerColor: user.id === board.hostId ? board.guestColor : board.hostColor,
+			timeControl: board.timeControl,
+			gameMode: 'local',
+			minRating: 'any',
+			maxRating: 'any',
+		}
+		deleteGame(user.id);
+		createLocalGame(user, data);
+		return true;
+	}
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// FLAG to create the game instead of requesting a rematch
+function requestRematch(user) {
+
+	if (!isLocalRematch(user) && isOpponentAvailable(user)) {
+
+		const message = {
+			type: 'requestRematch',
+			username: user.username,
+		}
+		const board = chessboard.get(user.id);
+		const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+		sendMsgToClient(opponentId, message);
+	}
+}
+
+async function acceptRematch(user) {
+
+	if (isOpponentAvailable(user)) {
+		const board = chessboard.get(user.id);
+		const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+		const opponent = await crud.user.getUserById(opponentId);
+
+		const newLobby = {
+			userId: opponent.id,
+			username: opponent.username,
+			playerColor: opponent.id === board.hostId ? board.guestColor : board.hostColor,
+			timeControl: board.timeControl,
+			gameMode: 'online',
+			minRating: 'any',
+			maxRating: 'any',
+		}
+		console.log(newLobby);
+		lobby.set(opponent.id, newLobby);
+		deleteGame(user.id);
+		deleteGame(opponent.id);
+		createOnlineGame(user, opponent.id);
+	}
+}
+
+function rejectRematch(user) {
+
+	const board = chessboard.get(user.id);
+	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+
+	const message = {
+		type: 'cancelRematch',
+		opponentName: user.username,
+		reason: 'declined the rematch',
+	}
+	sendMsgToClient(opponentId, message);
+}
+
 export function handleIncomingSocketMessage(user, socket) {
 
 	socket.on('message', async message => {
 		try {
 			const data = JSON.parse(message.toString());
-
+			console.log("Received message:", data);
 			switch (data.type) {
 				case 'info':
-					sendInfoToClient(user, data);
+					sendInfoToClient(user);
 					break;
 				case 'lobby':
 					sendLobbyToAllClients();
@@ -306,13 +441,25 @@ export function handleIncomingSocketMessage(user, socket) {
 					}
 					break;
 				case 'join':
-					createOnlineGame(user, data);
+					createOnlineGame(user, data.id);
 					break;
-				case 'cancel':
+				case 'deleteLobby':
 					deleteLobby(user.id);
 					break;
 				case 'move':
 					movePiece(user, data);
+					break;
+				case 'delete':
+					deleteGame(user.id);
+					break;
+				case 'requestRematch':
+					requestRematch(user);
+					break;
+				case 'rematch':
+					acceptRematch(user);
+					break;
+				case 'rejectRematch':
+					rejectRematch(user);
 					break;
 			}
 		} catch (error) {
@@ -326,10 +473,7 @@ export function handleSocketClose(user, socket) {
 	socket.on('close', () => {
 		deleteLobby(user.id);
 		clients.delete(user.id);
-		const board = chessboard.get(user.id);
-		if (board)
-			clearInterval(board.intervalId);
-		chessboard.delete(user.id);
+		deleteGame(user.id)
 	});
 }
 

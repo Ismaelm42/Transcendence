@@ -1,8 +1,9 @@
+import { launchUI } from './launchGame.js';
 import { chessboard, canvas, data } from './state.js';
-import { sendPieceMove } from './handleSenders.js';
+import { deleteNotation } from './loadAndUpdateDom.js';
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js';
-import { hidePromotionOptions } from './handlePromotion.js';
-import { promoteToPiece } from './handleSenders.js';
+import { sendPieceMove, promoteToPiece, deleteGame, requestRematch, acceptRematch, rejectRematch } from './handleSenders.js';
+import { hidePromotionOptions, hideGameOverOptions, hideSidebarOverlay, hideRequestRematchOptions, showRequestRematchWaiting, hideResponseRematchDeclined } from './handleModals.js';
 let selectedSquares = new Set();
 let arrows = new Map();
 function getSquare(playerColorView, event) {
@@ -82,7 +83,7 @@ function handleRightClick(fromSquare) {
     window.addEventListener("mouseup", mouseUpHandler);
 }
 export function handleEvents() {
-    var _a;
+    var _a, _b, _c, _d;
     // To prevent right click context menu
     canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
@@ -122,14 +123,53 @@ export function handleEvents() {
         }
     });
     // Event listener to handle promotion
-    (_a = document.getElementById("modal")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
+    (_a = document.getElementById("modal-promotion")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
         const target = event.target;
-        if (target.id === 'closeModal')
+        if (target.id === 'close-promotion')
             hidePromotionOptions();
         else if (target.id === 'q' || target.id === 'r' || target.id === 'b' || target.id === 'n') {
             const piece = target.id;
             hidePromotionOptions();
             promoteToPiece(data.moveFrom, data.moveTo, piece);
+        }
+    });
+    // Event listener to handle game over
+    (_b = document.getElementById("modal-game-over")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.id === 'close-game-over' || target.id === 'game-review') {
+            hideGameOverOptions();
+            hideSidebarOverlay();
+        }
+        else if (target.id === 'rematch') {
+            hideGameOverOptions();
+            showRequestRematchWaiting();
+            requestRematch();
+        }
+        else if (target.id === 'go-to-lobby') {
+            deleteNotation();
+            deleteGame();
+            launchUI();
+        }
+    });
+    // Event listener to respond rematch request
+    (_c = document.getElementById("modal-rematch")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.id === 'yes') {
+            acceptRematch();
+            hideRequestRematchOptions();
+        }
+        else if (target.id === 'no') {
+            rejectRematch();
+            hideRequestRematchOptions();
+            hideSidebarOverlay();
+        }
+    });
+    // Event listener to respond rematch decline
+    (_d = document.getElementById("modal-rematch-declined")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.id === 'close-rematch-declined') {
+            hideResponseRematchDeclined();
+            hideSidebarOverlay();
         }
     });
     // Event listener for resize window

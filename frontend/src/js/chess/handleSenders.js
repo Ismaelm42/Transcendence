@@ -16,7 +16,6 @@ export function waitForSocketOpen() {
 export function checkIfGameIsRunning() {
     const message = {
         type: 'info',
-        userId: userId,
     };
     socket.send(JSON.stringify(message));
 }
@@ -42,7 +41,7 @@ export function sendOptionSelected(id) {
     let message;
     if (userId === id) {
         message = {
-            type: 'cancel',
+            type: 'deleteLobby',
         };
     }
     else {
@@ -69,6 +68,30 @@ export function promoteToPiece(fromSquare, toSquare, piece) {
         userId: userId,
         moveFrom: fromSquare,
         moveTo: toSquare,
+    };
+    socket.send(JSON.stringify(message));
+}
+export function deleteGame() {
+    const message = {
+        type: 'delete',
+    };
+    socket.send(JSON.stringify(message));
+}
+export function requestRematch() {
+    const message = {
+        type: 'requestRematch',
+    };
+    socket.send(JSON.stringify(message));
+}
+export function acceptRematch() {
+    const message = {
+        type: 'rematch',
+    };
+    socket.send(JSON.stringify(message));
+}
+export function rejectRematch() {
+    const message = {
+        type: 'rejectRematch',
     };
     socket.send(JSON.stringify(message));
 }

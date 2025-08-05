@@ -1,9 +1,10 @@
-import { chessboard, canvas, data } from './state.js'
+import { launchUI } from './launchGame.js'
 import { Chessboard } from './chessboardClass.js'
-import { sendPieceMove } from './handleSenders.js'
+import { chessboard, canvas, data } from './state.js'
+import { deleteNotation } from './loadAndUpdateDom.js'
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js'
-import { hidePromotionOptions } from './handlePromotion.js'
-import { promoteToPiece } from './handleSenders.js'
+import { sendPieceMove, promoteToPiece, deleteGame, requestRematch, acceptRematch, rejectRematch } from './handleSenders.js'
+import { hidePromotionOptions, hideGameOverOptions, hideSidebarOverlay, hideRequestRematchOptions, showRequestRematchWaiting, hideResponseRematchDeclined } from './handleModals.js'
 
 let selectedSquares = new Set<string>();
 let arrows = new Map<string, [string, string]>();
@@ -140,9 +141,9 @@ export function handleEvents() {
 	});
 
 	// Event listener to handle promotion
-	document.getElementById("modal")?.addEventListener("click", (event) => {
+	document.getElementById("modal-promotion")?.addEventListener("click", (event) => {
 		const target = event.target as HTMLElement;
-		if (target.id === 'closeModal')
+		if (target.id === 'close-promotion')
 			hidePromotionOptions();
 		else if (target.id === 'q' || target.id === 'r' || target.id === 'b' || target.id === 'n') {
 			const piece = target.id;
@@ -151,6 +152,47 @@ export function handleEvents() {
 		}
 	});
 
+	// Event listener to handle game over
+	document.getElementById("modal-game-over")?.addEventListener("click", (event) => {
+		const target = event.target as HTMLElement;
+		if (target.id === 'close-game-over' || target.id === 'game-review') {
+			hideGameOverOptions();
+			hideSidebarOverlay();
+		}
+		else if (target.id === 'rematch') {
+			hideGameOverOptions();
+			showRequestRematchWaiting();
+			requestRematch();
+		}
+		else if (target.id === 'go-to-lobby') {
+			deleteNotation();
+			deleteGame();
+			launchUI();
+		}
+	});
+
+	// Event listener to respond rematch request
+	document.getElementById("modal-rematch")?.addEventListener("click", (event) => {
+		const target = event.target as HTMLElement;
+		if (target.id === 'yes') {
+			acceptRematch();
+			hideRequestRematchOptions();
+		}
+		else if (target.id === 'no') {
+			rejectRematch();
+			hideRequestRematchOptions();
+			hideSidebarOverlay();
+		}
+	});
+
+	// Event listener to respond rematch decline
+	document.getElementById("modal-rematch-declined")?.addEventListener("click", (event) => {
+		const target = event.target as HTMLElement;
+		if (target.id === 'close-rematch-declined') {
+			hideResponseRematchDeclined();
+			hideSidebarOverlay();
+		}
+	});
 
 	// Event listener for resize window
 	window.addEventListener("resize", () => {

@@ -1,5 +1,6 @@
 import { userId } from './state.js';
-import { getChessHtml, getLobbyItemHtml } from './handleFetchers.js'
+import { saveNotation } from './loadAndUpdateDom.js';
+import { getLobbyItemHtml, getChessHtml } from './handleFetchers.js'
 
 export async function formatLobbyList(data: any): Promise<string> {
 
@@ -14,47 +15,47 @@ export async function formatLobbyList(data: any): Promise<string> {
 
 		const minutes = parseInt(lobby.timeControl.split('|')[0], 10);
 		if (minutes === 1 || minutes === 2)
-		    mode = "bullet";
+			mode = "bullet";
 		else if (minutes === 3 || minutes === 5)
-		    mode = "blitz";
+			mode = "blitz";
 		else
-		    mode = "rapid";
+			mode = "rapid";
 
 		htmlContent = await getLobbyItemHtml();
 		htmlContent = htmlContent
-		.replace("{{ userId }}", lobby.userId.toString())
-		.replace("{{ id }}", lobby.userId.toString())
-		.replace("{{ username }}", lobby.username.toString())
-		.replace("{{ rating }}", lobby.rating.toString())
-		.replace("{{ color }}", lobby.playerColor.toString())
-		.replace("{{ mode }}", mode.toString())
-		.replace("{{ time }}", lobby.timeControl.toString())
-		.replace("{{ bg-color }}", color.toString())
-		.replace("{{ hover-color }}", color.toString())
-		.replace("{{option}}", option.toString());
+			.replace("{{ userId }}", lobby.userId.toString())
+			.replace("{{ id }}", lobby.userId.toString())
+			.replace("{{ username }}", lobby.username.toString())
+			.replace("{{ rating }}", lobby.rating.toString())
+			.replace("{{ color }}", lobby.playerColor.toString())
+			.replace("{{ mode }}", mode.toString())
+			.replace("{{ time }}", lobby.timeControl.toString())
+			.replace("{{ bg-color }}", color.toString())
+			.replace("{{ hover-color }}", color.toString())
+			.replace("{{option}}", option.toString());
 		htmlText += htmlContent;
 	}
 	return htmlText;
 }
 
 export async function formatChessGame(data: any): Promise<string> {
-	
+
 	console.log(data);
 	let htmlContent = await getChessHtml();
 	htmlContent = htmlContent
-	.replace("{{ playerName }}", data.playerName)
-	.replace("{{ playerElo }}", data.playerElo)
-	.replace("{{ playerImagePath }}", data.playerImagePath)
-	.replace("{{ playerTime }}", data.playerTime)
-	.replace("{{ opponentName }}", data.opponentName)
-	.replace("{{ opponentElo }}", data.opponentElo)
-	.replace("{{ opponentImagePath }}", data.opponentImagePath)
-	.replace("{{ opponentTime }}", data.opponentTime);
-	
+		.replace("{{ playerName }}", data.playerName)
+		.replace("{{ playerElo }}", data.playerElo)
+		.replace("{{ playerImagePath }}", data.playerImagePath)
+		.replace("{{ playerTime }}", data.playerTime)
+		.replace("{{ opponentName }}", data.opponentName)
+		.replace("{{ opponentElo }}", data.opponentElo)
+		.replace("{{ opponentImagePath }}", data.opponentImagePath)
+		.replace("{{ opponentTime }}", data.opponentTime);
+
 	return htmlContent;
 }
 
-export function updateTime(data:any) {
+export function updateTime(data: any) {
 
 	const playerTime = document.getElementById("player-time")
 	const opponentTime = document.getElementById("opponent-time")
@@ -64,3 +65,37 @@ export function updateTime(data:any) {
 	if (opponentTime)
 		opponentTime.textContent = data.opponentTime;
 }
+
+export function updateOrInsertNotation(move: string, color: string, notation: string) {
+
+	if (notation) {
+
+		let notationElement = document.querySelector(`[data-move="${move}"]`) as HTMLElement;
+
+		if (!notationElement) {
+			notationElement = document.createElement('div');
+			notationElement.className = "grid grid-cols-[3em_8em_8em] items-center p-2 text-white hover:bg-gray-800 border-b border-r border-l border-gray-400 cursor-pointer";
+			notationElement.dataset.move = move.toString();
+
+			notationElement.innerHTML = `
+				<span class="move-number">${move}.</span>
+				<span class="white-move"></span>
+				<span class="black-move"></span>
+			`;
+			document.getElementById('notations-items')!.appendChild(notationElement);
+		}
+
+		if (color === 'white')
+			notationElement.querySelector('.white-move')!.textContent = notation;
+		else
+			notationElement.querySelector('.black-move')!.textContent = notation;
+
+		saveNotation();
+
+		const notationContainer = document.getElementById('notation-container');
+		if (notationContainer)
+			notationContainer.scrollTop = notationContainer.scrollHeight;
+	}
+}
+
+

@@ -12,17 +12,19 @@ import { sendOptionSelected } from "./handleSenders.js";
 export function updateLobbyList(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const lobby = document.getElementById('games-list-container');
-        const Lobbies = yield formatLobbyList(data);
-        lobby.innerHTML = Lobbies;
-        const optionButtons = lobby.querySelectorAll('button');
-        optionButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const target = e.target;
-                const itemWrapper = target.closest('.item-wrapper');
-                const id = itemWrapper.dataset.id;
-                if (id)
-                    sendOptionSelected(id);
+        if (lobby) {
+            const Lobbies = yield formatLobbyList(data);
+            lobby.innerHTML = Lobbies;
+            const optionButtons = lobby.querySelectorAll('button');
+            optionButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const target = e.target;
+                    const itemWrapper = target.closest('.item-wrapper');
+                    const id = itemWrapper.dataset.id;
+                    if (id)
+                        sendOptionSelected(id);
+                });
             });
-        });
+        }
     });
 }

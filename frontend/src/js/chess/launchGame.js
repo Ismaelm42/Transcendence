@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { handleEvents } from './handleEvents.js';
 import { getLobbyHtml } from './handleFetchers.js';
+import { loadNotation } from './loadAndUpdateDom.js';
+import { formatChessGame } from './formatContent.js';
 import { preloadImages, setupChessboard } from './drawChessboard.js';
 import { requestLobbyList, sendGameConfig } from './handleSenders.js';
 import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js';
-import { formatChessGame } from './formatContent.js';
 function getConfig() {
     const playerColor = document.getElementById('color').value;
     const timeControl = document.getElementById('time').value;
@@ -66,6 +67,7 @@ export function launchUI() {
 export function launchGame(data) {
     return __awaiter(this, void 0, void 0, function* () {
         appContainer.innerHTML = yield formatChessGame(data);
+        loadNotation();
         setCanvas();
         setChessboard(data);
         preloadImages(() => {

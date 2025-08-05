@@ -8,7 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { userId } from './state.js';
-import { getChessHtml, getLobbyItemHtml } from './handleFetchers.js';
+import { saveNotation } from './loadAndUpdateDom.js';
+import { getLobbyItemHtml, getChessHtml } from './handleFetchers.js';
 export function formatLobbyList(data) {
     return __awaiter(this, void 0, void 0, function* () {
         let htmlText = '', htmlContent, option, color, mode;
@@ -63,4 +64,28 @@ export function updateTime(data) {
         playerTime.textContent = data.playerTime;
     if (opponentTime)
         opponentTime.textContent = data.opponentTime;
+}
+export function updateOrInsertNotation(move, color, notation) {
+    if (notation) {
+        let notationElement = document.querySelector(`[data-move="${move}"]`);
+        if (!notationElement) {
+            notationElement = document.createElement('div');
+            notationElement.className = "grid grid-cols-[3em_8em_8em] items-center p-2 text-white hover:bg-gray-800 border-b border-r border-l border-gray-400 cursor-pointer";
+            notationElement.dataset.move = move.toString();
+            notationElement.innerHTML = `
+				<span class="move-number">${move}.</span>
+				<span class="white-move"></span>
+				<span class="black-move"></span>
+			`;
+            document.getElementById('notations-items').appendChild(notationElement);
+        }
+        if (color === 'white')
+            notationElement.querySelector('.white-move').textContent = notation;
+        else
+            notationElement.querySelector('.black-move').textContent = notation;
+        saveNotation();
+        const notationContainer = document.getElementById('notation-container');
+        if (notationContainer)
+            notationContainer.scrollTop = notationContainer.scrollHeight;
+    }
 }

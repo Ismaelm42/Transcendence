@@ -1,9 +1,11 @@
-import { updateLobbyList } from "./lobby.js";
-import { updateTime } from "./formatContent.js";
-import { setupChessboard } from "./drawChessboard.js";
-import { launchUI, launchGame } from "./launchGame.js";
-import { socket, chessboard, setData } from "./state.js";
-import { showPromotionOptions } from "./handlePromotion.js";
+import { updateLobbyList } from './lobby.js';
+import { updateTime } from './formatContent.js';
+import { setupChessboard } from './drawChessboard.js';
+import { launchUI, launchGame } from './launchGame.js';
+import { socket, chessboard, setData } from './state.js';
+import { updateOrInsertNotation } from './formatContent.js';
+import { showPromotionOptions, showGameOverOptions, showRequestRematchOptions, showResponseRematchDeclined } from './handleModals.js'
+import { deleteNotation } from './loadAndUpdateDom.js';
 
 function handleSocketOpen() {
 
@@ -22,14 +24,17 @@ function handleSocketMessage() {
 		const data = JSON.parse(event.data);
 		if (data.type != 'time') {
 			setData(data);
+			console.log(data);
 		}
-		console.log(data);
 		switch (data.type) {
 			case 'info':
 				if (data.inGame === false)
 					launchUI();
-				else
+				else {
+					if (data.isNewGame)
+						deleteNotation();
 					launchGame(data);
+				}
 				break;
 			case 'lobby':
 				updateLobbyList(data);
@@ -37,6 +42,7 @@ function handleSocketMessage() {
 			case 'move':
 				chessboard!.set(data);
 				setupChessboard(chessboard!, null, null);
+				updateOrInsertNotation(data.move, data.color, data.notation);
 				break;
 			case 'time':
 				updateTime(data);
@@ -48,16 +54,28 @@ function handleSocketMessage() {
 			case 'check':
 				chessboard!.set(data);
 				setupChessboard(chessboard!, null, null);
+				updateOrInsertNotation(data.move, data.color, data.notation);
 				break;
 			case 'checkmate':
 				chessboard!.set(data);
 				setupChessboard(chessboard!, null, null);
+				updateOrInsertNotation(data.move, data.color, data.notation);
+				showGameOverOptions(data);
 				break;
 			case 'stalemate':
 				chessboard!.set(data);
 				setupChessboard(chessboard!, null, null);
+				updateOrInsertNotation(data.move, data.color, data.notation);
+				showGameOverOptions(data);
 				break;
 			case 'timeout':
+				showGameOverOptions(data);
+				break;
+			case 'requestRematch':
+				showRequestRematchOptions(data);
+				break;
+			case 'cancelRematch':
+				showResponseRematchDeclined(data);
 				break;
 		}
 	}

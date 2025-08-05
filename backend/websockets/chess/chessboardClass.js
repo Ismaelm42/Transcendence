@@ -45,8 +45,8 @@ export class Chessboard {
 			this.board = Array.from({ length: 8 }, () => Array(8).fill(null));
 			this.initBoard();
 		}
-		this.whiteKing = this.findKing('white');
-		this.blackKing = this.findKing('black');
+		this.whiteKing = this.findPiecesByType(King, 'white')[0];
+		this.blackKing = this.findPiecesByType(King, 'black')[0];
 	}
 
 	initBoard() {
@@ -70,9 +70,9 @@ export class Chessboard {
 		this.board[7][0] = new Rook('white', 70);
 		this.board[7][1] = new Knight('white', 71);
 		this.board[7][2] = new Bishop('white', 72);
-		this.board[7][3] = new Queen('white', 73);
+		this.board[5][5] = new Queen('white', 55);
 		this.board[7][4] = new King('white', 74);
-		this.board[7][5] = new Bishop('white', 75);
+		this.board[4][2] = new Bishop('white', 42);
 		this.board[7][6] = new Knight('white', 76);
 		this.board[7][7] = new Rook('white', 77);
 		this.board[6][0] = new Pawn('white', 60);
@@ -137,16 +137,19 @@ export class Chessboard {
 		this.setPieceAt(toSquare, piece);
 	}
 
-	findKing(color) {
+	findPiecesByType(pieceType, color) {
+
+		const result = [];
 
 		for (let row = 0; row < this.board.length; row++) {
 			for (let col = 0; col < this.board[row].length; col++) {
 				const piece = this.board[row][col];
-				if (piece instanceof King && piece.getColor() === color)
-					return piece;
+				if (piece instanceof pieceType && piece.getColor() === color) {
+					result.push(piece);
+				}
 			}
 		}
-		return null;
+		return result;
 	}
 
 	getKing(color) {
@@ -156,7 +159,7 @@ export class Chessboard {
 		return this.blackKing;
 	}
 
-	buildClientMessage(type, fromSquare, toSquare) {
+	buildClientMessage(type, fromSquare, toSquare, notation) {
 
 		const message = {
 			type: type,
@@ -164,6 +167,9 @@ export class Chessboard {
 			moveTo: toSquare,
 			lastMoveFrom: this.lastMoveFrom === null ? null : this.lastMoveFrom.toString().padStart(2, "0"),
 			lastMoveTo: this.lastMoveTo === null ? null : this.lastMoveTo.toString().padStart(2, "0"),
+			move: Math.floor(this.move / 2),
+			color: this.getTurn() === 'white' ? 'black' : 'white',
+			notation: notation,
 			board: this.getBoard(),
 		};
 		if (type === 'checkmate') {
@@ -321,6 +327,98 @@ export class Chessboard {
 		this.setPieceAt(fromSquare, piece);
 	}
 
+	toAlgebraic(row, col) {
+	
+		const file = String.fromCharCode(97 + col);
+		const rank = 8 - row;
+		return file + rank;
+	}
+
+	getDisambiguation(pieceFrom, piecesType, toSquare, fromAlg) {
+
+		let disambiguation = '';
+
+		if (!(pieceFrom instanceof Pawn || pieceFrom instanceof King)) {
+
+			const sameTargetPieces = piecesType.filter(p =>
+				p !== pieceFrom && p.isLegalMove(p.getSquare(), toSquare, this.board, this.lastMoveFrom, this.lastMoveTo)
+			);
+			if (sameTargetPieces.length > 0) {
+
+				const fromFile = fromAlg[0];
+				const fromRank = fromAlg[1];
+
+				const fileConflict = sameTargetPieces.some(p => {
+					const square = p.getSquare();
+					const alg = this.toAlgebraic(Math.floor(square / 10), square % 10);
+					return alg[0] === fromFile;
+				});
+
+				const rankConflict = sameTargetPieces.some(p => {
+					const square = p.getSquare();
+					const alg = this.toAlgebraic(Math.floor(square / 10), square % 10);
+					return alg[1] === fromRank;
+				});
+
+				if (fileConflict && rankConflict)
+					disambiguation = fromAlg;
+				else if (fileConflict)
+					disambiguation = fromRank;
+				else
+					disambiguation = fromFile;
+			}
+		}
+		return disambiguation;
+	}
+
+	getUnicode(notation) {
+
+		const pieceUnicodeMap = {
+			wk: '♔',
+			wq: '♕',
+			wr: '♖',
+			wb: '♗',
+			wn: '♘',
+			wp: '♙',
+			bk: '♚',
+			bq: '♛',
+			br: '♜',
+			bb: '♝',
+			bn: '♞',
+			bp: '♟',
+		};
+
+		return notation.replace(/\b([wb][kqrbnp])/gi, (match) => {
+			return pieceUnicodeMap[match];
+		});
+	}
+
+	getNotation(fromSquare, toSquare, data, color, type) {
+
+		const pieceFrom = this.getPieceAt(fromSquare);
+		const pieceTo = this.getPieceAt(toSquare);
+		const fromAlg = this.toAlgebraic(Math.floor(fromSquare / 10), fromSquare % 10);
+		const toAlg = this.toAlgebraic(Math.floor(toSquare / 10), toSquare % 10);
+		const suffix = type === 'check' ? '+' : type === 'checkmate' ? '++' : '';
+		let notation = '';
+
+		const piecesType = this.findPiecesByType(pieceFrom.constructor, color);
+		const disambiguation = this.getDisambiguation(pieceFrom, piecesType, toSquare, fromAlg);
+
+		if (pieceFrom instanceof King && pieceFrom.isKingSideCastle(fromSquare, toSquare, this.board))
+			notation = ('O-O' + suffix);
+		else if (pieceFrom instanceof King && pieceFrom.isQueenSideCastle(fromSquare, toSquare, this.board))
+			notation = ('O-O-O' + suffix);
+		else if (data.promoteTo)
+			notation = pieceTo ? (fromAlg[0] + 'x' + toAlg + '=' + color[0] + data.promoteTo + suffix) : (toAlg + '=' + color[0] + data.promoteTo + suffix);
+		else if (pieceFrom instanceof Pawn)
+			notation = pieceTo ? (fromAlg[0] + 'x' + toAlg + suffix) : (toAlg + suffix);
+		else
+			notation = pieceTo ? (pieceFrom.getNotation() + disambiguation + 'x' + toAlg + suffix) : (pieceFrom.getNotation() + disambiguation + toAlg + suffix);
+		
+		return this.getUnicode(notation);
+	}
+
 	makeMove(fromSquare, toSquare) {
 
 		const piece = this.getPieceAt(fromSquare);
@@ -356,10 +454,11 @@ export class Chessboard {
 		}
 		const result = this.isCheckMateOrStaleMate(fromSquare, toSquare, opponentColor);
 		const type = result ? result : 'move';
+		const notation = this.getNotation(fromSquare, toSquare, data, color, type);
 		this.makeMove(fromSquare, toSquare);
 		this.saveMove(type, fromSquare, toSquare);
 		this.updateTime();
-		return this.buildClientMessage(type, data.moveFrom, data.moveTo);
+		return this.buildClientMessage(type, data.moveFrom, data.moveTo, notation);
 	}
 
 	getBoard() {
