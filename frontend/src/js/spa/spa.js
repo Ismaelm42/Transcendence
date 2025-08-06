@@ -12,11 +12,8 @@ import { initOnlineSocket, onlineSocket } from "../friends/onlineUsersSocket.js"
 export class SPA {
     constructor(containerId) {
         this.currentGame = null;
-<<<<<<< HEAD
-        this.currentStep = null;
-=======
         this.currentTournament = null;
->>>>>>> origin/tournament
+        this.currentStep = null;
         this.routes = {
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
@@ -35,11 +32,6 @@ export class SPA {
         SPA.instance = this;
         this.loadHEaderAndFooter();
         this.loadStep();
-<<<<<<< HEAD
-        window.onpopstate = () => this.loadStep();
-        // this.navigate('home');
-        this.currentStep = null;
-=======
         // Changes to advise the user when they leave a tournament in progress
         //it will reset the tournament guards and delete TempUsers
         window.onpopstate = () => {
@@ -71,7 +63,6 @@ export class SPA {
                 this.loadStep();
             }
         };
->>>>>>> origin/tournament
         window.addEventListener("pageshow", (event) => {
             if (event.persisted && location.hash === '#login') {
                 console.log("Recargando el step de login");
@@ -125,7 +116,6 @@ export class SPA {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d;
             let step = location.hash.replace('#', '') || 'home';
-<<<<<<< HEAD
             // this.navigate(step);
             // // Obtener la URL actual
             // let currentUrl = window.location.href;
@@ -150,14 +140,12 @@ export class SPA {
                 }));
             }
             this.currentStep = step;
-=======
->>>>>>> origin/tournament
             const routeConfig = this.routes[step];
             if (routeConfig) {
                 const module = yield import(`./${routeConfig.module}`);
                 let stepInstance;
                 if (step === 'game-match') {
-                    stepInstance = new module.default(this.currentGame);
+                    stepInstance = new module.default(this.currentGame, this.currentTournament);
                     if (this.currentGame && stepInstance)
                         this.currentGame.setGameMatch(stepInstance);
                 }

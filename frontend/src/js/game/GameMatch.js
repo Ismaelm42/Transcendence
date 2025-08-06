@@ -17,11 +17,12 @@ import { Step } from "../spa/stepRender.js";
 import { GameControllers } from './GameControllers.js';
 import { GameAI } from './GameAI.js';
 export default class GameMatch extends Step {
-    constructor(game) {
+    constructor(game, tournament) {
         super('game-container');
         this.ai = null;
         this.readyStateInterval = null;
         this.game = game;
+        this.tournament = tournament !== null && tournament !== void 0 ? tournament : null;
         this.renderer = game.getGameRender();
         this.controllers = new GameControllers(this.game);
         this.config = game.getGameConfig();
@@ -163,8 +164,7 @@ export default class GameMatch extends Step {
             this.destroy();
             const spa = SPA.getInstance();
             spa.currentGame = null;
-            spa.navigate(this.log.tournamentId ? 'test' : 'game-lobby');
-            // TODO: change SPA route 'test' for 'tournament' when ready
+            spa.navigate(this.log.tournamentId ? 'tournament-lobby' : 'game-lobby');
         });
     }
     /**

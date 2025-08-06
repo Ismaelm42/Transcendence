@@ -271,7 +271,7 @@ export class TournamentUI {
                     const guestTournamentName = document.getElementById(`guest-tournament-name-${tournamentPlayer.Index}`);
                     if (!guestTournamentName || guestTournamentName.value.trim() === '') {
                         tournamentPlayer.gameplayer = {
-                            id: `${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`,
+                            id: Number(`${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`),
                             username: `Guest00${i}`,
                             tournamentUsername: `Guest00${i}`,
                             email: '',
@@ -288,8 +288,10 @@ export class TournamentUI {
                         const guestData = yield this.checkGuestPlayer(i, guestTournamentName.value);
                         if (guestData) {
                             tournamentPlayer.gameplayer = guestData.gameplayer;
-                            tournamentPlayer.gameplayer.id = `${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`,
-                                tournamentPlayer.gameplayer.username = `Guest00${i}`,
+                            let idString = `${tournamentPlayer.Index}+00${tournamentPlayer.Index}`;
+                            tournamentPlayer.gameplayer.id = Number(idString);
+                            // tournamentPlayer.gameplayer.id = `${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`,
+                            tournamentPlayer.gameplayer.username = `Guest00${i}`,
                                 tournamentPlayer.status = 'ready';
                         }
                         else {
@@ -300,8 +302,9 @@ export class TournamentUI {
                     }
                 }
                 else if (selectedOption === 3) { // AI 
+                    // let idString = `${tournamentPlayer.Index}+010${tournamentPlayer.Index}`;
                     tournamentPlayer.gameplayer = {
-                        id: `${tournamentPlayer.Index}+_Ai00${tournamentPlayer.Index}`,
+                        id: -1,
                         username: `Ai00${tournamentPlayer.Index}`,
                         tournamentUsername: `Ai00${tournamentPlayer.Index}`,
                         email: `ai${tournamentPlayer.Index}@transcendence.com`,
@@ -357,8 +360,8 @@ export class TournamentUI {
             let parsed = nextMatchHtml;
             console.log("En renderNextMatchInfo data array:", gameDataArray);
             console.log("renderNextMatchInfo: Next game index:", nextMatchIndex);
-            const player1 = gameDataArray[nextMatchIndex].player1;
-            const player2 = gameDataArray[nextMatchIndex].player2;
+            const player1 = gameDataArray[nextMatchIndex].playerDetails.player1;
+            const player2 = gameDataArray[nextMatchIndex].playerDetails.player2;
             if (!player1 || !player2) {
                 console.error("Player data is missing for next match.");
                 return;
@@ -495,7 +498,7 @@ export class TournamentUI {
                     Index: '',
                     status: 'ready',
                     gameplayer: {
-                        id: '',
+                        id: 0,
                         username: '',
                         tournamentUsername: '',
                         email: '',
@@ -525,7 +528,7 @@ export class TournamentUI {
                         Index: '',
                         status: 'ready',
                         gameplayer: {
-                            id: '',
+                            id: 0,
                             username: '',
                             tournamentUsername: guestTournamentName,
                             email: '',

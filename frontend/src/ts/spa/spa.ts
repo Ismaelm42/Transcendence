@@ -152,7 +152,7 @@ export class SPA {
 			let stepInstance;
 			if (step === 'game-match')
 			{	
-				stepInstance = new module.default(this.currentGame);
+				stepInstance = new module.default(this.currentGame, this.currentTournament);
 				if (this.currentGame && stepInstance)
 					this.currentGame.setGameMatch(stepInstance);
 			}

@@ -43,12 +43,9 @@ export default class Game extends Step {
             tournamentId: null,
             readyState: false
         };
-<<<<<<< HEAD
         this.isHost = true;
-=======
         console.log("Game instance created with container ID:", containerId);
         console.log("Game log initialized:", this.log);
->>>>>>> origin/tournament
     }
     /************ CORE *****************/
     /*********** METHODS ***************/

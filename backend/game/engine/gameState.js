@@ -119,6 +119,7 @@ export async function endGame(gamesList)
 	try
 	{
 		await createGamelog(gamelogData);
+		// TODO: Alfonso - update bracket DB
 		console.log('Gamelog saved directly to DB');
 	} catch (err) {
 		console.error('Error saving gamelog:', err);

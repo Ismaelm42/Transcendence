@@ -120,7 +120,7 @@ export default class Tournament extends Step {
 			this.tournamentPlayers.push({
 				Index: i.toString(),
 				status: 'pending', // 
-				gameplayer: { id: '', username: '', tournamentUsername:'',email:'',avatarPath:'' } // Assuming GamePlayer has these properties
+				gameplayer: { id: 0, username: '', tournamentUsername:'',email:'',avatarPath:'' } // Assuming GamePlayer has these properties
 			});
 		}
 	}
@@ -236,8 +236,8 @@ export default class Tournament extends Step {
 		}
 		else {
 			mode = '';
-			player1 = { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' };
-			player2 = { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' };
+			player1 = { id: 0, username: '', tournamentUsername: '', email: '', avatarPath: '' };
+			player2 = { id: 0, username: '', tournamentUsername: '', email: '', avatarPath: '' };
 		}
 		var id = this.tournamentId + "-match-"  + (this.gameDataArray.length + 1);
 
@@ -250,8 +250,7 @@ export default class Tournament extends Step {
 		let newGameData: GameData = {
 			id: id,
 			mode: mode,
-			player1: player1,
-			player2: player2,
+			playerDetails: { player1: player1, player2: player2,},
 			startTime: Date.now(),				
 			config: {
 				scoreLimit: this.tournamentConfig.scoreLimit,
@@ -428,13 +427,13 @@ export default class Tournament extends Step {
 			<h3 class="text-[#00ff99] text-xl font-bold mb-4 text-center tracking-wide">Current Match</h3>
 			<div class="flex items-center justify-center gap-8 mb-4">
 				<div class="flex flex-col items-center">
-					<img src="${match.player1?.avatarPath || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
-					<span class="font-semibold">${match.player1?.username}</span>
+					<img src="${match.playerDetails.player1?.avatarPath || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
+					<span class="font-semibold">${match.playerDetails.player1?.username}</span>
 				</div>
 				<span class="text-2xl font-bold text-[#00ff99]">VS</span>
 				<div class="flex flex-col items-center">
-					<img src="${match.player2?.avatarPath || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
-					<span class="font-semibold">${match.player2?.username}</span>
+					<img src="${match.playerDetails.player2?.avatarPath || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
+					<span class="font-semibold">${match.playerDetails.player2?.username}</span>
 				</div>
 			</div>
 			<div class="flex justify-between text-sm text-gray-300 mb-2">
@@ -460,12 +459,12 @@ export default class Tournament extends Step {
 			const	matchData : GameData = this.gameDataArray[this.nextGameIndex];
 			if( matchData.id.includes('Bye')) {
 				matchData.result = {
-						winner: matchData.player1?.id.toString() || '',
+						winner: matchData.playerDetails.player1?.id.toString() || '',
 						loser: "0",
 						score: [5, 0] 
 					};
 				
-				showMessage(`${matchData.player1?.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
+				showMessage(`${matchData.playerDetails.player1?.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
 				this.nextGameIndex++;
 				this.handleMatchResult(matchData);
 			}
@@ -473,15 +472,15 @@ export default class Tournament extends Step {
 				if (matchData.mode === 'auto') {
 				// Simulate a random winner (1 or 2 with equal probability)
 				const winnerIndex = Math.random() < 0.5 ? 0 : 1;
-				const winner = winnerIndex === 0 ? matchData.player1 : matchData.player2;
-				const loser = winnerIndex === 0 ? matchData.player2 : matchData.player1;
+				const winner = winnerIndex === 0 ? matchData.playerDetails.player1 : matchData.playerDetails.player2;
+				const loser = winnerIndex === 0 ? matchData.playerDetails.player2 : matchData.playerDetails.player1;
 				if( !winner || !loser) {
 					console.error("Invalid winner or loser data:", winner, loser);
 					return;
 				}
 				matchData.result = {
-					winner: winner.id,
-					loser: loser.id,
+					winner: winner.id.toString(),
+					loser: loser.id.toString(),
 					score: winnerIndex === 0 ? [matchData.config?.scoreLimit || 5, 0] : [0, matchData.config?.scoreLimit || 5]
 				};
 				matchData.readyState = true;
@@ -515,7 +514,7 @@ export default class Tournament extends Step {
 	handleMatchResult(result: GameData)
 	{
 		// Aux method -> Update bracket, increment currentMatchIndex, etc.
-		if (!result || !result.result || !result.player1 || !result.player2) {
+		if (!result || !result.result || !result.playerDetails.player1 || !result.playerDetails.player2) {
 			console.error("Invalid match result data:", result);
 			return;
 		}
@@ -535,8 +534,8 @@ export default class Tournament extends Step {
 		// ... copy the gameDataArray to avoid mutating the original array
 		const gamesData = this.gameDataArray.map(game => ({
 			...game,
-			player1: { ...game.player1 },
-			player2: { ...game.player2 },
+			player1: { ...game.playerDetails.player1 },
+			player2: { ...game.playerDetails.player2 },
 			config: game.config ? { ...game.config } : undefined,
 			result: game.result ? { ...game.result } : undefined
 		}));
@@ -553,7 +552,7 @@ export default class Tournament extends Step {
 			//todo: it is posible to improve the way we receive the array of GamePlayers
 			let winnerPlayer = null;
 			if (result.result && result.result.winner) {
-				winnerPlayer = this.bracket.find(player => player.id === result.result!.winner);
+				winnerPlayer = this.bracket.find(player => player.id.toString() === result.result!.winner);
 				if (winnerPlayer) {
 					this.bracket.push(winnerPlayer);
 				}

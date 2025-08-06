@@ -21,7 +21,7 @@ export class PlayerCard {
         this.tournamentPlayer = {
             Index: playerIndex.toString(),
             status: 'pending', // Initial status
-            gameplayer: { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' } // Assuming GamePlayer has these properties
+            gameplayer: { id: 0, username: '', tournamentUsername: '', email: '', avatarPath: '' } // Assuming GamePlayer has these properties
         };
     }
     render(target_1) {

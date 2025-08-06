@@ -115,7 +115,7 @@ export default class Tournament extends Step {
             this.tournamentPlayers.push({
                 Index: i.toString(),
                 status: 'pending', // 
-                gameplayer: { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' } // Assuming GamePlayer has these properties
+                gameplayer: { id: 0, username: '', tournamentUsername: '', email: '', avatarPath: '' } // Assuming GamePlayer has these properties
             });
         }
     }
@@ -220,8 +220,8 @@ export default class Tournament extends Step {
         }
         else {
             mode = '';
-            player1 = { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' };
-            player2 = { id: '', username: '', tournamentUsername: '', email: '', avatarPath: '' };
+            player1 = { id: 0, username: '', tournamentUsername: '', email: '', avatarPath: '' };
+            player2 = { id: 0, username: '', tournamentUsername: '', email: '', avatarPath: '' };
         }
         var id = this.tournamentId + "-match-" + (this.gameDataArray.length + 1);
         // id correction to control rare matches
@@ -232,8 +232,7 @@ export default class Tournament extends Step {
         let newGameData = {
             id: id,
             mode: mode,
-            player1: player1,
-            player2: player2,
+            playerDetails: { player1: player1, player2: player2, },
             startTime: Date.now(),
             config: {
                 scoreLimit: this.tournamentConfig.scoreLimit,
@@ -408,13 +407,13 @@ export default class Tournament extends Step {
 			<h3 class="text-[#00ff99] text-xl font-bold mb-4 text-center tracking-wide">Current Match</h3>
 			<div class="flex items-center justify-center gap-8 mb-4">
 				<div class="flex flex-col items-center">
-					<img src="${((_a = match.player1) === null || _a === void 0 ? void 0 : _a.avatarPath) || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
-					<span class="font-semibold">${(_b = match.player1) === null || _b === void 0 ? void 0 : _b.username}</span>
+					<img src="${((_a = match.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.avatarPath) || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
+					<span class="font-semibold">${(_b = match.playerDetails.player1) === null || _b === void 0 ? void 0 : _b.username}</span>
 				</div>
 				<span class="text-2xl font-bold text-[#00ff99]">VS</span>
 				<div class="flex flex-col items-center">
-					<img src="${((_c = match.player2) === null || _c === void 0 ? void 0 : _c.avatarPath) || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
-					<span class="font-semibold">${(_d = match.player2) === null || _d === void 0 ? void 0 : _d.username}</span>
+					<img src="${((_c = match.playerDetails.player2) === null || _c === void 0 ? void 0 : _c.avatarPath) || '/images/default-avatar.png'}" alt="Avatar" class="w-14 h-14 rounded-full border-2 border-[#00ff99] mb-2">
+					<span class="font-semibold">${(_d = match.playerDetails.player2) === null || _d === void 0 ? void 0 : _d.username}</span>
 				</div>
 			</div>
 			<div class="flex justify-between text-sm text-gray-300 mb-2">
@@ -438,26 +437,26 @@ export default class Tournament extends Step {
             const matchData = this.gameDataArray[this.nextGameIndex];
             if (matchData.id.includes('Bye')) {
                 matchData.result = {
-                    winner: ((_a = matchData.player1) === null || _a === void 0 ? void 0 : _a.id.toString()) || '',
+                    winner: ((_a = matchData.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.id.toString()) || '',
                     loser: "0",
                     score: [5, 0]
                 };
-                showMessage(`${(_b = matchData.player1) === null || _b === void 0 ? void 0 : _b.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
+                showMessage(`${(_b = matchData.playerDetails.player1) === null || _b === void 0 ? void 0 : _b.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
                 this.nextGameIndex++;
                 this.handleMatchResult(matchData);
             }
             else if (matchData.mode === 'auto') {
                 // Simulate a random winner (1 or 2 with equal probability)
                 const winnerIndex = Math.random() < 0.5 ? 0 : 1;
-                const winner = winnerIndex === 0 ? matchData.player1 : matchData.player2;
-                const loser = winnerIndex === 0 ? matchData.player2 : matchData.player1;
+                const winner = winnerIndex === 0 ? matchData.playerDetails.player1 : matchData.playerDetails.player2;
+                const loser = winnerIndex === 0 ? matchData.playerDetails.player2 : matchData.playerDetails.player1;
                 if (!winner || !loser) {
                     console.error("Invalid winner or loser data:", winner, loser);
                     return;
                 }
                 matchData.result = {
-                    winner: winner.id,
-                    loser: loser.id,
+                    winner: winner.id.toString(),
+                    loser: loser.id.toString(),
                     score: winnerIndex === 0 ? [((_c = matchData.config) === null || _c === void 0 ? void 0 : _c.scoreLimit) || 5, 0] : [0, ((_d = matchData.config) === null || _d === void 0 ? void 0 : _d.scoreLimit) || 5]
                 };
                 matchData.readyState = true;
@@ -489,7 +488,7 @@ export default class Tournament extends Step {
     */
     handleMatchResult(result) {
         // Aux method -> Update bracket, increment currentMatchIndex, etc.
-        if (!result || !result.result || !result.player1 || !result.player2) {
+        if (!result || !result.result || !result.playerDetails.player1 || !result.playerDetails.player2) {
             console.error("Invalid match result data:", result);
             return;
         }
@@ -507,7 +506,7 @@ export default class Tournament extends Step {
             try {
                 // Sanitize gameDataArray to ensure all objects are serializable
                 // ... copy the gameDataArray to avoid mutating the original array
-                const gamesData = this.gameDataArray.map(game => (Object.assign(Object.assign({}, game), { player1: Object.assign({}, game.player1), player2: Object.assign({}, game.player2), config: game.config ? Object.assign({}, game.config) : undefined, result: game.result ? Object.assign({}, game.result) : undefined })));
+                const gamesData = this.gameDataArray.map(game => (Object.assign(Object.assign({}, game), { player1: Object.assign({}, game.playerDetails.player1), player2: Object.assign({}, game.playerDetails.player2), config: game.config ? Object.assign({}, game.config) : undefined, result: game.result ? Object.assign({}, game.result) : undefined })));
                 const payload = { gamesData: gamesData, playerscount: this.tournamentConfig.numberOfPlayers };
                 const response = yield fetch("https://localhost:8443/back/updateBracket", {
                     method: "POST",
@@ -521,7 +520,7 @@ export default class Tournament extends Step {
                     //todo: it is posible to improve the way we receive the array of GamePlayers
                     let winnerPlayer = null;
                     if (result.result && result.result.winner) {
-                        winnerPlayer = this.bracket.find(player => player.id === result.result.winner);
+                        winnerPlayer = this.bracket.find(player => player.id.toString() === result.result.winner);
                         if (winnerPlayer) {
                             this.bracket.push(winnerPlayer);
                         }
