@@ -12,7 +12,11 @@ import { initOnlineSocket, onlineSocket } from "../friends/onlineUsersSocket.js"
 export class SPA {
     constructor(containerId) {
         this.currentGame = null;
+<<<<<<< HEAD
         this.currentStep = null;
+=======
+        this.currentTournament = null;
+>>>>>>> origin/tournament
         this.routes = {
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
@@ -28,12 +32,46 @@ export class SPA {
             'test': { module: '../game/tournamentGameTest.js', protected: true }
         };
         this.container = document.getElementById(containerId);
-        SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
+        SPA.instance = this;
         this.loadHEaderAndFooter();
         this.loadStep();
+<<<<<<< HEAD
         window.onpopstate = () => this.loadStep();
         // this.navigate('home');
         this.currentStep = null;
+=======
+        // Changes to advise the user when they leave a tournament in progress
+        //it will reset the tournament guards and delete TempUsers
+        window.onpopstate = () => {
+            var _a, _b;
+            if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
+                const tournamentId = this.currentTournament.getTournamentId();
+                const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
+                // If the tournament is in progress, show a warning message is it is not already shown
+                if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
+                    && warningFlag !== true) {
+                    showMessage("Tournament in progress aborted?", 5000);
+                    const tournamentUI = (_b = (_a = this.currentTournament).getTournamentUI) === null || _b === void 0 ? void 0 : _b.call(_a);
+                    if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
+                        tournamentUI.resetTournament();
+                    }
+                    // loop to wait for the message to be closed
+                    const messageContainer = document.getElementById("message-container");
+                    const intervalId = setInterval(() => {
+                        if ((messageContainer === null || messageContainer === void 0 ? void 0 : messageContainer.style.display) === 'none') {
+                            clearInterval(intervalId);
+                        }
+                    }, 1000);
+                }
+                const step = location.hash.replace('#', '') || 'home';
+                this.loadStep();
+            }
+            else {
+                const step = location.hash.replace('#', '') || 'home';
+                this.loadStep();
+            }
+        };
+>>>>>>> origin/tournament
         window.addEventListener("pageshow", (event) => {
             if (event.persisted && location.hash === '#login') {
                 console.log("Recargando el step de login");
@@ -41,7 +79,7 @@ export class SPA {
                 if (appContainer) {
                     appContainer.innerHTML = '';
                 }
-                this.loadStep(); // Vuelve a cargar el step para forzar la lógica
+                this.loadStep();
             }
         });
     }
@@ -87,6 +125,7 @@ export class SPA {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d;
             let step = location.hash.replace('#', '') || 'home';
+<<<<<<< HEAD
             // this.navigate(step);
             // // Obtener la URL actual
             // let currentUrl = window.location.href;
@@ -111,11 +150,11 @@ export class SPA {
                 }));
             }
             this.currentStep = step;
+=======
+>>>>>>> origin/tournament
             const routeConfig = this.routes[step];
             if (routeConfig) {
-                //importamos el módulo correspondiente
                 const module = yield import(`./${routeConfig.module}`);
-                // game-lobby <-> game-match communication
                 let stepInstance;
                 if (step === 'game-match') {
                     stepInstance = new module.default(this.currentGame);
@@ -126,9 +165,13 @@ export class SPA {
                     stepInstance = new module.default('app-container');
                     this.currentGame = stepInstance;
                 }
+                else if (step === 'tournament-lobby') {
+                    stepInstance = new module.default('app-container');
+                    this.currentTournament = stepInstance;
+                    console.log('tournament-lobby currentTournament: ', this.currentTournament);
+                }
                 else
                     stepInstance = new module.default('app-container');
-                // Verificamos si el usuario está autenticado
                 const user = yield stepInstance.checkAuth();
                 if (user) {
                     console.log("Usuario autenticado: ", user);
@@ -142,10 +185,10 @@ export class SPA {
                 }
                 if (routeConfig.protected && !user) {
                     console.warn(`Acceso denegado a la ruta protegida: ${step}`);
-                    this.navigate('login'); // Redirigir al usuario a la página de login
+                    this.navigate('login');
                     return;
                 }
-                yield stepInstance.init(); // Inicializar el módulo
+                yield stepInstance.init();
             }
             else {
                 showMessage('url does not exist', 2000);
@@ -153,15 +196,6 @@ export class SPA {
             }
         });
     }
-    // isAuthenticated(): boolean {
-    // 	//hardcode para las pruebas
-    //     // return false; // Aquí iría la lógica real de autenticación
-    // 	return true; // Para pruebas, siempre autenticado
-    // }
-    // // Método estático para acceder a la instancia de SPA
-    // static getInstance(): SPA {
-    //     return SPA.instance;
-    // }
     static getInstance() {
         return SPA.instance;
     }

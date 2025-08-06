@@ -26,7 +26,6 @@ export function configureGamelogRoutes(fastify, sequelize) {
 		}
 	});
 
-	// Define a GET route to retrieve gamelogs by userId from token // Probably needed to be a POST route
 	fastify.get('/get_user_gamelogs', async (request, reply) => {
 		try {
 			const token = request.cookies.token;

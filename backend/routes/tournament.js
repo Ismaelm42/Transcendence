@@ -4,6 +4,7 @@ import { verifyToken } from '../auth/token.js';
 import { authenticateUser } from '../auth/user.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { extractUserFromToken } from '../auth/token.js';
+import { getNextTournamentlogId } from '../crud/tournamentlog.js';
 
 
 export function configureTournamentRoutes(fastify) {
@@ -65,12 +66,18 @@ export function configureTournamentRoutes(fastify) {
 		}
 	});
 
+	/**
+	 * Define a POST route to verify a guest user and create a temporary user for the tournament
+	 * This route checks if the tournament name already exists among registered users and temporary users.
+	 * If the tournament name is unique, it creates a new temporary user with a new tournament ID.
+	 * If the tournament ID is -42, it generates a new tournament ID to prevent duplicates tournamentsIds
+	 */
 	fastify.post('/verify_guest_tournamentName', async (request, reply) => {
 		const { tournamentId, tournamentName } = request.body;
 		console.log('verify_guest_tournamentName');
 		console.log (request.body);
 		console.log('tournamentId:', tournamentId, 'tournamentName:', tournamentName);
-
+		var newTournamentId;
 		if (tournamentName) { 
 				try {
 					const users = await crud.user.getUsers();
@@ -78,8 +85,14 @@ export function configureTournamentRoutes(fastify) {
 					const exists = users.some(user => user.tournamentUsername === tournamentName);
 					const tempExists = tempusers.some(tempUser => tempUser.tournamentUsername === tournamentName);
 					if (!exists && !tempExists) {
-					 	const newTempUser = await crud.tempuser.createTempuser(tournamentId, tournamentName);
-					 	reply.status(200).send(newTempUser);
+						if (tournamentId === -42) {
+							newTournamentId = await crud.tournamentlog.getNextTournamentlogId(); //ya crea un nuevo tournamentlog
+						} else {
+							newTournamentId = tournamentId;
+						}
+						fastify.log.info('New tournamentId:', newTournamentId);
+						const newTempUser = await crud.tempuser.createTempuser(newTournamentId, tournamentName);
+						reply.status(200).send(newTempUser);
 					} else
 					 	reply.status(400).send({ error: 'Tournament name already exists' });
 				} catch (err) {
@@ -91,10 +104,6 @@ export function configureTournamentRoutes(fastify) {
 			reply.status(400).send({ error: 'Error verifying user' + "an empty field has been found" });
 		}
 	});
-
-
-
-
 
 	function shuffleArray(array) {
 		  const shuffled = [...array];
@@ -146,6 +155,32 @@ export function configureTournamentRoutes(fastify) {
 		// }
 	});
 
+	fastify.post('/updateBracket', async (request, reply) => {
+
+		fastify.log.info('En /updateBracket: ');
+		console.log('Request body:', request.body);
+		// This block save the Gamelog in
+		const { gamesData , playerscount} = request.body;
+		console.log('gamesData:', gamesData);
+		if (!gamesData || !Array.isArray(gamesData)) {
+			fastify.log.error('Missing or invalid gamesData in request body');
+			return reply.status(400).send({ error: 'Missing or invalid gamesData in request body' });
+		}
+		const tournamentId = gamesData[0].tournamentId;
+		let config;
+		let users;
+		let winner;
+		try {
+			// const updatedTournamentlog = await crud.tournamentlog.updateTournamentlog(tournamentId, gamesData) 
+			const updatedTournamentlog = await crud.tournamentlog.updateTournamentlog(tournamentId, playerscount, config, users, gamesData, winner) 
+			fastify.log.info('Tournamentlog updated successfully:', updatedTournamentlog);
+			// reply.status(200).send({ message: 'Tournamentlog updated successfully', players: updatedTournamentlog.users , gamesData: updatedTournamentlog.gamesData });
+			reply.status(200).send({ message: 'Tournamentlog updated successfully', gamesData: updatedTournamentlog.gamesData });
+		} catch (err) {
+			fastify.log.error(err);
+			reply.status(500).send({ error: 'Error updating tournamentlog' + err.message });
+		}
+	});
 	
 }
 
@@ -154,7 +189,7 @@ export function configureTournamentRoutes(fastify) {
 	// // Define a POST route to create a new user
 	// fastify.post('/create_tournament', async (request, reply) => {
 	// 	// include the necesary code to get the next tournament Id available
-	// 	// dependnig on the torunament type reques the necesary data
+	// 	// dependnig on the Tournament type reques the necesary data
 
 
 	// 	const { username, password, googleId, email, avatarPath } = request.body;

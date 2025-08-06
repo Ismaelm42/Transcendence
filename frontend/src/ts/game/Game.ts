@@ -52,6 +52,8 @@ export default class Game extends Step
 			readyState: false
 		};
 		this.isHost = true;
+		console.log("Game instance created with container ID:", containerId);
+		console.log("Game log initialized:", this.log);
 	}
 
 	/************ CORE *****************/

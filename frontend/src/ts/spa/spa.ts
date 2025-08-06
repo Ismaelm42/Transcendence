@@ -2,11 +2,13 @@ import { Step } from "./stepRender.js";
 import { showMessage } from "../modal/showMessage.js";
 import Game from "../game/Game.js"
 import { initOnlineSocket, onlineSocket } from "../friends/onlineUsersSocket.js";
+import Tournament from "../tournament/Tournament.js";
 
 export class SPA {
     private container: HTMLElement;
     private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
 	public currentGame: Game | null = null;
+	public currentTournament: Tournament | null = null;
 	private currentStep: string | null = null;
 
     private routes: { [key: string]: { module: string; protected: boolean } } = {
@@ -26,12 +28,40 @@ export class SPA {
 
     public constructor(containerId: string) {
         this.container = document.getElementById(containerId) as HTMLElement;
-		SPA.instance = this; // Guardamos la instancia en la propiedad estática para poder exportarla
+		SPA.instance = this;
         this.loadHEaderAndFooter();	
 		this.loadStep();
-        window.onpopstate = () => this.loadStep();
-		// this.navigate('home');
-		this.currentStep = null;
+		// Changes to advise the user when they leave a tournament in progress
+		//it will reset the tournament guards and delete TempUsers
+		window.onpopstate = () => {
+			if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
+				const tournamentId = this.currentTournament.getTournamentId();
+				const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
+				// If the tournament is in progress, show a warning message is it is not already shown
+				if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
+					&& warningFlag!== true) {
+					showMessage("Tournament in progress aborted?", 5000);
+					const tournamentUI = this.currentTournament.getTournamentUI?.();
+					if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
+						tournamentUI.resetTournament();
+					}
+					// loop to wait for the message to be closed
+					const messageContainer = document.getElementById("message-container");
+						const intervalId = setInterval(() => {
+							if (messageContainer?.style.display === 'none') {
+								clearInterval(intervalId);
+							}
+						}, 1000);
+					
+				}
+				const step = location.hash.replace('#', '') || 'home';
+				this.loadStep();
+			}else {
+				const step = location.hash.replace('#', '') || 'home';
+				this.loadStep();
+				}
+			}
+		
 		window.addEventListener("pageshow", (event) => {
 			if (event.persisted && location.hash === '#login') {
 				console.log("Recargando el step de login" );
@@ -39,7 +69,7 @@ export class SPA {
 				if (appContainer) {
 					appContainer.innerHTML = '';
 				}
-				this.loadStep(); // Vuelve a cargar el step para forzar la lógica
+				this.loadStep();
 			}
 		});
     }
@@ -118,9 +148,7 @@ export class SPA {
 		
 		const routeConfig = this.routes[step];
 		if (routeConfig) {
-			//importamos el módulo correspondiente
 			const module = await import(`./${routeConfig.module}`);
-			// game-lobby <-> game-match communication
 			let stepInstance;
 			if (step === 'game-match')
 			{	
@@ -133,9 +161,14 @@ export class SPA {
 				stepInstance = new module.default('app-container');
 				this.currentGame = stepInstance;
 			}
+			else if (step === 'tournament-lobby')
+			{
+				stepInstance = new module.default('app-container');
+				this.currentTournament = stepInstance;
+				console.log('tournament-lobby currentTournament: ', this.currentTournament);
+			}
 			else
 				stepInstance = new module.default('app-container');
-			// Verificamos si el usuario está autenticado
 			const user = await stepInstance.checkAuth();
 			if (user) {
 				console.log("Usuario autenticado: ", user);
@@ -148,31 +181,18 @@ export class SPA {
 			}
 			if (routeConfig.protected && !user) {
 				console.warn(`Acceso denegado a la ruta protegida: ${step}`);
-				this.navigate('login'); // Redirigir al usuario a la página de login
+				this.navigate('login');
 				return;
 			}
-			await stepInstance.init(); // Inicializar el módulo
+			await stepInstance.init();
 		} else {
 			showMessage('url does not exist', 2000);
 			window.location.hash = '#home'; 
 		}
 	}
-
-    // isAuthenticated(): boolean {
-	// 	//hardcode para las pruebas
-    //     // return false; // Aquí iría la lógica real de autenticación
-	// 	return true; // Para pruebas, siempre autenticado
-    // }
-
-    // // Método estático para acceder a la instancia de SPA
-    // static getInstance(): SPA {
-    //     return SPA.instance;
-    // }
-
 	public static getInstance(): SPA {
 		return SPA.instance;
 	}
-
 
 }
 

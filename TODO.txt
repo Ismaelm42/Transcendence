@@ -1,0 +1,42 @@
+Crear función para recuperar información del siguiente partido consultando backend:
+
+nextGameIndex
+GameData
+nextPlayer-1.tournamentName
+nextPlayer-1.avatar
+nextPlayer-2.tournamentName
+nextPlayer-2.avatar
+
+ronda o partida para reemplazar: roundName
+
+
+
+Flujo de comprobaciones torneo
+
+Asignar tournament_id 
+
+	-llamada a base de datos para obtener el siguiente id disponible
+	
+	Por defecto se incia en -42 y se incrementará cuando se de una de estas dos situaciones:
+		Todo: 
+			crear la función de update tournamentInfoEnBD - llamarla cuando:
+				Se incluya un tournamentName de un guest
+				Se pulse sobre startNextMatch1
+
+Comprobar jugadores si son reales o temporales guest con tournamentNames
+	llamada a la base de datos para verificar tournamentNames tanto temporales como permanentes
+
+Al realizar el render del bracket
+	se llama a prepareBracket donde ahora mismo se hace n shuffle de los jugadores y el orden determina 
+	los emparejamientos iniciales y el lado del cuadro.
+	todo: Actualizar información del torneo en base de datos con la información de los initial DataGame.
+
+Al finalizar cada partida
+	todo: Si (tournament_id !== null && !== undefined) - actualizar información en base de de datos
+	llamar a la función nextGame del torneo. 
+		Esta función debe llamar para contrastar la información o para tomarla por completo de base de datos
+		y contener llamadas - updateBracket
+							- nextgame Info	
+ 
+Al terminar el torneo:
+ 	todo: realizar llamada para eliminar los temporales de este torneo 

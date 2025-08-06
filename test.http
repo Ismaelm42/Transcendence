@@ -1,5 +1,4 @@
 
-
 // ***************************************************************//
 //	     La siguiente petición crea un usuario:                   //
 // ***************************************************************//
@@ -303,7 +302,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0N
 POST https://localhost:8443/back/verify_user HTTP/1.1
 Content-Type: application/json
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Njg2ODgwOSwiZXhwIjoxNzQ2ODcyNDA5fQ.ufRauLJfr9QF2HpYk74QHOKyeu-mixnirmkx7IvI320
-
+DELETE https://localhost:8443/back/delete_tournamentlogs HTTP/1.1
 {
 }
 
@@ -341,8 +340,217 @@ DELETE https://localhost:8443/back/delete_user_by_tournament_id HTTP/1.1
 Content-Type: application/json
 
 {
-	"TournamentId": "42"
+	"TournamentId": "26"
+}
+
+POST https://localhost:8443/back/clean_temp_user_after_closing HTTP/1.1
+Content-Type: application/json
+
+{
+	"tournamentId": "26"
 }
 
 DELETE https://localhost:8443/back/delete_all_temp_users HTTP/1.1
 
+// ***************************************************************//
+
+DELETE https://localhost:8443/back/delete_tournamentlogs HTTP/1.1
+
+GET https://localhost:8443/back/get_next_tournamentlog HTTP/1.1
+
+
+GET https://localhost:8443/back/get_tournamentlogs HTTP/1.1
+
+# Crear un tournamentlog
+POST https://localhost:8443/back/create_tournamentlog HTTP/1.1
+Content-Type: application/json
+
+{
+	"tournamentId": "123",
+	"playerscount": 8,
+	"config": { 
+			"numberOfPlayers": "6",
+			"scoreLimit": "5",
+			"difficulty": "medium"
+			},
+	"users": [
+		{
+			"Index": "1",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "2",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "3",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "4",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "5",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "6",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "7",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		},
+		{
+			"Index": "8",
+			"status": "ready",
+			"gameplayer": {
+				// propiedades de GamePlayer aquí
+			}
+		}
+	],
+	"gamesData": [
+		{ "gameId": "game1", "winner": 1 },
+		{ "gameId": "game2", "winner": 2 }
+	]
+}
+
+# Actualizar un tournamentlog todo: corregir la información de users y gamesData con valores reales
+POST https://localhost:8443/back/update_tournamentlog HTTP/1.1
+Content-Type: application/json
+
+{
+	"tournamentId": "123",
+	"playerscount": 8,
+	"config": { 
+		"numberOfPlayers": "6",
+		"scoreLimit": "5",
+		"difficulty": "medium"
+		},
+	"users": [1, 2, 3, 4, 5, 6, 7, 8],
+	"gamesData": [
+		{ "gameId": "game1", "winner": 1 },
+		{ "gameId": "game2", "winner": 2 }
+	],
+	"winner": 1
+}
+
+
+# Crear un tournamentlog todo: corregir la información de users y gamesData con valores reales
+POST https://localhost:8443/back/create_tournamentlog HTTP/1.1
+Content-Type: application/json
+
+{
+	"tournamentId": "124"
+}
+
+# Actualizar un tournamentlog
+POST https://localhost:8443/back/update_tournamentlog HTTP/1.1
+Content-Type: application/json
+
+{
+	"tournamentId": "123",
+	"playerscount": 8,
+	"config": { 
+		"numberOfPlayers": "6",
+		"scoreLimit": "5",
+		"difficulty": "medium"
+		},
+	"winner": 5
+}
+
+POST https://localhost:8443/back/updateBracket HTTP/1.1
+Content-Type: application/json
+
+[
+{
+"id": "11-match-1",
+"mode": "auto",
+"player1": {
+  "id": "4 + 5",
+  "username": "Ai004",
+  "tournamentUsername": "Ai004",
+  "email": "ai4@transcendence.com",
+  "avatarPath": "https://localhost:8443/back/images/avatar-14.png"
+},
+"player2": {
+  "id": "2 + 5",
+  "username": "Ai002",
+  "tournamentUsername": "Ai002",
+  "email": "ai2@transcendence.com",
+  "avatarPath": "https://localhost:8443/back/images/avatar-12.png"
+},
+"startTime": 1752511545001,
+"config": {
+  "scoreLimit": 5,
+  "difficulty": "medium"
+},
+"result": {
+  "winner": "4 + 5",
+  "loser": "2 + 5",
+  "score": [
+	5,
+	0
+  ]
+},
+"duration": 0,
+"tournamentId": 11,
+"readyState": true
+},
+{
+"id": "11-match-2",
+"mode": "1vAI",
+"player1": {
+  "id": "3 + 5",
+  "username": "Ai003",
+  "tournamentUsername": "Ai003",
+  "email": "ai3@transcendence.com",
+  "avatarPath": "https://localhost:8443/back/images/avatar-13.png"
+},
+"player2": {
+  "id": 2,
+  "username": "alfonso",
+  "tournamentUsername": "alfonso",
+  "email": "alfonso@gmail.com",
+  "avatarPath": "https://localhost:8443/back/images/avatar-18.png"
+},
+"startTime": 1752511545005,
+"config": {
+  "scoreLimit": 5,
+  "difficulty": "medium"
+},
+"result": {
+  "winner": "",
+  "loser": "",
+  "score": [
+	0,
+	0
+  ]
+},
+"duration": 0,
+"tournamentId": 11,
+"readyState": false
+}
+]

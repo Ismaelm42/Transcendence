@@ -38,6 +38,20 @@ export function configureTempUserRoutes(fastify,sequelize) {
 		}
 	});
 
+	// prepared just in case we need to use send.beacon that appaently only works with POST
+	
+	// fastify.post('/clean_temp_user_after_closing', async (request, reply) => {
+	// 	console.log('Cleaning temp users after closing tournament');
+	// 	const { tournamentId } = request.body;
+	// 	try {
+	// 		const result = await crud.tempuser.deleteTempuserByTournamentId(tournamentId);
+	// 		reply.status(200).send(result);
+	// 	} catch (err) {
+	// 		fastify.log.error(err);
+	// 		reply.status(400).send({ error: 'Error deleting user' + err.message });
+	// 	}
+	// });
+
 	// Define a DELETE route to remove all users
 	fastify.delete('/delete_all_temp_users', async (request, reply) => {
 		try {
