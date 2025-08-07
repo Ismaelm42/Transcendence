@@ -25,8 +25,7 @@ export class SPA {
             'chat': { module: '../chat/chatRender.js', protected: true },
             'stats': { module: '../stats/statsRender.js', protected: true },
             'logout': { module: '../login/logoutRender.js', protected: true },
-            'profile': { module: '../profile/userProfileRender.js', protected: true },
-            'test': { module: '../game/tournamentGameTest.js', protected: true }
+            'profile': { module: '../profile/userProfileRender.js', protected: true }
         };
         this.container = document.getElementById(containerId);
         SPA.instance = this;

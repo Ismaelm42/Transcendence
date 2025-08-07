@@ -7,7 +7,7 @@ import GameSession from './GameSession.js';
 import { resetState, update, checkScoring, endGame, setDifficulty } from './gameState.js';
 import { resetBall, checkPaddleCollision } from './physics.js';
 import { addPlayer, removePlayer, getPlayerView, movePlayerPaddle, setPlayerDetails } from './players.js';
-import { broadcastResponse, getConnections, checkPlayersStatus } from './network.js';
+import { broadcastResponse, getConnections, checkPlayersStatus,  } from './network.js';
 import { finalizeGame, getGamelogData } from './gameLogs.js';
 
 // From gameState.js

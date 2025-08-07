@@ -76,18 +76,25 @@ export function checkPlayersStatus(gamesList)
 	// Count active connections
 	let activePlayers = 0;
 	this.players.forEach((playerData, playerId) => {
-		if (playerData.connection.readyState === 1)
+		if (playerData.connection.readyState === 1 && playerData.active)
 			activePlayers++;
 	});
 
 	if (activePlayers >= 2)
 	{
-		// Resume game if enough players
-		this.resumeGame(gamesList);
-		this.broadcastResponse('GAME_RESUMED', {
+		const COUNTDOWN_SECONDS = 3;
+		this.broadcastResponse('GAME_COUNTDOWN', {
+			seconds: COUNTDOWN_SECONDS,
 			reason: 'Pause timeout expired - resuming game'
 		});
+		setTimeout(() => {
+			this.resumeGame(gamesList);
+			this.broadcastResponse('GAME_RESUMED', {
+				reason: 'Pause timeout expired - resuming game'
+			});
+		}, COUNTDOWN_SECONDS * 1000);
 	}
+	//TODO: check COUNTDOWN_SECONDS IF PASSED OR FIXED BEFORE (on first countdown) + data.reason for GAME_COUNTDOWN endpoint
 	else
 	{
 		// End game if not enough players

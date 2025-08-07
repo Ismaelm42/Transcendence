@@ -45,6 +45,7 @@ export default class GameMatch extends Step {
                 console.error("Error loading game UI:", error);
                 appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
             }
+            this.updatePlayerActivity(true);
             const canvas = document.getElementById('game-canvas');
             if (canvas) {
                 this.renderer.canvas = canvas;
@@ -207,14 +208,17 @@ export default class GameMatch extends Step {
         player1Ready.textContent = readyStates.player1 ? "Ready" : "";
         player2Ready.textContent = readyStates.player2 ? "Ready" : "";
     }
-    showCountdown(seconds = 3) {
+    showCountdown(seconds = 3, reason) {
         const overlay = document.getElementById('countdown-overlay');
         const number = document.getElementById('countdown-number');
+        const reasonElem = document.getElementById('countdown-reason');
         if (!overlay || !number)
             return;
         overlay.style.display = 'flex';
         let count = seconds;
         number.textContent = count.toString();
+        if (reasonElem)
+            reasonElem.textContent = reason || '';
         const interval = setInterval(() => {
             count--;
             if (count > 0)
@@ -228,7 +232,15 @@ export default class GameMatch extends Step {
             }
         }, 1000);
     }
+    updatePlayerActivity(state) {
+        var _a;
+        (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({
+            type: 'GAME_ACTIVITY',
+            active: state
+        }));
+    }
     destroy() {
+        this.updatePlayerActivity(false);
         this.controllers.cleanup();
         this.renderer.destroy();
         if (this.ai) {

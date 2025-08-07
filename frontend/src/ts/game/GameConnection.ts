@@ -143,13 +143,14 @@ export class GameConnection
 									readyModal.style.display = 'none';
 									this.game.getGameMatch()?.stopReadyStatePolling();
 								}
-								this.game.getGameMatch()?.showCountdown(data.seconds || 3);
+								this.game.getGameMatch()?.showCountdown(data.seconds || 3, data.reason);
 								break ;
 							case 'GAME_PAUSED':
 								this.game.getGameMatch()?.showPauseModal(data.reason, data.userId);
 								break ;
 							case 'GAME_RESUMED':
 								this.game.getGameMatch()?.hidePauseModal();
+								this.game.getGameMatch()?.showCountdown(3, data.reason);
 								break ;
 							default:
 								console.log(`Received message with type: ${data.type}`);

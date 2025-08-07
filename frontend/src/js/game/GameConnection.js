@@ -75,7 +75,7 @@ export class GameConnection {
                 // Always assign the message handler after connection is established
                 if (this.socket) {
                     this.socket.onmessage = (event) => {
-                        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                         console.log("Message received from server:", event.data);
                         try {
                             const data = JSON.parse(event.data);
@@ -139,13 +139,14 @@ export class GameConnection {
                                         readyModal.style.display = 'none';
                                         (_f = this.game.getGameMatch()) === null || _f === void 0 ? void 0 : _f.stopReadyStatePolling();
                                     }
-                                    (_g = this.game.getGameMatch()) === null || _g === void 0 ? void 0 : _g.showCountdown(data.seconds || 3);
+                                    (_g = this.game.getGameMatch()) === null || _g === void 0 ? void 0 : _g.showCountdown(data.seconds || 3, data.reason);
                                     break;
                                 case 'GAME_PAUSED':
                                     (_h = this.game.getGameMatch()) === null || _h === void 0 ? void 0 : _h.showPauseModal(data.reason, data.userId);
                                     break;
                                 case 'GAME_RESUMED':
                                     (_j = this.game.getGameMatch()) === null || _j === void 0 ? void 0 : _j.hidePauseModal();
+                                    (_k = this.game.getGameMatch()) === null || _k === void 0 ? void 0 : _k.showCountdown(3, data.reason);
                                     break;
                                 default:
                                     console.log(`Received message with type: ${data.type}`);

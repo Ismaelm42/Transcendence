@@ -279,8 +279,16 @@ export function handleResumeGame(client, data)
 		clearTimeout(gameSession.pauseTimer);
 		gameSession.pauseTimer = null;
 	}
-	gameSession.resumeGame(gamesList);
-	gameSession.broadcastResponse('GAME_RESUMED', {
+	const COUNTDOWN_SECONDS = 3;
+	// Broadcast countdown before resuming
+	gameSession.broadcastResponse('GAME_COUNTDOWN', {
+		seconds: COUNTDOWN_SECONDS,
 		reason: data?.reason || `${user.username} resumed the game`
 	});
+	setTimeout(() => {
+		gameSession.resumeGame(gamesList);
+		gameSession.broadcastResponse('GAME_RESUMED', {
+			reason: data?.reason || `${user.username} resumed the game`
+		});
+	}, COUNTDOWN_SECONDS * 1000);
 }

@@ -110,6 +110,9 @@ export function	messageManager(client, connection)
 				case 'RESUME_GAME':
 					handleResumeGame(client, data);
 					break;
+				case 'GAME_ACTIVITY':
+					handleGameActivity(client, data);
+					break;
 				default:
 					console.log(`Unknown message type: ${data.type}`);
 			}	
@@ -157,5 +160,17 @@ export function handleGameError(client, connection)
 		if (error.critical)
 			handleLeaveGame(client);
 	});
+}
+
+export function handleGameActivity(client, data)
+{
+	const	{ user } = client;
+	const	clientData = clients.get(user.id);
+	const	gameSession = gamesList.get(clientData.roomId);
+	if (!gameSession)
+		return ;
+	const	player = gameSession.players.get(user.id);
+	if (player)
+		player.active = !!data.active; // true if on game-match, false otherwise
 }
 
