@@ -34,14 +34,12 @@ export function saveStatusGame(status: string) {
 export function loadStatusGame() {
 
 	const status = localStorage.getItem('statusChessGame');
-	const buttons = document.getElementById('action-buttons');
 	const resignButton = document.getElementById('resign');
 	const drawButton = document.getElementById('draw');
 	const returnButton = document.getElementById('return');
 
 	if (status && status === 'hasEnded') {
 		showBoardOverlay();
-		buttons!.classList.remove('hidden');
 		resignButton!.classList.add('hidden');
 		drawButton!.classList.add('hidden');
 		returnButton!.classList.remove('hidden');

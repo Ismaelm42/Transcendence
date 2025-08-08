@@ -262,15 +262,15 @@ function updateTimePlayers(board) {
 
 		sendMsgToClient(board.hostId, {
 			type: 'time',
-			playerTime: formatTime(board.hostTime),
-			opponentTime: formatTime(board.guestTime),
+			playerTime: board.hostColorView === board.hostColor ? formatTime(board.hostTime) : formatTime(board.guestTime),
+			opponentTime: board.hostColorView === board.hostColor ? formatTime(board.guestTime) : formatTime(board.hostTime),
 		});
 
 		if (board.gameMode === 'online') {
 			sendMsgToClient(board.guestId, {
 				type: 'time',
-				playerTime: formatTime(board.guestTime),
-				opponentTime: formatTime(board.hostTime),
+				playerTime: board.guestColorView === board.guestColor ? formatTime(board.guestTime) : formatTime(board.hostTime),
+				opponentTime: board.guestColorView === board.guestColor ? formatTime(board.hostTime) : formatTime(board.guestTime),
 			});
 		}
 	}, 100);
