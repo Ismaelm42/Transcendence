@@ -293,10 +293,14 @@ export class Chessboard {
 		}
 	}
 
-	updateTime() {
+	updateTime(type) {
 
-		this.stopTimer();
-		this.startTimer();
+		if (type === 'checkmate' || type === 'stalemate' || type === 'draw')
+			this.stopTimer();
+		else {
+			this.stopTimer();
+			this.startTimer();
+		}
 	}
 
 	saveMove(type, fromSquare, toSquare) {
@@ -457,7 +461,7 @@ export class Chessboard {
 		const notation = this.getNotation(fromSquare, toSquare, data, color, type);
 		this.makeMove(fromSquare, toSquare);
 		this.saveMove(type, fromSquare, toSquare);
-		this.updateTime();
+		this.updateTime(type);
 		return this.buildClientMessage(type, data.moveFrom, data.moveTo, notation);
 	}
 

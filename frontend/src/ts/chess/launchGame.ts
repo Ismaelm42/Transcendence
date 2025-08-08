@@ -1,7 +1,8 @@
 import { handleEvents } from './handleEvents.js'
 import { getLobbyHtml } from './handleFetchers.js'
-import { loadNotation } from './loadAndUpdateDom.js'
+import { loadNotation, loadStatusGame } from './loadAndUpdateDom.js'
 import { formatChessGame } from './formatContent.js'
+import { deleteStatusGame } from './loadAndUpdateDom.js'
 import { preloadImages, setupChessboard } from './drawChessboard.js'
 import { requestLobbyList, sendGameConfig } from './handleSenders.js'
 import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js'
@@ -34,6 +35,7 @@ function getConfig(): any {
 
 export async function launchUI() {
 
+	deleteStatusGame();
 	appContainer!.innerHTML = await getLobbyHtml();
 	const start = document.getElementById('start-game') as HTMLButtonElement;
 	const modeSelect = document.getElementById('mode') as HTMLSelectElement;
@@ -67,6 +69,7 @@ export async function launchGame(data: any) {
 
 	appContainer!.innerHTML = await formatChessGame(data);
 	loadNotation();
+	loadStatusGame();
 	setCanvas();
 	setChessboard(data);
 

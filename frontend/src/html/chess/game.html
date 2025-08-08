@@ -118,11 +118,12 @@
 			</div>
 
 			<!-- Buttons -->
-			<div id="action-buttons" class="flex justify-between items-center overflow-hidden">
-				<button id="starting-position"
+			<div id="action-buttons" class="flex justify-between items-center overflow-hidden hidden">
+				<button id="first"
 					class="flex flex-1 text-gray-300 group font-semibold text-sm cursor-pointer transition-colors duration-200 hover:text-gray-600 justify-center items-center border border-gray-300">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-						class="w-9 h-9 mr-2 fill-current transition-colors duration-200">
+						style="transform: scale(1.6);"
+						class="w-9 h-9 fill-current transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier" fill-rule="nonzero">
@@ -132,10 +133,10 @@
 						</g>
 					</svg>
 				</button>
-				<button id="step-back"
+				<button id="previous"
 					class="flex flex-1 text-white font-semibold text-sm group cursor-pointer justify-center items-center border border-gray-300">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200">
+						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">
@@ -143,11 +144,11 @@
 						</g>
 					</svg>
 				</button>
-				<button id="step-forward"
+				<button id="next"
 					class="flex flex-1 text-white font-semibold text-sm group cursor-pointer justify-center items-center border border-gray-300">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 						style="transform: rotate(180deg);"
-						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200">
+						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">
@@ -155,11 +156,11 @@
 						</g>
 					</svg>
 				</button>
-				<button id="last-move"
+				<button id="last"
 					class="flex flex-1 text-gray-300 group font-semibold text-sm cursor-pointer transition-colors duration-200 hover:text-gray-600 justify-center items-center border border-gray-300">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-						style="transform: rotate(180deg);"
-						class="w-9 h-9 mr-2 fill-current transition-colors duration-200">
+						style="transform: rotate(180deg) scale(1.6);"
+						class="w-9 h-9 fill-current transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier" fill-rule="nonzero">
@@ -169,10 +170,10 @@
 						</g>
 					</svg>
 				</button>
-				<button id="flip-board"
+				<button id="flip"
 					class="flex flex-1 text-white font-semibold text-sm group cursor-pointer justify-center items-center border border-gray-300">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-						class="w-9 h-9 mr-2 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200">
+						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">

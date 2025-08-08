@@ -2,7 +2,7 @@ import { launchUI } from './launchGame.js';
 import { chessboard, canvas, data } from './state.js';
 import { deleteNotation } from './loadAndUpdateDom.js';
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js';
-import { sendPieceMove, promoteToPiece, deleteGame, requestRematch, acceptRematch, rejectRematch } from './handleSenders.js';
+import { sendPieceMove, promoteToPiece, deleteGame, requestRematch, acceptRematch, rejectRematch, flipBoard } from './handleSenders.js';
 import { hidePromotionOptions, hideGameOverOptions, hideSidebarOverlay, hideRequestRematchOptions, showRequestRematchWaiting, hideResponseRematchDeclined } from './handleModals.js';
 let selectedSquares = new Set();
 let arrows = new Map();
@@ -83,7 +83,7 @@ function handleRightClick(fromSquare) {
     window.addEventListener("mouseup", mouseUpHandler);
 }
 export function handleEvents() {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     // To prevent right click context menu
     canvas.addEventListener("contextmenu", (event) => {
         event.preventDefault();
@@ -170,6 +170,34 @@ export function handleEvents() {
         if (target.id === 'close-rematch-declined') {
             hideResponseRematchDeclined();
             hideSidebarOverlay();
+        }
+    });
+    // Event listener to handle buttons
+    (_e = document.getElementById("action-buttons")) === null || _e === void 0 ? void 0 : _e.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.id === 'first') {
+        }
+        else if (target.id === 'previous') {
+        }
+        else if (target.id === 'next') {
+        }
+        else if (target.id === 'last') {
+        }
+        else if (target.id === 'flip') {
+            flipBoard();
+        }
+    });
+    // Event listener to handle game options
+    (_f = document.getElementById("game-options")) === null || _f === void 0 ? void 0 : _f.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.id === 'draw') {
+        }
+        if (target.id === 'resign') {
+        }
+        if (target.id === 'return') {
+            deleteNotation();
+            deleteGame();
+            launchUI();
         }
     });
     // Event listener for resize window

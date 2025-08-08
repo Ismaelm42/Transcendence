@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { handleEvents } from './handleEvents.js';
 import { getLobbyHtml } from './handleFetchers.js';
-import { loadNotation } from './loadAndUpdateDom.js';
+import { loadNotation, loadStatusGame } from './loadAndUpdateDom.js';
 import { formatChessGame } from './formatContent.js';
+import { deleteStatusGame } from './loadAndUpdateDom.js';
 import { preloadImages, setupChessboard } from './drawChessboard.js';
 import { requestLobbyList, sendGameConfig } from './handleSenders.js';
 import { userId, appContainer, chessboard, setChessboard, setCanvas } from './state.js';
@@ -38,6 +39,7 @@ function getConfig() {
 }
 export function launchUI() {
     return __awaiter(this, void 0, void 0, function* () {
+        deleteStatusGame();
         appContainer.innerHTML = yield getLobbyHtml();
         const start = document.getElementById('start-game');
         const modeSelect = document.getElementById('mode');
@@ -68,6 +70,7 @@ export function launchGame(data) {
     return __awaiter(this, void 0, void 0, function* () {
         appContainer.innerHTML = yield formatChessGame(data);
         loadNotation();
+        loadStatusGame();
         setCanvas();
         setChessboard(data);
         preloadImages(() => {

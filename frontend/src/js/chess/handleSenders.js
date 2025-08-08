@@ -95,3 +95,28 @@ export function rejectRematch() {
     };
     socket.send(JSON.stringify(message));
 }
+export function navigateReplay(step) {
+    const message = {
+        type: 'navigate',
+        step: step,
+    };
+    socket.send(JSON.stringify(message));
+}
+export function flipBoard() {
+    const message = {
+        type: 'flip',
+    };
+    socket.send(JSON.stringify(message));
+}
+export function requestDraw() {
+    const message = {
+        type: 'requestDraw',
+    };
+    socket.send(JSON.stringify(message));
+}
+export function resign() {
+    const message = {
+        type: 'resign',
+    };
+    socket.send(JSON.stringify(message));
+}

@@ -1,31 +1,40 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
+import { showBoardOverlay } from './handleModals.js';
 export function saveNotation() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const notationsItems = document.getElementById('notations-items');
-        localStorage.setItem('notationHTML', notationsItems.innerHTML);
-    });
+    const notationsItems = document.getElementById('notations-items');
+    localStorage.setItem('notationHTML', notationsItems.innerHTML);
 }
 export function loadNotation() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const saved = localStorage.getItem('notationHTML');
-        if (saved) {
-            const notationsItems = document.getElementById('notations-items');
-            if (notationsItems)
-                notationsItems.innerHTML = saved;
-        }
-    });
+    const saved = localStorage.getItem('notationHTML');
+    if (saved) {
+        const notationsItems = document.getElementById('notations-items');
+        if (notationsItems)
+            notationsItems.innerHTML = saved;
+    }
 }
 export function deleteNotation() {
     const notationsItems = document.getElementById('notations-items');
     if (notationsItems)
         notationsItems.innerHTML = '';
     localStorage.removeItem('notationHTML');
+}
+export function saveStatusGame(status) {
+    localStorage.setItem('statusChessGame', status);
+    loadStatusGame();
+}
+export function loadStatusGame() {
+    const status = localStorage.getItem('statusChessGame');
+    const buttons = document.getElementById('action-buttons');
+    const resignButton = document.getElementById('resign');
+    const drawButton = document.getElementById('draw');
+    const returnButton = document.getElementById('return');
+    if (status && status === 'hasEnded') {
+        showBoardOverlay();
+        buttons.classList.remove('hidden');
+        resignButton.classList.add('hidden');
+        drawButton.classList.add('hidden');
+        returnButton.classList.remove('hidden');
+    }
+}
+export function deleteStatusGame() {
+    localStorage.removeItem('statusChessGame');
 }

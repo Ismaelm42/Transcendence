@@ -52,19 +52,21 @@ function sendInfoToClient(user) {
 
 	if (chessboard.has(user.id)) {
 		const board = chessboard.get(user.id);
-		const isHost = (user.id === board.hostId) ? true : false;
-		message = {
+		const isHost = user.id === board.hostId ? true : false;
+		const isDownSide = isHost ? (board.hostColorView === board.hostColor ? true : false) : (board.guestColorView === board.guestColor ? true : false)
+
+	message = {
 			type: 'info',
 			inGame: true,
-			playerName: isHost ? board.hostName : board.guestName,
-			opponentName: isHost ? board.guestName : board.hostName,
-			playerElo: isHost ? board.hostElo.toString() : board.guestElo.toString(),
-			opponentElo: isHost ? board.guestElo.toString() : board.hostElo.toString(),
-			playerImagePath: isHost ? board.hostImagePath : board.guestImagePath,
-			opponentImagePath: isHost ? board.guestImagePath : board.hostImagePath,
-			playerTime: isHost ? formatTime(board.hostTime) : formatTime(board.guestTime),
-			opponentTime: isHost ? formatTime(board.guestTime) : formatTime(board.hostTime),
-			playerColorView: isHost ? board.hostColorView : board.guestColorView,
+			playerName: isDownSide ? (user.id === board.hostId ? board.hostName : board.guestName) : (user.id === board.hostId ? board.guestName : board.hostName),
+			opponentName: isDownSide ? (user.id === board.hostId ? board.guestName : board.hostName) : (user.id === board.hostId ? board.hostName : board.guestName),
+			playerElo: isDownSide ? (user.id === board.hostId ? board.hostElo.toString() : board.guestElo.toString()) : (user.id === board.hostId ? board.guestElo.toString() : board.hostElo.toString()),
+			opponentElo: isDownSide ? (user.id === board.hostId ? board.guestElo.toString() : board.hostElo.toString()) : (user.id === board.hostId ? board.hostElo.toString() : board.guestElo.toString()),
+			playerImagePath: isDownSide ? (user.id === board.hostId ? board.hostImagePath : board.guestImagePath) : (user.id === board.hostId ? board.guestImagePath : board.hostImagePath),
+			opponentImagePath: isDownSide ? (user.id === board.hostId ? board.guestImagePath : board.hostImagePath) : (user.id === board.hostId ? board.hostImagePath : board.guestImagePath),
+			playerTime: isDownSide ? (user.id === board.hostId ? formatTime(board.hostTime) : formatTime(board.guestTime)) : (user.id === board.hostId ? formatTime(board.guestTime) : formatTime(board.hostTime)),
+			opponentTime: isDownSide ? (user.id === board.hostId ? formatTime(board.guestTime) : formatTime(board.hostTime)) : (user.id === board.hostId ? formatTime(board.hostTime) : formatTime(board.guestTime)),
+			playerColorView: user.id === board.hostId ? board.hostColorView : board.guestColorView,
 			lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
 			lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
 			board: board.getBoard(),
@@ -76,6 +78,7 @@ function sendInfoToClient(user) {
 			inGame: false,
 		}
 	}
+	console.log(message);
 	sendMsgToClient(user.id, message);
 }
 
@@ -344,30 +347,6 @@ function isLocalRematch(user) {
 	return false;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// FLAG to create the game instead of requesting a rematch
 function requestRematch(user) {
 
 	if (!isLocalRematch(user) && isOpponentAvailable(user)) {
@@ -419,6 +398,49 @@ function rejectRematch(user) {
 	sendMsgToClient(opponentId, message);
 }
 
+function handleNavigation(user, data) {
+
+}
+
+function flipBoard(user) {
+
+	const board = chessboard.get(user.id);
+
+	if (user.id === board.hostId)
+		board.hostColorView = board.hostColorView === 'white' ? 'black' : 'white';
+	else
+		board.guestColorView = board.guestColorView === 'white' ? 'black' : 'white';
+
+	const isHost = user.id === board.hostId ? true : false;
+	const isDownSide = isHost ? (board.hostColorView === board.hostColor ? true : false) : (board.guestColorView === board.guestColor ? true : false)
+
+	const message = {
+			type: 'flip',
+			playerName: isDownSide ? (user.id === board.hostId ? board.hostName : board.guestName) : (user.id === board.hostId ? board.guestName : board.hostName),
+			opponentName: isDownSide ? (user.id === board.hostId ? board.guestName : board.hostName) : (user.id === board.hostId ? board.hostName : board.guestName),
+			playerElo: isDownSide ? (user.id === board.hostId ? board.hostElo.toString() : board.guestElo.toString()) : (user.id === board.hostId ? board.guestElo.toString() : board.hostElo.toString()),
+			opponentElo: isDownSide ? (user.id === board.hostId ? board.guestElo.toString() : board.hostElo.toString()) : (user.id === board.hostId ? board.hostElo.toString() : board.guestElo.toString()),
+			playerImagePath: isDownSide ? (user.id === board.hostId ? board.hostImagePath : board.guestImagePath) : (user.id === board.hostId ? board.guestImagePath : board.hostImagePath),
+			opponentImagePath: isDownSide ? (user.id === board.hostId ? board.guestImagePath : board.hostImagePath) : (user.id === board.hostId ? board.hostImagePath : board.guestImagePath),
+			playerTime: isDownSide ? (user.id === board.hostId ? formatTime(board.hostTime) : formatTime(board.guestTime)) : (user.id === board.hostId ? formatTime(board.guestTime) : formatTime(board.hostTime)),
+			opponentTime: isDownSide ? (user.id === board.hostId ? formatTime(board.guestTime) : formatTime(board.hostTime)) : (user.id === board.hostId ? formatTime(board.hostTime) : formatTime(board.guestTime)),
+			playerColorView: user.id === board.hostId ? board.hostColorView : board.guestColorView,
+			lastMoveFrom: board.lastMoveFrom === null ? null : board.lastMoveFrom.toString(),
+			lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
+			board: board.getBoard(),
+		}
+
+	sendMsgToClient(user.id, message);
+}
+
+function requestDraw(user) {
+
+}
+function resign(user) {
+
+}
+
+
 export function handleIncomingSocketMessage(user, socket) {
 
 	socket.on('message', async message => {
@@ -460,6 +482,18 @@ export function handleIncomingSocketMessage(user, socket) {
 					break;
 				case 'rejectRematch':
 					rejectRematch(user);
+					break;
+				case 'navigate':
+					handleNavigation(user, data);
+					break;
+				case 'flip':
+					flipBoard(user);
+					break;
+				case 'requestDraw':
+					requestDraw(user);
+					break;
+				case 'resign':
+					resign(user);
 					break;
 			}
 		} catch (error) {

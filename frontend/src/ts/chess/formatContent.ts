@@ -40,7 +40,6 @@ export async function formatLobbyList(data: any): Promise<string> {
 
 export async function formatChessGame(data: any): Promise<string> {
 
-	console.log(data);
 	let htmlContent = await getChessHtml();
 	htmlContent = htmlContent
 		.replace("{{ playerName }}", data.playerName)
@@ -74,7 +73,7 @@ export function updateOrInsertNotation(move: string, color: string, notation: st
 
 		if (!notationElement) {
 			notationElement = document.createElement('div');
-			notationElement.className = "grid grid-cols-[3em_8em_8em] items-center p-2 text-white hover:bg-gray-800 border-b border-r border-l border-gray-400 cursor-pointer";
+			notationElement.className = "grid grid-cols-[3em_8em_8em] items-center p-2 text-white hover:bg-gray-800 border border-gray-400 cursor-pointer";
 			notationElement.dataset.move = move.toString();
 
 			notationElement.innerHTML = `
@@ -98,4 +97,41 @@ export function updateOrInsertNotation(move: string, color: string, notation: st
 	}
 }
 
+export function flipSideBar(data: any) {
 
+	const sidebar = document.getElementById('sidebar');
+	const opponent = document.getElementById('opponent');
+	const player = document.getElementById('player');
+
+	opponent?.remove();
+	player?.remove();
+
+	const newOpponentHTML = `
+		<div id="opponent" class="flex items-center gap-4 mb-4">
+			<img src=${data.opponentImagePath} alt="opponentImage" class="w-12 h-12 rounded-full" />
+			<div class="text-white text-lg sm:text-xl font-semibold truncate">
+				${data.opponentName} (${data.opponentElo})
+			</div>
+			<div id="opponent-time"
+				class="bg-gray-600 text-white font-bold text-3xl sm:text-4xl leading-none mt-1 ml-auto px-2 py-2 rounded">
+				${data.opponentTime}
+			</div>
+		</div>
+	`;
+
+	const newPlayerHTML = `
+		<div id="player" class="flex items-center gap-4">
+			<img src=${data.playerImagePath} alt="playerImage" class="w-12 h-12 rounded-full shrink-0" />
+			<div class="text-white text-lg sm:text-xl font-semibold truncate">
+				${data.playerName} (${data.playerElo})
+			</div>
+			<div id="player-time"
+				class="bg-gray-600 text-white font-bold text-3xl sm:text-4xl leading-none mt-1 ml-auto px-2 py-2 rounded">
+				${data.playerTime}
+			</div>
+		</div>
+	`;
+
+	sidebar?.insertAdjacentHTML('afterbegin', newOpponentHTML);
+	sidebar?.insertAdjacentHTML('beforeend', newPlayerHTML);
+} 
