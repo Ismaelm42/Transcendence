@@ -14,6 +14,8 @@ export function configureOnlineSocket(fastify) {
 				socket.close();
 				return;
 			}
+			// 1. Asigna el userId al socket
+			socket.userId = user.id;
 
 			// 2. Añade al usuario al mapa de conectados
 			onlineUsers.set(user.id, { userId: String(user.id), username: user.username, status: 'green' });
@@ -40,3 +42,17 @@ function broadcastOnlineUsers(fastify) {
 	}
 }
 
+export function notifyRelationsUpdate(fastify, userIds) {
+    // asegura que userIds son strings
+    const ids = userIds.map(id => String(id));
+    for (const client of fastify.websocketServer.clients) {
+        // client.userId lo asignas al conectar: socket.userId = String(user.id)
+        if (client && client.userId && ids.includes(String(client.userId))) {
+            try {
+                client.send(JSON.stringify({ type: "refreshRelations" }));
+            } catch (err) {
+                // ignore send errors for disconnected clients
+            }
+        }
+    }
+}

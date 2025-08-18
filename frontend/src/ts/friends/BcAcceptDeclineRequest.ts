@@ -37,7 +37,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
 					showMessage(`Friend added successfully:`, null);
 					searchUsersFriends('codigo');
 					const relationsContainer = document.getElementById('relations-container');
-					await renderRelations(relationsContainer!, currentUserId!);
+					//await renderRelations(relationsContainer!, currentUserId!);
 				}
 				else {
 					const errorMessage = await response.json();
@@ -72,7 +72,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
 					showMessage(`Friend request declined successfully:`, null);
 					searchUsersFriends('codigo');
 					const relationsContainer = document.getElementById('relations-container');
-					await renderRelations(relationsContainer!, currentUserId!);
+					//await renderRelations(relationsContainer!, currentUserId!);
 				}
 				else {
 					const errorMessage = await response.json();

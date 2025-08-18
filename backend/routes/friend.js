@@ -1,5 +1,6 @@
 import { crud } from '../crud/crud.js';
 import { extractUserFromToken } from '../auth/token.js';
+import { notifyRelationsUpdate } from '../websockets/online/onlineUsers.js';
 
 export function configureFriendRoutes(fastify) {
 
@@ -13,6 +14,9 @@ export function configureFriendRoutes(fastify) {
 		console.log('friendId = ', friendId);
 		try {
 			const newFriend = await crud.friend.createFriendEntry(userId, friendId);
+
+			notifyRelationsUpdate(fastify, [String(userId), String(friendId)]);
+
 			reply.status(200).send(newFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -29,6 +33,7 @@ export function configureFriendRoutes(fastify) {
 		const { friendId } = request.body;
 		try {
 			const newFriend = await crud.friend.updateFriendStatus(userId, friendId, 'accepted');
+			notifyRelationsUpdate(fastify, [String(userId), String(friendId)]);
 			reply.status(200).send(newFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -45,6 +50,7 @@ export function configureFriendRoutes(fastify) {
 		const { friendId } = request.body;
 		try {
 			const updatedFriend = await crud.friend.deleteFriendEntry(userId, friendId);
+			notifyRelationsUpdate(fastify, [String(userId), String(friendId)]);
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -61,6 +67,7 @@ export function configureFriendRoutes(fastify) {
 		const { friendId } = request.body;
 		try {
 			const updatedFriend = await crud.friend.deleteFriendEntry(userId, friendId);
+			notifyRelationsUpdate(fastify, [String(userId), String(friendId)]);
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);
@@ -79,6 +86,7 @@ export function configureFriendRoutes(fastify) {
 			let updatedFriend
 			try {
 				updatedFriend = await crud.friend.updateFriendStatus(userId, friendId, 'blocked');
+				notifyRelationsUpdate(fastify, [String(userId), String(friendId)]);
 			} catch (err) {
 				if (err.message == `Error updating friend status: Relationship between ${userId} and ${friendId} not found`) {
 					updatedFriend = await crud.friend.createFriendEntry(userId, friendId, 'blocked');
@@ -102,6 +110,7 @@ export function configureFriendRoutes(fastify) {
 		const { friendId } = request.body;
 		try {
 			let updatedFriend = await crud.friend.updateFriendStatus(userId, friendId, 'unblocked');
+			notifyRelationsUpdate(fastify, [String(userId), String(friendId)]);
 			reply.status(200).send(updatedFriend);
 		} catch (err) {
 			fastify.log.error(err);

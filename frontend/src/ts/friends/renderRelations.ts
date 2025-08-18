@@ -46,7 +46,9 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
 		await renderUserList(pending, pendingContainer, relationsContainer, userId);
 		await renderUserList(blocked, blockedContainer, relationsContainer, userId);
 
-		        // Lógica de botones (delegación de eventos)
+		relationsContainer.onclick = null; // Limpiar cualquier listener previo
+
+		// Lógica de botones (delegación de eventos)
         relationsContainer.onclick = async (event) => {
             const target = event.target as HTMLElement;
             const button = target.closest("button");
@@ -62,7 +64,7 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
             } else if (button.classList.contains("btnCancelFriendRequest")) {
                 await rejectFriendRequest(otherUserId);
             } else if (button.classList.contains("btnDeclineRequest")) {
-                // await FriendRequest(otherUserId);
+                await rejectFriendRequest(otherUserId);
             } else if (button.classList.contains("btnRemoveFriend")) {
                 await deleteFriend(otherUserId);
             } else if (button.classList.contains("btnUnblockItem")) {
@@ -72,7 +74,7 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
 			}
 
             // Recargar relaciones tras la acción
-            await renderRelations(relationsContainer, userId);
+            //await renderRelations(relationsContainer, userId);
         };
 	}
 
@@ -126,6 +128,13 @@ async function getUserById(userId: string): Promise<any> {
 async function renderUserList(relations: any[], container: HTMLElement, relationsContainer: HTMLElement, userId: string): Promise<void> {
 	for (const relation of relations) {
 		const otherId = relation.userId == userId ? relation.friendId : relation.userId;
+
+		// Evita duplicados: elimina cualquier nodo existente para ese userId antes de crear uno nuevo
+        const existing = container.querySelector(`.user-item[data-user-id="${otherId}"]`);
+        if (existing) {
+            existing.remove();
+        }
+		
 		const user = await getUserById(otherId);
 		const userTemplate = await fetch("../../html/friends/userTemplate.html");
 		const userElement = document.createElement("div");

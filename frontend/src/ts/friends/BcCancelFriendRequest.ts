@@ -37,7 +37,7 @@ export class BcCancelFriendRequest extends BasicComponent {
 					showMessage(`Friend request Cancelled successfully:`, null);
 					searchUsersFriends('codigo');
 					const relationsContainer = document.getElementById('relations-container');
-					await renderRelations(relationsContainer!, currentUserId!);
+					//await renderRelations(relationsContainer!, currentUserId!);
 				}
 				else {
 					const errorMessage = await response.json();
