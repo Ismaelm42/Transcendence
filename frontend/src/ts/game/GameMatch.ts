@@ -179,6 +179,12 @@ export default class GameMatch extends Step
 			const duration = gameData.duration ? Math.floor(gameData.duration / 1000) : 0;
 			durationElement.textContent = duration.toString();
 		}
+		const reasonElement = document.getElementById('end-reason');
+		if (reasonElement)
+		{	
+			console.warn("front end reason: ", gameData.result?.endReason);
+			reasonElement.textContent = gameData.result?.endReason || 'Game ended';
+		}
 		const	playAgainBtn = document.getElementById('play-again-btn');
 		if (playAgainBtn && (gameData.tournamentId || gameData.mode === 'remote'))
 			playAgainBtn.hidden = true;

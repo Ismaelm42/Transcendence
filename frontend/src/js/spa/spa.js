@@ -113,7 +113,7 @@ export class SPA {
     }
     loadStep() {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             let step = location.hash.replace('#', '') || 'home';
             // this.navigate(step);
             // // Obtener la URL actual
@@ -124,6 +124,20 @@ export class SPA {
             // let newUrl = baseUrl + '#home';
             // // Actualizar la URL sin recargar la página
             // history.replaceState(null, '', newUrl);
+            // DEBUG: show why the "leaving game-match" branch may not run
+            try {
+                console.debug('SPA.leave-check', {
+                    currentStep: this.currentStep,
+                    nextStep: step,
+                    hasCurrentGame: !!this.currentGame,
+                    getGameConnectionResult: (_b = (_a = this.currentGame) === null || _a === void 0 ? void 0 : _a.getGameConnection) === null || _b === void 0 ? void 0 : _b.call(_a),
+                    hasSocket: !!((_e = (_d = (_c = this.currentGame) === null || _c === void 0 ? void 0 : _c.getGameConnection) === null || _d === void 0 ? void 0 : _d.call(_c)) === null || _e === void 0 ? void 0 : _e.socket),
+                    isGameActive: (_g = (_f = this.currentGame) === null || _f === void 0 ? void 0 : _f.isGameActive) === null || _g === void 0 ? void 0 : _g.call(_f)
+                });
+            }
+            catch (e) {
+                console.debug('SPA.leave-check error', e);
+            }
             // Handle leaving game-match step on active game
             if (this.currentStep === 'game-match' && step !== 'game-match' &&
                 this.currentGame && this.currentGame.getGameConnection() &&
@@ -131,12 +145,14 @@ export class SPA {
                 this.currentGame.isGameActive()) {
                 const log = this.currentGame.getGameLog();
                 const username = this.currentGame.getGameIsHost()
-                    ? (_a = log.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.username
-                    : (_b = log.playerDetails.player2) === null || _b === void 0 ? void 0 : _b.username;
-                (_d = (_c = this.currentGame.getGameConnection()) === null || _c === void 0 ? void 0 : _c.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
+                    ? (_h = log.playerDetails.player1) === null || _h === void 0 ? void 0 : _h.username
+                    : (_j = log.playerDetails.player2) === null || _j === void 0 ? void 0 : _j.username;
+                (_l = (_k = this.currentGame.getGameConnection()) === null || _k === void 0 ? void 0 : _k.socket) === null || _l === void 0 ? void 0 : _l.send(JSON.stringify({
                     type: 'PAUSE_GAME',
                     reason: `${username} left the game`
                 }));
+                console.warn("updating player activity of match: ", this.currentGame.getGameMatch());
+                (_m = this.currentGame.getGameMatch()) === null || _m === void 0 ? void 0 : _m.updatePlayerActivity(false);
             }
             this.currentStep = step;
             const routeConfig = this.routes[step];

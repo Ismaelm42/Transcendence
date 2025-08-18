@@ -49,6 +49,7 @@ export function renderRelations(relationsContainer, userId) {
             yield renderUserList(friends, friendsContainer, relationsContainer, userId);
             yield renderUserList(pending, pendingContainer, relationsContainer, userId);
             yield renderUserList(blocked, blockedContainer, relationsContainer, userId);
+            relationsContainer.onclick = null; // Limpiar cualquier listener previo
             // Lógica de botones (delegación de eventos)
             relationsContainer.onclick = (event) => __awaiter(this, void 0, void 0, function* () {
                 const target = event.target;
@@ -67,7 +68,7 @@ export function renderRelations(relationsContainer, userId) {
                     yield rejectFriendRequest(otherUserId);
                 }
                 else if (button.classList.contains("btnDeclineRequest")) {
-                    // await FriendRequest(otherUserId);
+                    yield rejectFriendRequest(otherUserId);
                 }
                 else if (button.classList.contains("btnRemoveFriend")) {
                     yield deleteFriend(otherUserId);
@@ -79,7 +80,7 @@ export function renderRelations(relationsContainer, userId) {
                     yield blockUser(otherUserId);
                 }
                 // Recargar relaciones tras la acción
-                yield renderRelations(relationsContainer, userId);
+                //await renderRelations(relationsContainer, userId);
             });
         }
         catch (error) {
@@ -136,6 +137,11 @@ function renderUserList(relations, container, relationsContainer, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         for (const relation of relations) {
             const otherId = relation.userId == userId ? relation.friendId : relation.userId;
+            // Evita duplicados: elimina cualquier nodo existente para ese userId antes de crear uno nuevo
+            const existing = container.querySelector(`.user-item[data-user-id="${otherId}"]`);
+            if (existing) {
+                existing.remove();
+            }
             const user = yield getUserById(otherId);
             const userTemplate = yield fetch("../../html/friends/userTemplate.html");
             const userElement = document.createElement("div");

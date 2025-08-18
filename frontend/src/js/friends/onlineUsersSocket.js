@@ -13,6 +13,10 @@ export function initOnlineSocket() {
                 sessionStorage.setItem("userConnected", JSON.stringify(data.users));
                 window.dispatchEvent(new Event("onlineUsersUpdated"));
             }
+            else if (data.type === "refreshRelations") {
+                console.log("Refresh relations event received");
+                window.dispatchEvent(new Event("onlineUsersUpdated"));
+            }
         };
         onlineSocket.onclose = () => {
             console.log("Online socket closed");

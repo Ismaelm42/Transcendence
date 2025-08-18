@@ -126,6 +126,20 @@ export class SPA {
 		// // Actualizar la URL sin recargar la página
 		// history.replaceState(null, '', newUrl);
 
+		// DEBUG: show why the "leaving game-match" branch may not run
+        try {
+            console.debug('SPA.leave-check', {
+                currentStep: this.currentStep,
+                nextStep: step,
+                hasCurrentGame: !!this.currentGame,
+                getGameConnectionResult: this.currentGame?.getGameConnection?.(),
+                hasSocket: !!this.currentGame?.getGameConnection?.()?.socket,
+                isGameActive: this.currentGame?.isGameActive?.()
+            });
+        } catch (e) {
+            console.debug('SPA.leave-check error', e);
+        }
+		
 		// Handle leaving game-match step on active game
 		if (this.currentStep === 'game-match' && step !== 'game-match' &&
 				this.currentGame && this.currentGame.getGameConnection() &&
@@ -142,6 +156,8 @@ export class SPA {
 					reason: `${username} left the game`
 				 })
 			);
+			console.warn("updating player activity of match: ", this.currentGame.getGameMatch());
+			this.currentGame.getGameMatch()?.updatePlayerActivity(false);
 		}
         this.currentStep = step;
 		

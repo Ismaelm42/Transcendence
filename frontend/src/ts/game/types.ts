@@ -28,6 +28,7 @@ export interface	GameData
 		winner: string;
 		loser: string;
 		score: [number, number];
+		endReason: string;
 	};
 	duration?: number;
 	tournamentId?: number | null;

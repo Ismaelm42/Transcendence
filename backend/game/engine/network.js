@@ -34,13 +34,13 @@ export function	broadcastResponse(responseType, payload = {})
 				response.result = {
 					winner: this.metadata.result.winner?.username,
 					loser: this.metadata.result.loser?.username,
-					score: this.state.scores
+					score: this.state.scores,
+					endReason: this.metadata.result.endReason ?? 'Game ended'
 				},
 				response.stats = {
 					duration: this.metadata.duration,
 					score: this.state.scores
 				}
-				// TODO: maybe add another logic for tournament games if needed
 				break ;
 			case 'GAME_PAUSED':
 				response = {
@@ -58,12 +58,6 @@ export function	broadcastResponse(responseType, payload = {})
 					resumingUser: payload.username
 				};
 				break ;
-			case 'GAME_ABANDONED':
-				response = {
-					...response,
-					reason: payload.reason
-				};
-				break ;	
 			default:
 				break ;
 		}
@@ -73,6 +67,12 @@ export function	broadcastResponse(responseType, payload = {})
 
 export function checkPlayersStatus(gamesList)
 {
+	const totalPlayers = (this.players instanceof Map)
+		? this.players.size
+		: Array.isArray(this.players)
+			? this.players.length
+			: Object.keys(this.players || {}).length;
+	
 	// Count active connections
 	let activePlayers = 0;
 	this.players.forEach((playerData, playerId) => {
@@ -80,7 +80,7 @@ export function checkPlayersStatus(gamesList)
 			activePlayers++;
 	});
 
-	if (activePlayers >= 2)
+	if (activePlayers === totalPlayers)
 	{
 		const COUNTDOWN_SECONDS = 3;
 		this.broadcastResponse('GAME_COUNTDOWN', {
@@ -94,13 +94,10 @@ export function checkPlayersStatus(gamesList)
 			});
 		}, COUNTDOWN_SECONDS * 1000);
 	}
-	//TODO: check COUNTDOWN_SECONDS IF PASSED OR FIXED BEFORE (on first countdown) + data.reason for GAME_COUNTDOWN endpoint
 	else
 	{
-		// End game if not enough players
-		this.broadcastResponse('GAME_ABANDONED', {
-			reason: 'Game ended due to player disconnection during pause'
-		});
+		// End game if not enough players and set abandoned as reason
+		this.metadata.result.endReason = 'Game abandoned by a player';
 		this.endGame(gamesList);
 	}
 	// Cleanup

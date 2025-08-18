@@ -38,7 +38,7 @@ export default class Game extends Step {
             playerDetails: { player1: null, player2: null },
             startTime: 0,
             config: { scoreLimit: 5, difficulty: 'medium' },
-            result: { winner: '', loser: '', score: [0, 0] },
+            result: { winner: '', loser: '', score: [0, 0], endReason: '' },
             duration: 0,
             tournamentId: null,
             readyState: false

@@ -241,7 +241,8 @@ export default class Tournament extends Step {
             result: {
                 winner: '',
                 loser: '',
-                score: [0, 0]
+                score: [0, 0],
+                endReason: ''
             },
             duration: 0,
             tournamentId: this.tournamentId,
@@ -439,7 +440,8 @@ export default class Tournament extends Step {
                 matchData.result = {
                     winner: ((_a = matchData.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.id.toString()) || '',
                     loser: "0",
-                    score: [5, 0]
+                    score: [5, 0],
+                    endReason: 'Game ended'
                 };
                 showMessage(`${(_b = matchData.playerDetails.player1) === null || _b === void 0 ? void 0 : _b.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
                 this.nextGameIndex++;
@@ -457,7 +459,8 @@ export default class Tournament extends Step {
                 matchData.result = {
                     winner: winner.id.toString(),
                     loser: loser.id.toString(),
-                    score: winnerIndex === 0 ? [((_c = matchData.config) === null || _c === void 0 ? void 0 : _c.scoreLimit) || 5, 0] : [0, ((_d = matchData.config) === null || _d === void 0 ? void 0 : _d.scoreLimit) || 5]
+                    score: winnerIndex === 0 ? [((_c = matchData.config) === null || _c === void 0 ? void 0 : _c.scoreLimit) || 5, 0] : [0, ((_d = matchData.config) === null || _d === void 0 ? void 0 : _d.scoreLimit) || 5],
+                    endReason: 'Game ended'
                 };
                 matchData.readyState = true;
                 this.nextGameIndex++;

@@ -135,7 +135,7 @@ export default class GameMatch extends Step {
      * @param gameData Complete game data
      */
     showGameResults(gameData) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         // Update the HTML content with actual game data logs
         const winnerElement = document.getElementById('winner-name');
         const scoreElement = document.getElementById('final-score');
@@ -150,6 +150,11 @@ export default class GameMatch extends Step {
             const duration = gameData.duration ? Math.floor(gameData.duration / 1000) : 0;
             durationElement.textContent = duration.toString();
         }
+        const reasonElement = document.getElementById('end-reason');
+        if (reasonElement) {
+            console.warn("front end reason: ", (_c = gameData.result) === null || _c === void 0 ? void 0 : _c.endReason);
+            reasonElement.textContent = ((_d = gameData.result) === null || _d === void 0 ? void 0 : _d.endReason) || 'Game ended';
+        }
         const playAgainBtn = document.getElementById('play-again-btn');
         if (playAgainBtn && (gameData.tournamentId || gameData.mode === 'remote'))
             playAgainBtn.hidden = true;
@@ -162,7 +167,7 @@ export default class GameMatch extends Step {
             this.ui.showOnly('hide-all');
             this.rematchGame(true);
         });
-        (_c = document.getElementById('return-lobby-btn')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => {
+        (_e = document.getElementById('return-lobby-btn')) === null || _e === void 0 ? void 0 : _e.addEventListener('click', () => {
             this.rematchGame(false);
             this.controllers.cleanup();
             this.controllers.destroy();

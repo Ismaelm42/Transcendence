@@ -110,7 +110,7 @@ export function checkScoring(gamesList)
 		this.endGame(gamesList);
 }
 
-// CLean finish for game + call logs/DB methods for storing and/or showing info on front side
+// Clean finish for game + call logs/DB methods for storing and/or showing info on front side
 export async function endGame(gamesList)
 {
 	this.isFinished = true;
@@ -119,12 +119,10 @@ export async function endGame(gamesList)
 	try
 	{
 		await createGamelog(gamelogData);
-		// TODO: Alfonso - update bracket DB
-		console.log('Gamelog saved directly to DB');
+		console.warn('GAMELOG SAVED TO DB');
 	} catch (err) {
 		console.error('Error saving gamelog:', err);
 	}
-	// TODO: add another logic for tournament games if needed
 	// Stop and clean up intervals
 	clearInterval(this.gameLoop);
 	clearInterval(this.aiInterval);

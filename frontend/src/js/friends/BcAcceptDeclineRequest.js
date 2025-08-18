@@ -10,8 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { BasicComponent } from './BasicComponent.js';
 import { showMessage } from '../modal/showMessage.js';
 import { searchUsersFriends } from './friendsSearchUsers.js';
-import { renderRelations } from './renderRelations.js';
-import { currentUserId } from './friendsRender.js';
 export class BcAcceptDeclineRequest extends BasicComponent {
     constructor() {
         super('../../html/friends/BcAcceptDeclineRequest.html', () => {
@@ -48,7 +46,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
                     showMessage(`Friend added successfully:`, null);
                     searchUsersFriends('codigo');
                     const relationsContainer = document.getElementById('relations-container');
-                    yield renderRelations(relationsContainer, currentUserId);
+                    //await renderRelations(relationsContainer!, currentUserId!);
                 }
                 else {
                     const errorMessage = yield response.json();
@@ -87,7 +85,7 @@ export class BcAcceptDeclineRequest extends BasicComponent {
                     showMessage(`Friend request declined successfully:`, null);
                     searchUsersFriends('codigo');
                     const relationsContainer = document.getElementById('relations-container');
-                    yield renderRelations(relationsContainer, currentUserId);
+                    //await renderRelations(relationsContainer!, currentUserId!);
                 }
                 else {
                     const errorMessage = yield response.json();

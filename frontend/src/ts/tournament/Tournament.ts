@@ -259,7 +259,8 @@ export default class Tournament extends Step {
 			result: {
 				winner: '',
 				loser: '',
-				score: [0, 0]
+				score: [0, 0],
+				endReason: ''
 			},
 			duration: 0,
 			tournamentId: this.tournamentId,
@@ -461,7 +462,8 @@ export default class Tournament extends Step {
 				matchData.result = {
 						winner: matchData.playerDetails.player1?.id.toString() || '',
 						loser: "0",
-						score: [5, 0] 
+						score: [5, 0],
+						endReason: 'Game ended' 
 					};
 				
 				showMessage(`${matchData.playerDetails.player1?.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
@@ -481,7 +483,8 @@ export default class Tournament extends Step {
 				matchData.result = {
 					winner: winner.id.toString(),
 					loser: loser.id.toString(),
-					score: winnerIndex === 0 ? [matchData.config?.scoreLimit || 5, 0] : [0, matchData.config?.scoreLimit || 5]
+					score: winnerIndex === 0 ? [matchData.config?.scoreLimit || 5, 0] : [0, matchData.config?.scoreLimit || 5],
+					endReason: 'Game ended'
 				};
 				matchData.readyState = true;
 				this.nextGameIndex++;
