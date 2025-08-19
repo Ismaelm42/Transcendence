@@ -381,8 +381,8 @@ export default class GameMatch extends Step
 		// Not sure if needed or if can cause conflict - let's test it for a while...
 		if (this.readyStateInterval)
 		{
-		clearInterval(this.readyStateInterval);
-		this.readyStateInterval = null;
+			clearInterval(this.readyStateInterval);
+			this.readyStateInterval = null;
 		}
 		if (this.countdownInterval)
 		{
