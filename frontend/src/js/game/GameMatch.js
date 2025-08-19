@@ -87,10 +87,22 @@ export default class GameMatch extends Step {
         const waitingMsg = document.getElementById('waiting-msg');
         const player1 = this.log.playerDetails.player1;
         const player2 = this.log.playerDetails.player2;
-        document.getElementById('player1-name').textContent = (player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
-        document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
-        document.getElementById('player2-name').textContent = (player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
-        document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
+        /** search TournamentName  */
+        /** to revert this change just delete everything but the code into the else */
+        const players = { player1, player2 };
+        if (this.tournament && this.tournament.getTournamentId() !== -42 && player1 && player2) {
+            document.getElementById('player1-name').textContent = this.showTournamentName(players, player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
+            document.getElementById('player2-name').textContent = this.showTournamentName(players, player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
+            document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
+            document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
+        }
+        else {
+            document.getElementById('player1-name').textContent = (player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
+            document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
+            document.getElementById('player2-name').textContent = (player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
+            document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
+        }
+        /*  end of search */
         if (readyBtn && waitingMsg) {
             readyBtn.onclick = () => {
                 var _a;
@@ -126,30 +138,44 @@ export default class GameMatch extends Step {
             pauseModal.style.display = 'none';
     }
     /**
+     *
+     * @param players pair of players
+     * @param username username to find
+     * @returns tournamentUsername
+     */
+    showTournamentName(players, username) {
+        if (this.tournament && this.tournament.getTournamentId() !== -42) {
+            const player = [players.player1, players.player2].find((p) => (p === null || p === void 0 ? void 0 : p.username) === username);
+            if (player && player.tournamentUsername) {
+                return player.tournamentUsername;
+            }
+        }
+        return "";
+    }
+    /**
      * Display game results when a game ends
      * @param gameData Complete game data
      */
     showGameResults(gameData) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         // Update the HTML content with actual game data logs
         const winnerElement = document.getElementById('winner-name');
         const scoreElement = document.getElementById('final-score');
         const durationElement = document.getElementById('game-duration');
         if (winnerElement)
             winnerElement.textContent = ((_a = gameData.result) === null || _a === void 0 ? void 0 : _a.winner) || 'Unknown';
-        // TODO: Eliminar comentarios si dejamos el código
-        /** para mostrar el tournamentUsername */
-        if (this.tournament && this.tournament.getTournamentId() !== -42 && winnerElement) {
-            const winnerUsername = (_b = gameData.result) === null || _b === void 0 ? void 0 : _b.winner;
+        /** search TournamentName*/
+        if (this.tournament && this.tournament.getTournamentId() !== -42 && winnerElement && ((_b = gameData.result) === null || _b === void 0 ? void 0 : _b.winner)) {
+            const winnerUsername = (_c = gameData.result) === null || _c === void 0 ? void 0 : _c.winner;
             const players = gameData.playerDetails;
-            const winnerPlayer = [players.player1, players.player2].find((p) => (p === null || p === void 0 ? void 0 : p.username) === winnerUsername);
-            if (winnerPlayer && winnerPlayer.tournamentUsername) {
-                winnerElement.textContent = winnerPlayer.tournamentUsername;
+            const tournamentName = this.showTournamentName(players, winnerUsername);
+            if (tournamentName) {
+                winnerElement.textContent = tournamentName;
             }
         }
-        /** fin del cambio */
+        /** end of search */
         if (scoreElement) {
-            const score = ((_c = gameData.result) === null || _c === void 0 ? void 0 : _c.score) || [0, 0];
+            const score = ((_d = gameData.result) === null || _d === void 0 ? void 0 : _d.score) || [0, 0];
             scoreElement.textContent = `${score[0]} - ${score[1]}`;
         }
         if (durationElement) {
@@ -168,7 +194,7 @@ export default class GameMatch extends Step {
             this.ui.showOnly('game-container');
             this.rematchGame(true);
         });
-        (_d = document.getElementById('return-lobby-btn')) === null || _d === void 0 ? void 0 : _d.addEventListener('click', () => {
+        (_e = document.getElementById('return-lobby-btn')) === null || _e === void 0 ? void 0 : _e.addEventListener('click', () => {
             this.rematchGame(false);
             this.controllers.cleanup();
             this.controllers.destroy();
