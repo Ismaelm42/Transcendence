@@ -98,3 +98,11 @@ export function showResponseRematchDeclined(data) {
     document.getElementById("modal-rematch-declined").classList.remove("hidden");
     document.getElementById("declined-reason").textContent = data.opponentName + ' ' + data.reason;
 }
+export function hideReplayOverlay() {
+    var _a;
+    (_a = document.getElementById("replay-overlay")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
+}
+export function showReplayOverlay() {
+    var _a;
+    (_a = document.getElementById("replay-overlay")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
+}

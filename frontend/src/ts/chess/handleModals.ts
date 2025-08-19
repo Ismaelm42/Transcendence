@@ -121,3 +121,13 @@ export function showResponseRematchDeclined(data: any) {
 	document.getElementById("modal-rematch-declined")!.classList.remove("hidden");
 	document.getElementById("declined-reason")!.textContent = data.opponentName + ' ' + data.reason;
 }
+
+export function hideReplayOverlay() {
+
+	document.getElementById("replay-overlay")?.classList.add("hidden");
+}
+
+export function showReplayOverlay() {
+
+	document.getElementById("replay-overlay")?.classList.remove("hidden");
+}

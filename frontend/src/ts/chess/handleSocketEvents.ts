@@ -1,11 +1,10 @@
 import { updateLobbyList } from './lobby.js';
-import { updateTime, flipSideBar } from './formatContent.js';
 import { setupChessboard } from './drawChessboard.js';
 import { launchUI, launchGame } from './launchGame.js';
 import { socket, chessboard, setData } from './state.js';
-import { updateOrInsertNotation } from './formatContent.js';
 import { saveStatusGame, deleteNotation } from './loadAndUpdateDom.js';
-import { showPromotionOptions, showGameOverOptions, showRequestRematchOptions, showResponseRematchDeclined } from './handleModals.js'
+import { updateTime, updateOrInsertNotation, flipSideBar } from './formatContent.js';
+import { showPromotionOptions, showGameOverOptions, showRequestRematchOptions, showResponseRematchDeclined, hideReplayOverlay, showReplayOverlay } from './handleModals.js'
 
 function handleSocketOpen() {
 
@@ -81,6 +80,11 @@ function handleSocketMessage() {
 				break;
 			case 'cancelRematch':
 				showResponseRematchDeclined(data);
+				break;
+			case 'navigate':
+				data.moveEnabled ? hideReplayOverlay() : showReplayOverlay();
+				chessboard!.set(data);
+				setupChessboard(chessboard!, null, null);
 				break;
 			case 'flip':
 				chessboard!.set(data);

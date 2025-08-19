@@ -16,6 +16,7 @@ export class Chessboard {
 
 	set(data: any) {
 
+		console.log(data);
 		this.playerColorView = data.playerColorView;
 		this.lastMoveFrom = data.lastMoveFrom || null;
 		this.lastMoveTo = data.lastMoveTo || null;

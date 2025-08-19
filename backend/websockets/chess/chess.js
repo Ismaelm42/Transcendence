@@ -78,7 +78,6 @@ function sendInfoToClient(user) {
 			inGame: false,
 		}
 	}
-	console.log(message);
 	sendMsgToClient(user.id, message);
 }
 
@@ -377,7 +376,6 @@ async function acceptRematch(user) {
 			minRating: 'any',
 			maxRating: 'any',
 		}
-		console.log(newLobby);
 		lobby.set(opponent.id, newLobby);
 		deleteGame(user.id);
 		deleteGame(opponent.id);
@@ -400,6 +398,31 @@ function rejectRematch(user) {
 
 function handleNavigation(user, data) {
 
+	const board = chessboard.get(user.id);
+	let moveEnabled;
+	
+	if (data.step === 'first')
+		moveEnabled = board.firstReplayMove();
+	else if (data.step === 'previous')
+		moveEnabled = board.previousReplayMove();
+	else if (data.step === 'next')
+		moveEnabled = board.nextReplayMove();
+	else if (data.step === 'last')
+		moveEnabled = board.lastReplayMove();
+
+	const replayBoard = board.getReplayBoard();
+	const lastMoveFrom = board.allMovesFrom.get(board.currentBoardMove);
+	const lastMoveTo = board.allMovesTo.get(board.currentBoardMove);
+	
+	const message = {
+		type: 'navigate',
+		moveEnabled: moveEnabled,
+		playerColorView: user.id === board.hostId ? board.hostColorView : board.guestColorView,
+		lastMoveFrom: lastMoveFrom === null ? null : lastMoveFrom.toString().padStart(2, "0"),
+		lastMoveTo: lastMoveTo === null ? null : lastMoveTo.toString().padStart(2, "0"),
+		board: replayBoard,
+	}
+	sendMsgToClient(user.id, message);
 }
 
 function flipBoard(user) {
@@ -429,7 +452,6 @@ function flipBoard(user) {
 			lastMoveTo: board.lastMoveTo === null ? null : board.lastMoveTo.toString(),
 			board: board.getBoard(),
 		}
-
 	sendMsgToClient(user.id, message);
 }
 
@@ -446,7 +468,6 @@ export function handleIncomingSocketMessage(user, socket) {
 	socket.on('message', async message => {
 		try {
 			const data = JSON.parse(message.toString());
-			console.log("Received message:", data);
 			switch (data.type) {
 				case 'info':
 					sendInfoToClient(user);

@@ -3,7 +3,7 @@ import { Chessboard } from './chessboardClass.js'
 import { chessboard, canvas, data } from './state.js'
 import { deleteNotation } from './loadAndUpdateDom.js'
 import { setupChessboard, drawMovingPiece, highlightSquare } from './drawChessboard.js'
-import { sendPieceMove, promoteToPiece, deleteGame, requestRematch, acceptRematch, rejectRematch, flipBoard } from './handleSenders.js'
+import { sendPieceMove, promoteToPiece, deleteGame, requestRematch, acceptRematch, rejectRematch, navigateReplay, flipBoard } from './handleSenders.js'
 import { hidePromotionOptions, hideGameOverOptions, hideSidebarOverlay, hideRequestRematchOptions, showRequestRematchWaiting, hideResponseRematchDeclined } from './handleModals.js'
 
 let selectedSquares = new Set<string>();
@@ -198,21 +198,16 @@ export function handleEvents() {
 	document.getElementById("action-buttons")?.addEventListener("click", (event) => {
 	
 		const target = event.target as HTMLElement;
-		if (target.id === 'first') {
-
-		}
-		else if (target.id === 'previous') {
-			
-		}
-		else if (target.id === 'next') {
-			
-		}
-		else if (target.id === 'last') {
-			
-		}
-		else if (target.id === 'flip') {
+		if (target.id === 'first')
+			navigateReplay("first");
+		else if (target.id === 'previous')
+			navigateReplay("previous");
+		else if (target.id === 'next')
+			navigateReplay("next");
+		else if (target.id === 'last')
+			navigateReplay("last");
+		else if (target.id === 'flip')
 			flipBoard();
-		}
 	});
 
 	// Event listener to handle game options

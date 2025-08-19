@@ -17,9 +17,12 @@ export class Chessboard {
 		this.hostColorView = data.hostColorView || this.hostColor;
 		this.guestColorView = data.guestColorView || this.guestColor;
 		this.move = data.move || 0;
+		this.currentBoardMove = data.currentBoardMove || 0;
 		this.turn = this.getTurn();
 		this.lastMoveFrom = data.lastMoveFrom || null;
 		this.lastMoveTo = data.lastMoveTo || null;
+		this.allMovesFrom = data.allMovesFrom ? new Map(data.allMovesFrom) : new Map();
+		this.allMovesTo = data.allMovesTo ? new Map(data.allMovesTo) : new Map();
 		this.gameMode = data.gameMode;
 		this.timeControl = data.timeControl;
 		this.timeIncrement = this.setIncrement();
@@ -70,9 +73,9 @@ export class Chessboard {
 		this.board[7][0] = new Rook('white', 70);
 		this.board[7][1] = new Knight('white', 71);
 		this.board[7][2] = new Bishop('white', 72);
-		this.board[5][5] = new Queen('white', 55);
+		this.board[7][3] = new Queen('white', 73);
 		this.board[7][4] = new King('white', 74);
-		this.board[4][2] = new Bishop('white', 42);
+		this.board[7][5] = new Bishop('white', 75);
 		this.board[7][6] = new Knight('white', 76);
 		this.board[7][7] = new Rook('white', 77);
 		this.board[6][0] = new Pawn('white', 60);
@@ -83,7 +86,10 @@ export class Chessboard {
 		this.board[6][5] = new Pawn('white', 65);
 		this.board[6][6] = new Pawn('white', 66);
 		this.board[6][7] = new Pawn('white', 67);
-		this.game.set(this.move++, this.board);
+		this.game.set(this.move++, this.board.map(row => row.map(piece => piece ? piece.clone() : null)));
+		this.currentBoardMove = 0;
+		this.allMovesFrom.set(0, null);
+		this.allMovesTo.set(0, null);
 	}
 
 	getGuestColor() {
@@ -236,9 +242,10 @@ export class Chessboard {
 		for (let row = 0; row < board.length; row++) {
 			for (let col = 0; col < board[row].length; col++) {
 				const piece = board[row][col];
-				if (piece && piece.getColor() !== color)
+				if (piece && piece.getColor() !== color) {
 					if (piece.isLegalMove(piece.getSquare(), square, board, copy.lastMoveFrom, copy.lastMoveTo))
 						return true;
+				}
 			}
 		}
 		return false;
@@ -307,8 +314,11 @@ export class Chessboard {
 
 		this.lastMoveFrom = fromSquare;
 		this.lastMoveTo = toSquare;
-		this.game.set(this.move, this.board);
+		this.game.set(this.move, this.board.map(row => row.map(piece => piece ? piece.clone() : null)));
 		this.move++;
+		this.currentBoardMove = this.move - 1;
+		this.allMovesFrom.set(this.move - 1, fromSquare);
+		this.allMovesTo.set(this.move - 1, toSquare);
 		this.turn = this.move % 2 === 0;
 		if (type === 'checkmate' || type === 'stalemate')
 			this.mateType = true;
@@ -447,7 +457,6 @@ export class Chessboard {
 		const piece = this.getPieceAt(fromSquare);
 		const color = this.getTurn();
 		const opponentColor = color === 'white' ? 'black' : 'white';
-
 		if (data.promoteTo)
 			this.handlePromotion(fromSquare, toSquare, data.promoteTo);
 		else {
@@ -472,6 +481,46 @@ export class Chessboard {
 		);
 	}
 
+	firstReplayMove() {
+
+		this.currentBoardMove = 0;
+		if (this.currentBoardMove === (this.move - 1))
+			return true;
+		return false;
+	}
+
+	previousReplayMove() {
+
+		if ((this.move - 1) > 0 && this.currentBoardMove > 0)
+			this.currentBoardMove--;
+		if (this.currentBoardMove === (this.move - 1))
+			return true;
+		return false;
+	}
+
+	nextReplayMove() {
+
+		if (this.currentBoardMove < (this.move - 1))
+			this.currentBoardMove++;
+		if (this.currentBoardMove === (this.move - 1))
+			return true;
+		return false;
+	}
+
+	lastReplayMove() {
+
+		this.currentBoardMove = this.move - 1;
+		return true;
+	}
+
+	getReplayBoard() {
+
+		const replayBoard = this.game.get(this.currentBoardMove);
+		return replayBoard.map(row =>
+			row.map(piece => piece ? piece.getNotation() : null)
+		);
+	}
+
 	getData() {
 
 		const data = {
@@ -488,9 +537,12 @@ export class Chessboard {
 			hostColorView: this.hostColorView,
 			guestColorView: this.guestColorView,
 			move: this.move,
+			currentBoardMove: this.currentBoardMove,
 			turn: this.turn,
 			lastMoveFrom: this.lastMoveFrom,
 			lastMoveTo: this.lastMoveTo,
+			allMovesFrom: Array.from(this.allMovesFrom.entries()),
+			allMovesTo: Array.from(this.allMovesTo.entries()),
 			gameMode: this.gameMode,
 			timeControl: this.timeControl,
 			timeIncrement: this.timeIncrement,

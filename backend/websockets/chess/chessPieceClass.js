@@ -399,13 +399,12 @@ export class King extends ChessPiece {
 			return false;
 
 		const moves = [11, -11, 10, -10, 9, -9, 1, -1];
-
+		
 		if (moves.includes(toSquare - fromSquare))
 			return true;
 		if (this.isKingSideCastle(fromSquare, toSquare, board) || this.isQueenSideCastle(fromSquare, toSquare, board))
 			return true;
-
-		return false		
+		return false;
 	}
 
 	legalMoves(fromSquare, board, lastMoveFrom, lastMoveTo) {
