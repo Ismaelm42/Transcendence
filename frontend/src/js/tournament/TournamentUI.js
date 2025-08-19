@@ -63,6 +63,7 @@ export class TournamentUI {
         };
         this.boundClickHandler = null;
         this.boundKeyHandler = null;
+        console.log("TournamentUI constructor - tournament:", tournament);
         this.tournament = tournament;
         // this.boundOnLeavingTournamentLobby = this.onLeavingTournamentLobby.bind(this);
     }
@@ -271,7 +272,7 @@ export class TournamentUI {
                     const guestTournamentName = document.getElementById(`guest-tournament-name-${tournamentPlayer.Index}`);
                     if (!guestTournamentName || guestTournamentName.value.trim() === '') {
                         tournamentPlayer.gameplayer = {
-                            id: Number(`${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`),
+                            id: -2,
                             username: `Guest00${i}`,
                             tournamentUsername: `Guest00${i}`,
                             email: '',
@@ -288,9 +289,7 @@ export class TournamentUI {
                         const guestData = yield this.checkGuestPlayer(i, guestTournamentName.value);
                         if (guestData) {
                             tournamentPlayer.gameplayer = guestData.gameplayer;
-                            let idString = `${tournamentPlayer.Index}+00${tournamentPlayer.Index}`;
-                            tournamentPlayer.gameplayer.id = Number(idString);
-                            // tournamentPlayer.gameplayer.id = `${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`,
+                            tournamentPlayer.gameplayer.id = -2;
                             tournamentPlayer.gameplayer.username = `Guest00${i}`,
                                 tournamentPlayer.status = 'ready';
                         }

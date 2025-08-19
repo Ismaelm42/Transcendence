@@ -67,6 +67,34 @@ export default class Tournament extends Step {
             return -1; // Return -1 or any other value to indicate an error or no ID available
         });
     }
+    resumeTournament() {
+        console.log("Resuming tournament from tournament.resumeTournament:");
+        // 1. Asegúrate de que el contenedor principal existe y está limpio
+        const appContainer = document.getElementById('app-container');
+        console.log("limpiamos appContainer");
+        history.pushState(null, "", "#tournament-lobby");
+        if (appContainer) {
+            appContainer.innerHTML = '';
+            // Crea el contenedor del bracket si no existe
+            let bracketNode = document.getElementById('tournament-bracket-container');
+            if (!bracketNode) {
+                bracketNode = document.createElement('div');
+                bracketNode.id = 'tournament-bracket-container';
+                bracketNode.style.display = 'block';
+                appContainer.appendChild(bracketNode);
+            }
+        }
+        // 2. Muestra solo el bracket
+        this.ui.showOnly('tournament-bracket-container');
+        // 3. Renderiza el bracket actualizado con los jugadores y ganadores actuales
+        // const players = this.getTournamentPlayers().map(tp => tp.gameplayer);
+        // this.ui.updateRenderBracket(players);
+        // // 4. (Opcional) Si necesitas mostrar la siguiente partida, renderízala también
+        // const bracketContainer = document.getElementById('tournament-bracket-container');
+        // if (bracketContainer) {
+        // 	this.displayCurrentMatch();
+        // }
+    }
     saveTournament() {
         return __awaiter(this, void 0, void 0, function* () {
             this.log = {
@@ -457,8 +485,8 @@ export default class Tournament extends Step {
                     return;
                 }
                 matchData.result = {
-                    winner: winner.id.toString(),
-                    loser: loser.id.toString(),
+                    winner: winner.username,
+                    loser: loser.username,
                     score: winnerIndex === 0 ? [((_c = matchData.config) === null || _c === void 0 ? void 0 : _c.scoreLimit) || 5, 0] : [0, ((_d = matchData.config) === null || _d === void 0 ? void 0 : _d.scoreLimit) || 5],
                     endReason: 'Game ended'
                 };
@@ -507,10 +535,11 @@ export default class Tournament extends Step {
     updateTournamentBracket(result) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                //result = game to update
                 // Sanitize gameDataArray to ensure all objects are serializable
                 // ... copy the gameDataArray to avoid mutating the original array
                 const gamesData = this.gameDataArray.map(game => (Object.assign(Object.assign({}, game), { player1: Object.assign({}, game.playerDetails.player1), player2: Object.assign({}, game.playerDetails.player2), config: game.config ? Object.assign({}, game.config) : undefined, result: game.result ? Object.assign({}, game.result) : undefined })));
-                const payload = { gamesData: gamesData, playerscount: this.tournamentConfig.numberOfPlayers };
+                const payload = { result: result, gamesData: gamesData, playerscount: this.tournamentConfig.numberOfPlayers };
                 const response = yield fetch("https://localhost:8443/back/updateBracket", {
                     method: "POST",
                     headers: {
@@ -519,16 +548,18 @@ export default class Tournament extends Step {
                     body: JSON.stringify(payload),
                 });
                 const data = yield response.json();
+                console.log("updateTournamentBracket: Response data:", data);
                 if (response.ok) {
                     //todo: it is posible to improve the way we receive the array of GamePlayers
                     let winnerPlayer = null;
                     if (result.result && result.result.winner) {
-                        winnerPlayer = this.bracket.find(player => player.id.toString() === result.result.winner);
+                        winnerPlayer = this.bracket.find(player => player.username === result.result.winner);
                         if (winnerPlayer) {
                             this.bracket.push(winnerPlayer);
                         }
                     }
                     this.gameDataArray = data.gamesData;
+                    console.log("updateTournamentBracket: Updated gameDataArray:", this.gameDataArray);
                     if (result.id.includes('final')) {
                         // Todo: replace with the function to display the tournament winner if we want to improve it
                         showWinnerMessage(`${winnerPlayer ? winnerPlayer.tournamentUsername : 'Unknown'}`, null);

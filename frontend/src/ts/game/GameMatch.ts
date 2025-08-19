@@ -111,11 +111,21 @@ export default class GameMatch extends Step
 		const waitingMsg = document.getElementById('waiting-msg');
 		const player1 = this.log.playerDetails.player1;
 		const player2 = this.log.playerDetails.player2;
+		/** search TournamentName  */
+		/** to revert this change just delete everything but the code into the else */
+		const players = { player1, player2 };
+		if (this.tournament && this.tournament.getTournamentId() !== -42 && player1 && player2) {
+		(document.getElementById('player1-name') as HTMLElement).textContent = this.showTournamentName(players, player1?.username) || "Waiting player 1...";
+		(document.getElementById('player2-name') as HTMLElement).textContent = this.showTournamentName(players, player2?.username) || "Waiting player 2...";
+		(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || "https://localhost:8443/back/images/7.png";
+		(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || "https://localhost:8443/back/images/7.png";
+		}else{
 		(document.getElementById('player1-name') as HTMLElement).textContent = player1?.username || "Waiting player 1...";
 		(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || "https://localhost:8443/back/images/7.png";
 		(document.getElementById('player2-name') as HTMLElement).textContent = player2?.username || "Waiting player 2...";
 		(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || "https://localhost:8443/back/images/7.png";
-
+		}
+		/*  end of search */
 		if (readyBtn && waitingMsg)
 		{
 			readyBtn.onclick = () => {
@@ -132,6 +142,8 @@ export default class GameMatch extends Step
 			this.startReadyStatePolling();
 	}
 
+
+	
 	public showPauseModal(reason?: string, pauserId?: string): void
 	{
 		console.warn("pauserID", pauserId);
@@ -158,6 +170,26 @@ export default class GameMatch extends Step
 	}
 
 	/**
+	 * 
+	 * @param players pair of players
+	 * @param username username to find
+	 * @returns tournamentUsername
+	 */
+	public showTournamentName(players: any, username: string): string
+	{
+		if (this.tournament && this.tournament.getTournamentId() !== -42)
+		{
+			const player = [players.player1, players.player2].find(
+				(p: any) => p?.username === username
+			);
+			if (player && player.tournamentUsername) {
+				return player.tournamentUsername;
+			}
+		}
+		return "";
+	}
+
+	/**
 	 * Display game results when a game ends
 	 * @param gameData Complete game data
 	 */
@@ -169,6 +201,18 @@ export default class GameMatch extends Step
 		const durationElement = document.getElementById('game-duration');
 		if (winnerElement)
 			winnerElement.textContent = gameData.result?.winner || 'Unknown';
+		
+		/** search TournamentName*/
+		if (this.tournament && this.tournament.getTournamentId() !== -42 && winnerElement && gameData.result?.winner) {
+			const winnerUsername = gameData.result?.winner;
+			const players = gameData.playerDetails;
+			const tournamentName = this.showTournamentName(players, winnerUsername);
+			if (tournamentName) {
+				winnerElement.textContent = tournamentName;
+			}
+		}
+		/** end of search */
+
 		if (scoreElement)
 		{
 			const score = gameData.result?.score || [0, 0];
@@ -203,8 +247,16 @@ export default class GameMatch extends Step
 			this.controllers.destroy();
 			this.destroy();
 			const spa = SPA.getInstance();
+			if(this.tournament && this.tournament.getTournamentId() !== -42){
+				console.log("FROM showGameResults, Handling match result for tournament:", this.tournament.getTournamentId());
+				console.log("Match result data:", gameData);
+				this.tournament.resumeTournament();
+				this.tournament.handleMatchResult(gameData);
+			}else{
 			spa.currentGame = null;
-			spa.navigate(this.log.tournamentId ? 'tournament-lobby' : 'game-lobby');
+			// spa.navigate(this.log.tournamentId ? 'tournament-lobby' : 'game-lobby');
+			spa.navigate('game-lobby');
+			}
 		});
 	}
 	

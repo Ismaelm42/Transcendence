@@ -20,12 +20,10 @@ export class TournamentUI
 
 	constructor(tournament: Tournament)
 	{
+		console.log("TournamentUI constructor - tournament:", tournament);
 		this.tournament = tournament;
 		// this.boundOnLeavingTournamentLobby = this.onLeavingTournamentLobby.bind(this);
 	}
-
-
-
 
 	showOnly(divId: string, displayStyle: string = "block") : void
 	{
@@ -250,7 +248,7 @@ export class TournamentUI
 					const guestTournamentName = document.getElementById(`guest-tournament-name-${tournamentPlayer.Index}`) as HTMLInputElement;
 					if (!guestTournamentName || guestTournamentName.value.trim() === '') {
 						tournamentPlayer.gameplayer = {
-							id: Number(`${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`),
+							id: -2,
 							username: `Guest00${i}`,
 							tournamentUsername: `Guest00${i}`,
 							email: '',
@@ -268,10 +266,7 @@ export class TournamentUI
 						const guestData = await this.checkGuestPlayer(i, guestTournamentName.value);
 						if (guestData) {
 							tournamentPlayer.gameplayer = guestData.gameplayer;
-							let idString = `${tournamentPlayer.Index}+00${tournamentPlayer.Index}`;
-							tournamentPlayer.gameplayer.id = Number(idString);
-							// tournamentPlayer.gameplayer.id = `${tournamentPlayer.Index}+_Guest00${tournamentPlayer.Index}`,
-							
+							tournamentPlayer.gameplayer.id = -2;
 							tournamentPlayer.gameplayer.username =`Guest00${i}`,
 							tournamentPlayer.status = 'ready';
 						} else {
@@ -476,6 +471,7 @@ export class TournamentUI
 			console.error("Error while verifying:", error);
 		}
 	}
+
 	/**
 	 * Hay que darle el formato al componente para mostrar ya sea haciendo un pequeño componente con su html y sus clases, incluyendo más css aquí o con el archivo css**/
 	public renderRegisteredPlayers = (players: TournamentPlayer[]): void => {
@@ -577,6 +573,7 @@ export class TournamentUI
 			}
 		}
 	}
+
 	async checkPlayer(index: number, email: string | null, password: string | null): Promise<TournamentPlayer | null> {
 		const data = { email, password };
 		try {
@@ -640,7 +637,8 @@ export class TournamentUI
         difficultySlider.value = "2"; // Valor por defecto (Medium)
         if (difficultyValue) difficultyValue.textContent = difficultyLabels[1];
     }
-	}
+	
+}
 	/**
 	 * Resets the tournament HTML containers to their initial state.
 	 * This method clears the content of the tournament bracket, next match, and results containers.
