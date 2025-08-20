@@ -113,6 +113,13 @@ export function	messageManager(client, connection)
 				case 'GAME_ACTIVITY':
 					handleGameActivity(client, data);
 					break;
+				case 'END_GAME':
+					const	gameSession = gamesList.get(data.gameId);
+					if (gameSession) 
+						gameSession.endGame(gamesList, false);
+					else
+						console.error(`END_GAME: No game session found for id ${gameId}`);
+					break;
 				default:
 					console.log(`Unknown message type: ${data.type}`);
 			}	

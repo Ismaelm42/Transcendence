@@ -196,30 +196,37 @@ export class SPA {
 
 	public	handleLeavingMatchStep(nextStep?: string)
 	{
-		//nexStep as param in case later need to handle different scenarios
 		if (!this.currentGame)
 			return ;
-	
-		const	log = this.currentGame.getGameLog();
-		const	match = this.currentGame.getGameMatch();
-	
-		if (log.mode === 'remote' && this.currentGame.getGameConnection() &&
-			this.currentGame.getGameConnection().socket && this.currentGame.isGameActive())
-		{
-			const username = this.currentGame.getGameIsHost()
-				? log.playerDetails.player1?.username
-				: log.playerDetails.player2?.username;
-			this.currentGame.getGameConnection()?.socket?.send(
-				JSON.stringify({
-					type: 'PAUSE_GAME',
-					reason: `${username} left the game`
-				})
-			);
-		}
-		if (match)
-		{
-			match.updatePlayerActivity(false);
-			match.destroy();
+
+		if (nextStep != 'game-match')
+		{		
+			const	log = this.currentGame.getGameLog();
+			const	match = this.currentGame.getGameMatch();
+		
+			if (log.mode === 'remote' && this.currentGame.getGameConnection() &&
+				this.currentGame.getGameConnection().socket && this.currentGame.isGameActive())
+			{
+				const username = this.currentGame.getGameIsHost()
+					? log.playerDetails.player1?.username
+					: log.playerDetails.player2?.username;
+				this.currentGame.getGameConnection()?.socket?.send(
+					JSON.stringify({
+						type: 'PAUSE_GAME',
+						reason: `${username} left the game`
+					})
+				);
+			}
+			else if (log.mode != 'remote' && this.currentGame.getGameConnection() &&
+				this.currentGame.getGameConnection().socket && this.currentGame.isGameActive())
+			{
+				this.currentGame.getGameConnection().killGameSession(this.currentGame.getGameLog().id);
+			}
+			if (match)
+			{
+				match.updatePlayerActivity(false);
+				match.destroy();
+			}
 		}
 	}
 }

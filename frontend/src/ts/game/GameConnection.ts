@@ -80,11 +80,9 @@ export class GameConnection
 						const data = JSON.parse(event.data);
 						if (data.type != 'GAME_STATE')
 							console.log("Message received from server:", event.data);
+						// console.log("Message received from server:", event.data);
 						switch(data.type)
-						{		
-							/*Cuando el servidor responde con un mensaje de tipo USER_INFO, 
-							el manejador de mensajes del WebSocket verifica si pendingUserInfoResolve está definido. 
-							Si es así, la llama pasando el usuario recibido y luego la limpia (la pone en null).*/
+						{
 							case 'USER_INFO':
 								if (this.pendingUserInfoResolve)
 								{
@@ -259,6 +257,14 @@ export class GameConnection
 		}
 	};
 	
+	public	killGameSession(gameId: string)
+	{
+		this.socket?.send(JSON.stringify({
+				type: 'END_GAME',
+				gameId: gameId
+			}));
+	}
+
 	/**
 	 * Cleans up the WebSocket connection by removing all event handlers and closing the socket.
 	 * Also clears any pending user information resolution callbacks.

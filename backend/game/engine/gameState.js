@@ -107,29 +107,31 @@ export function checkScoring(gamesList)
 	}
 	// Check if the winScore has been reached to end the game
 	if (this.state.scores[0] >= this.winScore || this.state.scores[1] >= this.winScore)
-		this.endGame(gamesList);
+		this.endGame(gamesList, true);
 }
 
 // Clean finish for game + call logs/DB methods for storing and/or showing info on front side
-export async function endGame(gamesList)
+export async function endGame(gamesList, needSaving)
 {
 	this.isFinished = true;
-	// Final update of game logs
 	const gamelogData = this.finalizeGame();
-	try
-	{
-		await createGamelog(gamelogData);
-		console.warn('GAMELOG SAVED TO DB');
-	} catch (err) {
-		console.error('Error saving gamelog:', err);
-	}
-	// Stop and clean up intervals
 	clearInterval(this.gameLoop);
 	clearInterval(this.aiInterval);
-	// Remove gameSession from map if we are on tournament game - no rematch possible
-	if (this.metadata.tournamentId && gamesList && gamesList.has(this.roomId))
+	// Save gamelog on DB if game ended normally
+	if (needSaving)
 	{
-		console.log("Tournamente Game: deleting gameSession from map");
+		try
+		{
+			await createGamelog(gamelogData);
+			console.warn('GameLog succesfully saved to DB');
+		} catch (err) {
+			console.error('Error saving gamelog:', err);
+		}
+	}
+	// Remove gameSession from map if we are on tournament game or game aborted  - no rematch possible
+	if (gamesList && gamesList.has(this.roomId) && (this.metadata.tournamentId || !needSaving))
+	{
+		console.log("in-tournament or aborted game: deleting gameSession from map");
 		gamesList.delete(this.roomId);
 	}
 	// Notify players

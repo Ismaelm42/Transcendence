@@ -191,24 +191,29 @@ export class SPA {
     }
     handleLeavingMatchStep(nextStep) {
         var _a, _b, _c, _d;
-        //nexStep as param in case later need to handle different scenarios
         if (!this.currentGame)
             return;
-        const log = this.currentGame.getGameLog();
-        const match = this.currentGame.getGameMatch();
-        if (log.mode === 'remote' && this.currentGame.getGameConnection() &&
-            this.currentGame.getGameConnection().socket && this.currentGame.isGameActive()) {
-            const username = this.currentGame.getGameIsHost()
-                ? (_a = log.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.username
-                : (_b = log.playerDetails.player2) === null || _b === void 0 ? void 0 : _b.username;
-            (_d = (_c = this.currentGame.getGameConnection()) === null || _c === void 0 ? void 0 : _c.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
-                type: 'PAUSE_GAME',
-                reason: `${username} left the game`
-            }));
-        }
-        if (match) {
-            match.updatePlayerActivity(false);
-            match.destroy();
+        if (nextStep != 'game-match') {
+            const log = this.currentGame.getGameLog();
+            const match = this.currentGame.getGameMatch();
+            if (log.mode === 'remote' && this.currentGame.getGameConnection() &&
+                this.currentGame.getGameConnection().socket && this.currentGame.isGameActive()) {
+                const username = this.currentGame.getGameIsHost()
+                    ? (_a = log.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.username
+                    : (_b = log.playerDetails.player2) === null || _b === void 0 ? void 0 : _b.username;
+                (_d = (_c = this.currentGame.getGameConnection()) === null || _c === void 0 ? void 0 : _c.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
+                    type: 'PAUSE_GAME',
+                    reason: `${username} left the game`
+                }));
+            }
+            else if (log.mode != 'remote' && this.currentGame.getGameConnection() &&
+                this.currentGame.getGameConnection().socket && this.currentGame.isGameActive()) {
+                this.currentGame.getGameConnection().killGameSession(this.currentGame.getGameLog().id);
+            }
+            if (match) {
+                match.updatePlayerActivity(false);
+                match.destroy();
+            }
         }
     }
 }
