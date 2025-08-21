@@ -14,6 +14,7 @@ export class SPA {
         this.currentGame = null;
         this.currentTournament = null;
         this.currentStep = null;
+        this.resetTournamentFLAG = false; // Flag to reset the tournament when leaving the step
         this.routes = {
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
@@ -41,7 +42,7 @@ export class SPA {
                 // If the tournament is in progress, show a warning message is it is not already shown
                 if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
                     && warningFlag !== true) {
-                    showMessage("Tournament in progress aborted?", 5000);
+                    showMessage("Tournament in progress aborted", 5000);
                     const tournamentUI = (_b = (_a = this.currentTournament).getTournamentUI) === null || _b === void 0 ? void 0 : _b.call(_a);
                     if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
                         tournamentUI.resetTournament();
@@ -72,6 +73,15 @@ export class SPA {
                 this.loadStep();
             }
         });
+    }
+    getResetTournamentFLAG() {
+        return this.resetTournamentFLAG;
+    }
+    activateTournamentFLAG() {
+        this.resetTournamentFLAG = true;
+    }
+    desactivateTournamentFLAG() {
+        this.resetTournamentFLAG = false;
     }
     loadHEaderAndFooter() {
         return __awaiter(this, void 0, void 0, function* () {

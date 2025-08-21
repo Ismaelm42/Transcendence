@@ -91,24 +91,36 @@ const findplayerByUsername= (users, username) => {
 	return null;
 }
 
-/**
- * it compares email in order to decide if game mode is auto (AIvAI),1vAI or 1v1.  
- * @param {} player1 
- * @param {*} player2 
- * @returns game mode 
- */
 const returnMode = (player1, player2) =>{
 		//console.log("Returning mode for players:", player1, player2);
-		if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
-				&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) { 
+		if (player1.id === -1 && player2.id === -1) {
 			return 'auto';
-		} else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com')) 
-				|| ( player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
+		} else if (player1.id === -1 || player2.id === -1) {
 			return '1vAI';
 		} else {
 			return '1v1';
 		}
 }
+
+// /** OLD retunrmode function
+// /**
+//  * it compares email in order to decide if game mode is auto (AIvAI),1vAI or 1v1.  
+//  * @param {} player1 
+//  * @param {*} player2 
+//  * @returns game mode 
+//  */
+// const returnMode = (player1, player2) =>{
+// 		//console.log("Returning mode for players:", player1, player2);
+// 		if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
+// 				&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) { 
+// 			return 'auto';
+// 		} else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com')) 
+// 				|| ( player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
+// 			return '1vAI';
+// 		} else {
+// 			return '1v1';
+// 		}
+// }
 
 // These functions has to be uncomment in case that we use the Id as winner info
 

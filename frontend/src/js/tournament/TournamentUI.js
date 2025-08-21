@@ -662,16 +662,25 @@ export class TournamentUI {
                     this.disableTournamentHashGuard(); // disables the hash guard
                 }
             }
-            else {
-                const confirmOther = confirm("Are you sure you want to leave the tournament?");
-                if (confirmOther) {
-                    this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
-                    this.resetTournament();
-                    window.location.hash = href;
-                    this.disableTournamentHashGuard(); // si quieres desactivar protección desde H1
-                    //todo: INCLUIR AQUÍ ELIMINADO LOS TEMP USERS
-                }
-            }
+            // else if (href.includes('#game-match')) {
+            // 		this.resetTournament();
+            // 		const spa = SPA.getInstance();
+            // 		spa.activateTournamentFLAG();
+            // 		this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
+            // 		window.location.hash = href;
+            // 		this.disableTournamentHashGuard(); // disables the hash guard
+            // }
+            // else
+            // 	{
+            // 	const confirmOther = confirm("Are you sure you want to leave the tournament?");
+            // 	if (confirmOther) {
+            // 		this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
+            // 		this.resetTournament();
+            // 		window.location.hash = href;
+            // 		this.disableTournamentHashGuard(); // si quieres desactivar protección desde H1
+            // 	//todo: INCLUIR AQUÍ ELIMINADO LOS TEMP USERS
+            // 	}
+            // }
         }
     }
     evaluarMovimiento(event) {
@@ -697,17 +706,30 @@ export class TournamentUI {
         }
         else if (isKey) {
             const keyboardEvent = event;
-            // Prevent Alt+F4 and Ctrl+F5 to avoid accidental exit/reload
-            if (keyboardEvent.ctrlKey && keyboardEvent.key === "F5") {
-                alert("This key combination is disabled during the tournament.");
+            // Prevent Ctrl+F5 to avoid accidental exit/reload
+            // if (keyboardEvent.ctrlKey && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) {
+            // 	alert("This key combination is disabled during the tournament.");
+            // 	keyboardEvent.preventDefault();
+            // 	return;
+            // }
+            // Para que afecte solo al hash tournament-lobby
+            // if (((keyboardEvent.ctrlKey && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) || keyboardEvent.key === "F5")
+            // 		&& window.location.hash.includes('#tournament-lobby') ){
+            if ((keyboardEvent.ctrlKey && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) || keyboardEvent.key === "F5") {
                 keyboardEvent.preventDefault();
-                return;
-            }
-            if (keyboardEvent.key === "F5") {
-                keyboardEvent.preventDefault();
-                const confirmExit = confirm("Are you sure you want to reload and reset the tournament?");
-                if (confirmExit && keyboardEvent.key === "F5") {
-                    this.resetTournament(); // Reset the tournament state
+                if (window.location.hash.includes('#tournament-lobby')) {
+                    const confirmExit = confirm("Are you sure you want to reload and reset the tournament?");
+                    if (confirmExit && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) {
+                        this.resetTournament();
+                        location.reload();
+                    }
+                }
+                if (window.location.hash.includes('#game-match')) {
+                    // const confirmExit = confirm("Are you sure you want to reload and reset the game?");
+                    // if (confirmExit && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) {
+                    // 	//TODO: Pedro Aquí se podría incluir lo que quisieras
+                    // 	location.reload();
+                    // }
                     location.reload();
                 }
             }

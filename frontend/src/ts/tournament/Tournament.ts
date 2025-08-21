@@ -244,21 +244,33 @@ export default class Tournament extends Step {
 		console.log("Current game data array length:", this.gameDataArray.length);
 	}
 
-	public returnMode(player1: GamePlayer, player2: GamePlayer): string {
-		// return'auto'; // HARDCODED FOR TESTING PURPOSES
-		//TODO: descomentar y eliminar return 'auto';
-		console.log("Returning mode for players:", player1, player2);
-		if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
-				&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) {
-			return 'auto';
-		} else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com')) 
-				|| ( player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
-			return '1vAI';
-		} else {
-			return '1v1';
-		}
-	}
-
+    // public returnMode(player1: GamePlayer, player2: GamePlayer): string {
+    // 	// return'auto'; // HARDCODED FOR TESTING PURPOSES
+    // 	//TODO: descomentar y eliminar return 'auto';
+    // 	console.log("Returning mode for players:", player1, player2);
+    // 	if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
+    // 			&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) {
+    // 		return 'auto';
+    // 	} else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com')) 
+    // 			|| ( player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
+    // 		return '1vAI';
+    // 	} else {
+    // 		return '1v1';
+    // 	}
+    // }
+    public returnMode(player1: GamePlayer, player2: GamePlayer): string {
+        /**TODO: if we asign a id !== -1 to any Ai player revieew this function */
+        console.log("Returning mode for players:", player1, player2);
+        if (player1.id === -1 && player2.id === -1) {
+            return 'auto';
+        }
+        else if (player1.id === -1 || player2.id === -1) {
+            return '1vAI';
+        }
+        else {
+            return '1v1';
+        }
+    }
 	private initialGameData(player1Index: number, player2Index: number){
 		if (player1Index > -1 )
 		{
