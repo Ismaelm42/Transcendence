@@ -28,7 +28,7 @@ export async function	registerGameClient(request, connection)
 	}
 	const	user = await extractUserFromToken(token);
 	if (user && user.id)
-	{
+	{	
 		console.log(`User authenticated: ${user.id}`);
 		// Register and track connection
 		clients.set(user.id, {
@@ -120,6 +120,9 @@ export function	messageManager(client, connection)
 					else
 						console.error(`END_GAME: No game session found for id ${gameId}`);
 					break;
+				case 'INSPECT_GAMES':
+					fetchGameSessionsInfo(client);
+					break;
 				default:
 					console.log(`Unknown message type: ${data.type}`);
 			}	
@@ -181,3 +184,19 @@ export function handleGameActivity(client, data)
 		player.active = !!data.active; // true if on game-match, false otherwise
 }
 
+export async function	fetchGameSessionsInfo(client)
+{
+	const	token = request.cookies.token;
+	const	user = await extractUserFromToken(token);
+	const	games = [];
+	for (const gameSession of gamesList.values())
+	{
+		if (gameSession && gameSession.metadata)
+			games.push(gameSession.metadata);
+	}
+	client.connection.send(JSON.stringify({
+		type: 'GAMES_DETAILS',
+		games: games,
+		clientUserId: user.id
+	}));
+}

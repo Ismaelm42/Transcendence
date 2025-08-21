@@ -3,6 +3,7 @@
  */
 import { SPA } from '../spa/spa.js';
 import Game from './Game.js'
+import type { GameData } from './types.js';
 
 // This is a variable to store the first websocket connection
 // so we can use the same one during the whole browser lifecycle
@@ -14,6 +15,7 @@ export class GameConnection
 	private game: Game;	// Reference to the Game instance
 	public	socket: WebSocket | null = null; 	// WebSocket instance
 	public	connectionStat: boolean = false; 	// Connection status
+	public	activeGamesDetails: GameData[] | null = null;
 	/**
 	 * A callback function that is invoked to resolve pending user information requests.
 	 * 
@@ -257,6 +259,29 @@ export class GameConnection
 		}
 	};
 	
+	public checkActiveGameSessions(): Promise<{sessions: GameData[], userId: number}>
+	{
+		return new Promise((resolve, reject) => {
+			if (!this.socket || this.socket.readyState !== WebSocket.OPEN)
+				return (reject('Socket not connected'));
+			const handler = (event: MessageEvent) => {
+				const data = JSON.parse(event.data);
+				if (data.type === 'GAMES_DETAILS')
+				{
+					this.socket?.removeEventListener('message', handler);
+					this.activeGamesDetails = data.games as GameData[];
+					resolve({sessions: this.activeGamesDetails, userId: data.userId});
+				}
+			};
+			this.socket?.addEventListener('message', handler);
+			this.socket?.send(JSON.stringify({ type: 'INSPECT_GAMES' }));
+			setTimeout(() => {
+				this.socket?.removeEventListener('message', handler);
+				reject('Timeout waiting for GAMES_DETAILS');
+			}, 3000);
+		});
+	}
+
 	public	killGameSession(gameId: string)
 	{
 		this.socket?.send(JSON.stringify({

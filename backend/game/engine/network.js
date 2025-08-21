@@ -98,7 +98,7 @@ export function checkPlayersStatus(gamesList)
 	{
 		// End game if not enough players and set abandoned as reason
 		this.metadata.result.endReason = 'Game abandoned by a player';
-		this.endGame(gamesList, true); // TODO: check if we are saving winner correctly - finalizeGame() different case for this case!
+		this.endGame(gamesList, true);
 	}
 	// Cleanup
 	this.pauseTimer = null;

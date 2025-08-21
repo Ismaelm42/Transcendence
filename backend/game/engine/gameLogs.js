@@ -11,6 +11,7 @@ export function finalizeGame()
 	this.metadata.result.finalScore = [...this.state.scores];
 	
 	// Determine winner and set result
+	// TODO: Take into account when remote game abandoned
 	const p1Score = this.state.scores[0];
 	const p2Score = this.state.scores[1];
 	this.metadata.result.finalScore = [...this.state.scores];
