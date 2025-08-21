@@ -662,25 +662,17 @@ export class TournamentUI {
                     this.disableTournamentHashGuard(); // disables the hash guard
                 }
             }
-            // else if (href.includes('#game-match')) {
-            // 		this.resetTournament();
-            // 		const spa = SPA.getInstance();
-            // 		spa.activateTournamentFLAG();
-            // 		this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
-            // 		window.location.hash = href;
-            // 		this.disableTournamentHashGuard(); // disables the hash guard
-            // }
-            // else
-            // 	{
-            // 	const confirmOther = confirm("Are you sure you want to leave the tournament?");
-            // 	if (confirmOther) {
-            // 		this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
-            // 		this.resetTournament();
-            // 		window.location.hash = href;
-            // 		this.disableTournamentHashGuard(); // si quieres desactivar protección desde H1
-            // 	//todo: INCLUIR AQUÍ ELIMINADO LOS TEMP USERS
-            // 	}
-            // }
+            else
+            	{
+            	const confirmOther = confirm("Are you sure you want to leave the tournament?");
+            	if (confirmOther) {
+            		this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
+            		this.resetTournament();
+            		window.location.hash = href;
+            		this.disableTournamentHashGuard(); // si quieres desactivar protección desde H1
+            	//todo: INCLUIR AQUÍ ELIMINADO LOS TEMP USERS
+            	}
+            }
         }
     }
     evaluarMovimiento(event) {

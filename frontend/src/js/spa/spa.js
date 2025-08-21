@@ -14,7 +14,6 @@ export class SPA {
         this.currentGame = null;
         this.currentTournament = null;
         this.currentStep = null;
-        this.resetTournamentFLAG = false; // Flag to reset the tournament when leaving the step
         this.routes = {
             'home': { module: '../home/homeRender.js', protected: false },
             'login': { module: '../login/loginRender.js', protected: false },
@@ -73,15 +72,6 @@ export class SPA {
                 this.loadStep();
             }
         });
-    }
-    getResetTournamentFLAG() {
-        return this.resetTournamentFLAG;
-    }
-    activateTournamentFLAG() {
-        this.resetTournamentFLAG = true;
-    }
-    desactivateTournamentFLAG() {
-        this.resetTournamentFLAG = false;
     }
     loadHEaderAndFooter() {
         return __awaiter(this, void 0, void 0, function* () {

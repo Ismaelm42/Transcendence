@@ -10,7 +10,6 @@ export class SPA {
 	public currentGame: Game | null = null;
 	public currentTournament: Tournament | null = null;
 	private currentStep: string | null = null;
-	private resetTournamentFLAG: boolean = false; // Flag to reset the tournament when leaving the step
 
     private routes: { [key: string]: { module: string; protected: boolean } } = {
         'home': { module: '../home/homeRender.js', protected: false },
@@ -73,20 +72,6 @@ export class SPA {
 			}
 		});
     }
-
-	public getResetTournamentFLAG(): boolean {
-		return this.resetTournamentFLAG;
-	}
-
-	public activateTournamentFLAG(): void {
-		this.resetTournamentFLAG = true;
-	}
-
-	public desactivateTournamentFLAG(): void {
-		this.resetTournamentFLAG = false;
-	}
-
-
 
     private async loadHEaderAndFooter() {
 
