@@ -33,6 +33,7 @@ export class SPA {
 		// Changes to advise the user when they leave a tournament in progress
 		//it will reset the tournament guards and delete TempUsers
 		window.onpopstate = () => {
+			console.log("onpopstate event triggered");
 			if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
 				const tournamentId = this.currentTournament.getTournamentId();
 				const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
@@ -40,6 +41,7 @@ export class SPA {
 				if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
 					&& warningFlag!== true) {
 					showMessage("Tournament in progress aborted", 5000);
+					console.log("Tournament in progress aborted");
 					const tournamentUI = this.currentTournament.getTournamentUI?.();
 					if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
 						tournamentUI.resetTournament();
@@ -134,7 +136,8 @@ export class SPA {
                 hasCurrentGame: !!this.currentGame,
                 getGameConnectionResult: this.currentGame?.getGameConnection?.(),
                 hasSocket: !!this.currentGame?.getGameConnection?.()?.socket,
-                isGameActive: this.currentGame?.isGameActive?.()
+                isGameActive: this.currentGame?.isGameActive?.(),
+                currentTournament: this.currentTournament
             });
         } catch (e) {
             console.debug('SPA.leave-check error', e);

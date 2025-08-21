@@ -35,6 +35,7 @@ export class SPA {
         //it will reset the tournament guards and delete TempUsers
         window.onpopstate = () => {
             var _a, _b;
+            console.log("onpopstate event triggered");
             if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
                 const tournamentId = this.currentTournament.getTournamentId();
                 const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
@@ -42,6 +43,7 @@ export class SPA {
                 if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
                     && warningFlag !== true) {
                     showMessage("Tournament in progress aborted", 5000);
+                    console.log("Tournament in progress aborted");
                     const tournamentUI = (_b = (_a = this.currentTournament).getTournamentUI) === null || _b === void 0 ? void 0 : _b.call(_a);
                     if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
                         tournamentUI.resetTournament();
@@ -132,7 +134,8 @@ export class SPA {
                     hasCurrentGame: !!this.currentGame,
                     getGameConnectionResult: (_b = (_a = this.currentGame) === null || _a === void 0 ? void 0 : _a.getGameConnection) === null || _b === void 0 ? void 0 : _b.call(_a),
                     hasSocket: !!((_e = (_d = (_c = this.currentGame) === null || _c === void 0 ? void 0 : _c.getGameConnection) === null || _d === void 0 ? void 0 : _d.call(_c)) === null || _e === void 0 ? void 0 : _e.socket),
-                    isGameActive: (_g = (_f = this.currentGame) === null || _f === void 0 ? void 0 : _f.isGameActive) === null || _g === void 0 ? void 0 : _g.call(_f)
+                    isGameActive: (_g = (_f = this.currentGame) === null || _f === void 0 ? void 0 : _f.isGameActive) === null || _g === void 0 ? void 0 : _g.call(_f),
+                    currentTournament: this.currentTournament
                 });
             }
             catch (e) {

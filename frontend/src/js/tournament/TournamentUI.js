@@ -646,33 +646,24 @@ export class TournamentUI {
             selectPlayerContainer.innerHTML = '';
         this.resetConfigSliders();
         this.resetTournamentHTML();
+        const appElement = document.getElementById('app-container');
+        if (appElement)
+            this.initializeUI(appElement);
     }
     //////////////////////////////////////////////////////////
     handleAnchorClick(anchor) {
+        console.log("Anchor clicked:", anchor.href);
         const href = anchor.getAttribute('href') || '';
-        if (href.startsWith('#')) {
-            // Previene el comportamiento predeterminado
-            // (esto se hace fuera del handler original ya)
-            if (href.includes('#tournament-lobby')) {
-                const confirmChange = confirm("you are leaving the tournament lobby. Do you want to continue?");
-                if (confirmChange) {
-                    this.resetTournament();
-                    this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
-                    window.location.hash = href;
-                    this.disableTournamentHashGuard(); // disables the hash guard
-                }
-            }
-            else
-            	{
-            	const confirmOther = confirm("Are you sure you want to leave the tournament?");
-            	if (confirmOther) {
-            		this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
-            		this.resetTournament();
-            		window.location.hash = href;
-            		this.disableTournamentHashGuard(); // si quieres desactivar protección desde H1
-            	//todo: INCLUIR AQUÍ ELIMINADO LOS TEMP USERS
-            	}
-            }
+        let message = "Are you sure you want to leave the tournament?";
+        if (href.includes('#tournament-lobby')) {
+            message = "Do you want to reset the tournament?";
+        }
+        const confirmChange = confirm(message);
+        if (confirmChange) {
+            this.resetTournament();
+            this.tournament.LeaveWithoutWarningFLAG = true; // avoid duplicate confirmation
+            window.location.hash = href;
+            this.disableTournamentHashGuard(); // disables the hash guard
         }
     }
     evaluarMovimiento(event) {
@@ -709,6 +700,8 @@ export class TournamentUI {
             // 		&& window.location.hash.includes('#tournament-lobby') ){
             if ((keyboardEvent.ctrlKey && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) || keyboardEvent.key === "F5") {
                 keyboardEvent.preventDefault();
+                keyboardEvent.stopPropagation();
+                keyboardEvent.stopImmediatePropagation();
                 if (window.location.hash.includes('#tournament-lobby')) {
                     const confirmExit = confirm("Are you sure you want to reload and reset the tournament?");
                     if (confirmExit && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) {
@@ -719,17 +712,16 @@ export class TournamentUI {
                 if (window.location.hash.includes('#game-match')) {
                     // const confirmExit = confirm("Are you sure you want to reload and reset the game?");
                     // if (confirmExit && (keyboardEvent.key === "F5" || keyboardEvent.key === "r")) {
-                    // 	//TODO: Pedro Aquí se podría incluir lo que quisieras
+                    // 	//TODO: Pedro Aquí se podría incluir lo que quisieras pero los usuarios temporales y el torneo 
+                    // ya se han reseteado..
                     // 	location.reload();
                     // }
-                    location.reload();
                 }
             }
             if (keyboardEvent.key === "Escape") {
                 keyboardEvent.preventDefault();
                 const confirmExit = confirm("this will lead yo to Home. Are you sure you want to exit the tournament?");
                 if (confirmExit && keyboardEvent.key === "Escape") {
-                    // lógica personalizada, si deseas redirigir
                     console.log("Escape pressed, user confirmed exit.");
                     this.resetTournament(); // Reset the tournament state
                     window.location.href = "#home";
