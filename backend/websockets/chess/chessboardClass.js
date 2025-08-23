@@ -90,6 +90,7 @@ export class Chessboard {
 		this.currentBoardMove = 0;
 		this.allMovesFrom.set(0, null);
 		this.allMovesTo.set(0, null);
+		this.startTimer();
 	}
 
 	getGuestColor() {
@@ -165,7 +166,7 @@ export class Chessboard {
 		return this.blackKing;
 	}
 
-	buildClientMessage(type, fromSquare, toSquare, notation) {
+	buildClientMessage(type, fromSquare, toSquare, notation, id) {
 
 		const message = {
 			type: type,
@@ -178,9 +179,13 @@ export class Chessboard {
 			notation: notation,
 			board: this.getBoard(),
 		};
-		if (type === 'checkmate') {
+		if (type === 'checkmate' || (type === 'resignation' && this.gameMode === 'local')) {
 			message.loser = this.getTurn() === this.hostColor ? this.hostName : this.guestName;
 			message.winner = this.getTurn() === this.hostColor ? this.guestName : this.hostName;
+		}
+		if (type === 'resignation' && this.gameMode === 'online') {
+			message.loser = id === this.hostId ? this.hostName : this.guestName;
+			message.winner = id === this.hostId ? this.guestName : this.hostName;
 		}
 		return message;
 	}
@@ -302,7 +307,7 @@ export class Chessboard {
 
 	updateTime(type) {
 
-		if (type === 'checkmate' || type === 'stalemate' || type === 'draw')
+		if (type === 'checkmate' || type === 'stalemate' || type === 'agreement' || type === 'resignation')
 			this.stopTimer();
 		else {
 			this.stopTimer();

@@ -457,10 +457,45 @@ function flipBoard(user) {
 }
 
 function requestDraw(user) {
-
+	
+	const board = chessboard.get(user.id);
+	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+	
+	if (board.gameMode === 'online') {
+		const message = {
+			type: 'requestDraw',
+			username: user.username,
+		}
+		sendMsgToClient(opponentId, message);
+	}
+	else
+		acceptDraw(user);
 }
+
+function acceptDraw(user) {
+
+	const board = chessboard.get(user.id);
+	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+
+	board.updateTime('agreement');
+	const message = board.buildClientMessage('agreement', board.lastMoveFrom, board.lastMoveTo, null, user.id);
+	
+	if (board.gameMode !== 'local')
+		sendMsgToClient(opponentId, message);
+	sendMsgToClient(user.id, message);
+}
+
 function resign(user) {
 
+	const board = chessboard.get(user.id);
+	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
+
+	board.updateTime('resignation');
+	const message = board.buildClientMessage('resignation', board.lastMoveFrom, board.lastMoveTo, null, user.id);
+
+	if (board.gameMode !== 'local')
+		sendMsgToClient(opponentId, message);
+	sendMsgToClient(user.id, message);
 }
 
 
@@ -511,8 +546,14 @@ export function handleIncomingSocketMessage(user, socket) {
 				case 'flip':
 					flipBoard(user);
 					break;
+				case 'cancel':
+					cancelGame(user);
+					break;
 				case 'requestDraw':
 					requestDraw(user);
+					break;
+				case 'acceptDraw':
+					acceptDraw(user);
 					break;
 				case 'resign':
 					resign(user);
@@ -528,8 +569,6 @@ export function handleSocketClose(user, socket) {
 
 	socket.on('close', () => {
 		deleteLobby(user.id);
-		clients.delete(user.id);
-		deleteGame(user.id)
 	});
 }
 
