@@ -11,31 +11,36 @@ module.exports = {
 		  username: 'ismael',
 		  password: await hashPassword('1234'),
 		  email: 'ismael@gmail.com',
-		  last_login: new Date(),
+		  lastLogin: new Date(),
+		  chessRating: 2100
 		},
 		{
 		  username: 'alfonso',
 		  password: await hashPassword('1234'),
 		  email: 'alfonso@gmail.com',
-		  last_login: new Date(),
+		  lastLogin: new Date(),
+		  chessRating: 1900
 		},
 		{
 		  username: 'fernando',
 		  password: await hashPassword('1234'),
 		  email: 'fernando@gmail.com',
-		  last_login: new Date(),
+		  lastLogin: new Date(),
+		  chessRating: 2300
 		},
 		{
 		  username: 'pedro',
 		  password: await hashPassword('1234'),
 		  email: 'pedro@gmail.com',
-		  last_login: new Date(),
+		  lastLogin: new Date(),
+		  chessRating: 2250
 		},
 		{
 		  username: 'user',
 		  password: await hashPassword('1234'),
 		  email: 'user@gmail.com',
-		  last_login: new Date(),
+		  lastLogin: new Date(),
+		  chessRating: 1700
 		},
 	  ];
   

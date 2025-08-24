@@ -13,6 +13,9 @@ export async function registerUser(request, socket) {
 	const token = cookies.token;
 	const user = await extractUserFromToken(token);
 	clients.set(user.id, socket);
+	const board = chessboard.get(user.id);
+	if (board && !board.gameState)
+		chessboard.delete(user.id);
 	return user;
 }
 
@@ -45,6 +48,32 @@ function formatTime(time) {
 		return `${formattedMinutes}:${formattedSeconds}`;
 	}
 }
+
+async function updateChessRatings(user, message) {
+
+	console.log(user.id);
+	const board = chessboard.get(user.id);
+	let diff = 0;
+
+	if (board && board.gameMode === 'online') {
+		if (message.winner && user.id === message.winnerId) {
+			diff = await crud.user.calculateElo(message.winnerId, message.loserId, 1);
+			board.hostId === message.winnerId ? board.hostElo += diff : board.guestElo += diff;
+			board.hostId === message.loserId ?  board.hostElo -= diff : board.guestElo -= diff;
+		}
+		else if (message.type === 'stalemate' || message.type === 'agreement') {
+			diff = await crud.user.calculateElo(message.hostId, message.guestId, 0);
+			board.hostId < board.guestId ? board.hostElo += diff : board.hostElo -= diff;
+			board.guestId < board.hostId ? board.guestElo += diff : board.guestElo -= diff;
+		}
+		else if (message.type === 'timeout') {
+			diff = await crud.user.calculateElo(message.winnerId, message.loserId, 1);
+			board.hostId === message.winnerId ? board.hostElo += diff : board.guestElo += diff;
+			board.hostId === message.loserId ?  board.hostElo -= diff : board.guestElo -= diff;
+		}
+	}
+}
+
 
 function sendInfoToClient(user) {
 
@@ -99,9 +128,9 @@ function createLobby(user, data) {
 		playerColor: data.playerColor,
 		timeControl: data.timeControl,
 		gameMode: 'online',
-		minRating: 'any',
-		maxRating: 'any',
-		rating: '4000',
+		minRating: data.minRating,
+		maxRating: data.maxRating,
+		rating: user.chessRating,
 	}
 	lobby.set(user.id, newLobby);
 	sendLobbyToAllClients();
@@ -128,7 +157,7 @@ async function createBoard(user, data) {
 			guestId: user.id,
 			hostName: user.username,
 			guestName: 'Guest',
-			hostElo: '2000',
+			hostElo: user.chessRating,
 			guestElo: 'N/A',
 			hostImagePath: user.avatarPath,
 			guestImagePath: user.avatarPath,
@@ -144,8 +173,8 @@ async function createBoard(user, data) {
 			guestId: user.id,
 			hostName: host.username,
 			guestName: user.username,
-			hostElo: '2000',
-			guestElo: '2500',
+			hostElo: host.chessRating,
+			guestElo: user.chessRating,
 			hostImagePath: host.avatarPath,
 			guestImagePath: user.avatarPath,
 			hostColor: hostColor,
@@ -204,7 +233,7 @@ async function createOnlineGame(user, opponentId) {
 		board: board.getBoard(),
 	}
 	sendMsgToClient(user.id, guestMessage);
-	updateTimePlayers(board);
+	updateTimePlayers(user, board);
 }
 
 async function createLocalGame(user, data) {
@@ -230,32 +259,33 @@ async function createLocalGame(user, data) {
 		board: board.getBoard(),
 	}
 	sendMsgToClient(user.id, message);
-	updateTimePlayers(board);
+	updateTimePlayers(user, board);
 }
 
-function updateTimePlayers(board) {
+function updateTimePlayers(user, board) {
 
-	board.intervalId = setInterval(() => {
+	board.intervalId = setInterval(async () => {
 
 		if (board.mateType) {
 			clearInterval(board.intervalId);
 			return;
 		}
-
 		if (board.timeOut) {
 			clearInterval(board.intervalId);
-			sendMsgToClient(board.hostId, {
+			const winnerId = board.timeOut === board.hostName ? board.guestId : board.hostId;
+			const loserId = board.timeOut === board.hostName ? board.hostId : board.guestId;
+			const message = {
 				type: 'timeout',
-				loser: board.timeOut,
 				winner: board.timeOut === board.hostName ? board.guestName : board.hostName,
-			});
-			if (board.gameMode === 'online') {
-				sendMsgToClient(board.guestId, {
-					type: 'timeout',
-					loser: board.timeOut,
-					winner: board.timeOut === board.hostName ? board.guestName : board.hostName,
-				});
+				winnerId: winnerId,
+				loser: board.timeOut,
+				loserId: loserId,
 			}
+			sendMsgToClient(board.hostId, message);
+			if (board.gameMode === 'online')
+				sendMsgToClient(board.guestId, message);
+
+			await updateChessRatings(user, message, 1);
 			return;
 		}
 
@@ -275,13 +305,14 @@ function updateTimePlayers(board) {
 	}, 100);
 }
 
-function movePiece(user, data) {
+async function movePiece(user, data) {
 
 	let message;
 
 	if (chessboard.has(user.id)) {
 		const board = chessboard.get(user.id);
 		message = board.handleMove(data, user.id);
+		await updateChessRatings(user, message);
 		if (message.type === 'promote')
 			sendMsgToClient(user.id, { ...message, playerColorView: user.id === board.hostId ? board.hostColorView : board.guestColorView });
 		else {
@@ -338,6 +369,7 @@ function isLocalRematch(user) {
 			gameMode: 'local',
 			minRating: 'any',
 			maxRating: 'any',
+			rating: user.chessRating,
 		}
 		deleteGame(user.id);
 		createLocalGame(user, data);
@@ -375,6 +407,7 @@ async function acceptRematch(user) {
 			gameMode: 'online',
 			minRating: 'any',
 			maxRating: 'any',
+			rating: user.chessRating,
 		}
 		lobby.set(opponent.id, newLobby);
 		deleteGame(user.id);
@@ -472,26 +505,30 @@ function requestDraw(user) {
 		acceptDraw(user);
 }
 
-function acceptDraw(user) {
+async function acceptDraw(user) {
 
 	const board = chessboard.get(user.id);
 	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
 
 	board.updateTime('agreement');
 	const message = board.buildClientMessage('agreement', board.lastMoveFrom, board.lastMoveTo, null, user.id);
-	
+
+	await updateChessRatings(user, message);
+
 	if (board.gameMode !== 'local')
 		sendMsgToClient(opponentId, message);
 	sendMsgToClient(user.id, message);
 }
 
-function resign(user) {
+async function resign(user) {
 
 	const board = chessboard.get(user.id);
 	const opponentId = user.id === board.hostId ? board.guestId : board.hostId;
 
 	board.updateTime('resignation');
 	const message = board.buildClientMessage('resignation', board.lastMoveFrom, board.lastMoveTo, null, user.id);
+
+	await updateChessRatings(user, message);
 
 	if (board.gameMode !== 'local')
 		sendMsgToClient(opponentId, message);
@@ -568,13 +605,28 @@ export function handleIncomingSocketMessage(user, socket) {
 export function handleSocketClose(user, socket) {
 
 	socket.on('close', () => {
+		console.log("SOCKET CLOSED")
 		deleteLobby(user.id);
+		clients.delete(user.id);
 	});
 }
 
 export function handleSocketError(user, socket) {
 
 	socket.on('error', (error) => {
+		console.log("SOCKET ERROR")
+		deleteLobby(user.id);
+		clients.delete(user.id);
 		console.log(`WebSocket error :`, error);
 	});
 }
+
+
+
+// Problemas:
+
+// Cuando un usuario gana o pierde no se actualiza la puntuación
+// Las puntuaciones a veces hacen cosillas raras. No sé muy bien qué ocurre. Echarle un ojo
+// Las puntuaciones para las partidas locales están deshabilitadas.
+// El filtro de elo no está implementado. Habría que hacerlo.
+// Es muy posible que sea por el no uso de await crud.user.getUserById en funciones como rematch.

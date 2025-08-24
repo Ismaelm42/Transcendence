@@ -21,7 +21,7 @@ export default class Chess extends Step {
             try {
                 yield setUserId(this.username);
                 setAppContainer(appElement);
-                setSocket(Step.chessSocket);
+                setSocket();
                 handleSocketEvents();
                 yield waitForSocketOpen();
                 checkIfGameIsRunning();

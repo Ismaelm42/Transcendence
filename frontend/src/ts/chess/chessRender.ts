@@ -13,7 +13,7 @@ export default class Chess extends Step {
 		try {
 			await setUserId(this.username!);
 			setAppContainer(appElement);
-			setSocket(Step.chessSocket);
+			setSocket();
 			handleSocketEvents();
 			await waitForSocketOpen();
 			checkIfGameIsRunning();

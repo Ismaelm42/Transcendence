@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Step } from '../spa/stepRender.js';
 import { Chessboard } from './chessboardClass.js';
 export let userId = null;
 export let socket = null;
@@ -33,13 +34,13 @@ export function setUserId(username) {
         userId = yield id.text();
     });
 }
-export function setSocket(ws) {
-    if (!ws || ws.readyState === WebSocket.CLOSED) {
-        ws = new WebSocket("https://localhost:8443/back/ws/chess");
-        socket = ws;
+export function setSocket() {
+    if (!Step.chessSocket || Step.chessSocket.readyState === WebSocket.CLOSED) {
+        Step.chessSocket = new WebSocket("https://localhost:8443/back/ws/chess");
+        socket = Step.chessSocket;
     }
     else
-        socket = ws;
+        socket = Step.chessSocket;
 }
 export function setChessboard(data) {
     chessboard = new Chessboard(data);

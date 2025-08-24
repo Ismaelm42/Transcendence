@@ -32,6 +32,7 @@ export class Chessboard {
 		this.guestTime = this.setTime();
 		this.timeOut = data.timeOut || null;
 		this.mateType = data.mateType || null;
+		this.gameState = true;
 		if (data.game) {
 			this.game = new Map(
 				data.game.map(([key, value]) => [
@@ -170,6 +171,8 @@ export class Chessboard {
 
 		const message = {
 			type: type,
+			hostId: this.hostId,
+			guestId: this.guestId,
 			moveFrom: fromSquare,
 			moveTo: toSquare,
 			lastMoveFrom: this.lastMoveFrom === null ? null : this.lastMoveFrom.toString().padStart(2, "0"),
@@ -180,12 +183,16 @@ export class Chessboard {
 			board: this.getBoard(),
 		};
 		if (type === 'checkmate' || (type === 'resignation' && this.gameMode === 'local')) {
-			message.loser = this.getTurn() === this.hostColor ? this.hostName : this.guestName;
 			message.winner = this.getTurn() === this.hostColor ? this.guestName : this.hostName;
+			message.winnerId = this.getTurn() === this.hostColor ? this.guestId : this.hostId;
+			message.loser = this.getTurn() === this.hostColor ? this.hostName : this.guestName;
+			message.loserId = this.getTurn() === this.hostColor ? this.hostId : this.guestId;
 		}
 		if (type === 'resignation' && this.gameMode === 'online') {
-			message.loser = id === this.hostId ? this.hostName : this.guestName;
 			message.winner = id === this.hostId ? this.guestName : this.hostName;
+			message.winnerId = id === this.hostId ? this.guestId : this.hostId;
+			message.loser = id === this.hostId ? this.hostName : this.guestName;
+			message.loserId = id === this.hostId ? this.hostId : this.guestId;
 		}
 		return message;
 	}
@@ -286,6 +293,7 @@ export class Chessboard {
 
 		this.interval = setInterval(() => {
 			if (this.timeOut || this.hostTime <= 0 || this.guestTime <= 0) {
+				this.gameState = false;
 				this.timeOut = this.getTurn() === this.hostColor ? this.hostName : this.guestName;
 				this.stopTimer();
 				return;
@@ -307,8 +315,10 @@ export class Chessboard {
 
 	updateTime(type) {
 
-		if (type === 'checkmate' || type === 'stalemate' || type === 'agreement' || type === 'resignation')
+		if (type === 'checkmate' || type === 'stalemate' || type === 'agreement' || type === 'resignation') {
 			this.stopTimer();
+			this.gameState = false;
+		}
 		else {
 			this.stopTimer();
 			this.startTimer();
@@ -556,6 +566,7 @@ export class Chessboard {
 			guestTime: this.guestTime,
 			timeOut: this.timeOut,
 			mateType: this.mateType,
+			gameState: this.gameState,
 			game: Array.from(this.game.entries()),
 			board: this.board.map(row => row.map(piece => piece ? piece.clone() : null)),
 		}

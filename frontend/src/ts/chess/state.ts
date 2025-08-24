@@ -1,3 +1,4 @@
+import { Step } from '../spa/stepRender.js'
 import { Chessboard } from './chessboardClass.js';
 
 export let userId: string | null = null;
@@ -28,15 +29,15 @@ export async function setUserId(username: string) {
 	userId = await id.text();
 }
 
-export function setSocket(ws: WebSocket | null) {
+export function setSocket() {
 
-	if (!ws || ws.readyState === WebSocket.CLOSED)
+	if (!Step.chessSocket || Step.chessSocket.readyState === WebSocket.CLOSED)
 	{
-		ws = new WebSocket("https://localhost:8443/back/ws/chess");
-		socket = ws;
+		Step.chessSocket = new WebSocket("https://localhost:8443/back/ws/chess");
+		socket = Step.chessSocket;
 	}
 	else
-		socket = ws
+		socket = Step.chessSocket;
 }
 
 export function setChessboard(data: any) {

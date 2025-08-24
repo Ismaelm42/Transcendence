@@ -23,6 +23,10 @@ export default class LoginRender extends Step {
                 document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 sessionStorage.clear();
                 sessionStorage.removeItem("chatHTML");
+                if (Step.chessSocket) {
+                    Step.chessSocket.close();
+                    Step.chessSocket = null;
+                }
                 // Redirigir a la página principal
                 appElement.innerHTML = `<div id="pong-container">
 									<div class="paddle left-paddle"></div>

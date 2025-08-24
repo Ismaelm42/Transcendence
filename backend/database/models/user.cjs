@@ -51,6 +51,11 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: true,
 			defaultValue: null
+		},
+		chessRating: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 1200
 		}
 	}, {
 	sequelize,
