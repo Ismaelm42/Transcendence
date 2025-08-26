@@ -3,6 +3,7 @@ import { showMessage } from "../modal/showMessage.js";
 import Game from "../game/Game.js"
 import { initOnlineSocket, onlineSocket } from "../friends/onlineUsersSocket.js";
 import Tournament from "../tournament/Tournament.js";
+import { clearSearchFilter } from "../chat/filterSearch.js";
 
 export class SPA {
     private container: HTMLElement;
@@ -183,6 +184,10 @@ export class SPA {
 				console.warn(`Acceso denegado a la ruta protegida: ${step}`);
 				this.navigate('login');
 				return;
+			}
+			//await stepInstance.init();
+			if (step === 'chat') {
+				try { clearSearchFilter(); } catch (e) { /* ignore */ }
 			}
 			await stepInstance.init();
 		} else {

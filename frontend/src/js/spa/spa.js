@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { showMessage } from "../modal/showMessage.js";
 import { initOnlineSocket, onlineSocket } from "../friends/onlineUsersSocket.js";
+import { clearSearchFilter } from "../chat/filterSearch.js";
 export class SPA {
     constructor(containerId) {
         this.currentGame = null;
@@ -175,6 +176,13 @@ export class SPA {
                     console.warn(`Acceso denegado a la ruta protegida: ${step}`);
                     this.navigate('login');
                     return;
+                }
+                //await stepInstance.init();
+                if (step === 'chat') {
+                    try {
+                        clearSearchFilter();
+                    }
+                    catch (e) { /* ignore */ }
                 }
                 yield stepInstance.init();
             }
