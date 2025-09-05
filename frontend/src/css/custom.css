@@ -190,4 +190,9 @@ body {
 		animation: softBlink 1.5s ease-in-out infinite;
 	  }
 
+	#registered-players .player-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }

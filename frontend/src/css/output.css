@@ -416,6 +416,12 @@
   .-mt-4 {
     margin-top: calc(var(--spacing) * -4);
   }
+  .-mt-8 {
+    margin-top: calc(var(--spacing) * -8);
+  }
+  .-mt-10 {
+    margin-top: calc(var(--spacing) * -10);
+  }
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
   }
@@ -439,6 +445,9 @@
   }
   .mr-4 {
     margin-right: calc(var(--spacing) * 4);
+  }
+  .-mb-8 {
+    margin-bottom: calc(var(--spacing) * -8);
   }
   .mb-0 {
     margin-bottom: calc(var(--spacing) * 0);
@@ -568,6 +577,9 @@
   }
   .h-\[50vh\] {
     height: 50vh;
+  }
+  .h-\[60vh\] {
+    height: 60vh;
   }
   .h-\[80px\] {
     height: 80px;
@@ -1630,6 +1642,10 @@
     --tw-duration: 700ms;
     transition-duration: 700ms;
   }
+  .ease-in-out {
+    --tw-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
   .\[backface-visibility\:hidden\] {
     backface-visibility: hidden;
   }
@@ -2224,9 +2240,29 @@
       height: 30vw;
     }
   }
+  .lg\:h-\[60vh\] {
+    @media (width >= 64rem) {
+      height: 60vh;
+    }
+  }
   .lg\:h-\[65vh\] {
     @media (width >= 64rem) {
       height: 65vh;
+    }
+  }
+  .lg\:h-\[70vh\] {
+    @media (width >= 64rem) {
+      height: 70vh;
+    }
+  }
+  .lg\:h-\[80vh\] {
+    @media (width >= 64rem) {
+      height: 80vh;
+    }
+  }
+  .lg\:h-\[90vh\] {
+    @media (width >= 64rem) {
+      height: 90vh;
     }
   }
   .lg\:h-full {
@@ -2272,6 +2308,11 @@
   .lg\:w-auto {
     @media (width >= 64rem) {
       width: auto;
+    }
+  }
+  .lg\:w-full {
+    @media (width >= 64rem) {
+      width: 100%;
     }
   }
   .lg\:max-w-\[20\%\] {
@@ -2327,6 +2368,11 @@
   .lg\:justify-between {
     @media (width >= 64rem) {
       justify-content: space-between;
+    }
+  }
+  .lg\:justify-start {
+    @media (width >= 64rem) {
+      justify-content: flex-start;
     }
   }
   .lg\:rounded-t-none {
@@ -2906,6 +2952,10 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-ease {
+  syntax: "*";
+  inherits: false;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -2966,6 +3016,7 @@
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
+      --tw-ease: initial;
     }
   }
 }

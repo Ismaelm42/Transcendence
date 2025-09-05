@@ -488,7 +488,6 @@ export class TournamentUI
 			players.forEach((player) => {
 				if (player.status === 'ready' ){	//Condicionar al modo en remoto para el cambio de ready a waiting si se hace finalmente
 				const playerItem = document.createElement('li');
-				playerItem.classList.add('flex', 'flex-row');
 				const avatarImg = document.createElement('img');
 				avatarImg.src = player.gameplayer.avatarPath || 'default-avatar.png'; // Use a default avatar if none is provided
 				avatarImg.alt = `Avatar of Player ${player.Index}`;
@@ -497,7 +496,7 @@ export class TournamentUI
 				avatarImg.style.height = 'auto';
 				playerItem.appendChild(avatarImg);
 				playerItem.className = 'player-item';
-				const playerTournamentName = document.createElement('span');
+				const playerTournamentName = document.createElement('span');	
 				playerTournamentName.className = 'player-tournament-name';
 				playerItem.appendChild(playerTournamentName);
 				// Capitalize the first letter of the tournament username
