@@ -16,7 +16,7 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
 		const blockedContainer = document.getElementById("blocked-container") as HTMLElement;
 
 		if (!friendsContainer || !pendingContainer || !blockedContainer) {
-			console.error("Uno o más contenedores no existen en el DOM");
+			//console.error("Uno o más contenedores no existen en el DOM");
 			return;
 		}
 		friendsContainer!.innerHTML = "";
