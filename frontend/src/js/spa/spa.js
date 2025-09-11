@@ -41,7 +41,7 @@ export class SPA {
             // Intercept leaving game-match BEFORE existing tournament logic
             if (!this.navigationGuardActive && this.currentStep === 'game-match' && nextStep !== 'game-match') {
                 this.navigationGuardActive = true;
-                const confirmed = yield showConfirmDialog("You are about to leave the game. This will end your current session. Continue?");
+                const confirmed = yield this.confirmLeaveGameMatch(nextStep);
                 this.navigationGuardActive = false;
                 if (!confirmed) {
                     // Revert hash to current step (pushState so it does not create another history entry)
@@ -83,7 +83,7 @@ export class SPA {
                 return; // popstate already processed
             if (this.currentStep === 'game-match' && nextStep !== 'game-match') {
                 this.navigationGuardActive = true;
-                const confirmed = yield showConfirmDialog("You are about to leave the game. This will end your current session. Continue?");
+                const confirmed = yield this.confirmLeaveGameMatch(nextStep);
                 this.navigationGuardActive = false;
                 if (!confirmed) {
                     // Restore original hash
@@ -303,7 +303,7 @@ export class SPA {
                 return true;
             (_d = (_c = this.currentGame.getGameConnection()) === null || _c === void 0 ? void 0 : _c.socket) === null || _d === void 0 ? void 0 : _d.send(JSON.stringify({
                 type: 'PAUSE_GAME',
-                reason: 'leave confirmation'
+                reason: 'User navigating away'
             }));
             return yield showConfirmDialog("You are about to leave the game. This will end your current session. Continue?");
         });

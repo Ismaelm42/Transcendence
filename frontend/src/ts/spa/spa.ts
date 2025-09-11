@@ -40,7 +40,7 @@ export class SPA {
 			if (!this.navigationGuardActive && this.currentStep === 'game-match' && nextStep !== 'game-match')
 			{
 				this.navigationGuardActive = true;
-				const confirmed = await showConfirmDialog("You are about to leave the game. This will end your current session. Continue?");
+				const confirmed = await this.confirmLeaveGameMatch(nextStep);
 				this.navigationGuardActive = false;
 				if (!confirmed)
 				{
@@ -83,7 +83,7 @@ export class SPA {
 				if (this.navigationGuardActive) return; // popstate already processed
 				if (this.currentStep === 'game-match' && nextStep !== 'game-match') {
 					this.navigationGuardActive = true;
-					const confirmed = await showConfirmDialog("You are about to leave the game. This will end your current session. Continue?");
+					const confirmed = await this.confirmLeaveGameMatch(nextStep);
 					this.navigationGuardActive = false;
 					if (!confirmed) {
 						// Restore original hash
@@ -152,7 +152,8 @@ export class SPA {
 		// Intercept programmatic navigation
 		if (this.currentStep === 'game-match' && step !== 'game-match') {
 			const confirmed = await this.confirmLeaveGameMatch(step);
-			if (!confirmed) return; // abort navigation
+			if (!confirmed)
+				return; // abort navigation
 		}
 		history.pushState({}, '', `#${step}`);
         this.loadStep();
@@ -315,7 +316,7 @@ export class SPA {
 			return true;
 		this.currentGame.getGameConnection()?.socket?.send(JSON.stringify({
 			type: 'PAUSE_GAME',
-			reason: 'leave confirmation'
+			reason: 'User navigating away'
 		}));
 		return await showConfirmDialog("You are about to leave the game. This will end your current session. Continue?");
 	}

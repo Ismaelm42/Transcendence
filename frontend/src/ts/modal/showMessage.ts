@@ -127,6 +127,7 @@ export function showConfirmDialog(message: string): Promise<boolean>
 		const onNo = (e: Event) => {
 			e.preventDefault();
 			cleanup();
+			
 			resolve(false);
 		};
 		const onKeyDown = (e: KeyboardEvent) => {
