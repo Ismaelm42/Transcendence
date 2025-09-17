@@ -168,7 +168,7 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 					if (label === 'Wins') {
 						if (record.winner == userID) {
 							tableRows += `
-							<tr class="hover:bg-gray-800">
+							<tr class="hover:bg-pong-secondary ">
 								<td class="p-2 border-b border-gray-700">${date}</td>
 								<td class="p-2 border-b border-gray-700">${getUserNameById(record.winner)}</td>
 								<td class="p-2 border-b border-gray-700">${getUserNameById(record.loser)}</td>
@@ -180,7 +180,7 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 					} else if (label === 'Losses') {
 						if (record.loser === userID) {
 							tableRows += `
-								<tr class="hover:bg-gray-800">
+								<tr class="hover:bg-pong-secondary ">
 									<td class="p-2 border-b border-gray-700">${date}</td>
 									<td class="p-2 border-b border-gray-700">${getUserNameById(record.winner)}</td>
 									<td class="p-2 border-b border-gray-700">${getUserNameById(record.loser)}</td>
@@ -193,7 +193,7 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 					else if (label === 'Total') {
 						if (record.winner === userID || record.loser === userID) {
 							tableRows += `
-								<tr class="hover:bg-gray-800">
+								<tr class="hover:bg-pong-secondary ">
 									<td class="p-2 border-b border-gray-700">${date}</td>
 									<td class="p-2 border-b border-gray-700">${getUserNameById(record.winner)}</td>
 									<td class="p-2 border-b border-gray-700">${getUserNameById(record.loser)}</td>

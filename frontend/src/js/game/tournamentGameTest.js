@@ -62,7 +62,7 @@ export default class Tournament extends Step {
             return;
         }
         panel.innerHTML = `
-		<div class="bg-gray-800 border-2 border-[#00ff99] rounded-xl shadow-lg p-6 max-w-md mx-auto my-8 text-white">
+		<div class="bg-pong-secondary  border-2 border-[#00ff99] rounded-xl shadow-lg p-6 max-w-md mx-auto my-8 text-white">
 			<h3 class="text-[#00ff99] text-xl font-bold mb-4 text-center tracking-wide">Current Match</h3>
 			<div class="flex items-center justify-center gap-8 mb-4">
 				<div class="flex flex-col items-center">
