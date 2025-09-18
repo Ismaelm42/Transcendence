@@ -73,6 +73,9 @@ export default class Tournament extends Step {
         const appContainer = document.getElementById('app-container');
         console.log("limpiamos appContainer");
         history.pushState(null, "", "#tournament-lobby");
+        // TODO: Pedro esta llamada relanzaría la protección al volver de game-match
+        this.ui.enableTournamentHashGuard();
+        ////////////////////////////////////////////////////////////////////////////
         if (appContainer) {
             appContainer.innerHTML = '';
             // Crea el contenedor del bracket si no existe
@@ -224,16 +227,27 @@ export default class Tournament extends Step {
         console.log("Game data added to tournament:", gameData);
         console.log("Current game data array length:", this.gameDataArray.length);
     }
+    // public returnMode(player1: GamePlayer, player2: GamePlayer): string {
+    // 	// return'auto'; // HARDCODED FOR TESTING PURPOSES
+    // 	//TODO: descomentar y eliminar return 'auto';
+    // 	console.log("Returning mode for players:", player1, player2);
+    // 	if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
+    // 			&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) {
+    // 		return 'auto';
+    // 	} else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com')) 
+    // 			|| ( player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
+    // 		return '1vAI';
+    // 	} else {
+    // 		return '1v1';
+    // 	}
+    // }
     returnMode(player1, player2) {
-        // return'auto'; // HARDCODED FOR TESTING PURPOSES
-        //TODO: descomentar y eliminar return 'auto';
+        /**TODO: if we asign a id !== -1 to any Ai player revieew this function */
         console.log("Returning mode for players:", player1, player2);
-        if (player1.email.includes('ai') && player1.email.includes('@transcendence.com')
-            && player2.email.includes('ai') && player2.email.includes('@transcendence.com')) {
+        if (player1.id === -1 && player2.id === -1) {
             return 'auto';
         }
-        else if ((player1.email.includes('ai') && player1.email.includes('@transcendence.com'))
-            || (player2.email.includes('ai') && player2.email.includes('@transcendence.com'))) {
+        else if (player1.id === -1 || player2.id === -1) {
             return '1vAI';
         }
         else {
@@ -501,6 +515,9 @@ export default class Tournament extends Step {
                 this.handleMatchResult(matchData);
             }
             else {
+                // TODO: Pedro esta llamada anularía la protección en hame-match //
+                this.ui.disableTournamentHashGuard();
+                ///////////////////////////////////////////////////////////////////
                 this.game.setGameLog(matchData);
                 if (matchData.config)
                     this.game.setGameConfig(matchData.config);

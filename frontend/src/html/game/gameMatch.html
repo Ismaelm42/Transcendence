@@ -19,9 +19,9 @@
 </div>
 
 <!-- Ready-waiting players modal overlay -->
-<div id="ready-modal"
-class="fixed inset-0 z-50 flex items-center justify-center bg-overlays"
-style="display: flex;">
+<!-- <div id="ready-modal"
+	class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" 
+	style="display: flex;">
 <div class="flex flex-row items-center justify-center w-full max-w-xl px-8 py-8 border-4 border-[#00ff99] bg-overlays rounded-lg shadow-xl backdrop-blur">
 	<div class="flex flex-col items-center flex-1 min-w-0">
 		<img id="player1-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
@@ -41,7 +41,43 @@ style="display: flex;">
 		<div id="player2-ready" class="text-green-400 font-bold"></div>
 	</div>
 </div>
+</div> -->
+
+<!-- Ready-waiting players modal overlay -->
+<div id="ready-modal"
+	class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" 
+	style="display: flex;">
+
+	<div class="flex flex-col md:flex-row items-center justify-center 
+            w-[90%] sm:w-4/5 max-w-xl 
+            px-8 py-8 border-4 border-[#00ff99] bg-overlays 
+            rounded-lg shadow-xl backdrop-blur">
+	
+		<!-- Player 1 -->
+		<div class="flex flex-col items-center flex-1 min-w-0 mb-6 md:mb-0">
+			<img id="player1-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
+			<div id="player1-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 1...</div>
+			<div id="player1-ready" class="text-green-400 font-bold"></div>
+		</div>
+		
+		<!-- Ready button -->
+		<div class="flex flex-col items-center mx-4 mb-6 md:mb-0">
+			<button id="ready-btn"
+				class="bg-green-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-green-600 transition">
+				Ready to play!
+			</button>
+			<div id="waiting-msg" class="text-gray-300 text-center min-h-[1.5em]"></div>
+		</div>
+		
+		<!-- Player 2 -->
+		<div class="flex flex-col items-center flex-1 min-w-0">
+			<img id="player2-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
+			<div id="player2-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 2...</div>
+			<div id="player2-ready" class="text-green-400 font-bold"></div>
+		</div>
+	</div>
 </div>
+
 
 <!-- Start game countdown overlay, hidden by default -->
 <div id="countdown-overlay"
@@ -54,7 +90,7 @@ style="display: none;">
 </div>
 
 <!-- Game results overlay, hidden by default -->
-<div id="game-results" class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" style="display: none;">
+<!-- <div id="game-results" class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" style="display: none;">
 	<div class="border-4 border-[#00ff99] rounded-lg px-8 py-6 w-full max-w-2xl min-w-[600px] text-white text-center shadow-lg bg-overlays backdrop-blur"
 		style="box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);">
 	
@@ -79,7 +115,36 @@ style="display: none;">
 	</div>
 
 	</div>
+</div> -->
+<div id="game-results" class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" style="display: none;">
+	<div class="border-4 border-[#00ff99] rounded-lg px-8 py-6 
+	            w-[90%] sm:w-[85%] md:w-[80%] lg:w-[70%] max-w-2xl
+	            text-white text-center shadow-lg bg-overlays backdrop-blur"
+		style="box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);">
+	
+		<h2 class="text-4xl font-bold text-[#00ff99] mb-6 font-[Tektur]">Game Over</h2>
+
+		<div class="mb-6 text-base space-y-2 font-[Tektur]">
+			<p id="reason-text"><span id="end-reason"></span></p>
+			<p id="winner-text"><strong>Winner:</strong> <span id="winner-name">Player1</span></p>
+			<p id="score-text"><strong>Final Score:</strong> <span id="final-score">0 - 0</span></p>
+			<p id="duration-text"><strong>Game Duration:</strong> <span id="game-duration">0</span> seconds</p>
+		</div>
+
+		<div class="flex flex-col gap-4 items-center font-[Tektur]">
+			<button id="play-again-btn" style="width: 200px"
+			class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">
+				Play Again
+			</button>
+			<button id="return-lobby-btn" style="width: 200px"
+			class="h-12 py-3 bg-blue-500 text-white border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">
+				Return to Lobby
+			</button>
+		</div>
+	</div>
 </div>
+
+
 
 <!-- Pause modal (match border and background style) -->
 <div id="pause-modal"

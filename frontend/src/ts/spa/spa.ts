@@ -53,10 +53,11 @@ export class SPA {
 			if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
 				const tournamentId = this.currentTournament.getTournamentId();
 				const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
-				// If the tournament is in progress, show a warning message is it is not already shown
+
+				// if the tournament is in progress, show a warning message is it is not already shown when navigation arrow is clicked
 				if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
 					&& warningFlag!== true) {
-					showMessage("Tournament in progress aborted?", 5000);
+					showMessage("Tournament in progress aborted", 5000);
 					const tournamentUI = this.currentTournament.getTournamentUI?.();
 					if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
 						tournamentUI.resetTournament();
@@ -189,12 +190,14 @@ export class SPA {
                 hasCurrentGame: !!this.currentGame,
                 getGameConnectionResult: this.currentGame?.getGameConnection?.(),
                 hasSocket: !!this.currentGame?.getGameConnection?.()?.socket,
-                isGameActive: this.currentGame?.isGameActive?.()
+                isGameActive: this.currentGame?.isGameActive?.(),
+                currentTournament: this.currentTournament
             });
         } catch (e) {
             console.debug('SPA.leave-check error', e);
         }
-		
+		console.log("this.currentStep: " , this.currentStep);
+		console.log("step: " , step);
 		// Handle leaving game-match step on active game
 		if (this.currentStep === 'game-match')
 			await this.gameMatchNavigation(this.currentStep, step);

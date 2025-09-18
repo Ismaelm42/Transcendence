@@ -1,0 +1,27 @@
+Partida con scroll
+
+1 	_ GAME ________________________________________
+
+	- Se mueve el scroll principal cuando hay overflow vertical, quizás se pueda evitar con un stp propagation en alguna de sus dos modalidades
+	Asi el event prevent default cuando esté en marcha la partida no permitiría que se moviera hacia arriba ay abajo usando las flechas
+
+	- Cuando se muestra el modal "Ready to Play" la unica forma de salir de ahí es jugando, se podría incluir un botón de cancelar o back?
+	
+	La forma de cancelarlo es refrescando y te lleva un espacio con el fondo azul sin nada más y con el header y el login aun estando ya logueado
+	la URL al refrescar sigue siendo: https://localhost:8443/#game-match . Este botón si se implementa debería funcionar de forma distinta 
+	en torneos. 
+	
+	Si el botón es mucho follón en este punto del proyecto ¿se podría redireccionar a home en lugar de que se refresque en vacío?
+
+
+2	_ GAME ONLINE _________________________________ 
+
+	- Al igual que en el modal de "Ready to Play" no hay otra forma de salir que esperando o refrescando, ¿se
+	podría añadir fácilemnte un botón para cancelar y dejar de esperar?
+	
+	Sería interesante ver si se pudiera seguir navegando por la aplicación mientras espera 
+	y que el sistema te avise con un pop up cuando esté el otro jugador, pero si esto conllevaría 
+	más tiempo mejor dejarlo para cuando hagamos la versión porfesional..
+
+
+

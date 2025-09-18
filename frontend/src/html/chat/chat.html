@@ -1,15 +1,15 @@
-<section id="chat-section" class="bg-gray-900 flex justify-center items-start">
+<section id="chat-section" class="bg-grey-900 flex justify-center items-start w-full
+			rounded-lg 
+              w-[90%] min-w-[400px] mx-auto max-w-[80%]
+              md:w-[80%] md:min-w-0 md:mx-0 md:max-w-none">
 	<!-- Responsive Container -->
-	<div class="flex flex-col lg:flex-row lg:flex-wrap h-auto lg:h-[65vh] w-full max-w-screen-xl mx-auto">
-
-
-
+	<div class="flex flex-col lg:flex-row lg:flex-wrap h-auto lg:h-[65vh] w-full max-w-screen-xl mx-auto gap-1" >
 		<!-- Messages Container -->
 		<div id="messages-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-[3] lg:max-w-[30%] h-[50vh] lg:h-full rounded-tl-xl rounded-bl-xl bg-gray-800 border border-gray-500">
+			class="flex flex-col items-center justify-start w-full lg:flex-3 lg:max-w-[30%] h-auto lg:h-full rounded-t-xl lg:rounded-t-none  lg:rounded-tl-xl lg:rounded-bl-xl bg-gray-800 border border-gray-500">
 			<!-- Chats div -->
 			<div id="messages-title-container"
-				class="px-4 h-[80px] bg-gray-800 rounded-tl-xl border-b border-gray-500 w-full flex items-center">
+				class="px-4 h-[80px] bg-gray-800 rounded-t-xl lg:rounded-t-none  lg:rounded-tl-xl border-b border-gray-500 w-full flex items-center">
 				<h2 class="text-white text-xl font-semibold mb-2 ">Chats</h2>
 			</div>
 			<!-- Chats List Container -->
@@ -44,7 +44,7 @@
 
 		<!-- Chat Container -->
 		<div id="chat-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-[5] lg:max-w-[50%] h-[50vh] lg:h-full border-t border-b border-gray-500">
+			class="flex flex-col items-center justify-start w-full lg:flex-[5] lg:max-w-[50%] h-[80vh] lg:h-full border lg:border-t border-b border-gray-500">
 			<div id="user-info-container" class="w-full">
 				<!-- User info will be dynamically replace here -->
 			</div>
@@ -79,25 +79,35 @@
 
 		<!-- Users Container -->
 		<div id="users-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-[2] lg:max-w-[20%] h-[50vh] lg:h-full rounded-tr-xl rounded-br-xl bg-gray-800 border border-gray-500">
-			<!-- Search div -->
-			<div id="search-users-container">
-				<!-- Search Form -->
-				<form id="search-users-form" class="px-4 h-[80px] w-full flex items-center">
-					<div class="flex items-center bg-gray-800 ">
-						<input id="search-users-input" type="text"
-							class="block mx-4 p-2 w-full text-sm text-gray-900 rounded-lg border bg-gray-700 border-gray-900 placeholder-gray-400 text-white resize-none focus:outline focus:outline-2 focus:outline-gray-400"
-							placeholder="Search users..." />
-					</div>
-				</form>
-			</div>
-			<!-- Users list Container -->
-			<div id="users-list-container"
-				class="w-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-				<div id="user-item-container" class="w-full">
-					<!-- Chat users will be dynamically inserted here -->
-				</div>
-			</div>
+		     class="flex flex-col items-center justify-start w-full lg:flex-[2] 
+		            lg:max-w-[20%] h-auto lg:h-full rounded-b-xl lg:rounded-b-none 
+		            lg:rounded-tr-xl lg:rounded-br-xl bg-gray-800 border border-gray-500">
+
+		  <!-- Users list Container (en móviles primero, en desktop se mantiene abajo) -->
+		  <div id="users-list-container"
+		       class="order-1 lg:order-2 w-full overflow-y-auto 
+		              [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full 
+		              [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full 
+		              [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+		    <div id="user-item-container" class="w-full"></div>
+		    <!-- Chat users will be dynamically inserted here -->
+		  </div>
+
+		  <!-- Search div (en móviles debajo, en desktop arriba) -->
+		  <div id="search-users-container"
+		       class="order-2 lg:order-1 w-full rounded-b-xl lg:rounded-b-none">
+		    <!-- Search Form -->
+		    <form id="search-users-form" class="px-4 h-[80px] w-full flex items-center">
+		      <div class="flex items-center bg-gray-800 w-full">
+		        <input id="search-users-input" type="text"
+		               class="block mx-4 p-2 w-full text-sm text-gray-900 rounded-lg 
+		                      border bg-gray-700 border-gray-900 placeholder-gray-400 text-white 
+		                      resize-none focus:outline focus:outline-2 focus:outline-gray-400"
+		               placeholder="Search users..." />
+		      </div>
+		    </form>
+		  </div>
 		</div>
+
 	</div>
 </section>

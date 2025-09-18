@@ -14,7 +14,7 @@
 </div>
 
 <!-- Player 2 login panel (initially hidden) -->
-<div id="local-tournament-form" style="display:none;" class="p-8 bg-gray-800 rounded-lg max-w-md mx-auto my-12 flex flex-col items-center w-full">
+<div id="local-tournament-form" style="display:none;" class="p-8 bg-gray-800 rounded-lg max-w-md mx-auto my-12 flex flex-col items-center w-[90%]">
 	<h2 id="config-title" class="text-center text-[#00ff99] mb-3 text-xl font-bold">Select tournament configuration</h2>
 	
 	<!-- Number of players configuration -->
@@ -43,8 +43,8 @@
 </div>
 
 <!-- Wrapper visible -->
-<div id="tournament-info-container" style="display:none;">
-	<div class="w-full min-h-screen p-2 bg-black text-white flex flex-col lg:flex-row gap-2">
+<div id="tournament-info-container" class="w-full h-auto lg:w-full lg:h-[70vh] -mt-8 " style="display:none;">
+	<div class="w-full lg:h-[70vh] p-2 bg-grey-900 text-white flex flex-col lg:flex-row gap-2">
 		
 			<!-- Left (sin cambios por ahora) -->
 		<div class="w-full lg:w-1/2 bg-gray-800 p-4 rounded-xl">
@@ -55,7 +55,7 @@
 					<li>🔥 Difficulty: <span id="summary-difficulty">Medium</span></li>
 				</ul>
 				<h4 class="text-base font-bold text-green-400 mb-2">Registered Players</h4>
-				<ul id="registered-players" class="space-y-2 text-sm">
+				<ul id="registered-players" class="flex flex-wrap gap-4 max-w-full justify-center lg:justify-start"></ul>
 					<!-- Avatares y nombres -->
 				</ul>
 		</div>
