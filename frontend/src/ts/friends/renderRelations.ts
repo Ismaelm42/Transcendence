@@ -10,33 +10,20 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
 			return;
 		}
 		const relations = await getRelationsForUserId(userId);
-		//console.log("Relations:", relations);
-		
- 		if (!relations || relations.length === 0) {
-			relationsContainer.innerHTML = `
-				<div id="pong-container" class="flex flex-col items-center justify-center py-8 text-gray-500">
-					<svg width="80" height="80" viewBox="0 0 24 24" fill="none">
-						<circle cx="12" cy="12" r="10" stroke="#888" stroke-width="2" fill="#f3f4f6"/>
-						<circle cx="9" cy="10" r="1" fill="#888"/>
-						<circle cx="15" cy="10" r="1" fill="#888"/>
-						<path d="M9 16c1.333-1 4-1 6 0" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
-					</svg>
-					<div class="mt-2 text-gray-700  font-bold text-2xl">No relations yet</div>
-				</div>
-			`;
-			return;
-		}
+
 		const friendsContainer = document.getElementById("friends-container") as HTMLElement;
 		const pendingContainer = document.getElementById("pending-container") as HTMLElement;
 		const blockedContainer = document.getElementById("blocked-container") as HTMLElement;
 
 		if (!friendsContainer || !pendingContainer || !blockedContainer) {
-			console.error("Uno o más contenedores no existen en el DOM");
+			//console.error("Uno o más contenedores no existen en el DOM");
 			return;
 		}
 		friendsContainer!.innerHTML = "";
 		pendingContainer!.innerHTML = "";
 		blockedContainer!.innerHTML = "";
+
+		
 
 		const friends = relations.filter(relation => relation.status === "accepted");
 		const pending = relations.filter(relation => relation.status === "pending");
@@ -126,6 +113,25 @@ async function getUserById(userId: string): Promise<any> {
 }
 
 async function renderUserList(relations: any[], container: HTMLElement, relationsContainer: HTMLElement, userId: string): Promise<void> {
+	// Limpiar primero para evitar duplicados al re-renderizar
+    container.innerHTML = "";
+
+    // Si no hay relaciones para este contenedor, mostrar mensaje simple y salir
+    if (!relations || relations.length === 0) {
+        // Mensaje distinto según el contenedor (friends / pending / blocked)
+        let message = "No relations yet";
+        if (container.id === "friends-container") message = "No friends yet";
+        else if (container.id === "pending-container") message = "No pending requests";
+        else if (container.id === "blocked-container") message = "No blocked users";
+
+        container.innerHTML = `
+            <div class="no-relations text-sm text-gray-700 py-2">
+                <span>${message}</span>
+            </div>
+        `;
+        return;
+    }
+	
 	for (const relation of relations) {
 		const otherId = relation.userId == userId ? relation.friendId : relation.userId;
 

@@ -1,3 +1,4 @@
+import { showMessage } from "../modal/showMessage.js";
 
 export async function checkFriendStatus(userId: string, friendsEntries: any[]): Promise<{ isFriend: boolean; isPending: boolean; isBlocked: boolean }> {
 	const blockedFriends = friendsEntries.filter((entry: any) => entry.status === "blocked");
@@ -45,7 +46,7 @@ export async function rejectFriendRequest(userId: string): Promise<void> {
 			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
-			alert("Solicitud de amistad cancelada.");
+			showMessage("Solicitud de amistad cancelada.", null);
 		} else {
 			const errorMessage = await response.json();
 			alert("Error al cancelar la solicitud: " + errorMessage.error);
@@ -66,7 +67,7 @@ export async function deleteFriend(userId: string) {
 			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
-			alert("Friend deleted");
+			showMessage("Friend deleted", null);
 		} else {
 			const errorMessage = await response.json();
 			alert("Error al cancelar la solicitud: " + errorMessage.error);
@@ -87,7 +88,7 @@ export async function blockUser(userId: string) {
 			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
-			alert("Friend deleted");
+			showMessage("User blocked", null);
 		} else {
 			const errorMessage = await response.json();
 			alert("Error al cancelar la solicitud: " + errorMessage.error);
@@ -108,7 +109,7 @@ export async function unblockUser(userId: string) {
 			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
-			alert("User unblocked");
+			showMessage("User unblocked", null);
 		} else {
 			const errorMessage = await response.json();
 			alert("Error al cancelar la solicitud: " + errorMessage.error);
