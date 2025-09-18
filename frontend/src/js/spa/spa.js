@@ -50,7 +50,6 @@ export class SPA {
                     return;
                 }
             }
-            console.log("onpopstate event triggered");
             if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
                 const tournamentId = this.currentTournament.getTournamentId();
                 const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
@@ -58,7 +57,7 @@ export class SPA {
                 if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
                     && warningFlag !== true) {
                     showMessage("Tournament in progress aborted", 5000);
-                    const tournamentUI = (_b = (_a = this.currentTournament).getTournamentUI) === null || _b === void 0 ? void 0 : _b.call(_a);
+                    const tournamentUI = (_d = (_c = this.currentTournament).getTournamentUI) === null || _d === void 0 ? void 0 : _d.call(_c);
                     if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
                         tournamentUI.resetTournament();
                     }
@@ -164,9 +163,7 @@ export class SPA {
                 }
             }
             history.pushState({}, '', `#${step}`);
-            console.log("current hash: ", window.location.hash);
-        console.log("Navigating to step: ", step);
-        this.loadStep();
+            this.loadStep();
         });
     }
     loadStep() {
