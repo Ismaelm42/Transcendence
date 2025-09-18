@@ -32,7 +32,7 @@ export function showUserOptionsMenu(userElement, event, socket, currentUserId) {
 function createOptionMenu(event, userElement) {
     const menu = document.createElement("div");
     menu.id = "user-options-menu";
-    menu.className = "absolute bg-gray-900/95 border border-slate-200 rounded-xl shadow-2xl p-2 z-50";
+    menu.className = "absolute bg-pong-primary/95 border border-amber-400 rounded-xl shadow-2xl p-2 z-50";
     menu.innerHTML = `
 		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
   		<rect x="2" y="4" width="12" height="8" rx="2"/>

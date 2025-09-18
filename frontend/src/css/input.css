@@ -8,3 +8,160 @@ Use this command for production:
 	If there is a volume with Docker, execute "npm install" command again if you do not have the node_modules folder.
 */
 
+:root {
+
+  
+/* Candlelight palette */
+--candlelight-50: #ffffe7;
+--candlelight-100: #fdffc1;
+--candlelight-200: #ffff86;
+--candlelight-300: #fff741;
+--candlelight-400: #ffe90d;
+--candlelight-500: #f5d200;
+--candlelight-600: #d1a100;
+--candlelight-700: #a67302;
+--candlelight-800: #895a0a;
+--candlelight-900: #74490f;
+--candlelight-950: #442604;
+
+/* Supernova palette */
+--supernova-50: #fefde8;
+--supernova-100: #fffdc2;
+--supernova-200: #fff887;
+--supernova-300: #ffed43;
+--supernova-400: #ffdc10;
+--supernova-500: #facb03;
+--supernova-600: #ce9700;
+--supernova-700: #a46b04;
+--supernova-800: #88540b;
+--supernova-900: #734410;
+--supernova-950: #432305;
+
+/* International Orange palette */
+--international-orange-50: #fef5ee;
+--international-orange-100: #fee8d6;
+--international-orange-200: #fbcead;
+--international-orange-300: #f8ab79;
+--international-orange-400: #f47f43;
+--international-orange-500: #f15d1f;
+--international-orange-600: #e24214;
+--international-orange-700: #bc3112;
+--international-orange-800: #952817;
+--international-orange-900: #782416;
+--international-orange-950: #410f09;
+
+/* Chilean Fire palette */
+--chilean-fire-50: #fff9ed;
+--chilean-fire-100: #fff2d4;
+--chilean-fire-200: #ffe2a9;
+--chilean-fire-300: #ffcc72;
+--chilean-fire-400: #feab39;
+--chilean-fire-500: #fc8f13;
+--chilean-fire-600: #f6790b;
+--chilean-fire-700: #c55809;
+--chilean-fire-800: #9c4510;
+--chilean-fire-900: #7e3a10;
+--chilean-fire-950: #441c06;
+
+  /* Pong theme colors */
+  --pong-bg-primary: #222121;
+  --pong-bg-secondary: #1a1919;
+  --pong-bg-tertiary: #575656;
+  --pong-text-primary: #ffffff;
+  --pong-text-secondary: #e0e0e0;
+  --pong-text-reverse: #222121;
+  --pong-text-accent: #ffe90d;
+  --pong-text-muted: #808080;
+  --pong-line: #e0e0e0;
+
+}
+
+/* Pong utility classes */
+.bg-pong-primary { background-color: var(--pong-bg-primary); }
+.bg-pong-secondary { background-color: var(--pong-bg-secondary); }
+.bg-pong-tertiary { background-color: var(--pong-bg-tertiary); }
+.text-pong-primary { color: var(--pong-text-primary); }
+.text-pong-secondary { color: var(--pong-text-secondary); }
+.text-pong-accent { color: var(--pong-text-accent); }
+.text-pong-muted { color: var(--pong-text-muted); }
+
+.text-pong-reverse { color: var(--pong-text-reverse); }
+.border-pong-primary { border-color: var(--pong-bg-primary); }
+.border-pong-secondary { border-color: var(--pong-bg-secondary); }
+.border-pong-tertiary { border-color: var(--pong-bg-tertiary); }	
+
+.btn-pong-primary{ 
+	background-color: var(--supernova-500); 
+	color: var(--pong-text-reverse); 
+	border: 2px solid var(--supernova-600); 
+}
+.btn-pong-primary:hover { 
+	background-color: var(--supernova-400);
+	color: var(--pong-text-reverse); 
+	border: 2px solid var(--supernova-700); 
+	box-shadow: 0 0 4px 1px var(--supernova-300), 0 0 8px 2px var(--supernova-500);
+}
+
+.btn-pong-secondary{ 
+	background-color: var(--chilean-fire-600); 
+	color: var(--pong-text-reverse); 
+	border: 2px solid var(--chilean-fire-700); 
+}
+.btn-pong-secondary:hover { 
+	background-color: var(--chilean-fire-400); /* Más retro: naranja claro */
+	color: var(--pong-text-reverse); 
+	border: 2px solid var(--chilean-fire-300); 
+	box-shadow: 0 0 4px 1px var(--chilean-fire-300), 0 0 8px 2px var(--international-orange-400);
+}
+
+.btn-pong-tertiary{ 
+	background-color: var(--international-orange-700); 
+	color: var(--pong-text-primary); 
+	border: 2px solid var(--international-orange-900); 
+}
+.btn-pong-tertiary:hover { 
+	background-color: var(--pong-bg-tertiary); /* Gris oscuro para look retro */
+	color: var(--supernova-300); /* Amarillo pálido retro */
+	border: 2px solid var(--supernova-300); 
+	box-shadow: 0 0 4px 1px var(--supernova-200), 0 0 8px 2px var(--international-orange-700);
+}
+
+
+
+.border-pong-line { border-color: var(--pong-line); }
+.border-candlelight-400 { border-color: var(--candlelight-400); }
+
+
+.glow-yellow {
+	border: 2px solid var(--supernova-500);
+	box-shadow: 0 0 8px 2px var(--supernova-400), 0 0 16px 4px var(--supernova-500);
+	transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+
+.glow-yellow:hover {
+	border-color: var(--supernova-700);
+	box-shadow: 0 0 12px 4px var(--supernova-400), 0 0 24px 8px var(--supernova-500), 0 0 32px 12px var(--supernova-300);
+}
+
+.glow-orange-400 {
+	border: 2px solid var(--international-orange-400);
+	box-shadow: 0 0 8px 2px var(--international-orange-200), 0 0 16px 4px var(--international-orange-400);
+	transition: box-shadow 0.2s, border-color 0.2s;
+}
+.glow-orange-400:hover {
+	border-color: var(--international-orange-400);
+	box-shadow: 0 0 12px 4px var(--international-orange-200), 0 0 24px 8px var(--international-orange-400), 0 0 32px 12px var(--international-orange-300);
+}
+
+.glow-orange-500 {
+	border: 2px solid var(--international-orange-500);
+	box-shadow: 0 0 8px 2px var(--international-orange-300), 0 0 16px 4px var(--international-orange-500);
+	transition: box-shadow 0.2s, border-color 0.2s;
+}
+.glow-orange-500:hover {
+	border-color: var(--international-orange-500);
+	box-shadow: 0 0 12px 4px var(--international-orange-300), 0 0 24px 8px var(--international-orange-500), 0 0 32px 12px var(--international-orange-400);
+}
+
+

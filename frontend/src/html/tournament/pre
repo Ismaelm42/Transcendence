@@ -2,7 +2,7 @@
 <div id="tournament-form-wrapper" class="w-full min-h-screen p-4 bg-black text-white flex flex-col lg:flex-row gap-4">
 
 	<!-- Left: Config & Registered Players -->
-	<div class="w-full lg:w-1/2 bg-gray-800 p-4 rounded-xl">
+	<div class="w-full lg:w-1/2 bg-pong-secondary  p-4 rounded-xl">
 		<h3 class="text-xl font-bold text-yellow-400 mb-4">Tournament Config</h3>
 		<ul class="space-y-2 mb-6">
 		<li>🕹️ Players: <span id="summary-players">4</span></li>
