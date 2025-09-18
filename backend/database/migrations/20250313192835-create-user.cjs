@@ -50,7 +50,12 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: true,
 				defaultValue: null
-			},	
+			},
+			chess_rating: {
+				type: Sequelize.INTEGER,
+				allowNull: false,
+				defaultValue: 1200
+			},
 			created_at: {
 				allowNull: false,
 				type: Sequelize.DATE,

@@ -19,6 +19,7 @@ export class SPA {
         'register': { module: '../login/registerRender.js', protected: false },
         'game-lobby': { module: '../game/Game.js', protected: true },
         'game-match': { module: '../game/GameMatch.js', protected: true },
+		'play-chess': {module: '../chess/chessRender.js', protected: true },
         'tournament-lobby': { module: '../tournament/Tournament.js', protected: true },
         'friends': { module: '../friends/friendsRender.js', protected: true },
         'chat': { module: '../chat/chatRender.js', protected: true },

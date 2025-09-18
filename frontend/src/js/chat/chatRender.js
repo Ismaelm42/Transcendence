@@ -38,14 +38,14 @@ export default class Chat extends Step {
                 const userId = yield getUserId(this.username);
                 removeNotificationChatTab();
                 handleContentStorage(chatMessages, recentChats, userId);
-                Step.socket = verifySocket(Step.socket);
-                handleSocketEvents(Step.socket, chatMessages, recentChats, userId);
+                Step.chatSocket = verifySocket(Step.chatSocket);
+                handleSocketEvents(Step.chatSocket, chatMessages, recentChats, userId);
                 textarea.addEventListener('keydown', e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), form.requestSubmit()));
-                form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket));
+                form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.chatSocket));
                 searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
                 searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
-                items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket));
-                recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket, userId));
+                items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.chatSocket));
+                recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.chatSocket, userId));
                 items.addEventListener("click", (event) => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     const target = event.target;
@@ -57,7 +57,7 @@ export default class Chat extends Step {
                     const userId = yield getUserId(this.username);
                     const clickedUserId = yield getUserId(clickedUsername);
                     if (clickedUserId && clickedUserId !== userId) {
-                        showUserOptionsMenu(userItem, event, Step.socket, userId);
+                        showUserOptionsMenu(userItem, event, Step.chatSocket, userId);
                     }
                 }));
             }

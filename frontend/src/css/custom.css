@@ -25,6 +25,9 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
+	z-index: 100;
+	/*Necesario para que cuando la ventana se haga pequeña, el footer se superponga al modal de promoción
+	en el juego de ajedrez. Quizás no sea necesario, pero es lo aconsejable.
 } */
 
 .vertical-bar {
@@ -73,6 +76,10 @@ body {
     top: 40%; /* Centrado vertical */
     left: 60%; /* Centrado horizontal */
     transform: translate(-50%, -50%);
+}
+
+.selected {
+	background-color: #1f2937; /* = bg-gray-800 */
 }
 
 .bg-opacity-90 {

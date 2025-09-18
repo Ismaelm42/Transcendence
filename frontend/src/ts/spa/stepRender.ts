@@ -4,7 +4,8 @@ export class Step {
 	protected container: HTMLElement;
 	protected spa: SPA;
 	protected username: string | null = null; // Almacena el nombre de usuario autenticado
-	protected static socket: WebSocket | null = null; // Almacena la conexión WebSocket
+	public static chatSocket: WebSocket | null = null; // Almacena la conexión WebSocket
+	public static chessSocket: WebSocket | null = null;
 
 	constructor(containerId: string) {
 		this.container = document.getElementById(containerId) as HTMLElement;
@@ -84,6 +85,7 @@ export class Step {
 			<nav id="nav" class="bg-gray-800 p-4 ">
 			    <ul class="flex space-x-4">
 			        <li><a href="#game-lobby" class="text-white hover:text-gray-400">Play Game</a></li>
+	                <li><a href="#play-chess" class="text-white hover:text-gray-400">Chess</a></li>
 			        <li><a href="#tournament-lobby" class="text-white hover:text-gray-400">Tournaments</a></li>
 			        <li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
 			        <li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>

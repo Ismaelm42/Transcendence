@@ -95,6 +95,7 @@ export class Step {
 			<nav id="nav" class="bg-gray-800 p-4 ">
 			    <ul class="flex space-x-4">
 			        <li><a href="#game-lobby" class="text-white hover:text-gray-400">Play Game</a></li>
+	                <li><a href="#play-chess" class="text-white hover:text-gray-400">Chess</a></li>
 			        <li><a href="#tournament-lobby" class="text-white hover:text-gray-400">Tournaments</a></li>
 			        <li><a href="#friends" class="text-white hover:text-gray-400">Friends</a></li>
 			        <li><a href="#chat" class="text-white hover:text-gray-400">Chat</a></li>
@@ -154,4 +155,5 @@ export class Step {
         });
     }
 }
-Step.socket = null; // Almacena la conexión WebSocket
+Step.chatSocket = null; // Almacena la conexión WebSocket
+Step.chessSocket = null;

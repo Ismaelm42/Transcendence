@@ -67,6 +67,7 @@ export function handlePrivateMsg(e: MouseEvent, socket: WebSocket) {
 }
 
 export function showPrivateChat(e: MouseEvent, socket: WebSocket, userId: string) {
+
 	const target = e.target as HTMLElement;
 	const chatDiv = target.closest('[id^="chat-item-"]') as HTMLElement | null;
 	if (!chatDiv)
