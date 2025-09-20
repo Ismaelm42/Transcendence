@@ -37,7 +37,7 @@
 	</div>
 	<div class="flex flex-col items-center flex-1 min-w-0">
 		<img id="player2-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
-		<div id="player2-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 2...</div>
+		<div id="player2-name" class="text-white  text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 2...</div>
 		<div id="player2-ready" class="text-green-400 font-bold"></div>
 	</div>
 </div>
@@ -56,14 +56,14 @@
 		<!-- Player 1 -->
 		<div class="flex flex-col items-center flex-1 min-w-0 mb-6 md:mb-0">
 			<img id="player1-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
-			<div id="player1-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 1...</div>
+			<div id="player1-name" class="text-white  text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 1...</div>
 			<div id="player1-ready" class="text-green-400 font-bold"></div>
 		</div>
 		
 		<!-- Ready button -->
 		<div class="flex flex-col items-center mx-4 mb-6 md:mb-0">
 			<button id="ready-btn"
-				class="bg-green-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-green-600 transition">
+				class="bg-green-500 text-white  px-6 py-3 rounded-lg font-bold text-lg hover:bg-green-600 transition">
 				Ready to play!
 			</button>
 			<div id="waiting-msg" class="text-gray-300 text-center min-h-[1.5em]"></div>
@@ -72,7 +72,7 @@
 		<!-- Player 2 -->
 		<div class="flex flex-col items-center flex-1 min-w-0">
 			<img id="player2-avatar" src="/images/default-avatar.png" class="w-28 h-28 rounded-full border-4 border-white bg-gray-200 mb-2" />
-			<div id="player2-name" class="text-white text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 2...</div>
+			<div id="player2-name" class="text-white  text-lg font-semibold mb-1 w-full truncate text-center">Waiting for player 2...</div>
 			<div id="player2-ready" class="text-green-400 font-bold"></div>
 		</div>
 	</div>
@@ -84,14 +84,14 @@
 class="fixed inset-0 z-50 flex items-center justify-center bg-overlays"
 style="display: none;">
 	<div class="flex flex-col items-center rounded-lg px-8 py-6 shadow-xl backdrop-blur">
-		<span class="text-white text-[15vw] font-extrabold font-[Tektur] drop-shadow-lg" id="countdown-number"></span>
-		<div id="countdown-reason" class="text-white text-2xl mt-4 font-semibold text-center"></div>
+		<span class="text-white  text-[15vw] font-extrabold font-[Tektur] drop-shadow-lg" id="countdown-number"></span>
+		<div id="countdown-reason" class="text-white  text-2xl mt-4 font-semibold text-center"></div>
 	</div>
 </div>
 
 <!-- Game results overlay, hidden by default -->
 <!-- <div id="game-results" class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" style="display: none;">
-	<div class="border-4 border-[#00ff99] rounded-lg px-8 py-6 w-full max-w-2xl min-w-[600px] text-white text-center shadow-lg bg-overlays backdrop-blur"
+	<div class="border-4 border-[#00ff99] rounded-lg px-8 py-6 w-full max-w-2xl min-w-[600px] text-white  text-center shadow-lg bg-overlays backdrop-blur"
 		style="box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);">
 	
 	<h2 class="text-4xl font-bold text-[#00ff99] mb-6 font-[Tektur]">Game Over</h2>
@@ -105,11 +105,11 @@ style="display: none;">
 
 	<div class="flex flex-col gap-4 items-center font-[Tektur]">
 		<button id="play-again-btn" style="width: 200px"
-		class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">
+		class="h-12 py-3 bg-green-500 text-white  border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">
 		Play Again
 		</button>
 		<button id="return-lobby-btn" style="width: 200px"
-		class="h-12 py-3 bg-blue-500 text-white border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">
+		class="h-12 py-3 bg-blue-500 text-white  border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">
 		Return to Lobby
 		</button>
 	</div>
@@ -119,7 +119,7 @@ style="display: none;">
 <div id="game-results" class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" style="display: none;">
 	<div class="border-4 border-[#00ff99] rounded-lg px-8 py-6 
 	            w-[90%] sm:w-[85%] md:w-[80%] lg:w-[70%] max-w-2xl
-	            text-white text-center shadow-lg bg-overlays backdrop-blur"
+	            text-white  text-center shadow-lg bg-overlays backdrop-blur"
 		style="box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);">
 	
 		<h2 class="text-4xl font-bold text-[#00ff99] mb-6 font-[Tektur]">Game Over</h2>
@@ -133,11 +133,11 @@ style="display: none;">
 
 		<div class="flex flex-col gap-4 items-center font-[Tektur]">
 			<button id="play-again-btn" style="width: 200px"
-			class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">
+			class="h-12 py-3 bg-green-500 text-white  border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">
 				Play Again
 			</button>
 			<button id="return-lobby-btn" style="width: 200px"
-			class="h-12 py-3 bg-blue-500 text-white border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">
+			class="h-12 py-3 bg-blue-500 text-white  border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">
 				Return to Lobby
 			</button>
 		</div>
@@ -155,9 +155,9 @@ style="display: none;">
 			<svg class="w-8 h-8 text-[#00ff99] inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
 			Game Paused
 		</span>
-		<div id="pause-reason" class="text-white text-lg mb-4"></div>
+		<div id="pause-reason" class="text-white  text-lg mb-4"></div>
 		<button id="resume-btn"
-			class="mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+			class="mt-4 bg-green-500 hover:bg-green-600 text-white  font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-green-600"
 			type="button">
 			▶ Resume
 		</button>

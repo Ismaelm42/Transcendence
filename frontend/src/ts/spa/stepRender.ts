@@ -55,15 +55,15 @@ export class Step {
 			// console.log("Valor de user en renderHeader:", user);
 			headerElement.innerHTML = user ? 			
 				`<div id="authButtons" class="flex items-center">
-					<span id="username" class="text-white hover:text-amber-400"><a href="#profile"> ${user} </a></span>
+					<span id="username" class="text-white hover:text-amber-300"><a href="#profile"> ${user} </a></span>
 					<div id="headerSeparator" class="vertical-bar"></div>
-					<a href="#logout" id="logoutButton" class="text-white hover:text-amber-400">Logout</a>
+					<a href="#logout" id="logoutButton" class="text-white hover:text-amber-300">Logout</a>
 				</div>
 			` : `
 				<div id="authButtons" class="flex items-center">
-					<a href="#login" class="text-white hover:text-amber-400">Login</a>
+					<a href="#login" class="text-white hover:text-amber-300">Login</a>
 					<div id="headerSeparator" class="vertical-bar"></div>
-					<a href="#register" class="text-white hover:text-amber-400 ml-2">Register</a>
+					<a href="#register" class="text-white hover:text-amber-300 ml-2">Register</a>
 				</div>
 			`;
 		} catch (error) {
@@ -81,30 +81,30 @@ export class Step {
 		if (user) {
 			// Modificar el innerHTML de menuContainer si el usuario está autenticado
 			menuElement.innerHTML = `
-			<nav id="nav" class="bg-pong-secondary p-4 border-b-2 border-amber-400">
+			<nav id="nav" class="bg-pong-secondary p-4 border-b-2 border-amber-300">
 				<ul class="flex space-x-4">
 					<li class="transition-colors">
-						<a href="#game-lobby" class="block px-3 py-2 text-white hover:bg-amber-200 hover:text-black w-full h-full">
+						<a href="#game-lobby" class="block px-3 py-2 text-[var(--pong-text-secondary)] hover:text-amber-300 hover:font-bold w-full h-full">
 							Play Game
 						</a>
 					</li>
 					<li class="transition-colors">
-						<a href="#tournament-lobby" class="block px-3 py-2 text-white hover:bg-amber-200 hover:text-black w-full h-full">
+						<a href="#tournament-lobby" class="block px-3 py-2 text-[var(--color-)] hover:text-amber-300 hover:font-bold w-full h-full">
 							Tournaments
 						</a>
 					</li>
 					<li class="transition-colors">
-						<a href="#friends" class="block px-3 py-2 text-white hover:bg-amber-200 hover:text-black w-full h-full">
+						<a href="#friends" class="block px-3 py-2 text-[var(--pong-text-secondary)] hover:text-amber-300 hover:font-bold w-full h-full">
 							Friends
 						</a>
 					</li>
 					<li class="transition-colors">
-						<a href="#chat" class="block px-3 py-2 text-white hover:bg-amber-200 hover:text-black w-full h-full">
+						<a href="#chat" class="block px-3 py-2 text-[var(--pong-text-secondary)] hover:text-amber-300 hover:font-bold w-full h-full">
 							Chat
 						</a>
 					</li>
 					<li class="transition-colors">
-						<a href="#stats" class="block px-3 py-2 text-white hover:bg-amber-200 hover:text-black w-full h-full">
+						<a href="#stats" class="block px-3 py-2 text-[var(--pong-text-secondary)] hover:text-amber-300 hover:font-bold w-full h-full">
 							Stats
 						</a>
 					</li>
