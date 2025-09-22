@@ -8,13 +8,13 @@ export function showMessage(message, time) {
     }
     // Set the message content and make the container visible
     messageContent.innerHTML = message;
-    messageContainer.classList.remove("hidden");
+    messageContainer.style.display = "flex"; // mostrar
     // Focus the close button so Enter will trigger it
     closeButton.focus();
     // Close button event listener
     const closeHandler = (event) => {
         event.preventDefault();
-        messageContainer.classList.add("hidden");
+        messageContainer.style.display = "none"; // ocultar
         closeButton.removeEventListener("click", closeHandler);
         closeButton.removeEventListener("keydown", keydownHandler);
     };
@@ -30,7 +30,7 @@ export function showMessage(message, time) {
     // If a time is provided, hide the message after the specified time
     if (time !== null) {
         setTimeout(() => {
-            messageContainer.classList.add("hidden");
+            messageContainer.style.display = "none"; // ocultar
             closeButton.removeEventListener("click", closeHandler);
             closeButton.removeEventListener("keydown", keydownHandler);
         }, time);
@@ -47,14 +47,15 @@ export function showWinnerMessage(message, time) {
     }
     // Set the message content and make the container visible
     messageContent.innerHTML = message;
-    messageContainer.classList.remove("hidden");
+    messageContainer.style.display = "flex"; // mostrar
     // Focus the close button so Enter will trigger it
     closeButton.focus();
     // Close button event listener
     const closeHandler = (event) => {
         event === null || event === void 0 ? void 0 : event.preventDefault();
-        messageContainer.classList.add("hidden");
+        messageContainer.style.display = "none"; // ocultar
         closeButton.removeEventListener("click", closeHandler);
+        closeButton.removeEventListener("keydown", keydownHandler);
     };
     closeButton.addEventListener("click", closeHandler);
     // Allow closing with Enter key
@@ -68,8 +69,9 @@ export function showWinnerMessage(message, time) {
     // If a time is provided, hide the message after the specified time
     if (time !== null) {
         setTimeout(() => {
-            messageContainer.classList.add("hidden");
+            messageContainer.style.display = "none"; // ocultar
             closeButton.removeEventListener("click", closeHandler);
+            closeButton.removeEventListener("keydown", keydownHandler);
         }, time);
     }
 }

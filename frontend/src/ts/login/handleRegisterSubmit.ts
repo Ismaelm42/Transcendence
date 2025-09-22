@@ -7,7 +7,7 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 	if (data.password !== data.confirm_password) {
-		showMessage("Passwords do not match. Please check and try again.", null);
+		showMessage("Passwords do not match. Please check it and try again.", null);
 		return;
 	}
     try {

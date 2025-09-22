@@ -99,15 +99,15 @@ export default class GameMatch extends Step {
         /** to revert this change just delete everything but the code into the else */
         const players = { player1, player2 };
         if (this.tournament && this.tournament.getTournamentId() !== -42 && player1 && player2) {
-            document.getElementById('player1-name').textContent = this.showTournamentName(players, player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
-            document.getElementById('player2-name').textContent = this.showTournamentName(players, player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
+            document.getElementById('player1-name').innerHTML = this.showTournamentName(players, player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting <br>player 1...";
+            document.getElementById('player2-name').innerHTML = this.showTournamentName(players, player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting <br>player 2...";
             document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
             document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
         }
         else {
-            document.getElementById('player1-name').textContent = (player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting player 1...";
+            document.getElementById('player1-name').innerHTML = (player1 === null || player1 === void 0 ? void 0 : player1.username) || "Waiting <br>player 1...";
             document.getElementById('player1-avatar').src = (player1 === null || player1 === void 0 ? void 0 : player1.avatarPath) || "https://localhost:8443/back/images/7.png";
-            document.getElementById('player2-name').textContent = (player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting player 2...";
+            document.getElementById('player2-name').innerHTML = (player2 === null || player2 === void 0 ? void 0 : player2.username) || "Waiting <br>player 2...";
             document.getElementById('player2-avatar').src = (player2 === null || player2 === void 0 ? void 0 : player2.avatarPath) || "https://localhost:8443/back/images/7.png";
         }
         /*  end of search */
@@ -115,7 +115,7 @@ export default class GameMatch extends Step {
             readyBtn.onclick = () => {
                 var _a;
                 readyBtn.disabled = true;
-                waitingMsg.textContent = "Waiting for opponent confirmation...";
+                waitingMsg.innerHTML = `Waiting for<br>opponent confirmation...`;
                 (_a = this.connection.socket) === null || _a === void 0 ? void 0 : _a.send(JSON.stringify({ type: 'CLIENT_READY' }));
                 if (this.ai)
                     this.ai.start();
@@ -254,11 +254,13 @@ export default class GameMatch extends Step {
         const player2Avatar = document.getElementById('player2-avatar');
         const player1Ready = document.getElementById('player1-ready');
         const player2Ready = document.getElementById('player2-ready');
-        player1Name.textContent = ((_a = playerDetails.player1) === null || _a === void 0 ? void 0 : _a.username) || "Waiting player 1...";
+        player1Name.innerHTML = ((_a = playerDetails.player1) === null || _a === void 0 ? void 0 : _a.username) || "Waiting <br>player 1...";
         player1Avatar.src = ((_b = playerDetails.player1) === null || _b === void 0 ? void 0 : _b.avatarPath) || "https://localhost:8443/back/images/7.png";
-        player2Name.textContent = ((_c = playerDetails.player2) === null || _c === void 0 ? void 0 : _c.username) || "Waiting player 2...";
+        player2Name.innerHTML = ((_c = playerDetails.player2) === null || _c === void 0 ? void 0 : _c.username) || "Waiting <br>player 2...";
         player2Avatar.src = ((_d = playerDetails.player2) === null || _d === void 0 ? void 0 : _d.avatarPath) || "https://localhost:8443/back/images/7.png";
-        player1Ready.textContent = readyStates.player1 ? "Ready" : "";
+        player1Ready.textContent = readyStates.player1 ? "Ready" : "Press Ready...";
+        if (player1Ready.textContent === "Ready")
+            player1Ready.classList.remove("blink");
         player2Ready.textContent = readyStates.player2 ? "Ready" : "";
     }
     showCountdown(seconds = 3, reason) {

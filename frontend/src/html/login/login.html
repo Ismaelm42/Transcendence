@@ -1,48 +1,53 @@
 <section class="bg-pong-primary flex justify-center px-6 py-8"
          style="width: 90%; max-width: 600px; min-width: 320px; margin: 0 auto;">
-  <div class="flex flex-col w-full rounded-lg shadow border bg-pong-secondary  border-gray-700">
+  <div class="flex flex-col w-full rounded-lg shadow border bg-pong-secondary border-candlelight-400">
     <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-      <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
+      <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-pong-secondary">
         Sign in to your account
       </h1>
-      <form id="login-form" class="space-y-4 md:space-y-6" action="#">
+      <form id="login-form" class="space-y-4 " action="#">
         <div>
-          <label for="email" class="block mb-2 text-sm font-medium text-white">Email</label>
+          <label for="email" class="block mb-2 text-sm font-medium text-pong-secondary">Email</label>
           <input type="email" name="email" id="email" autocomplete="email"
-                 class="border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                 class="border-1 border-international-orange-300 font-bold rounded-lg block w-full p-2.5 bg-pong-bg-tertiary placeholder-international-orange-200 text-pong-secondary focus:ring-0 focus:border-candlelight-400 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,215,0,0.3),0_0_15px_rgba(255,215,0,0.4)] transition"
                  placeholder="email@gmail.com" required="">
         </div>
+		<!-- class="border rounded-lg block w-full p-2.5 bg-pong-bg-tertiary pong-bg-tertiary placeholder-gray-400 text-pong-secondary focus:ring-candlelight-400 focus:border-candlelight-400" -->
+        <!-- <div>border border-candlelight-400 rounded-lg block w-full p-2.5 bg-pong-bg-tertiary placeholder-pong-text-muted text-pong-secondary focus:ring-yellow-400 -->
         <div>
-          <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
+          <label for="password" class="block mb-2 text-sm font-medium text-pong-secondary">Password</label>
           <input type="password" name="password" id="password" autocomplete="current-password"
                  placeholder="••••••••"
-                 class="border rounded-lg focus:border-sky-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                 class="border-1 border-international-orange-300 font-bold rounded-lg block w-full p-2.5 bg-pong-bg-tertiary placeholder-international-orange-200 text-pong-secondary focus:ring-0 focus:border-candlelight-400 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,215,0,0.3),0_0_15px_rgba(255,215,0,0.4)] transition"
                  required="">
+				 <!-- class="font-black border rounded-lg focus:border-candlelight-400 block w-full p-2.5 bg-pong-primary border-gray-600 placeholder-international-orange-200 text-pong-secondary focus:ring-candlelight-400 focus:border-candlelight-400" -->
         </div>
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between pt-4">
           <div class="flex items-start">
             <div class="flex items-center h-5">
               <input id="remember" aria-describedby="remember" type="checkbox"
-                     class="w-4 h-4 border rounded focus:ring-3 bg-gray-700 border-gray-600 focus:ring-sky-600 ring-offset-gray-800">
+                     class="
+					 w-4 h-4 border rounded focus:ring-3 bg-international-orange-100 border-candlelight-400 focus:ring-international-orange-400 ring-offset-international-orange-400">
             </div>
             <div class="ml-3 text-sm">
-              <label for="remember" class="text-gray-300">Remember me</label>
+              <label for="remember" class="text-pong-secondary">Remember me</label>
             </div>
           </div>
-          <a href="#" class="text-sm font-medium hover:underline text-sky-500">Forgot password?</a>
+          <a href="#" class="text-sm font-medium hover:underline text-international-orange-500">Forgot password?</a>
         </div>
         <button type="submit"
-                class="w-full focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-sky-600 hover:bg-sky-700 focus:ring-sky-800 mb-0 btn-pong-primary cursor-pointer">Sign in</button>
+            	class="w-full focus:ring-4 focus:outline-none font-bold 
+						rounded-lg text-sm px-5 py-2.5 text-center mb-0 btn-pong-primary cursor-pointer focus:ring-international-orange-400">Sign in</button>
       </form>
       <button onclick="location.assign('https://localhost:8443/back/auth/google/login')"
-              class="w-full flex items-center justify-center focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-white text-black hover:bg-gray-200 focus:ring-gray-300 mb-5"
+              class="w-full flex items-center justify-center focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-white text-black hover:bg-gray-200 focus:ring-candlelight-400 mb-5"
               style="cursor: pointer;">
         <img src="../img/google-logo.png" alt="Google Logo" class="w-5 h-5 mr-2">
         Continue with Google
       </button>
       <p class="text-sm font-light text-gray-400">
         Don’t have an account yet?
-        <a id="signUp" href="#register" class="font-medium hover:underline text-emerald-500">Sign up</a>
+        <a id="signUp" href="#register" class="font-medium hover:underline text-international-orange-500">Sign up</a>
       </p>
     </div>
   </div>

@@ -119,14 +119,14 @@ export default class GameMatch extends Step
 		/** to revert this change just delete everything but the code into the else */
 		const players = { player1, player2 };
 		if (this.tournament && this.tournament.getTournamentId() !== -42 && player1 && player2) {
-		(document.getElementById('player1-name') as HTMLElement).textContent = this.showTournamentName(players, player1?.username) || "Waiting player 1...";
-		(document.getElementById('player2-name') as HTMLElement).textContent = this.showTournamentName(players, player2?.username) || "Waiting player 2...";
+		(document.getElementById('player1-name') as HTMLElement).innerHTML = this.showTournamentName(players, player1?.username) || "Waiting <br>player 1...";
+		(document.getElementById('player2-name') as HTMLElement).innerHTML = this.showTournamentName(players, player2?.username) || "Waiting <br>player 2...";
 		(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || "https://localhost:8443/back/images/7.png";
 		(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || "https://localhost:8443/back/images/7.png";
 		}else{
-		(document.getElementById('player1-name') as HTMLElement).textContent = player1?.username || "Waiting player 1...";
+		(document.getElementById('player1-name') as HTMLElement).innerHTML = player1?.username || "Waiting <br>player 1...";
 		(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || "https://localhost:8443/back/images/7.png";
-		(document.getElementById('player2-name') as HTMLElement).textContent = player2?.username || "Waiting player 2...";
+		(document.getElementById('player2-name') as HTMLElement).innerHTML = player2?.username || "Waiting <br>player 2...";
 		(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || "https://localhost:8443/back/images/7.png";
 		}
 		/*  end of search */
@@ -134,7 +134,7 @@ export default class GameMatch extends Step
 		{
 			readyBtn.onclick = () => {
 				readyBtn.disabled = true;
-				waitingMsg.textContent = "Waiting for opponent confirmation...";
+				waitingMsg.innerHTML = `Waiting for<br>opponent confirmation...`;
 				this.connection.socket?.send(JSON.stringify({ type: 'CLIENT_READY' }));
 				if (this.ai)
 					this.ai.start();
@@ -299,12 +299,14 @@ export default class GameMatch extends Step
 		const player1Ready = document.getElementById('player1-ready') as HTMLElement;
 		const player2Ready = document.getElementById('player2-ready') as HTMLElement;
 
-		player1Name.textContent = playerDetails.player1?.username || "Waiting player 1...";
+		player1Name.innerHTML = playerDetails.player1?.username || "Waiting <br>player 1...";
 		player1Avatar.src = playerDetails.player1?.avatarPath || "https://localhost:8443/back/images/7.png";
-		player2Name.textContent = playerDetails.player2?.username || "Waiting player 2...";
+		player2Name.innerHTML = playerDetails.player2?.username || "Waiting <br>player 2...";
 		player2Avatar.src = playerDetails.player2?.avatarPath || "https://localhost:8443/back/images/7.png";
 
-		player1Ready.textContent = readyStates.player1 ? "Ready" : "";
+		player1Ready.textContent = readyStates.player1 ? "Ready" : "Press Ready...";
+		if (player1Ready.textContent === "Ready")
+			player1Ready.classList.remove("blink");
 		player2Ready.textContent = readyStates.player2 ? "Ready" : "";
 	}
 

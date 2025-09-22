@@ -111,6 +111,18 @@ export class GameUI {
         if (scoreSlider && scoreValue) {
             scoreSlider.addEventListener('input', () => {
                 const value = scoreSlider.value;
+                if (Number(value) < 4) {
+                    scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                    scoreValue.classList.add('text-supernova-400');
+                }
+                else if (Number(value) > 4 && Number(value) < 8) {
+                    scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                    scoreValue.classList.add('text-international-orange-400');
+                }
+                else {
+                    scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                    scoreValue.classList.add('text-international-orange-600');
+                }
                 scoreValue.textContent = value;
                 this.game.getGameConfig().scoreLimit = parseInt(value);
             });
@@ -122,14 +134,20 @@ export class GameUI {
             difficultySlider.addEventListener('input', () => {
                 const value = parseInt(difficultySlider.value);
                 let difficultyText = 'Medium';
+                difficultyValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                difficultyValue.classList.add('text-international-orange-400');
                 let difficultyLevel = 'medium';
                 if (value === 1) {
                     difficultyText = 'Easy';
                     difficultyLevel = 'easy';
+                    difficultyValue.classList.remove('text-supernova-400', 'text-international-orange-600', 'text-international-orange-400');
+                    difficultyValue.classList.add('text-supernova-400');
                 }
                 else if (value === 3) {
                     difficultyText = 'Hard';
                     difficultyLevel = 'hard';
+                    difficultyValue.classList.remove('text-supernova-400', 'text-international-orange-600', 'text-international-orange-400');
+                    difficultyValue.classList.add('text-international-orange-600');
                 }
                 difficultyValue.textContent = difficultyText;
                 this.game.getGameConfig().difficulty = difficultyLevel;
