@@ -119,6 +119,7 @@
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --drop-shadow-lg: 0 4px 4px rgb(0 0 0 / 0.15);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
     --blur-md: 12px;
     --default-transition-duration: 150ms;
@@ -1091,6 +1092,9 @@
   .border-yellow-700 {
     border-color: var(--color-yellow-700);
   }
+  .bg-\[\#272727\] {
+    background-color: #272727;
+  }
   .bg-\[rgb\(225\,88\,50\)\] {
     background-color: rgb(225,88,50);
   }
@@ -1608,6 +1612,10 @@
     --tw-duration: 700ms;
     transition-duration: 700ms;
   }
+  .ease-in-out {
+    --tw-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
   .\[backface-visibility\:hidden\] {
     backface-visibility: hidden;
   }
@@ -2096,6 +2104,11 @@
   .md\:flex-row {
     @media (width >= 48rem) {
       flex-direction: row;
+    }
+  }
+  .md\:items-center {
+    @media (width >= 48rem) {
+      align-items: center;
     }
   }
   .md\:space-y-4 {
@@ -2791,6 +2804,10 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-ease {
+  syntax: "*";
+  inherits: false;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -2851,6 +2868,7 @@
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
+      --tw-ease: initial;
     }
   }
 }

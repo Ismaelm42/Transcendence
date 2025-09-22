@@ -1,6 +1,6 @@
 import { handlePrivateMsg } from "./handleSenders.js";
 import { showUserProfile } from "./handleUserProfile.js";
-import {openPrivateChat} from "./userProfileActions.js";
+import { onlineSocket } from "../friends/onlineUsersSocket.js";
 
 export function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent, socket: WebSocket, currentUserId: string) {
 	const username = userElement.querySelector("span.text-sm")?.textContent?.trim();
@@ -85,7 +85,8 @@ function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username:
 						handlePrivateMsg(event, socket);
 						break;
 					case "play-game":
-						alert("Feature not implemented yet: Play Game with " + username);
+						handlePlayGame(currentUserId, userId);
+						break;
 					case "show-more":
 						showUserProfile(currentUserId, userId, username, event);
 						break;
@@ -94,4 +95,27 @@ function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username:
 			menu.remove();
 		});
 	});
+}
+
+export function handlePlayGame(currentUserId: string, opponentId: string) {
+	if (!onlineSocket || onlineSocket.readyState !== WebSocket.OPEN) {
+		console.error("Online socket not open. ReadyState:", onlineSocket?.readyState);
+		return;
+	}
+
+	const payload = {
+		type: "challenge",
+        targetId: opponentId,
+        fromId: currentUserId,
+        ts: Date.now()
+    };
+
+	try {
+		onlineSocket.send(JSON.stringify(payload));
+		console.log("Challenge sent:", payload);
+		alert("Solicitud de juego enviada. Esperando respuesta del oponente.");
+	} catch (error) {
+		console.error("Error sending challenge:", error);
+	}
+	return;
 }
