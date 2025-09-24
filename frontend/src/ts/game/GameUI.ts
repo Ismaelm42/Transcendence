@@ -122,7 +122,7 @@ export class GameUI
 		{
 			scoreSlider.addEventListener('input', () => {
 				const value = scoreSlider.value;
-				if (Number(value) < 4)
+				if (Number(value) < 4) 
 				{
 					scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
 					scoreValue.classList.add('text-supernova-400');
@@ -244,13 +244,16 @@ export class GameUI
 		console.log("GameDATA from server games", games);
 		games.forEach((game: GameData) => {
 			const card = document.createElement('div');
-			card.className = 'bg-gray-700 rounded p-4 flex flex-col gap-2';
+			card.className = 'bg-pong-primary rounded p-4 flex flex-col gap-2 border-1 border-pong-tertiary shadow-md';
+			const DifficultyColor = game.config?.difficulty === 'easy' ? 'text-supernova-400' : game.config?.difficulty === 'medium' ? 'text-international-orange-400' : 'text-international-orange-600';
+			const scoreColor = (game.config?.scoreLimit && game.config.scoreLimit < 4) ? 'text-supernova-400' : (game.config?.scoreLimit && game.config.scoreLimit < 8) ? 'text-international-orange-400' : 'text-international-orange-600';
 			card.innerHTML = `
-				<div class="text-white font-bold">Game ID: ${game.id}</div>
-				<div class="text-gray-300">Host: ${game.playerDetails.player1?.username}</div>
-				<div class="text-gray-300">Limit score: ${game.config?.scoreLimit}</div>
-				<div class="text-gray-300">Difficulty: ${game.config?.difficulty}</div>
-				<button class="join-game-btn bg-green-500 text-white rounded px-3 py-2 mt-2" data-gameid="${game.id}">Join</button>
+				<div class="text-white font-medium">Game ID: <span class="font-bold">${game.id}</span></div>
+				<hr class="border-candlelight-400"/>
+				<div class="text-pong-text-secondary">Host: <span class="text-international-orange-400">${game.playerDetails.player1?.username}</span></div>
+				<div class="text-pong-text-secondary">Limit score: <span class="${scoreColor}">${game.config?.scoreLimit}</span></div>
+				<div class="text-pong-text-secondary">Difficulty: <span class="${DifficultyColor}">${game.config?.difficulty}</span></div>
+				<button class="join-game-btn btn-pong-secondary rounded px-3 py-2 mt-2" data-gameid="${game.id}">Join</button>
 			`;
 			lobbyDiv.appendChild(card);
 		});

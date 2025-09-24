@@ -174,19 +174,38 @@
 	  box-shadow: 0 0 0 2px var(--color-candlelight-400);
 	}
 
-	/* Range slider personalizado */
-	/* .range-pong {
-		background-color: var(--color-pong-bg-tertiary);
-		border: 1px solid var(--color-candlelight-400);
-		padding: 2px;
-	} */
+	/* class to do it Chrome friendly */
+	.range-pong {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 100%;
+		height: 8px;
+		border-radius: 6px;
+		background: linear-gradient(to right, #fbbf24, #f97316, #ea580c);
+		outline: none;
+		opacity: 0.7;
+		transition: opacity 0.2s;
+	}
 
+	.range-pong:hover {
+		opacity: 1;
+	}
+
+	/****************************************************************/
+	/*        webBrowser specific styles sample                   	*/
+	/****************************************************************/
+
+	/* Chrome/Safari  */
 	.range-pong::-webkit-slider-track {
+		-webkit-appearance: none;
+		appearance: none;
 		background: linear-gradient(to right, #fbbf24, #f97316, #ea580c);
 		height: 8px;
 		border-radius: 6px;
+		border: none;
 	}
 
+	/* Firefox */
 	.range-pong::-moz-range-track {
 		background: linear-gradient(to right, #fbbf24, #f97316, #ea580c);
 		height: 8px;
@@ -212,5 +231,8 @@
 		border: 2px solid var(--color-candlelight-400);
 		cursor: pointer;
 	} 
+	/****************************************************************/
+	/*        End of specific styles sample                   	*/
+	/****************************************************************/
 }
 

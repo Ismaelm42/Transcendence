@@ -113,6 +113,20 @@ export class TournamentUI {
                 numberValue.textContent = numberSlider.value;
                 numberSlider.addEventListener("input", () => {
                     numberValue.textContent = numberSlider.value;
+                    const nvalue = numberSlider.value;
+                    if (Number(nvalue) == 4) {
+                        numberValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                        numberValue.classList.add('text-supernova-400');
+                    }
+                    else if (Number(nvalue) == 6) {
+                        numberValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                        numberValue.classList.add('text-international-orange-400');
+                    }
+                    else {
+                        numberValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                        numberValue.classList.add('text-international-orange-600');
+                    }
+                    numberValue.textContent = numberSlider.value;
                 });
             }
             // Score limit
@@ -121,7 +135,21 @@ export class TournamentUI {
             if (scoreSlider && scoreValue) {
                 scoreValue.textContent = scoreSlider.value;
                 scoreSlider.addEventListener("input", () => {
-                    scoreValue.textContent = scoreSlider.value;
+                    //scoreValue.textContent = scoreSlider.value;
+                    const value = scoreSlider.value;
+                    if (Number(value) < 4) {
+                        scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                        scoreValue.classList.add('text-supernova-400');
+                    }
+                    else if (Number(value) > 4 && Number(value) < 8) {
+                        scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                        scoreValue.classList.add('text-international-orange-400');
+                    }
+                    else {
+                        scoreValue.classList.remove('text-supernova-400', 'text-international-orange-400', 'text-international-orange-600');
+                        scoreValue.classList.add('text-international-orange-600');
+                    }
+                    scoreValue.textContent = value;
                 });
             }
             // Dificultad
@@ -447,6 +475,7 @@ export class TournamentUI {
                 }
                 const wrapper = document.createElement('div');
                 wrapper.className = 'tournament-bracket';
+                wrapper.classList.add('w-[90%]', 'lg:w-full');
                 wrapper.innerHTML = parsed;
                 appElement.appendChild(wrapper);
                 this.renderNextMatchInfo(appElement);

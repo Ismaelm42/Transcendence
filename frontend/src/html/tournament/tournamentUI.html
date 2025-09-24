@@ -14,31 +14,31 @@
 </div>
 
 <!-- Player 2 login panel (initially hidden) -->
-<div id="local-tournament-form" style="display:none;" class="p-8 bg-pong-secondary rounded-lg max-w-md mx-auto my-12 flex flex-col items-center w-[90%]">
-	<h2 id="config-title" class="text-center text-[#00ff99] mb-3 text-xl font-bold">Select tournament configuration</h2>
+<div id="local-tournament-form" style="display:none;" class="p-6 border-2 border-candlelight-400 bg-pong-secondary rounded-lg max-w-md mx-auto my-12 flex flex-col items-center w-[90%]">
+	<h2 id="config-title" class="text-center border-candlelight-400 text-candlelight-400 mb-3 text-xl font-bold">Select tournament configuration</h2>
 	
 	<!-- Number of players configuration -->
 	<div class="mb-4">
-		<label for="players" class="block mb-2">Number of players: <span id="tournament-number-of-players-value">4</span></label>
-		<input type="range" id="tournament-number-of-players" min="4" max="8" step="2" value="4" class="w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer">
+		<label for="players" class="text-pong-text-secondary block mb-2">Number of players: <span class="text-xl text-bold text-supernova-400" id="tournament-number-of-players-value">4</span></label>
+		<input type="range" id="tournament-number-of-players" min="4" max="8" step="2" value="4" class="w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer range-pong">
 	</div>
 	
 	<!-- Score limit configuration -->
 	<div class="mb-4">
-		<label for="score-limit" class="block mb-2">Score Limit: <span id="tournament-score-value">5</span></label>
-		<input type="range" id="tournament-score-limit" min="1" max="10" value="5" class="w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer">
+		<label for="score-limit" class="text-pong-text-secondary block mb-2">Score Limit: <span class="text-xl text-bold text-international-orange-400" id="tournament-score-value">5</span></label>
+		<input type="range" id="tournament-score-limit" min="1" max="10" value="5" class="w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer range-pong">
 	</div>
 	 
 	<!-- Difficulty configuration -->
 	<div class="mb-4">
-		<label for="difficulty" class="block mb-2">Difficulty: <span id="tournament-difficulty-value">Medium</span></label>
-		<input type="range" id="tournament-difficulty" min="1" max="3" value="2" class="w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer">
+		<label for="difficulty" class="text-pong-text-secondary block mb-2">Difficulty: <span class="text-bold text-xl text-international-orange-400" id="tournament-difficulty-value">Medium</span></label>
+		<input type="range" id="tournament-difficulty" min="1" max="3" value="2" class="w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer range-pong">
 	</div>
 	
 	<!-- Buttons -->
 	<div class="flex flex-col gap-3">
-		<button id="select-players" style="width: 100%" class="h-12 py-3 bg-green-500 text-white border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">SelectPlayers</button>
-		<button id="tournament-back-button" style="width: 100%" class="h-12 py-3 bg-red-500 text-white border-none rounded hover:bg-gray-500 font-bold cursor-pointer text-base flex justify-center items-center">Go Back</button>
+		<button id="select-players" style="width: 100%" class="h-12 py-3 border-none rounded btn-pong-primary font-bold cursor-pointer text-base flex justify-center items-center">SelectPlayers</button>
+		<button id="tournament-back-button" style="width: 100%" class="h-12 py-3 border-none rounded btn-pong-tertiary font-bold cursor-pointer text-base flex justify-center items-center">Go Back</button>
 	</div>
 </div>
 
@@ -48,13 +48,13 @@
 		
 			<!-- Left (sin cambios por ahora) -->
 		<div class="w-full lg:w-1/2 bg-pong-secondary  p-4 rounded-xl">
-			<h3 class="text-xl font-bold text-yellow-400 mb-4">Tournament Config</h3>
+			<h3 class="font-bold text-2xl text-candlelight-400 mb-4 font-[Tektur]">Tournament Config</h3>
 				<ul class="space-y-2 mb-6 text-sm">
-					<li>🕹️ Players: <span id="summary-players">4</span></li>
-					<li>🏁 Score Limit: <span id="summary-score">5</span></li>
-					<li>🔥 Difficulty: <span id="summary-difficulty">Medium</span></li>
+					<li class="text-lg lg:text-xl">🕹️ Players:	 <span id="summary-players">4</span></li>
+					<li class="text-lg lg:text-xl">🏁 Score Limits:	<span id="summary-score">5</span></li>
+					<li class="text-lg lg:text-xl">🔥 Difficulty:	<span id="summary-difficulty">Medium</span></li>
 				</ul>
-				<h4 class="text-base font-bold text-green-400 mb-2">Registered Players</h4>
+				<h4 class="font-bold text-2xl text-international-orange-400 mb-4 font-[Tektur]">Registered Players</h4>
 				<ul id="registered-players" class="flex flex-wrap gap-4 max-w-full justify-center lg:justify-start"></ul>
 					<!-- Avatares y nombres -->
 				</ul>
@@ -86,4 +86,4 @@
 	</div>
 </div>
 
-<div id="tournament-bracket-container" style="display:none;"></div>
+<div id="tournament-bracket-container" class="w-[90%] lg:w-full"  style="display:none;"></div>

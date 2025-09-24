@@ -11,7 +11,7 @@
 ></canvas>
 	<button
 		id="pause-btn"
-		class="mt-6 bg-green-500 hover:bg-green-600 text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+		class="mt-6 btn-pong-secondary text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
 		type="button"
 	>
 	⏸ Pause
@@ -117,27 +117,27 @@ style="display: none;">
 	</div>
 </div> -->
 <div id="game-results" class="fixed inset-0 z-50 flex items-center justify-center bg-overlays" style="display: none;">
-	<div class="border-4 border-[#00ff99] rounded-lg px-8 py-6 
+	<div class="border-2 border-candlelight-400 rounded-lg px-8 py-6 
 	            w-[90%] sm:w-[85%] md:w-[80%] lg:w-[70%] max-w-2xl
 	            text-pong-secondary  text-center shadow-lg bg-overlays backdrop-blur"
-		style="box-shadow: 0 0 20px rgba(0, 255, 153, 0.5);">
+		style="box-shadow: 0 0 20px rgba(241, 188, 11, 0.5);">
 	
-		<h2 class="text-4xl font-bold text-[#00ff99] mb-6 font-[Tektur]">Game Over</h2>
+		<h2 class="text-4xl font-bold text-candlelight-400 mb-6 font-[Tektur]">Game Over</h2>
 
 		<div class="mb-6 text-base space-y-2 font-[Tektur]">
-			<p id="reason-text"><span id="end-reason"></span></p>
-			<p id="winner-text"><strong>Winner:</strong> <span id="winner-name">Player1</span></p>
-			<p id="score-text"><strong>Final Score:</strong> <span id="final-score">0 - 0</span></p>
-			<p id="duration-text"><strong>Game Duration:</strong> <span id="game-duration">0</span> seconds</p>
+			<p class=" text-pong-text-muted" id="reason-text"><span id="end-reason"></span></p>
+			<p class="text-xl" id="winner-text"><strong>Winner:  </strong><span class="text-2xl uppercase blink" id="winner-name">Player1</span></p>
+			<p class="text-xl" id="score-text"><strong>Final Score: </strong> <span class="text-2xl"id="final-score">0 - 0</span></p>
+			<p class="text-xl" id="duration-text"><strong>Game Duration: </strong> <span class="text-2xl"id="game-duration">0</span> seconds</p>
 		</div>
 
 		<div class="flex flex-col gap-4 items-center font-[Tektur]">
 			<button id="play-again-btn" style="width: 200px"
-			class="h-12 py-3 bg-green-500 text-pong-secondary  border-none rounded hover:bg-green-600 font-bold cursor-pointer text-base flex justify-center items-center">
+			class="h-12 py-3 btn-pong-primary border-none rounded font-bold cursor-pointer text-base flex justify-center items-center">
 				Play Again
 			</button>
 			<button id="return-lobby-btn" style="width: 200px"
-			class="h-12 py-3 bg-blue-500 text-pong-secondary  border-none rounded hover:bg-blue-600 font-bold cursor-pointer text-base flex justify-center items-center">
+			class="h-12 py-3  border-none rounded btn-pong-tertiary font-bold cursor-pointer text-base flex justify-center items-center">
 				Return to Lobby
 			</button>
 		</div>
@@ -150,14 +150,14 @@ style="display: none;">
 <div id="pause-modal"
 	class="fixed inset-0 z-50 flex items-center justify-center bg-overlays"
 	style="display: none;">
-	<div class="rounded-lg px-8 py-6 flex flex-col items-center shadow-xl bg-overlays border-4 border-[#00ff99] backdrop-blur">
-		<span class="text-4xl font-bold text-[#00ff99] mb-6 font-[Tektur] flex items-center gap-2">
-			<svg class="w-8 h-8 text-[#00ff99] inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+	<div class="rounded-lg px-8 py-6 flex flex-col items-center shadow-xl bg-overlays border-4 border-candlelight-400 backdrop-blur" style="box-shadow: 0 0 20px rgba(241, 188, 11, 0.5);">
+		<span class="text-4xl font-bold text-candlelight-400 mb-6 font-[Tektur] flex items-center gap-2">
+			<svg class="w-8 h-8 text-candlelight-400 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
 			Game Paused
 		</span>
 		<div id="pause-reason" class="text-pong-secondary  text-lg mb-4"></div>
 		<button id="resume-btn"
-			class="mt-4 bg-green-500 hover:bg-green-600 text-pong-secondary  font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+			class="mt-4 btn-pong-tertiary text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
 			type="button">
 			▶ Resume
 		</button>

@@ -88,6 +88,7 @@ export default class Tournament extends Step {
 				if (!bracketNode) {
 					bracketNode = document.createElement('div');
 					bracketNode.id = 'tournament-bracket-container';
+					bracketNode.classList.add('w-[90%]','lg:w-full');
 					bracketNode.style.display = 'block';
 					appContainer.appendChild(bracketNode);
 				}
