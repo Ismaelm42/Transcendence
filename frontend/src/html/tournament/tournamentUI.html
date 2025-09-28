@@ -47,20 +47,20 @@
 	<div class="w-full lg:h-[70vh] p-2 bg-pong-primary text-white flex flex-col lg:flex-row gap-2">
 		
 			<!-- Left (sin cambios por ahora) -->
-		<div class="w-full lg:w-1/2 bg-pong-secondary  p-4 rounded-xl">
-			<h3 class="font-bold text-2xl text-candlelight-400 mb-4 font-[Tektur]">Tournament Config</h3>
-				<ul class="space-y-2 mb-6 text-sm">
+		<div class="w-full lg:w-1/2 bg-pong-secondary  py-4 px-8 rounded-xl">
+			<h3 class="font-bold text-3xl text-center lg:text-left text-candlelight-400 mb-4 font-[Tektur] border-b border-pong-tertiary">Tournament Config</h3>
+				<ul class="space-y-2 mb-6 text-sm text-center lg:text-left">
 					<li class="text-lg lg:text-xl">🕹️ Players:	 <span id="summary-players">4</span></li>
 					<li class="text-lg lg:text-xl">🏁 Score Limits:	<span id="summary-score">5</span></li>
 					<li class="text-lg lg:text-xl">🔥 Difficulty:	<span id="summary-difficulty">Medium</span></li>
 				</ul>
-				<h4 class="font-bold text-2xl text-international-orange-400 mb-4 font-[Tektur]">Registered Players</h4>
-				<ul id="registered-players" class="flex flex-wrap gap-4 max-w-full justify-center lg:justify-start"></ul>
+				<h4 class="font-bold text-2xl text-international-orange-400 mb-4 font-[Tektur] text-center lg:text-left border-b border-pong-tertiary">Registered Players</h4>
+				<ul id="registered-players" class="flex flex-wrap gap-4 py-4 max-w-full justify-center lg:justify-start"></ul>
 					<!-- Avatares y nombres -->
 				</ul>
 		</div>
 			<!-- Right: Player Form estilo retro-->
-		<div id="select-player-container" style="display:none;"class="w-full lg:w-1/2 bg-pong-primary p-3 rounded-md relative text-sm font-mono">
+		<div id="select-player-container" style="display:none;"class="w-full lg:w-1/2 bg-pong-secondary py-4 px-8 rounded-md relative text-sm font-mono">
 		</div>
 	</div>
 </div>

@@ -33,16 +33,38 @@
 				</button>
 			</div>
 		</div>
-		<div id="winner-message-container" class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-90" style="display: none;">
-			<div class="card-pong w-96 border-4 border-candlelight-400" style="border-color: var(--candlelight-400); box-shadow: 0 0 30px var(--candlelight-400);">
+		<!-- <div id="winner-message-container" class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-90" style="display: none;">
+			<div class="card-pong glow-tricolor w-96 border-4 border-candlelight-400" style="border-color: var(--candlelight-400); box-shadow: 0 0 30px var(--candlelight-400);">
 				<h2 class="mb-4 text-center text-pong-accent blink">🏆 Tournament Winner! 🏆</h2>
 				<h1 id="winner-message-content" class="text-2xl text-center font-bold mb-4 text-pong-accent blink">This is a placeholder message.</h1>
 				<button id="close-winner-message" class="btn-pong-accent float-right">
 					Close
 				</button>
 			</div>
+		</div> -->
+		<div id="winner-message-container" class="hidden fixed inset-0 z-50 items-center justify-center bg-overlays">
+		<div class="glow-yellow  border-2 border-candlelight-400 rounded-lg px-8 py-6 
+	            w-[90%] sm:w-[85%] md:w-[80%] lg:w-[70%] max-w-2xl
+	            text-pong-secondary  text-center shadow-lg bg-overlays backdrop-blur"
+				style="box-shadow: 0 0 20px rgba(238, 190, 33, 0.5);">
+		
+			<h2 class="text-4xl font-bold text-candlelight-400 mb-6 font-[Tektur]">Tournament Over</h2>
+
+			<div class="mb-6 text-base space-y-2 font-[Tektur]">
+				<h2 class="text-xl"><strong>🏆 Tournament Winner! 🏆 </strong></h2>
+				<h1 id="winner-message-content" class="text-2xl text-center font-bold mb-4 text-pong-accent blink">This is a placeholder message.</h1>
+				<button id="close-winner-message" class="btn-pong-accent float-right">
+					Close
+				</button>
 		</div>
 	</div>
+	</div>
+
+</div>
+
+
+
+
 	<!-- <script type="module" src="./js/spa.js"></script> -->
 	<!--<script src="./js/handleLoginSubmit.js" defer></script> -->
 	<script type="module" src="./js/include/main.js"></script>

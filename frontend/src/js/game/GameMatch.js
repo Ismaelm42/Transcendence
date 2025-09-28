@@ -196,6 +196,13 @@ export default class GameMatch extends Step {
             playAgainBtn.hidden = true;
         else if (playAgainBtn)
             playAgainBtn.hidden = false;
+        const returnLobbyBtn = document.getElementById('return-lobby-btn');
+        if (returnLobbyBtn) {
+            if (gameData.tournamentId && gameData.tournamentId !== -42)
+                returnLobbyBtn.textContent = "Return to Tournament";
+            else
+                returnLobbyBtn.textContent = "Return to Lobby";
+        }
         // Show the results overlay
         this.ui.showOnly('game-results', 'flex');
         // Add event listeners for the buttons (these need to be set each time)

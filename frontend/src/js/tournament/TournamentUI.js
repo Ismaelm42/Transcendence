@@ -33,8 +33,9 @@ export class TournamentUI {
                         avatarImg.src = player.gameplayer.avatarPath || 'default-avatar.png'; // Use a default avatar if none is provided
                         avatarImg.alt = `Avatar of Player ${player.Index}`;
                         avatarImg.className = 'player-avatar';
-                        avatarImg.style.maxWidth = '2rem';
-                        avatarImg.style.height = 'auto';
+                        avatarImg.classList.add('w-24', 'lg:w-32', 'h-auto');
+                        // avatarImg.style.maxWidth = '2rem';
+                        // avatarImg.style.height = 'auto';
                         playerItem.appendChild(avatarImg);
                         playerItem.className = 'player-item';
                         const playerTournamentName = document.createElement('span');

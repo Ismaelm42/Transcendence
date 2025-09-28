@@ -1,10 +1,10 @@
 			<div class="relative w-full h-full">
 				<div id="player-forms" class="w-full h-full relative">
 					<div id="player-form-{{ userIndex }}" class="transition-transform duration-500">
-						<h4 class="font-bold mb-2 text-2xl text-candlelight-400 font-[Tektur]">Select player {{ userIndex }}</h4>
+						<h4 class="font-bold mb-2 text-3xl text-candlelight-400 font-[Tektur] text-center lg:text-left">Select player {{ userIndex }}</h4>
 						<form id="players-login-form-{{ userIndex }}" class="w-full flex flex-col items-center space-y-2">
-							<input type="email" id="players-email-{{ userIndex }}" placeholder="Email" class="w-full h-10 px-2 py-2 rounded-lg bg-pong-secondary  text-white focus:outline-none focus:ring-1 focus:ring-candlelight-400 text-sm" />
-							<input type="password" id="players-password-{{ userIndex }}" placeholder="Password" class="w-full h-10 px-2 py-2 rounded-lg bg-pong-secondary  text-white focus:outline-none focus:ring-1 focus:ring-candlelight-400 text-sm" />
+							<input type="email" id="players-email-{{ userIndex }}" placeholder="Email" class="w-full h-10 px-2 py-2 rounded-lg bg-pong-secondary  text-white focus:outline-none focus:ring-1 focus:ring-candlelight-400 text-sm  text-center lg:text-left" />
+							<input type="password" id="players-password-{{ userIndex }}" placeholder="Password" class="w-full h-10 px-2 py-2 rounded-lg bg-pong-secondary  text-white focus:outline-none focus:ring-1 focus:ring-candlelight-400 text-sm  text-center lg:text-left" />
 							<button type="submit" id="players-login-btn-{{ userIndex }}" class="w-full px-2 py-2 rounded-lg font-bold btn-pong-primary transition text-sm">
 								▶ Play as registered
 							</button>
@@ -17,12 +17,12 @@
 							<div class="flex-grow h-px bg-candlelight-400"></div>
 						</div>
 
-						<h4 class="font-bold text-xl text-international-orange-400 mb-2 font-[Tektur]">Guest Tournament Name</h4>
+						<h4 class="font-bold text-xl text-international-orange-400 mb-2 font-[Tektur] text-center lg:text-left">Guest Tournament Name</h4>
 						<form id="guests-login-form-{{ userIndex }}"
 							class="w-full flex flex-col items-center space-y-2 mt-2">
 							<input type="text" id="guest-tournament-name-{{ userIndex }}"
 								placeholder="Enter name or leave blank"
-								class="w-full h-10 px-2 py-2 rounded-lg bg-pong-secondary  focus:outline-none focus:ring-1  focus:ring-international-orange-400 text-sm" />
+								class="w-full h-10 px-2 py-2 rounded-lg bg-pong-secondary  focus:outline-none focus:ring-1  focus:ring-international-orange-400 text-sm  text-center lg:text-left" />
 							<button type="submit" id="players-guest-btn-{{ userIndex }}"
 								class="w-full py-2 rounded-lg btn-pong-secondary">
 								▶ Play as guest

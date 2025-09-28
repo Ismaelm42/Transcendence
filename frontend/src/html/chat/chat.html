@@ -5,22 +5,22 @@
 	<div class="flex flex-col lg:flex-row lg:flex-wrap h-auto lg:h-[65vh] w-full max-w-screen-xl mx-auto gap-1" >
 		<!-- Messages Container -->
 		<div id="messages-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-3 lg:max-w-[30%] h-auto lg:h-full rounded-t-xl lg:rounded-t-none  lg:rounded-tl-xl lg:rounded-bl-xl bg-pong-secondary  border border-gray-500">
+			class="flex flex-col items-center justify-start w-full lg:flex-3 lg:max-w-[30%] h-auto lg:h-full rounded-t-xl lg:rounded-t-none  lg:rounded-tl-xl lg:rounded-bl-xl bg-pong-secondary  border border-pong-tertiary">
 			<!-- Chats div -->
 			<div id="messages-title-container"
-				class="px-4 h-[80px] bg-pong-secondary  rounded-t-xl lg:rounded-t-none  lg:rounded-tl-xl border-b border-gray-500 w-full flex items-center">
+				class="px-4 h-[80px] bg-pong-secondary  rounded-t-xl lg:rounded-t-none  lg:rounded-tl-xl border-b border-pong-tertiary w-full flex items-center">
 				<h2 class="text-white text-xl font-semibold mb-2 ">Chats</h2>
 			</div>
 			<!-- Chats List Container -->
 			<div id="chat-item-container"
 				class="w-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 				<div id="chat-item-list-container"
-					class="overflow-y-auto flex-1 flex flex-col items-center justify-start w-full border-gray-500 bg-pong-secondary  [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+					class="overflow-y-auto flex-1 flex flex-col items-center justify-start w-full border-pong-tertiary bg-pong-secondary  [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 					<!-- Chat users will be dynamically inserted here -->
 
 
 					<!-- <div id="chat-item"
-						class="flex items-center w-full px-4 py-3 bg-pong-terciary hover:bg-slate-600 transition-colors duration-400 cursor-pointer">
+						class="flex items-center w-full px-4 py-3 bg-pong-tertiary hover:bg-slate-600 transition-colors duration-400 cursor-pointer">
 						<img src="https://localhost:8443/back/images/avatar-2.png" alt="avatar"
 							class="w-12 h-12 rounded-full mr-4 border border-gray-600" />
 						<div class="flex-1 min-w-0">
@@ -43,26 +43,26 @@
 
 		<!-- Chat Container -->
 		<div id="chat-container"
-			class="flex flex-col items-center justify-start w-full lg:flex-[5] lg:max-w-[50%] h-[80vh] lg:h-full border lg:border-t border-b border-gray-500">
+			class="flex flex-col items-center justify-start w-full lg:flex-[5] lg:max-w-[50%] h-[80vh] lg:h-full border lg:border-t border-b border-pong-tertiary">
 			<div id="user-info-container" class="w-full">
 				<!-- User info will be dynamically replace here -->
 			</div>
 			<div id="chat-messages"
-				class="overflow-y-auto flex-1 flex flex-col items-center justify-start px-6 py-4 pr-2 w-full border-b border-gray-500 bg-pong-secondary  [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+				class="overflow-y-auto flex-1 flex flex-col items-center justify-start px-6 py-4 pr-2 w-full border-b border-pong-tertiary bg-pong-secondary  [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 				<!-- Chat messages will be dynamically inserted here -->
 			</div>
 			<!-- Chat input area -->
 			<div id="input-container" class="flex flex-col items-center justify-start w-full bg-pong-secondary ">
 				<form id="chat-form" class="w-full">
 					<label for="chat" class="sr-only">Your message</label>
-					<div class="flex items-center px-3 py-2 bg-gray-700">
+					<div class="flex items-center px-3 py-2 bg-pong-bg-tertiary">
 						<textarea id="chat-textarea" rows="1"
-							class="block mx-4 p-2.5 w-full text-sm text-gray-900 rounded-lg border bg-pong-secondary  border-gray-600 placeholder-gray-400 text-white min-h-[2.5rem] max-h-[8rem] focus:outline focus:outline-2 focus:outline-gray-400"
+							class="block mx-4 p-2.5 w-full text-sm rounded-lg border bg-pong-secondary  border-pong-tertiary placeholder-international-orange-300 text-white min-h-[2.5rem] max-h-[8rem] focus:outline-2 focus:outline-international-orange-400"
 							placeholder="Your message..."></textarea>
 						<!-- Button send message -->
 						<button type="submit"
-							class="inline-flex justify-center p-2 rounded-full cursor-pointer text-blue-500 hover:bg-gray-600">
-							<svg class="w-5 h-5 rotate-90 rtl:-rotate-90 text-sky-500" aria-hidden="true"
+							class="inline-flex justify-center p-2 rounded-full cursor-pointer text-chilean-fire-500 hover:bg-pong-bg-primary transition-colors duration-400 ">
+							<svg class="w-5 h-5 rotate-90 rtl:-rotate-90 text-chilean-fire-500" aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 20">
 								<path fill="currentColor"
 									d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
@@ -80,7 +80,7 @@
 		<div id="users-container"
 		     class="flex flex-col items-center justify-start w-full lg:flex-[2] 
 		            lg:max-w-[20%] h-auto lg:h-full rounded-b-xl lg:rounded-b-none 
-		            lg:rounded-tr-xl lg:rounded-br-xl bg-pong-secondary  border border-gray-500">
+		            lg:rounded-tr-xl lg:rounded-br-xl bg-pong-secondary  border border-pong-tertiary">
 
 		  <!-- Users list Container (en móviles primero, en desktop se mantiene abajo) -->
 		  <div id="users-list-container"
@@ -99,9 +99,9 @@
 		    <form id="search-users-form" class="px-4 h-[80px] w-full flex items-center">
 		      <div class="flex items-center bg-pong-secondary  w-full">
 		        <input id="search-users-input" type="text"
-		               class="block mx-4 p-2 w-full text-sm text-gray-900 rounded-lg 
-		                      border bg-gray-700 border-gray-900 placeholder-gray-400 text-white 
-		                      resize-none focus:outline focus:outline-2 focus:outline-gray-400"
+		               class="block mx-4 p-2 w-full text-sm rounded-lg 
+		                      border bg-pong-tertiary border-pong-bg-primary placeholder-international-orange-300 text-pon
+		                      resize-none focus:outline-2 focus:outline-international-orange-400 "
 		               placeholder="Search users..." />
 		      </div>
 		    </form>

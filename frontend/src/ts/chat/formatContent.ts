@@ -146,7 +146,7 @@ export function sortUsersAlphabetically(htmlContent: string): string {
 	if (items.length > 0) {
 		const target = items[0].querySelector('.item-wrapper');
 		if (target) {
-			target.classList.add("border-t");
+			target.classList.add('border-t', 'border-t-chilean-fire-500');
 		}
 	}
 	const sortedHtml = items.map(item => item.outerHTML).join('');

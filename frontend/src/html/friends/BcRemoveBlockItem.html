@@ -1,17 +1,17 @@
-<div class="w-full odd:bg-white odd:bg-pong-primary even:bg-gray-50 even:bg-pong-secondary  border-b border-gray-700 border-gray-200 flex">
-	<div class="flex-10 px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-white flex-1">
+<div class="w-full odd:bg-pong-bg-primary even:bg-pong-bg-secondary  border-b odd:border-pong-secondary even:border-pong-primary flex">
+	<div class="flex-10 px-6 py-2 font-mediumwhitespace-nowrap text-white">
 		{{ username }}
 		<span class="hidden" data-user-id="user_id">{{ id }}</span>
 	</div>
-	<div class="flex-1 px-6 py-4 flex-1">
-		<button type="button" class="btnRemoveFriend p-1.5 ms-2 text-sm font-medium text-white bg-red-700 rounded-lg border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 bg-red-600 hover:bg-red-700 focus:ring-red-800" title="Remove friend">
+	<div class="flex-1 px-6 py-2">
+		<button type="button" class="btnRemoveFriend p-1.5 ms-2 text-sm font-medium text-white rounded-lg border border-red-700 focus:ring-4 focus:outline-none bg-red-600 hover:bg-red-700 focus:ring-red-800" title="Remove friend">
 			<svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
 				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4M15,5.9C16.16,5.9 17.1,6.84 17.1,8C17.1,9.16 16.16,10.1 15,10.1A2.1,2.1 0 0,1 12.9,8A2.1,2.1 0 0,1 15,5.9M1,10V12H9V10H1M15,13C12.33,13 7,14.33 7,17V20H23V17C23,14.33 17.67,13 15,13M15,14.9C17.97,14.9 21.1,16.36 21.1,17V18.1H8.9V17C8.9,16.36 12,14.9 15,14.9Z" />
 			</svg>
 		</button>
 	</div>
-	<div class="flex-1 px-6 py-4 flex-1">
-		<button type="button" class="btnBlockItem p-1.5 ms-2 text-sm font-medium text-white bg-indigo-700 rounded-lg border border-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-800" title="Block user">
+	<div class="flex-1 px-6 py-2">
+		<button type="button" class="btnBlockItem p-1.5 ms-2 text-sm font-medium text-white rounded-lg border border-indigo-700 focus:ring-4 focus:outline-none  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-800" title="Block user">
 			<svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
 				<path Stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 20V10H18V13.09C18.33 13.04 18.66 13 19 13C19.34 13 19.67 13.04 20 13.09V10C20 8.9 19.11 8 18 8H17V6C17 3.24 14.76 1 12 1S7 3.24 7 6V8H6C4.89 8 4 8.89 4 10V20C4 21.1 4.89 22 6 22H13.81C13.46 21.39 13.22 20.72 13.09 20H6M9 6C9 4.34 10.34 3 12 3S15 4.34 15 6V8H9V6M14 15C14 16.11 13.11 17 12 17C10.89 17 10 16.1 10 15C10 13.89 10.89 13 12 13C13.11 13 14 13.9 14 15M23 18V20H20V23H18V20H15V18H18V15H20V18H23Z" />
 			</svg>

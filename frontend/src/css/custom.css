@@ -135,6 +135,20 @@ body {
 		}
 	}
 
+
+	@keyframes glow-tricolor {
+
+		0%, 100% {
+			box-shadow: 0 0 6px 3px rgba(245, 158, 11, 0.7); /* Amarillo */
+		}
+		33% {
+			box-shadow: 0 0 12px 6px rgba(255, 140, 0, 1); /* Naranja */
+		}
+		66% {
+			box-shadow: 0 0 12px 6px rgba(255, 87, 34, 1); /* Naranja oscuro */
+		}
+	}
+
 	.glow-yellow {
 		animation: glow-yellow 3s ease-in-out infinite;
 	}

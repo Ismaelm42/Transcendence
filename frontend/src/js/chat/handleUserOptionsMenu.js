@@ -32,16 +32,16 @@ export function showUserOptionsMenu(userElement, event, socket, currentUserId) {
 function createOptionMenu(event, userElement) {
     const menu = document.createElement("div");
     menu.id = "user-options-menu";
-    menu.className = "absolute bg-pong-primary/95 border border-amber-400 rounded-xl shadow-2xl p-2 z-50";
+    menu.className = "absolute bg-pong-primary/95 border border-candlelight-400   rounded-xl shadow-2xl p-2 z-50";
     menu.innerHTML = `
-		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="msg"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
+		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-candlelight-400 hover:text-pong-text-reverse transition-colors duration-400 p-2 rounded" data-action="msg"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
   		<rect x="2" y="4" width="12" height="8" rx="2"/>
   		<path d="M2.5 4.5L8 9l5.5-4.5"/>
 		</svg> Private Message</div>
-		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="play-game"><svg width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
+		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-chilean-fire-500 hover:text-pong-text-reverse transition-colors duration-400 p-2 rounded" data-action="play-game"><svg width="25" height="25" fill="currentColor" viewBox="0 0 16 16">
   		<polygon points="5,3 13,8 5,13"/>
 		</svg> Play Game</div>
-		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-sky-700/80 p-2 rounded" data-action="show-more"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
+		<div class="flex items-center gap-4 text-gray-300 cursor-pointer hover:bg-international-orange-700 hover:text-pong-text-secondary transition-colors duration-400 p-2 rounded" data-action="show-more"> <svg width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
   		<circle cx="8" cy="6" r="3"/>
   		<path d="M3 13c0-2.2 2.2-4 5-4s5 1.8 5 4"/>
 		</svg> Show Profile</div>
