@@ -31,14 +31,14 @@ export default class Chat extends Step {
 
 			removeNotificationChatTab();
 			handleContentStorage(chatMessages, recentChats, userId);
-			Step.socket = verifySocket(Step.socket);
-			handleSocketEvents(Step.socket!, chatMessages, recentChats, userId);
+			Step.chatSocket = verifySocket(Step.chatSocket);
+			handleSocketEvents(Step.chatSocket!, chatMessages, recentChats, userId);
 			textarea.addEventListener('keydown', e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), form.requestSubmit()));
-			form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.socket!));
+			form.addEventListener('submit', (e) => handleFormSubmit(e, textarea, Step.chatSocket!));
 			searchInput.addEventListener('keydown', e => e.key === 'Enter' && e.preventDefault());
 			searchInput.addEventListener('input', () => filterSearchUsers(searchInput.value));
-			items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.socket!));
-			recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.socket!, userId));
+			items.addEventListener('dblclick', (e) => handlePrivateMsg(e, Step.chatSocket!));
+			recentChats.addEventListener('click', (e) => showPrivateChat(e, Step.chatSocket!, userId));
 
 			items.addEventListener("click", async (event) => {
 				const target = event.target as HTMLElement;
@@ -50,7 +50,7 @@ export default class Chat extends Step {
 				const userId = await getUserId(this.username!);
 				const clickedUserId = await getUserId(clickedUsername!);
 				if (clickedUserId && clickedUserId !== userId) {
-					showUserOptionsMenu(userItem, event as MouseEvent, Step.socket!, userId);
+					showUserOptionsMenu(userItem, event as MouseEvent, Step.chatSocket!, userId);
 				}
 			});
 		}

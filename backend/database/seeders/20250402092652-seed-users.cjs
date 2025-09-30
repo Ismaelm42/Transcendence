@@ -6,65 +6,47 @@ const { hashPassword } = require('../users/PassUtils.cjs');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		const users = [
-			{
-				username: 'ismael',
-				password: await hashPassword('1234'),
-				email: 'ismael@gmail.com',
-				last_login: new Date(),
-			},
-			{
-				username: 'alfonso',
-				password: await hashPassword('1234'),
-				email: 'alfonso@gmail.com',
-				last_login: new Date(),
-			},
-			{
-				username: 'fernando',
-				password: await hashPassword('1234'),
-				email: 'fernando@gmail.com',
-				last_login: new Date(),
-			},
-			{
-				username: 'pedro',
-				password: await hashPassword('1234'),
-				email: 'pedro@gmail.com',
-				last_login: new Date(),
-			},
-			{
-				username: 'user',
-				password: await hashPassword('1234'),
-				email: 'user@gmail.com',
-				last_login: new Date(),
-			},
-		];
-
-		// Añadir usuarios AI001-AI007
-		for (let i = 1; i <= 7; i++) {
-			const num = i.toString().padStart(3, '0');
-			users.push({
-				username: `Ai${num}`,
-				password: await hashPassword('1234'),
-				email: `ai${num}@transcendence.com`,
-				last_login: new Date(),
-			});
-		}
-
-		// Añadir usuarios Guest001-Guest008
-		for (let i = 1; i <= 7; i++) {
-			const num = i.toString().padStart(3, '0');
-			users.push({
-				username: `Guest${num}`,
-				password: await hashPassword('1234'),
-				email: `guest${num}@transcendence.com`,
-				last_login: new Date(),
-			});
-		}
-
-		// Crear todos los usuarios en la base de datos
-		for (const user of users) {
-			await User.create(user);
-		}
+	  const users = [
+		{
+		  username: 'ismael',
+		  password: await hashPassword('1234'),
+		  email: 'ismael@gmail.com',
+		  lastLogin: new Date(),
+		  chessRating: 2100
+		},
+		{
+		  username: 'alfonso',
+		  password: await hashPassword('1234'),
+		  email: 'alfonso@gmail.com',
+		  lastLogin: new Date(),
+		  chessRating: 1900
+		},
+		{
+		  username: 'fernando',
+		  password: await hashPassword('1234'),
+		  email: 'fernando@gmail.com',
+		  lastLogin: new Date(),
+		  chessRating: 2300
+		},
+		{
+		  username: 'pedro',
+		  password: await hashPassword('1234'),
+		  email: 'pedro@gmail.com',
+		  lastLogin: new Date(),
+		  chessRating: 2250
+		},
+		{
+		  username: 'user',
+		  password: await hashPassword('1234'),
+		  email: 'user@gmail.com',
+		  lastLogin: new Date(),
+		  chessRating: 1700
+		},
+	  ];
+  
+	  for (const user of users) {
+		await User.create(user);
+	  }
 	},
 
 	async down(queryInterface, Sequelize) {

@@ -4,7 +4,8 @@ export class Step {
 	protected container: HTMLElement;
 	protected spa: SPA;
 	protected username: string | null = null; // Almacena el nombre de usuario autenticado
-	protected static socket: WebSocket | null = null; // Almacena la conexión WebSocket
+	public static chatSocket: WebSocket | null = null; // Almacena la conexión WebSocket
+	public static chessSocket: WebSocket | null = null;
 
 	constructor(containerId: string) {
 		this.container = document.getElementById(containerId) as HTMLElement;

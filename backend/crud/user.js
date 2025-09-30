@@ -205,3 +205,37 @@ export const getAllUsersCoincidences = async (userId, keyword) => {
 		throw new Error(`Error searching for users with ${keyword}: ${err.message}`);
 	}
 }
+
+export const calculateElo = async (userId, opponentId, result) => {
+
+	try {
+		const user = await User.findByPk(userId);
+		const opponent = await User.findByPk(opponentId);
+		let change = 0;
+		
+		if (user && opponent) {
+			if (result === 1) {
+				change = Math.abs(Math.round(16 / (1 + Math.pow(10, (user.chessRating - opponent.chessRating) / 400))));
+				user.chessRating += change;
+				opponent.chessRating -= change;
+			}
+			else {
+				change = Math.abs(Math.round(16 * (0,5 - (1 / (1 + Math.pow(10, (opponent.chessRating - user.chessRating) / 400))))));
+				if (user.chessRating > opponent.chessRating) {
+					user.chessRating -= change;
+					opponent.chessRating += change;
+				}
+				else {
+					user.chessRating += change;
+					opponent.chessRating -= change;
+				}
+			}
+			await user.save();
+			await opponent.save();
+		} 
+		return change;
+	}
+	catch (err) {
+		throw new Error(`Error calculating elo`);
+	}
+}

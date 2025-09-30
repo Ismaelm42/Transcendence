@@ -75,6 +75,10 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.selected {
+	background-color: #1f2937; /* = bg-gray-800 */
+}
+
 .bg-opacity-90 {
 	background-color: rgba(0, 0, 0, 0.9) !important;
 }
