@@ -3,6 +3,10 @@ import { canvas } from './state.js'
 
 const pieceImages: { [key: string]: HTMLImageElement } = {};
 
+function getCSSColor(varName: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+
 function resizeCanvas() {
 
 	const rect = canvas!.getBoundingClientRect();
@@ -35,25 +39,31 @@ function drawBoard(board: Chessboard, selectedSquares: Set<string> | null) {
 		for (let col = 0; col < 8; col++) {
 			const isLight = (row + col) % 2 === 0;
 			if (selectedSquares && selectedSquares.has(`${row}${col}`))
-				ctx.fillStyle = isLight ? "rgb(255, 139, 139)" : "rgb(253, 103, 103)";
+				ctx.fillStyle = isLight ? getCSSColor('--color-chilean-fire-300') : getCSSColor('--color-chilean-fire-500');
+				// ctx.fillStyle = isLight ? "rgb(255, 139, 139)var" : "rgb(253, 103, 103)";
 			else if ((logicToVisualCol(fsCol) === col && logicToVisualRow(fsRow) === row) || (logicToVisualCol(tsCol) === col && logicToVisualRow(tsRow) === row)) {
-				ctx.fillStyle = "rgb(154, 234, 236)";
+				// ctx.fillStyle = "rgb(154, 234, 236)";
+				ctx.fillStyle = getCSSColor('--color-chilean-fire-300') ;
 			}
 			else
-				ctx.fillStyle = isLight ? "rgb(255, 255, 255)" : "rgb(67, 128, 183)";
+				ctx.fillStyle = isLight ? getCSSColor('--color-chilean-fire-100') : getCSSColor('--color-candlelight-800');
+
+				// ctx.fillStyle = isLight ? "rgb(255, 255, 255)" : "rgb(67, 128, 183)";
 			ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
 			if (col === 0) {
 				const number = board.playerColorView === "white" ? 8 - row : row + 1;
-				ctx.textBaseline = "top";
+				ctx.textBaseline = "top";	
 				ctx.textAlign = "left";
-				ctx.fillStyle = isLight ? "rgb(67, 128, 183)" : "rgb(255, 255, 255)";
+	  			ctx.fillStyle = isLight ? getCSSColor('--color-candlelight-800') : getCSSColor('--color-chilean-fire-100');
+				// ctx.fillStyle = isLight ? "rgb(67, 128, 183)" : "rgb(255, 255, 255)";
 				ctx.fillText(number.toString(), col * squareSize + 4, row * squareSize + 4);
 			}
 			if (row === 7) {
 				const letter = board.playerColorView === "white" ? String.fromCharCode(97 + col) : String.fromCharCode(97 + (7 - col));
 				ctx.textBaseline = "bottom";
 				ctx.textAlign = "right";
-				ctx.fillStyle = isLight ? "rgb(67, 128, 183)" : "rgb(255, 255, 255)";
+				ctx.fillStyle = isLight ? getCSSColor('--color-candlelight-800') : getCSSColor('--color-chilean-fire-100');
+				// ctx.fillStyle = isLight ? "rgb(67, 128, 183)" : "rgb(255, 255, 255)";
 				ctx.fillText(letter.toString(), (col + 1) * squareSize - 4, (row + 1) * squareSize - 4);
 			}
 		}
@@ -134,7 +144,8 @@ export function highlightSquare(square: string) {
 
 	
 	ctx.lineWidth = 4;
-	ctx.strokeStyle = "rgb(94, 101, 134)";
+	ctx.strokeStyle = getCSSColor('--color-international-orange-800');
+	// ctx.strokeStyle = "rgb(94, 101, 134)";
 	ctx.strokeRect(squareX + 2, squareY + 2, squareSize - 4, squareSize - 4);
 }
 
@@ -186,7 +197,8 @@ export function drawArrows(arrows: Map<string, [string, string]> | null) {
 		ctx.beginPath();
 		ctx.moveTo(startX, startY);
 		ctx.lineTo(baseX, baseY);
-		ctx.strokeStyle = "rgba(255, 191, 62, 0.7)";
+		// ctx.strokeStyle = "rgba(255, 191, 62, 0.7)";
+		ctx.strokeStyle = getCSSColor('--color-international-orange-700');
 		ctx.lineWidth = squareSize * 0.2;
 		ctx.stroke();
 
@@ -196,7 +208,8 @@ export function drawArrows(arrows: Map<string, [string, string]> | null) {
 		ctx.lineTo(leftX, leftY);
 		ctx.lineTo(rightX, rightY);
 		ctx.closePath();
-		ctx.fillStyle = "rgba(255, 191, 62, 0.7)";
+		// ctx.fillStyle = "rgba(255, 191, 62, 0.7)";
+		ctx.fillStyle = getCSSColor('--color-international-orange-600');
 		ctx.fill();
 	}
 }

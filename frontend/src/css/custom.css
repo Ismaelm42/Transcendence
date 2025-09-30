@@ -76,7 +76,8 @@ body {
 }
 
 .selected {
-	background-color: #1f2937; /* = bg-gray-800 */
+	background-color: var(--color-pong-bg-secondary); /*#1f2937; /* = bg-gray-800 */
+	color: var(--color-pong-text-accent); /* #fbbf24; /* = text-yellow-400 */
 }
 
 .bg-opacity-90 {

@@ -1,8 +1,8 @@
-<section id="game-section" class="flex flex-col justify-center items-center bg-gray-900">
-	<div id="container" class="flex flex-col lg:flex-row w-full justify-center items-center">
-
+<section id="game-section" class="flex flex-col justify-center items-center bg-pong-bg-primary">
+	<div id="container" class="flex flex-col lg:flex-row w-full justify-center items-center gap-2">
 		<div id="board"
-			class="relative w-[44vh] h-[44vh] lg:w-[64vh] lg:h-[64vh] lg:min-w-[500px] lg:min-h-[500px] min-w-[300px] min-h-[300px]">
+			class="relative w-[44vh] h-[44vh] md:w-[60vh] md:h-[60vh]  lg:w-[64vh] lg:h-[64vh] lg:min-w-[500px] lg:min-h-[500px] min-w-[300px] min-h-[300px]
+				border border-candlelight-400 transition-all duration-300 ease-in-out">
 			<!-- Overlay -->
 			<div id="board-overlay" class="absolute inset-0 bg-black/50 z-40 hidden">
 			</div>
@@ -10,52 +10,53 @@
 			</div>
 			<!-- Promotion Modal -->
 			<div id="modal-promotion"
-				class="absolute flex items-center justify-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900/80 text-black text-xl rounded-lg shadow-lg z-50 px-4 py-2 min-w-[80%] lg:min-w-[60%] hidden">
+				class="absolute items-center justify-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary/80 text-black text-xl rounded-lg shadow-lg z-50 px-4 py-2 min-w-[80%] lg:min-w-[60%] hidden">
 				<button id="close-promotion"
-					class="absolute top-1 right-1 text-gray-500 hover:text-white text-2xl leading-none font-bold cursor-pointer">&times;
+					class="absolute top-1 right-2 text-international-orange-700 hover:text-candlelight-400 text-2xl leading-none font-bold cursor-pointer">&times;
 				</button>
 				<div class="flex justify-center items-center gap-1">
 					<img id="q" src="../../pieces/wq.png" alt="Queen"
-						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+					
+						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer hover:drop-shadow-[0_0_8px_var(--color-candlelight-400)] transition-all duration-300" />
 					<img id="r" src="../../pieces/wr.png" alt="Rook"
-						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer hover:drop-shadow-[0_0_8px_var(--color-candlelight-400)] transition-all duration-300" />
 					<img id="b" src="../../pieces/wb.png" alt="Bishop"
-						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer hover:drop-shadow-[0_0_8px_var(--color-candlelight-400)] transition-all duration-300" />
 					<img id="n" src="../../pieces/wn.png" alt="Knight"
-						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer" />
+						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer hover:drop-shadow-[0_0_8px_var(--color-candlelight-400)] transition-all duration-300" />
 				</div>
 			</div>
 			<!-- Game Over Modal -->
 			<div id="modal-game-over"
-				class="absolute flex items-center justify-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 border border-gray-600 text-black text-xl rounded-lg shadow-lg z-50 px-4 py-2 w-[60%] h-[80%] hidden">
+				class="absolute items-center justify-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary border-candlelight-400 glow-yellow text-black text-xl rounded-lg shadow-lg z-50 px-4 py-2 w-[80%] lg:w-[70%] h-auto hidden">
 				<button id="close-game-over"
-					class="absolute top-1 right-1 text-gray-500 hover:text-white text-2xl leading-none font-bold cursor-pointer">&times;
+					class="absolute top-2 right-2 text-international-orange-700 hover:text-candlelight-400 text-2xl leading-none font-bold cursor-pointer">&times;
 				</button>
 				<div class="flex flex-col justify-center items-center text-center text-white">
 					<h2 id="game-result" class="text-2xl font-semibold mb-4 lg:mb-6 leading-relaxed hidden">
 						Winner is<br>
 						<span id="winner-name"
-							class="text-2xl font-bold truncate block max-w-[180px] lg:max-w-[300px]"></span>
+							class="text-2xl text-candlelight-400 font-bold truncate block max-w-[180px] lg:max-w-[300px] blink"></span>
 						<span id="end-reason" class="text-lg font-semibold"></span>
 					</h2>
 					<h2 id="draw-result" class="text-2xl font-semibold mb-6 leading-relaxed hidden">
 						Draw<br>
 						<span id="draw-reason" class="text-lg font-semibold"></span>
 					</h2>
-					<img src="../../img/congratulations.gif" alt="congratulations" class="hidden lg:block w-62 h-35">
-					<div class="flex flex-col gap-2 lg:gap-4 lg:mt-2 items-center">
-						<div class="flex gap-2 lg:gap-4">
+					<img src="../../img/congratulations.gif" alt="congratulations" class="hidden mb-4 glow-yellow lg:block w-62 h-35">
+					<div class="flex flex-col gap-2 lg:gap-4 lg:mt-2 items-center w-full">
+						<div class="flex gap-2 lg:gap-4 w-full">
 							<button id="rematch"
-								class="w-[80px] lg:w-[120px] flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 border border-emerald-500 py-2 rounded-lg text-white text-sm lg:text-lg transition cursor-pointer">
+								class="w-auto flex flex-1 items-center justify-center btn-pong-primary py-2 rounded-lg text-sm lg:text-lg transition cursor-pointer">
 								Rematch
 							</button>
 							<button id="game-review"
-								class="w-[80px] lg:w-[120px] flex items-center justify-center bg-gray-600 hover:bg-gray-700 border border-gray-500 py-2 rounded-lg text-white text-sm lg:text-lg transition cursor-pointer">
+								class="w-auto flex-1 flex items-center justify-center btn-pong-secondary py-2 rounded-lg  text-sm lg:text-lg transition cursor-pointer">
 								Game Review
 							</button>
 						</div>
 						<button id="go-to-lobby"
-							class="w-full lg:w-full flex items-center justify-center bg-sky-600 hover:bg-sky-700 border border-sky-500 py-2 rounded-lg text-white text-sm lg:text-lg transition cursor-pointer">
+							class="mb-4 w-full lg:w-full flex items-center justify-center btn-pong-tertiary py-2 rounded-lg text-sm lg:text-lg transition cursor-pointer">
 							Go to Lobby
 						</button>
 					</div>
@@ -101,15 +102,15 @@
 
 			<!-- confirmDraw Modal -->
 			<div id="modal-confirmDraw"
-				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 px-6 py-4 flex-col items-center gap-4 text-white max-w-[100%] hidden">
-				<p id="confirmDraw-options-message" class="text-base sm:text-lg lg:text-lg text-center mb-2">Are you sure you want to offer a draw? </p>
+				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary border border-candlelight-400 rounded-xl shadow-2xl z-50 px-8 py-6 flex-col items-center gap-4 text-white max-w-[100%] hidden">	
+				<p id="confirmDraw-options-message" class="text-base sm:text-lg lg:text-lg text-center mb-2">Are you sure you want to offer a <span class="text-chilean-fire-500">draw?</span></p>
 				<div class="flex gap-4 mt-4 justify-center">
 					<button id="yes"
-						class="px-4 py-2 bg-sky-600 hover:bg-sky-700 border border-sky-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-primary rounded-lg text-sm sm:text-base transition cursor-pointer">
 						Yes
 					</button>
 					<button id="no"
-						class="px-4 py-2 bg-gray-600 hover:bg-gray-700 border border-gray-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-tertiary rounded-lg  text-sm sm:text-base transition cursor-pointer">
 						No
 					</button>
 				</div>
@@ -117,15 +118,15 @@
 
 			<!-- confirmResign Modal -->
 			<div id="modal-confirmResign"
-				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 px-6 py-4 flex-col items-center gap-4 text-white max-w-[100%] hidden">
-				<p id="confirmResign-options-message" class="text-base sm:text-lg lg:text-lg text-center mb-2">Are you sure you want to resign? </p>
+				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary border border-candlelight-400 rounded-xl shadow-2xl z-50 px-8 py-6 flex-col items-center gap-4 text-white max-w-[100%] hidden">
+				<p id="confirmResign-options-message" class="text-base sm:text-lg lg:text-lg text-center mb-2">Are you sure you want to <span class="text-international-orange-700">resign?</span> </p>
 				<div class="flex gap-4 mt-4 justify-center">
 					<button id="yes"
-						class="px-4 py-2 bg-sky-600 hover:bg-sky-700 border border-sky-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-primary rounded-lg text-sm sm:text-base transition cursor-pointer">
 						Yes
 					</button>
 					<button id="no"
-						class="px-4 py-2 bg-gray-600 hover:bg-gray-700 border border-gray-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-tertiary rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
 						No
 					</button>
 				</div>
@@ -152,7 +153,9 @@
 		</div>
 		<!-- Sidebar -->
 		<div id="sidebar"
-			class="relative w-[44vh] h-[64vh] lg:w-[44vh] lg:h-[64vh] flex flex-col justify-between p-6 overflow-hidden lg:min-w-[310px] lg:min-h-[500px] min-w-[300px] min-h-[300px]">
+			class="relative w-[44vh] h-[64vh]  md:w-[60vh] md:h-[60vh] lg:w-[50vh] lg:h-[64vh] flex flex-col justify-between 
+					p-6 overflow-hidden lg:min-w-[400px] lg:min-h-[500px] min-w-[300px] min-h-[300px]
+					bg-pong-bg-secondary border border-candlelight-400 transition-all  duration-300 ease-in-out">
 			<div id="sidebar-overlay" class="absolute inset-0 bg-black/50 z-40 hidden">
 			</div>
 
@@ -163,7 +166,7 @@
 					{{ opponentName }} ({{ opponentElo }})
 				</div>
 				<div id="opponent-time"
-					class="bg-gray-600 text-white font-bold text-3xl sm:text-4xl leading-none mt-1 ml-auto px-2 py-2 rounded">
+					class="bg-pong-bg-tertiary text-candlelight-400 font-bold text-3xl sm:text-4xl leading-none mt-1 ml-auto px-2 py-2 rounded">
 					{{ opponentTime }}
 				</div>
 			</div>
@@ -171,10 +174,10 @@
 			<!-- Buttons -->
 			<div id="action-buttons" class="flex justify-between items-center overflow-hidden">
 				<button id="first"
-					class="flex flex-1 text-gray-300 group font-semibold text-sm cursor-pointer transition-colors duration-200 hover:text-gray-600 justify-center items-center border border-gray-300">
+					class="flex flex-1 text-candlelight-400 group font-semibold text-sm cursor-pointer justify-center items-center hover:bg-chilean-fire-50/10 transition-colors duration-200 border border-chilean-fire-500">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 						style="transform: scale(1.6);"
-						class="w-9 h-9 fill-current transition-colors duration-200 pointer-events-none">
+						class="w-9 h-9 fill-candlelight-400 group-hover:fill-chilean-fire-500 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier" fill-rule="nonzero">
@@ -185,9 +188,9 @@
 					</svg>
 				</button>
 				<button id="previous"
-					class="flex flex-1 text-white font-semibold text-sm group cursor-pointer justify-center items-center border border-gray-300">
+					class="flex flex-1 text-candlelight-400 font-semibold text-sm group cursor-pointer justify-center items-center border hover:bg-chilean-fire-50/10 transition-colors duration-200 border-chilean-fire-500">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200 pointer-events-none">
+						class="w-9 h-9 fill-candlelight-400 group-hover:fill-chilean-fire-500 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">
@@ -196,10 +199,10 @@
 					</svg>
 				</button>
 				<button id="next"
-					class="flex flex-1 text-white font-semibold text-sm group cursor-pointer justify-center items-center border border-gray-300">
+					class="flex flex-1 text-candlelight-400 font-semibold text-sm group cursor-pointer justify-center items-center border hover:bg-chilean-fire-50/10 transition-colors duration-200 border-chilean-fire-500">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 						style="transform: rotate(180deg);"
-						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200 pointer-events-none">
+						class="w-9 h-9 fill-candlelight-400 group-hover:fill-chilean-fire-500 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">
@@ -208,7 +211,7 @@
 					</svg>
 				</button>
 				<button id="last"
-					class="flex flex-1 text-gray-300 group font-semibold text-sm cursor-pointer transition-colors duration-200 hover:text-gray-600 justify-center items-center border border-gray-300">
+					class="flex flex-1 text-candlelight-400 group font-semibold text-sm cursor-pointer hover:bg-chilean-fire-50/10 transition-colors duration-200 hover:text-chilean-fire-500  justify-center items-center border border-chilean-fire-500">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 						style="transform: rotate(180deg) scale(1.6);"
 						class="w-9 h-9 fill-current transition-colors duration-200 pointer-events-none">
@@ -222,9 +225,9 @@
 					</svg>
 				</button>
 				<button id="flip"
-					class="flex flex-1 text-white font-semibold text-sm group cursor-pointer justify-center items-center border border-gray-300">
+					class="flex flex-1 text-candlelight-400 font-semibold text-sm group cursor-pointer justify-center items-center border hover:bg-chilean-fire-50/10 transition-colors duration-200 border-chilean-fire-500">
 					<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-						class="w-9 h-9 fill-gray-300 group-hover:fill-gray-600 transition-colors duration-200 pointer-events-none">
+						class="w-9 h-9 fill-candlelight-400 group-hover:fill-chilean-fire-500 transition-colors duration-200 pointer-events-none">
 						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
 						<g id="SVGRepo_iconCarrier">
@@ -238,7 +241,7 @@
 
 			<!-- Notation container -->
 			<div id="notation-container"
-				class="flex-1 overflow-y-auto mb-4 bg-gray-700 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+				class="flex-1 overflow-y-auto mb-4 mt-2 bg-pong-bg-tertiary border border-chilean-fire-500 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 				<div id="notations-items" class="">
 					<!-- Insert notation item here -->
 				</div>
@@ -246,11 +249,11 @@
 
 			<div id="game-options" class="flex justify-between gap-2 mb-4">
 				<button id="draw"
-					class="flex-1 bg-sky-600 hover:bg-sky-700 cursor-pointer text-white font-semibold py-2 px-2 rounded text-sm">Offer Draw ½</button>
+					class="flex-1 btn-pong-primary cursor-pointer font-semibold py-2 px-2 rounded text-sm">Offer Draw ½</button>
 				<button id="resign"
-					class="flex-1 bg-gray-700 hover:bg-gray-800 cursor-pointer text-white font-semibold py-2 px-2 rounded text-sm">Resign 🏳️</button>
+					class="flex-1 btn-pong-tertiary cursor-pointer font-semibold py-2 px-2 rounded text-sm">Resign 🏳️</button>
 				<button id="return"
-					class="flex-1 bg-sky-600 hover:bg-sky-700 cursor-pointer text-white font-semibold py-2 px-2 rounded text-sm hidden">Go to Lobby</button>
+					class="flex-1 btn-pong-secondary cursor-pointer font-semibold py-2 px-2 rounded text-sm hidden">Go to Lobby</button>
 			</div>
 
 			<div id="player" class="flex items-center gap-4">
@@ -259,7 +262,7 @@
 					{{ playerName }} ({{ playerElo }})
 				</div>
 				<div id="player-time"
-					class="bg-gray-600 text-white font-bold text-3xl sm:text-4xl leading-none mt-1 ml-auto px-2 py-2 rounded">
+					class="bg-pong-bg-tertiary text-candlelight-400 font-bold text-3xl sm:text-4xl leading-none mt-1 ml-auto px-2 py-2 rounded">
 					{{ playerTime }}
 				</div>
 			</div>

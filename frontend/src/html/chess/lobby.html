@@ -1,16 +1,18 @@
-<section id="lobby" class="bg-gray-900">
-	<div id="container" class="flex justify-center items-center">
-
+<section id="lobby" class="bg-gray-900 w-[90%] lg:w-[70%]">
+	<div id="container" class="flex flex-col lg:flex-row gap-2 
+						justify-center items-center  rounded-lg" >
 		<div id="config-game"
-			class="flex flex-col w-[50vh] h-[64vh] bg-gray-800 border-gray-700 rounded-l-lg">
-			<h2 class="text-3xl font-[Tektur] font-bold text-white mb-4 mt-6 text-center">New Game</h2>
+			class="flex flex-col w-full lg:w-[50%] h-[64vh] bg-pong-bg-secondary
+				rounded-t-lg lg:rounded-t-none  lg:rounded-tl-lg lg:rounded-bl-lg 
+				border border-candlelight-400">
+			<h2 class="text-3xl font-[Tektur] font-bold text-candlelight-400 mb-4 mt-6 text-center">New Game</h2>
 			<div id="config-container"
 				class="w-[85%] h-[75%] mx-auto my-auto flex flex-col overflow-y-auto justify-between rounded-lg [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500" style="margin: 0 auto; padding: 0 15px;">
 				<div>
 					<label for="color" class="block mb-2 text-base font-semibold text-white text-center">Select your
 						color:</label>
 					<select id="color"
-						class="w-full p-2.5 border rounded-lg bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500">
+						class="w-full p-2.5 border rounded-lg bg-pong-tertiary border-international-orange-400 text-white  focus:outline-none focus:ring-candlelight-400 focus:border-candlelight-400">
 						<option value="random" selected>Random</option>
 						<option value="white">White</option>
 						<option value="black">Black</option>
@@ -21,7 +23,7 @@
 					<label for="time" class="block mb-2 text-base font-semibold text-white text-center">Select time
 						control:</label>
 					<select id="time"
-						class="w-full p-2.5 border rounded-lg bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500">
+						class="w-full p-2.5 border rounded-lg bg-pong-tertiary border-international-orange-400 text-white focus:outline-none focus:ring-candlelight-400 focus:border-candlelight-400">
 						<optgroup label="Bullet">
 							<option value="1|0">1 min</option>
 							<option value="1|1">1 min + 1s</option>
@@ -44,7 +46,7 @@
 					<label for="mode" class="block mb-2 text-base font-semibold text-white text-center">Game
 						mode:</label>
 					<select id="mode"
-						class="w-full p-2.5 border rounded-lg bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500">
+						class="w-full p-2.5 border rounded-lg bg-pong-tertiary border-international-orange-400 text-white focus:outline-none focus:ring-candlelight-400 focus:border-candlelight-400">
 						<option value="local" selected>Local</option>
 						<option value="online">Online</option>
 					</select>
@@ -55,7 +57,7 @@
 						<label for="minRating" class="block mb-2 text-base font-semibold text-white text-center">Min
 							Rating</label>
 						<select id="minRating"
-							class="w-full p-2.5 border rounded-lg bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500 disabled:text-gray-400 disabled:italic">
+							class="w-full p-2.5 border rounded-lg bg-pong-tertiary border-international-orange-400 text-white focus:outline-none focus:ring-candlelight-400 focus:border-candlelight-400 disabled:text-gray-400 disabled:italic">
 							<option value="any">Any</option>
 							<option value="-25">-25</option>
 							<option value="-50">-50</option>
@@ -70,7 +72,7 @@
 						<label for="maxRating" class="block mb-2 text-base font-semibold text-white text-center">Max
 							Rating</label>
 						<select id="maxRating"
-							class="w-full p-2.5 border rounded-lg bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500 disabled:text-gray-400 disabled:italic">
+							class="w-full p-2.5 border rounded-lg bg-pong-tertiary border-international-orange-400 text-white focus:outline-none focus:ring-candlelight-400 focus:border-candlelight-400 disabled:text-gray-400 disabled:italic">
 							<option value="any">Any</option>
 							<option value="25">25</option>
 							<option value="50">50</option>
@@ -83,7 +85,7 @@
 				</div>
 
 				<button id="start-game" type="submit"
-					class="w-full focus:ring-4 focus:outline-none font-medium rounded-lg text-base mt-4 px-5 py-2.5 text-center bg-sky-600 hover:bg-sky-700 focus:ring-sky-800 mb-2"
+					class="w-full focus:outline-none focus:ring-4 font-medium rounded-lg text-base mt-4 px-5 py-2.5 text-center btn-pong-primary mb-2 transitions-colors"
 					style="cursor: pointer;">
 					Start Game
 				</button>
@@ -91,10 +93,18 @@
 		</div>
 
 		<div id="games"
-			class="flex flex-col w-[50vh] h-[64vh] bg-gray-800 border-gray-700 rounded-r-lg">
-			<h2 class="text-3xl font-[Tektur] font-bold text-white mb-4 mt-6 text-center">Lobbies</h2>
+			class="flex flex-col w-full lg:w-[50%] h-[64vh] bg-pong-bg-secondary 
+				rounded-b-lg lg:rounded-b-none  lg:rounded-tr-lg lg:rounded-br-lg 
+				border border-candlelight-400 pb-4 lg:pb-0">
+			<h2 class="text-3xl font-[Tektur] font-bold text-chilean-fire-500 mb-4 mt-6 text-center">Lobbies</h2>
 			<div id="games-list-container"
-				class="w-[85%] h-[75%] bg-slate-700 mx-auto my-auto flex flex-col overflow-y-auto rounded-lg [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+				class="w-[85%] h-[75%] bg-pong-bg-tertiary border border-chilean-fire-500 mx-auto my-auto flex 	
+					flex-col overflow-y-auto rounded-lg
+					[&::-webkit-scrollbar]:w-2 
+					[&::-webkit-scrollbar-track]:rounded-full 
+					[&::-webkit-scrollbar-track]:bg-neutral-700 
+					[&::-webkit-scrollbar-thumb]:rounded-full 
+					[&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
 				<!-- Insert games here -->
 
