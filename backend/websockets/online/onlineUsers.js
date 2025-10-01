@@ -16,6 +16,7 @@ export function configureOnlineSocket(fastify) {
 			}
 			// 1. Asigna el userId al socket
 			socket.userId = user.id;
+			socket.token = token; 
 
 			// 2. Añade al usuario al mapa de conectados
 			onlineUsers.set(user.id, { userId: String(user.id), username: user.username, status: 'green' });
@@ -140,14 +141,17 @@ function handleOnlineMessages(fastify, socket) {
 				if (!client || !client.userId || client.readyState !== 1) continue;
 				const clientId = String(client.userId);
 				if (clientId === fromId || clientId === targetId) {
+					// Obtén el token del socket (asume que lo guardas al conectar)
+					const token = client.token; // Añade esto al conectar en configureOnlineSocket
 					try {
 						client.send(JSON.stringify({
 							type: "gameStarted",
 							gameId,
 							url,
-							gameMode
+							gameMode,
+							token  // Añade token
 						}));
-						console.log(`gameStarted enviado a ${clientId}`);
+						console.log(`gameStarted enviado a ${clientId} con token`);
 					} catch (err) {
 						console.error('Error enviando gameStarted:', err);
 					}

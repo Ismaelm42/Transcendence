@@ -34,23 +34,38 @@ export function initOnlineSocket() {
 				}
 				return;
 			}
+
 			if (data.type === "gameStarted") {
-				console.log("Evento gameStarted recibido:", data); // Log específico para gameStarted
+				console.log("Evento gameStarted recibido:", data); // Log para confirmar recepción
 
 				const gameId = data.gameId;
 				const gameMode = data.gameMode;
+				const token = data.token;
 
 				console.log("Creando Game y GameConnection..."); // Log antes de crear
 				const game = new Game();
 				const gameConnection = new GameConnection(game);
-				console.log("Llamando establishConnection..."); // Log antes de conectar
 
+				console.log("Llamando establishConnection..."); // Log antes de conectar
 				gameConnection.establishConnection().then(() => {
-					console.log("Conectado al WebSocket de juego, llamando joinGame..."); // Log en then
-					gameConnection.joinGame(gameId);
+					console.log("Conectado al WebSocket de juego, verificando estado..."); // Log en then
+
+					if (gameConnection.socket && gameConnection.socket.readyState === WebSocket.OPEN) {
+						const joinMsg = {
+							type: 'JOIN_GAME',
+							roomId: gameId,
+							token: token
+						};
+						console.log("Enviando JOIN_GAME:", joinMsg); // Log antes de enviar
+						gameConnection.socket.send(JSON.stringify(joinMsg));
+						console.log("JOIN_GAME enviado manualmente con token");
+					} else {
+						console.error("WebSocket de juego no está OPEN. Estado:", gameConnection.socket?.readyState);
+					}
+
 					console.log("Game started with ID:", gameId, "Mode:", gameMode);
 
-					// Añade un listener temporal para logs (sin modificar GameConnection)
+					// Añade listener para mensajes
 					if (gameConnection.socket) {
 						gameConnection.socket.addEventListener('message', (event) => {
 							const msg = JSON.parse(event.data);
@@ -61,10 +76,10 @@ export function initOnlineSocket() {
 						});
 					}
 				}).catch((error) => {
-					console.error("Error establishing game connection:", error); // Log en catch
+					console.error("Error en establishConnection:", error); // Log en catch
 				});
-				return;
-			}
+    return;
+}
 		};
 
 		onlineSocket.onclose = () => {
