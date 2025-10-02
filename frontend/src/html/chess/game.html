@@ -16,7 +16,6 @@
 				</button>
 				<div class="flex justify-center items-center gap-1">
 					<img id="q" src="../../pieces/wq.png" alt="Queen"
-					
 						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer hover:drop-shadow-[0_0_8px_var(--color-candlelight-400)] transition-all duration-300" />
 					<img id="r" src="../../pieces/wr.png" alt="Rook"
 						class="promotion-piece w-12 h-12 lg:w-16 lg:h-16 object-contain cursor-pointer hover:drop-shadow-[0_0_8px_var(--color-candlelight-400)] transition-all duration-300" />
@@ -74,10 +73,9 @@
 
 			<!-- Opponent declined Rematch -->
 			<div id="modal-rematch-declined"
-				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 px-6 py-4 flex-col items-center gap-4 text-white max-w-[100%] hidden">
+				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary border border-candlelight-400 rounded-xl shadow-2xl z-50 px-8 py-6 flex-col items-center gap-4 text-white max-w-[100%] hidden">
 				<button id="close-rematch-declined"
-					class="absolute top-1 right-1 text-gray-500 hover:text-white text-2xl leading-none font-bold cursor-pointer">
-					&times;
+					class="absolute top-1 right-2 text-international-orange-700 hover:text-candlelight-400 text-2xl leading-none font-bold cursor-pointer">&times;
 				</button>
 				<div class="flex flex-col items-center">
 					<p id="declined-reason" class="text-base sm:text-lg lg:text-lg text-center mb-2"></p>
@@ -86,15 +84,15 @@
 
 			<!-- Rematch Modal -->
 			<div id="modal-rematch"
-				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 px-6 py-4 flex-col items-center gap-4 text-white max-w-[100%] hidden">
+				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary border border-candlelight-400 rounded-xl shadow-2xl z-50 px-8 py-6 flex-col items-center gap-4 text-white max-w-[100%] hidden">
 				<p id="rematch-options-message" class="text-base sm:text-lg lg:text-lg text-center mb-2"></p>
 				<div class="flex gap-4 mt-4 justify-center">
 					<button id="yes"
-						class="px-4 py-2 bg-sky-600 hover:bg-sky-700 border border-sky-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-primary rounded-lg text-sm sm:text-base transition cursor-pointer">
 						Yes
 					</button>
 					<button id="no"
-						class="px-4 py-2 bg-gray-600 hover:bg-gray-700 border border-gray-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-tertiary rounded-lg  text-sm sm:text-base transition cursor-pointer">
 						No
 					</button>
 				</div>
@@ -134,15 +132,15 @@
 
 			<!-- Request Draw Modal -->
 			<div id="modal-requestDraw"
-				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 px-6 py-4 flex-col items-center gap-4 text-white max-w-[100%] hidden">
+				class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pong-bg-secondary border border-candlelight-400 rounded-xl shadow-2xl z-50 px-8 py-6 flex-col items-center gap-4 text-white max-w-[100%] hidden">
 				<p id="requestDraw-options-message" class="text-base sm:text-lg lg:text-lg text-center mb-2"></p>
 				<div class="flex gap-4 mt-4 justify-center">
 					<button id="yes"
-						class="px-4 py-2 bg-sky-600 hover:bg-sky-700 border border-sky-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-primary rounded-lg text-sm sm:text-base transition cursor-pointer">
 						Accept
 					</button>
 					<button id="no"
-						class="px-4 py-2 bg-gray-600 hover:bg-gray-700 border border-gray-500 rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
+						class="px-4 py-2 btn-pong-tertiary rounded-lg text-white text-sm sm:text-base transition cursor-pointer">
 						Decline
 					</button>
 				</div>
