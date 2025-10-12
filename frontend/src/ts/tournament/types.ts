@@ -46,3 +46,17 @@ export interface TournamentPlayer
 	status: 'pending' | 'ready' | 'waiting'; //pending not regiser, ready is registered, waiting is waiting for other players (remote)
 	gameplayer: GamePlayer;
 }
+
+export type Tournament_log = {
+  id: number;
+  tournament_id: number;
+  playerscount: number;
+  config: string;
+  users: string;
+  games_data: string;
+  winner: string;
+  created_at: string;
+  updated_at: string;
+};
+
+

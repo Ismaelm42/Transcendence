@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { handleStats, handleChessStats } from './handleStats.js';
+import { handleStats, handleChessStats, handlePongTournamentStats } from './handleStats.js';
 function formatTimeFromMilliseconds(milliseconds) {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
@@ -18,7 +18,6 @@ function formatTimeFromMilliseconds(milliseconds) {
 }
 export function getPongStats(appElement) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("getPongStats called");
         try {
             const url = `https://localhost:8443/back/get_user_gamelogs`;
             const getUserResponse = yield fetch(`${url}`, {
@@ -29,20 +28,13 @@ export function getPongStats(appElement) {
                 throw new Error("Error retrieving stats");
             }
             const userStats = yield getUserResponse.json();
-            console.log("userStats:", userStats);
             if (userStats) {
                 try {
                     const statsContainer = document.getElementById("pong-stats-content");
                     const selectionElement = document.getElementById("stats_select");
-                    // const selectedValue = (selectionElement as HTMLSelectElement).value;
                     let htmlContent = statsContainer ? statsContainer.innerHTML : '';
-                    // console.log("htmlContent before:", htmlContent);
-                    // console.log("selectedValue:", selectedValue);
                     if (statsContainer) {
                         statsContainer.innerHTML = ''; // Clear previous content			
-                        // const response = await fetch("../../html/stats/stats.html");
-                        // if (!response.ok) throw new Error("Failed to load the HTML file");
-                        // let htmlContent = await response.text();
                         htmlContent = htmlContent
                             .replace("{{ totalGames }}", userStats.totalGames.toString())
                             .replace("{{ wins }}", userStats.wins.toString())
@@ -52,30 +44,120 @@ export function getPongStats(appElement) {
                             .replace("{{ winsInTournaments }}", userStats.winsInTournaments.toString())
                             .replace("{{ lossesInTournaments }}", userStats.losses.toString());
                         statsContainer.innerHTML = htmlContent;
-                        // console.log("htmlContent:", htmlContent);
                         handleStats(userStats);
                     }
                 }
                 catch (error) {
-                    console.error("Error loading HTML file:", error);
+                    console.log("Error loading HTML file:", error);
                     appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
                 }
             }
         }
         catch (error) {
-            console.error("Error rendering Stats element:", error);
+            console.log("Error rendering Stats element:", error);
             appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
         }
     });
 }
 export function getPongTournamentStats(appElement) {
     return __awaiter(this, void 0, void 0, function* () {
-        alert("getPongTournamentStats called");
+        // alert("getPongTournamentStats called");
+        try {
+            const url = `https://localhost:8443/back/get_user_tournamentlogs`;
+            const getUserResponse = yield fetch(`${url}`, {
+                method: "GET",
+                credentials: "include"
+            });
+            if (!getUserResponse.ok) {
+                throw new Error("Error retrieving stats");
+            }
+            const userStats = yield getUserResponse.json();
+            if (userStats) {
+                // const userId = userStats[0].userId;
+                const userIDElement = userStats.shift(); // Remove the first element which contains only { userId: ... }
+                const userId = userIDElement.userId;
+                let tournamentsPlayed = 0;
+                let timePlayed = 0;
+                let TournamentsWon = 0;
+                let TournamentsLost = 0;
+                let username = '';
+                userStats.forEach((tournament) => {
+                    tournamentsPlayed++;
+                    console.log('Tournament Winner: ', tournament.winner);
+                    // games_data is a stringified JSON, so we need to parse it
+                    const parsedGames = JSON.parse(tournament.games_data);
+                    const parsedUsers = JSON.parse(tournament.users);
+                    parsedUsers.forEach((user) => {
+                        if (user.gameplayer.id === userId) {
+                            username = user.gameplayer.username;
+                        }
+                    });
+                    if (username === tournament.winner)
+                        TournamentsWon++;
+                    else
+                        TournamentsLost++;
+                    parsedGames.forEach((game) => {
+                        var _a, _b;
+                        console.log(game);
+                        if (((_a = game.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.id) === userId || ((_b = game.playerDetails.player2) === null || _b === void 0 ? void 0 : _b.id) === userId) {
+                            if (game.duration) {
+                                // console.log('Tiempo de partida: ' ,game.duration);
+                                timePlayed += game.duration;
+                            }
+                        }
+                    });
+                });
+                // console.log("TournamentsWon:", TournamentsWon);
+                // console.log("TournamentsLost:", TournamentsLost);
+                // console.log("TournamentsPlayed:", tournamentsPlayed);
+                // console.log("TimePlayed:", timePlayed);
+                // console.log("userStats in getPongTournamentStats:", userStats);
+                // Update the HTML content with the tournament stats /////////////////////////////////////////////////////////////////////////////
+                if (userStats) {
+                    try {
+                        const statsContainer = document.getElementById("pong-tournament-stats-content");
+                        const selectionElement = document.getElementById("stats_select");
+                        let htmlContent = statsContainer ? statsContainer.innerHTML : '';
+                        if (statsContainer) {
+                            statsContainer.innerHTML = ''; // Clear previous content			
+                            htmlContent = htmlContent
+                                .replace("{{ tournamentsPlayed }}", tournamentsPlayed.toString())
+                                .replace("{{ t_wins }}", TournamentsWon.toString())
+                                .replace("{{ t_losses }}", TournamentsLost.toString())
+                                .replace("{{ timePlayed }}", (formatTimeFromMilliseconds(timePlayed)).toString());
+                            statsContainer.innerHTML = htmlContent;
+                            // userStats.unshift(userIDElement); // Re-add the userId element to the start of the array
+                            // console.log("userStats after unshift:", userStats);
+                            // console.log("type of userStats:", typeof userStats);
+                            // console.log("htmlContent:", htmlContent);
+                            const proccessedStats = {
+                                userId: userId,
+                                username: username,
+                                tournamentsPlayed: tournamentsPlayed,
+                                TournamentsWins: TournamentsWon,
+                                Tournamentslosses: TournamentsLost,
+                                timePlayed: (formatTimeFromMilliseconds(timePlayed)).toString(),
+                                userStats: userStats
+                            };
+                            handlePongTournamentStats(proccessedStats);
+                        }
+                    }
+                    catch (error) {
+                        console.log("Error loading HTML file:", error);
+                        appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
+                    }
+                }
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            }
+        }
+        catch (error) {
+            console.log("Error rendering Pong TournamentStats element:", error);
+            appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
+        }
     });
 }
 export function getChessStats(appElement) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("getChessStats called");
         try {
             const url = `https://localhost:8443/back/get_user_chessgamelogs`;
             const getUserResponse = yield fetch(`${url}`, {
@@ -86,40 +168,32 @@ export function getChessStats(appElement) {
                 throw new Error("Error retrieving stats");
             }
             const userStats = yield getUserResponse.json();
-            console.log("userStats:", userStats);
             if (userStats) {
                 try {
                     const statsContainer = document.getElementById("chess-stats-content");
                     const selectionElement = document.getElementById("stats_select");
-                    // const selectedValue = (selectionElement as HTMLSelectElement).value;
                     let htmlContent = statsContainer ? statsContainer.innerHTML : '';
-                    // console.log("htmlContent before:", htmlContent);
-                    // console.log("selectedValue:", selectedValue);
                     if (statsContainer) {
                         statsContainer.innerHTML = ''; // Clear previous content			
-                        // const response = await fetch("../../html/stats/stats.html");
-                        // if (!response.ok) throw new Error("Failed to load the HTML file");
-                        // let htmlContent = await response.text();
                         htmlContent = htmlContent
                             .replace("{{ totalGames }}", userStats.totalGames.toString())
                             .replace("{{ wins }}", userStats.wins.toString())
                             .replace("{{ losses }}", userStats.losses.toString())
                             .replace("{{ draws }}", userStats.draws.toString())
                             .replace("{{ WinsByCheckMate }}", userStats.WinsByCheckMate.toString())
-                            .replace("{{ lostByCheckMate }}", userStats.losses.toString());
+                            .replace("{{ lostByCheckMate }}", userStats.lostByCheckMate.toString());
                         statsContainer.innerHTML = htmlContent;
-                        // console.log("htmlContent:", htmlContent);
                         handleChessStats(userStats);
                     }
                 }
                 catch (error) {
-                    console.error("Error loading HTML file:", error);
+                    console.log("Error loading HTML file:", error);
                     appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
                 }
             }
         }
         catch (error) {
-            console.error("Error rendering Stats element:", error);
+            console.log("Error rendering Stats element:", error);
             appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
         }
     });

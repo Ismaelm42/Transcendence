@@ -15,21 +15,115 @@ export const getTournamentlogs = async () => {
 	}
 };
 
-// TODO : pendiente de probar
+
 export const getTournamentlogsByUserId = async (userId) => {
 	try {
-		const [userTournamentlogs] = await sequelize.query(
-			'SELECT * FROM "Usergamelog" WHERE "userId" = :userId',
-			{
-				type: Sequelize.QueryTypes.SELECT,
-				replacements: { userId },
-			}
-		);
-		return userTournamentlogs;
+		const tournaments = await sequelize.query(`SELECT id, playerscount, users, winner FROM tournamentlogs`, 
+			{ type: sequelize.QueryTypes.SELECT });
+
+		  // filters for each row:
+		  const queries = tournaments.map(t => {
+		    const conditions = [];
+			// we cannot iterate over undefined length arrays
+		  	const count = t.playerscount || 4; // default value in case of an empty value
+			// add condition to check if any playerId in users=  userId
+			for (let i = 0; i < count; i++) {
+		      conditions.push(`
+		        (json_extract(users, '$[${i}].gameplayer.id') = ${userId})
+		      `);
+		    }
+		    return `(id = ${t.id} AND (${conditions.join(' OR ')}))`;
+		  });
+
+		  // get the final query:
+		  /*
+		    SELECT *
+		    FROM tournamentlogs
+		    WHERE (id = 1 AND (
+		        (json_extract(users, '$[0].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[1].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[2].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[3].gameplayer.id') = 6)
+		      )) OR (id = 2 AND (
+		        (json_extract(users, '$[0].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[1].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[2].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[3].gameplayer.id') = 6)
+		      )) OR (id = 3 AND (
+		        (json_extract(users, '$[0].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[1].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[2].gameplayer.id') = 6)
+		       OR 
+		        (json_extract(users, '$[3].gameplayer.id') = 6)
+		      ))
+		  */
+		  const finalQuery = `
+		    SELECT *
+		    FROM tournamentlogs
+		    WHERE ${queries.join(' OR ')}
+		  `;
+
+		  // Executing the query
+		  const [results] = await sequelize.query(finalQuery);
+		  console.log("tournamentlogs by userId: " + JSON.stringify(results));
+		  return results;
 	} catch (err) {
-		throw new Error(`Error fetching user tournamentlogs: ${err.message}`);
+		throw new Error(`Error fetching tournamentlogs ${err.message}`);
 	}
 };
+
+// like getTournamentlogsByUserId but filtering also by winner
+export const getTournamentWinsByUserId = async (userId) => {
+	try {
+		const tournaments = await sequelize.query(`SELECT id, playerscount, users, winner FROM tournamentlogs`, 
+			{ type: sequelize.QueryTypes.SELECT });
+			const queries = tournaments.map(t => {
+		    const conditions = [];
+		    const count = t.playerscount || 4;
+		    for (let i = 0; i < count; i++) {
+		      conditions.push(`
+		        (json_extract(users, '$[${i}].gameplayer.id') = ${userId}
+		         AND winner = json_extract(users, '$[${i}].gameplayer.tournamentUsername'))
+		      `);
+		    }
+		    return `(id = ${t.id} AND (${conditions.join(' OR ')}))`;
+		  });
+		  const finalQuery = `
+		    SELECT *
+		    FROM tournamentlogs
+		    WHERE ${queries.join(' OR ')}
+		  `;
+		  const [results] = await sequelize.query(finalQuery);
+		  console.log("tournamentlogs by userId: " + JSON.stringify(results));
+		  return results;
+	} catch (err) {
+		throw new Error(`Error fetching tournamentlogs ${err.message}`);
+	}
+};
+
+//// funcion anterior a medio camino entre games y torneo
+// export const getTournamentlogsByUserId = async (userId) => {
+// 	try {
+// 		const [userTournamentlogs] = await sequelize.query(
+// 			'SELECT * FROM "Usergamelog" WHERE "userId" = :userId',
+// 			{
+// 				type: Sequelize.QueryTypes.SELECT,
+// 				replacements: { userId },
+// 			}
+// 		);
+// 		return userTournamentlogs;
+// 	} catch (err) {
+// 		throw new Error(`Error fetching user tournamentlogs: ${err.message}`);
+// 	}
+// };
 
 // tested and working
 export const getNextTournamentlogId = async () => {

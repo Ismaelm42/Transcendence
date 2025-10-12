@@ -33,9 +33,10 @@ export function configureTournamentlogRoutes(fastify, sequelize) {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			const userId = decoded.userId;
 			const ParamsuserId = request.params.userId;
-			console.log('userId en get_user_tournamentlogs', userId);
-			console.log('ParamsuserId en get_user_tournamentlogs', ParamsuserId);
+			// console.log('userId en get_user_tournamentlogs', userId);
+			// console.log('ParamsuserId en get_user_tournamentlogs', ParamsuserId);
 			const userTournamentlogs = await crud.tournamentlog.getTournamentlogsByUserId(userId);
+			userTournamentlogs.unshift({ userId });
 			reply.status(200).send(userTournamentlogs);
 		} catch (err) {
 			fastify.log.error(err);
