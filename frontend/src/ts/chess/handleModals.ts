@@ -85,7 +85,10 @@ export async function saveChessGame(data: any): Promise<void>  {
 			if (!response.ok) {
 				console.log(`Error: ${result.message}`);
 			} else {
-				console.log("Game log saved successfully:", result);
+				if (result && result.id && result.id == -42)
+					console.log("Online game: Game log already saved by the host: ", result);
+				else
+					console.log("Game log saved successfully:", result);
 			}
 		} catch (error) {
 			console.error("Error while verifying:", error);

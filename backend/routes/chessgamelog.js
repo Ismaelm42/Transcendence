@@ -46,10 +46,26 @@ export function configureChessgamelogRoutes(fastify, sequelize) {
 	fastify.post('/post_chessgamelog', async (request, reply) => {
 		try
 		{
+			const token = request.cookies.token;
+			const decoded = jwt.verify(token, process.env.JWT_SECRET);
+			const userId = decoded.userId;
 			console.log('Request body:', request.body);
 			const chessgamelogData = request.body;
-			const chessgamelog = await crud.chessgamelog.createChessgamelog(chessgamelogData);
-			reply.status(201).send(chessgamelog);
+			if (chessgamelogData.user1 === userId){
+				const chessgamelog = await crud.chessgamelog.createChessgamelog(chessgamelogData);
+				reply.status(200).send(chessgamelog);
+			} else {
+				const chessgamelog = {	"id":-42,
+										"user1":0,
+										"user2":0,
+										"draw":false,
+										"winner":0,
+										"loser":0,
+										"endtype":"resignation",
+										"updatedAt":"2025-10-12T09:57:12.439Z",
+										"createdAt":"2025-10-12T09:57:12.439Z"};
+				reply.status(200).send(chessgamelog);
+			}
 			// reply.status(201).send(chessgamelogData);
 
 		}
