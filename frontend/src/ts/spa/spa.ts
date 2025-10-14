@@ -34,72 +34,45 @@ export class SPA {
 		SPA.instance = this;
         this.loadHEaderAndFooter();	
 		this.loadStep();
-		// Changes to advise the user when they leave a tournament in progress
-		//it will reset the tournament guards and delete TempUsers
-		window.onpopstate = async () => {
+
+		// Unified hash-based routing (single source of truth)
+		let revertingHash = false; // guard re-entrancy when we revert after a cancelled leave
+		window.addEventListener('hashchange', async () => {
+			if (revertingHash) return; // ignore synthetic change caused by our own revert
 			const nextStep = location.hash.replace('#', '') || 'home';
-			// Intercept leaving game-match BEFORE existing tournament logic
-			if (!this.navigationGuardActive && this.currentStep === 'game-match' && nextStep !== 'game-match')
-			{
+			// Guard: leaving an active game-match
+			if (!this.navigationGuardActive && this.currentStep === 'game-match' && nextStep !== 'game-match') {
 				this.navigationGuardActive = true;
 				const confirmed = await this.confirmLeaveGameMatch(nextStep);
 				this.navigationGuardActive = false;
-				if (!confirmed)
-				{
-					// Revert hash to current step (pushState so it does not create another history entry)
+				if (!confirmed) {
 					this.currentGame?.getGameConnection().socket?.send(JSON.stringify({ type: 'RESUME_GAME' }));
-					history.pushState({}, '', `#${this.currentStep}`);
-					return ;
+					revertingHash = true;
+					window.location.hash = `#${this.currentStep}`; // restore previous
+					revertingHash = false;
+					return;
 				}
 			}
+			// Tournament in progress warning logic (moved from popstate)
 			if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
 				const tournamentId = this.currentTournament.getTournamentId();
 				const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
-
-				// if the tournament is in progress, show a warning message is it is not already shown when navigation arrow is clicked
-				if (typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42
-					&& warningFlag!== true) {
+				if (this.currentStep === 'tournament-lobby' && nextStep !== 'tournament-lobby' && typeof tournamentId !== 'undefined' && tournamentId !== null && tournamentId > -42 && warningFlag !== true) {
 					showMessage("Tournament in progress aborted", 5000);
 					const tournamentUI = this.currentTournament.getTournamentUI?.();
 					if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
 						tournamentUI.resetTournament();
 					}
-					// loop to wait for the message to be closed
 					const messageContainer = document.getElementById("message-container");
-						const intervalId = setInterval(() => {
-							if (messageContainer?.style.display === 'none') {
-								clearInterval(intervalId);
-							}
-						}, 1000);
-					
-				}
-				const step = location.hash.replace('#', '') || 'home';
-				this.loadStep();
-			}else {
-				const step = location.hash.replace('#', '') || 'home';
-				this.loadStep();
+					const intervalId = setInterval(() => {
+						if (messageContainer?.style.display === 'none') {
+							clearInterval(intervalId);
+						}
+					}, 1000);
 				}
 			}
-
-			// Handle manual hash edits (not via navigate()/pushState). Avoid double firing if popstate already handled.
-			window.addEventListener('hashchange', async () => {
-				const nextStep = location.hash.replace('#', '') || 'home';
-				if (this.navigationGuardActive) return; // popstate already processed
-				if (this.currentStep === 'game-match' && nextStep !== 'game-match') {
-					this.navigationGuardActive = true;
-					const confirmed = await this.confirmLeaveGameMatch(nextStep);
-					this.navigationGuardActive = false;
-					if (!confirmed)
-					{
-						// Restore original hash
-						this.currentGame?.getGameConnection().socket?.send(JSON.stringify({ type: 'RESUME_GAME' }));
-						window.location.hash = `#${this.currentStep}`;
-						return;
-					}
-				}
-				// If confirmed or not a guarded leave, proceed
-				this.loadStep();
-			});
+			this.loadStep();
+		});
 
 			// Native browser reload / close guard
 			window.onbeforeunload = (e) => {
@@ -155,17 +128,16 @@ export class SPA {
     }
 
     async navigate(step: string) {
-		// Intercept programmatic navigation
+		// Intercept programmatic navigation (guarding game-match before changing hash)
 		if (this.currentStep === 'game-match' && step !== 'game-match') {
 			const confirmed = await this.confirmLeaveGameMatch(step);
-			if (!confirmed)
-			{	
+			if (!confirmed) {
 				this.currentGame?.getGameConnection().socket?.send(JSON.stringify({ type: 'RESUME_GAME' }));
-				return ;
+				return;
 			}
 		}
-		history.pushState({}, '', `#${step}`);
-        this.loadStep();
+		if (location.hash === `#${step}`) return; // no-op if already there
+		location.hash = `#${step}`; // hashchange handler will call loadStep
     }
 
 	async loadStep() {
