@@ -77,7 +77,13 @@ export function configureUserRoutes(fastify, sequelize) {
 	fastify.get('/get_users', async (request, reply) => {
 		try {
 			const users = await crud.user.getUsers();
-			reply.status(200).send(users);
+			/// To avoid sending sensitive information, map users to only include non-sensitive fields
+			let safeUsers = users.map(user => {
+				const { id, username} = user;
+				return { id, username };
+			});
+			reply.status(200).send(safeUsers);
+			////////
 		} catch (err) {
 			fastify.log.error(err);
 			reply.status(500).send({ error: 'Error fetching users' + err.message });

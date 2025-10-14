@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { handleStats, handleChessStats, handlePongTournamentStats } from './handleStats.js';
-function formatTimeFromMilliseconds(milliseconds) {
+export function formatTimeFromMilliseconds(milliseconds) {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -42,7 +42,7 @@ export function getPongStats(appElement) {
                             .replace("{{ timePlayed }}", (formatTimeFromMilliseconds(userStats.timePlayed)).toString())
                             .replace("{{ tournamentsGames }}", userStats.tournamentsPlayed.toString())
                             .replace("{{ winsInTournaments }}", userStats.winsInTournaments.toString())
-                            .replace("{{ lossesInTournaments }}", userStats.losses.toString());
+                            .replace("{{ lossesInTournaments }}", userStats.lossesInTournaments.toString());
                         statsContainer.innerHTML = htmlContent;
                         handleStats(userStats);
                     }
@@ -73,7 +73,6 @@ export function getPongTournamentStats(appElement) {
             }
             const userStats = yield getUserResponse.json();
             if (userStats) {
-                // const userId = userStats[0].userId;
                 const userIDElement = userStats.shift(); // Remove the first element which contains only { userId: ... }
                 const userId = userIDElement.userId;
                 let tournamentsPlayed = 0;
@@ -83,8 +82,6 @@ export function getPongTournamentStats(appElement) {
                 let username = '';
                 userStats.forEach((tournament) => {
                     tournamentsPlayed++;
-                    console.log('Tournament Winner: ', tournament.winner);
-                    // games_data is a stringified JSON, so we need to parse it
                     const parsedGames = JSON.parse(tournament.games_data);
                     const parsedUsers = JSON.parse(tournament.users);
                     parsedUsers.forEach((user) => {
@@ -98,10 +95,8 @@ export function getPongTournamentStats(appElement) {
                         TournamentsLost++;
                     parsedGames.forEach((game) => {
                         var _a, _b;
-                        console.log(game);
                         if (((_a = game.playerDetails.player1) === null || _a === void 0 ? void 0 : _a.id) === userId || ((_b = game.playerDetails.player2) === null || _b === void 0 ? void 0 : _b.id) === userId) {
                             if (game.duration) {
-                                // console.log('Tiempo de partida: ' ,game.duration);
                                 timePlayed += game.duration;
                             }
                         }

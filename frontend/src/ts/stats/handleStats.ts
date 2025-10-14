@@ -54,7 +54,7 @@ export async function fetchGameLogs(): Promise<any> {
 export async function fetchChessGameLogs(): Promise<any> {
 	try {
 
-				const url = `https://localhost:8443/back/get_chessgamelogs`;
+		const url = `https://localhost:8443/back/get_chessgamelogs`;
 		const getUserResponse = await fetch(`${url}`, {
 			method: "GET",
 			credentials: "include"
@@ -68,6 +68,7 @@ export async function fetchChessGameLogs(): Promise<any> {
 		return await userStats;
 		// const response = await fetch('https://localhost:8443/back/get_user_chessgamelogs`', {			
 		// 	method: "GET",
+		
 		// 	credentials: "include"
 		// });
 		// if (!response.ok) {
@@ -109,35 +110,27 @@ export function getUserNameById(userId: string| null): string | undefined {
 export async function handleStats(userStats: { userId: string; wins: number; losses: number; totalGames: number, tournamentsPlayed: number, winsInTournaments: number }): Promise<void> {
 	userID = userStats.userId;
 	initializeUserNames();
-	// De esta forma hacemos que se ejectue el script de Chart.js
-	if (typeof Chart === 'undefined') {
-		await loadChartJs();
-	}
-	// Asignamos el canvas a la variable
+	await loadChartJs();
 	const canvas = document.getElementById('statsChart') as HTMLCanvasElement | null;
 	if (!canvas) {
 		console.error("Canvas element with id 'statsChart' not found.");
 		return;
 	}
-	// Asignamos el canvas a la variable
 	const canvas2 = document.getElementById('statsTournamentChart') as HTMLCanvasElement | null;
 	if (!canvas2) {
 		console.error("Tournament Canvas element with id 'statsChart' not found.");
 		return;
 	}
-	// generamos el contexto 2D del canvas
 	const ctx = canvas.getContext('2d');
 	if (!ctx) {
 		console.error("Failed to get 2D context from canvas.");
 		return;
 	}
-	// generamos el contexto 2D del canvas
 	const ctx2 = canvas2.getContext('2d');
 	if (!ctx2) {
 		console.error("Failed to get 2D context from canvas.");
 		return;
 	}
-
 	const statsChart = new Chart(ctx, {
 		type: 'pie',
 		data: {
@@ -151,6 +144,7 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 		},
 		options: {
 			responsive: true,
+			animateRotate: true,
 			plugins: {
 				legend: {
 					labels: {
@@ -160,7 +154,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 			}
 		}
 	});
-
 	const torunamentLoosed = userStats.tournamentsPlayed - userStats.winsInTournaments;
 	const statsTournamentChart = new Chart(ctx2, {
 		type: 'pie',
@@ -197,21 +190,16 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 	// 🖱️ Doble click handler for game stats
 	canvas.addEventListener('dblclick', async function (event) {
 		const points = statsChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
-
 		if (points.length) {
 			const index = points[0].index;
 			const label = statsChart.data.labels[index];
 			const color = statsChart.data.datasets[0].backgroundColor[index]
-
-			//Obtenemos todas las partidas
 			try {
 				const gameRecords = await fetchGameLogs();
 				const users = await fetchUsers();
 				console.log("users", users);
 				const response = await fetch("../../html/stats/statslist.html");
 				let htmlTemplate = await response.text();
-				// Generar el contenido dinámico
-
 				let tableRows = "";
 				gameRecords.forEach((record: { createdAt: string; winner: string; loser: string; duration: number; tournamentId: string | null }) => {
 					const date = new Date(record.createdAt).toLocaleString();
@@ -257,14 +245,10 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 				});
 
 				htmlTemplate = htmlTemplate.replace(/{{table_rows}}/g, tableRows);
-
-				// Reemplazar los marcadores de posición
 				htmlTemplate = htmlTemplate
 					.replace(/{{label}}/g, label)
 					.replace(/{{color}}/g, color)
 					.replace(/{{table_rows}}/g, tableRows);
-
-				// Insertar en el DOM
 				const container = document.createElement("div");
 				container.innerHTML = htmlTemplate;
 				document.body.appendChild(container);
@@ -272,7 +256,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 				if (closeBtn) {
 					window.addEventListener("popstate", navivageBack)
 				}
-
 				closeBtn?.addEventListener("click", () => {
 					container.remove();
 					window.removeEventListener("popstate", navivageBack);
@@ -292,23 +275,12 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 			const label = statsTournamentChart.data.labels[index];
 			const color = statsTournamentChart.data.datasets[0].backgroundColor[index];
 			const value = statsTournamentChart.data.datasets[0].data[index];
-
-			// Ejecutar acción personalizada	
-			console.log(`Doble clic en: ${label} (${value})`);
-			// alert(`Doble clic en: ${label} (${value})`);
-
-			// Podés llamar aquí a otra función según el label
-			// if (label === 'Wins') { ... }
-
-			//// Inicio prueba
-				try {
+			try {
 				const gameRecords = await fetchGameLogs();
 				const users = await fetchUsers();
 				console.log("users", users);
 				const response = await fetch("../../html/stats/statslist.html");
 				let htmlTemplate = await response.text();
-				// Generar el contenido dinámico
-
 				let tableRows = "";
 				gameRecords.forEach((record: { createdAt: string; winner: string; loser: string; duration: number; tournamentId: string | null }) => {
 					const tournamentInfo = record.tournamentId ? `Tournament: ${record.tournamentId}` : "Non-tournament game";
@@ -356,14 +328,10 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 				});
 
 				htmlTemplate = htmlTemplate.replace(/{{table_rows}}/g, tableRows);
-
-				// Reemplazar los marcadores de posición
 				htmlTemplate = htmlTemplate
 					.replace(/{{label}}/g, label)
 					.replace(/{{color}}/g, color)
 					.replace(/{{table_rows}}/g, tableRows);
-
-				// Insertar en el DOM
 				const container = document.createElement("div");
 				container.innerHTML = htmlTemplate;
 				document.body.appendChild(container);
@@ -371,7 +339,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 				if (closeBtn) {
 					window.addEventListener("popstate", navivageBack)
 				}
-
 				closeBtn?.addEventListener("click", () => {
 					container.remove();
 					window.removeEventListener("popstate", navivageBack);
@@ -379,13 +346,10 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 			} catch (error) {
 				console.error("Error fetching game logs:", error);
 			}
-
-			//// Fin de prueba
 		}
 	});
 }
 
-// Pendiente de adaptar ///
 export async function handlePongTournamentStats(
 						proccessedStats : {
 						userId: string,
@@ -399,35 +363,17 @@ export async function handlePongTournamentStats(
 
 	const userID = proccessedStats.userId;
 	initializeUserNames();
-	// De esta forma hacemos que se ejectue el script de Chart.js
-	if (typeof Chart === 'undefined') {
-		await loadChartJs();
-	}
-	// Asignamos el canvas a la variable
+	await loadChartJs();
 	const pongTcanvas = document.getElementById('pong-tournament-statsChart') as HTMLCanvasElement | null;
 	if (!pongTcanvas) {
 		console.error("Canvas element with id 'statsChart' not found.");
 		return;
 	}
-	// Asignamos el pongTcanvas a la variable
-	// const pongTcanvas2 = document.getElementById('pong-tournament-statsExtendedChart') as HTMLCanvasElement | null;
-	// if (!pongTcanvas2) {
-	// 	console.error("Tournament Canvas element with id 'statsChart' not found.");
-	// 	return;
-	// }
-	// generamos el contexto 2D del pongTcanvas
 	const ctx = pongTcanvas.getContext('2d');
 	if (!ctx) {
 		console.error("Failed to get 2D context from pongTcanvas.");
 		return;
 	}
-	// // generamos el contexto 2D del pongTcanvas
-	// const ctx2 = pongTcanvas2.getContext('2d');
-	// if (!ctx2) {
-	// 	console.error("Failed to get 2D context from pongTcanvas.");
-	// 	return;
-	// }
-
 	const statsChart = new Chart(ctx, {
 		type: 'pie',
 		data: {
@@ -452,30 +398,6 @@ export async function handlePongTournamentStats(
 	});
 
 	const torunamentLoosed = proccessedStats.Tournamentslosses;
-	// const statsTournamentChart = new Chart(ctx2, {
-	// 	type: 'pie',
-	// 	data: {
-	// 		labels: ['Wins', 'Losses', 'Total'],
-	// 		datasets: [{
-	// 			data: [proccessedStats.TournamentsWins, torunamentLoosed, proccessedStats.tournamentsPlayed],
-
-	// 			backgroundColor: ['#ffe90d', '#bc3112', '#feab39'], 
-	// 			borderColor: '#1F2937',
-	// 			borderWidth: 2
-	// 		}]
-	// 	},
-	// 	options: {
-	// 		responsive: true,
-	// 		plugins: {
-	// 			legend: {
-	// 				labels: {
-	// 					color: 'white'
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// });
-
 	function navivageBack() {
 		const container = document.getElementById("stats-modal");
 		if (container) {
@@ -483,7 +405,6 @@ export async function handlePongTournamentStats(
 		}
 		window.removeEventListener("popstate", navivageBack);
 	};
-
 	// 🖱️ Doble click handler for game stats
 	pongTcanvas.addEventListener('dblclick', async function (event) {
 		const points = statsChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
@@ -492,16 +413,12 @@ export async function handlePongTournamentStats(
 			const index = points[0].index;
 			const label = statsChart.data.labels[index];
 			const color = statsChart.data.datasets[0].backgroundColor[index]
-
 			try {
-				// const gameRecords = await fetchGameLogs();
 				const users = await fetchUsers();
 				console.log("users", users);
 				const response = await fetch("../../html/stats/tournamentpongstatslist.html");
 				let htmlTemplate = await response.text();
-
 				let tableRows = "";
-				// proccessedStats.userStats.forEach((record: { createdAt: string; winner: string; loser: string; duration: number; tournamentId: string | null }) => {
 				proccessedStats.userStats.forEach((record: Tournament_log) => {
 					console.log("record:", record);
 					const date = new Date(record.created_at).toLocaleString();
@@ -558,14 +475,10 @@ export async function handlePongTournamentStats(
 				});
 
 				htmlTemplate = htmlTemplate.replace(/{{table_rows}}/g, tableRows);
-
-				// Reemplazar los marcadores de posición
 				htmlTemplate = htmlTemplate
 					.replace(/{{label}}/g, label)
 					.replace(/{{color}}/g, color)
 					.replace(/{{table_rows}}/g, tableRows);
-
-				// Insertar en el DOM
 				const container = document.createElement("div");
 				container.innerHTML = htmlTemplate;
 				document.body.appendChild(container);
@@ -573,7 +486,6 @@ export async function handlePongTournamentStats(
 				if (closeBtn) {
 					window.addEventListener("popstate", navivageBack)
 				}
-
 				closeBtn?.addEventListener("click", () => {
 					container.remove();
 					window.removeEventListener("popstate", navivageBack);
@@ -600,38 +512,28 @@ export async function handleChessStats(userStats: {
 										}): Promise<void> {
 	userID = userStats.userId;
 	initializeUserNames();
-	// De esta forma hacemos que se ejectue el script de Chart.js
-	if (typeof Chart === 'undefined') {
-		await loadChartJs();
-		// await loadChessChartJs();
-
-	}
-	// Asignamos el canvas a la variable
+	await loadChartJs();
 	const chesscanvas = document.getElementById('chess-statsChart') as HTMLCanvasElement | null;
 	if (!chesscanvas) {
 		console.error("Canvas element with id 'chess-statsChart' not found.");
 		return;
 	}
-	// Asignamos el chesscanvas a la variable
 	const chesscanvas2 = document.getElementById('chess-statsExtendedChart') as HTMLCanvasElement | null;
 	if (!chesscanvas2) {
 		console.error("Tournament Canvas element with id 'chess-statsExtendedChart' not found.");
 		return;
 	}
-	// generamos el contexto 2D del chesscanvas
-	const ctx = chesscanvas.getContext('2d');
-	if (!ctx) {
+	const chess_ctx = chesscanvas.getContext('2d');
+	if (!chess_ctx) {
 		console.error("Failed to get 2D context from chesscanvas.");
 		return;
 	}
-	// generamos el contexto 2D del chesscanvas
-	const ctx2 = chesscanvas2.getContext('2d');
-	if (!ctx2) {
+	const chess_ctx2 = chesscanvas2.getContext('2d');
+	if (!chess_ctx2) {
 		console.error("Failed to get 2D context from chesscanvas.");
 		return;
 	}
-
-	const chessstatsChart = new Chart(ctx, {
+	const chessstatsChart = new Chart(chess_ctx, {
 		type: 'pie',
 		data: {
 			labels: ['Wins', 'Draws', 'Losses', 'Total'],
@@ -654,8 +556,7 @@ export async function handleChessStats(userStats: {
 		}
 	});
 	console.log("userStats for extended chart:", userStats);
-	// const torunamentLoosed = userStats.tournamentsPlayed - userStats.winsInTournaments;
-	const statsExtendedChart = new Chart(ctx2, {
+	const statsExtendedChart = new Chart(chess_ctx2, {
 		type: 'pie',
 		data: {
 			labels: ['Wins By CheckMate', 'Wins By Resignation', 'Wins By TimeOut', 'Losses By CheckMate', 'Losses By Resignation', 'Losses By TimeOut'],
@@ -932,25 +833,24 @@ export async function handleChessStats(userStats: {
 	});
 }
 
-// Cargamos por cdn Chart.js para no tener que instalarlo
 async function loadChartJs(): Promise<void> {
 	return new Promise((resolve, reject) => {
+		const windowAny = window as any;
+		// if window has a Chart, chart.js is already loaded
+		if (windowAny.Chart) {
+			resolve();
+			return;
+		}
+		// if not, we load it and resolve the promise when it's loaded
 		const script = document.createElement('script');
-		// script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
 		script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.js';
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error("Failed to load Chart.js"));
+		script.onload = () => {
+			resolve();
+		};
+		script.onerror = () => {
+			reject(new Error('Failed to load Chart.js'));
+		};
+
 		document.head.appendChild(script);
 	});
 }
-
-// async function loadChessChartJs(): Promise<void> {
-// 	return new Promise((resolve, reject) => {
-// 		const script = document.createElement('script');
-// 		// script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-// 		script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.js';
-// 		script.onload = () => resolve();
-// 		script.onerror = () => reject(new Error("Failed to load Chart.js"));
-// 		document.head.appendChild(script);
-// 	});
-// }

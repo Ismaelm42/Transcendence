@@ -2,7 +2,7 @@ import { handleStats, handleChessStats, handlePongTournamentStats } from './hand
 import { TournamentPlayer} from '../tournament/types.js';
 import { GameData} from '../game/types.js';
 
-function formatTimeFromMilliseconds(milliseconds: number): string {
+export function formatTimeFromMilliseconds(milliseconds: number): string {
 	const totalSeconds = Math.floor(milliseconds / 1000);
 	const hours = Math.floor(totalSeconds / 3600);
 	const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -38,7 +38,7 @@ export async function getPongStats(appElement: HTMLElement): Promise<any> {
 						.replace("{{ timePlayed }}", (formatTimeFromMilliseconds(userStats.timePlayed)).toString())
 						.replace("{{ tournamentsGames }}", userStats.tournamentsPlayed.toString())
 						.replace("{{ winsInTournaments }}", userStats.winsInTournaments.toString())
-						.replace("{{ lossesInTournaments }}", userStats.losses.toString());
+						.replace("{{ lossesInTournaments }}", userStats.lossesInTournaments.toString());
 					statsContainer.innerHTML =  htmlContent;
 					handleStats(userStats);
 					}
@@ -67,7 +67,6 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 		const userStats = await getUserResponse.json();
 
 		if (userStats) {
-			// const userId = userStats[0].userId;
 			const userIDElement = userStats.shift(); // Remove the first element which contains only { userId: ... }
 			const userId = userIDElement.userId;
 			let tournamentsPlayed = 0;
@@ -78,8 +77,6 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 
 			userStats.forEach((tournament: { users: TournamentPlayer[], winner: string, games_data : GameData[] }) => {
 				tournamentsPlayed++;
-			 	console.log('Tournament Winner: ', tournament.winner);
-				// games_data is a stringified JSON, so we need to parse it
 				const parsedGames = JSON.parse(tournament.games_data as unknown as string) as GameData[];
 				const parsedUsers = JSON.parse(tournament.users as unknown as string) as TournamentPlayer[];
 				parsedUsers.forEach((user) => {
@@ -93,10 +90,8 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 					TournamentsLost++;
 
 				parsedGames.forEach((game: GameData) => {
-					console.log(game);
 					if (game.playerDetails.player1?.id === userId || game.playerDetails.player2?.id === userId) {
 						if(game.duration){
-							// console.log('Tiempo de partida: ' ,game.duration);
 							timePlayed += game.duration;}
 						}
 					});

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Step } from '../spa/stepRender.js';
 import { handleProfile } from './handleProfile.js';
+import { formatTimeFromMilliseconds } from '../stats/getStats.js';
 export default class Profile extends Step {
     render(appElement) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -46,33 +47,50 @@ export default class Profile extends Step {
                 console.error("Error al renderizar la página de login:", error);
                 appElement.innerHTML = `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
             }
-            const statContainer = document.getElementById("user-stats");
+            const statContainer = document.getElementById("user-pong-stats");
+            const chessstatContainer = document.getElementById("user-chess-stats");
             if (statContainer) {
                 try {
                     const url = `https://localhost:8443/back/get_user_gamelogs`;
+                    const chessurl = `https://localhost:8443/back/get_user_chessgamelogs`;
                     const getUserResponse = yield fetch(`${url}`, {
+                        method: "GET",
+                        credentials: "include"
+                    });
+                    const getChessUserResponse = yield fetch(`${chessurl}`, {
                         method: "GET",
                         credentials: "include"
                     });
                     if (!getUserResponse.ok) {
                         throw new Error("Error retrieving stats");
                     }
+                    if (!getChessUserResponse.ok) {
+                        throw new Error("Error retrieving chess stats");
+                    }
                     const userStats = yield getUserResponse.json();
-                    console.log("userStats:", userStats);
-                    if (userStats) {
+                    const chessUserStats = yield getChessUserResponse.json();
+                    if (userStats && chessUserStats && statContainer && chessstatContainer) {
                         try {
                             const response = yield fetch("../../html/stats/userstats.html");
-                            if (!response.ok)
+                            const chessresponse = yield fetch("../../html/stats/userChessstats.html");
+                            if (!response.ok || !chessresponse.ok)
                                 throw new Error("Failed to load the HTML file");
                             let htmlContent = yield response.text();
+                            let chesshtmlContent = yield chessresponse.text();
                             htmlContent = htmlContent
                                 .replace("{{ totalGames }}", userStats.totalGames.toString())
                                 .replace("{{ wins }}", userStats.wins.toString())
                                 .replace("{{ losses }}", userStats.losses.toString())
-                                .replace("{{ timePlayed }}", userStats.timePlayed.toString())
+                                .replace("{{ timePlayed }}", (formatTimeFromMilliseconds(userStats.timePlayed)).toString())
                                 .replace("{{ tournamentsPlayed }}", userStats.tournamentsPlayed.toString())
                                 .replace("{{ winsInTournaments }}", userStats.winsInTournaments.toString());
                             statContainer.innerHTML = htmlContent;
+                            chesshtmlContent = chesshtmlContent
+                                .replace("{{ totalGames }}", chessUserStats.totalGames.toString())
+                                .replace("{{ wins }}", chessUserStats.wins.toString())
+                                .replace("{{ losses }}", chessUserStats.losses.toString())
+                                .replace("{{ draws }}", chessUserStats.draws.toString());
+                            chessstatContainer.innerHTML = chesshtmlContent;
                         }
                         catch (error) {
                             console.error("Error loading HTML file:", error);

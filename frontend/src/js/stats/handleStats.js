@@ -121,29 +121,22 @@ export function handleStats(userStats) {
     return __awaiter(this, void 0, void 0, function* () {
         userID = userStats.userId;
         initializeUserNames();
-        // De esta forma hacemos que se ejectue el script de Chart.js
-        if (typeof Chart === 'undefined') {
-            yield loadChartJs();
-        }
-        // Asignamos el canvas a la variable
+        yield loadChartJs();
         const canvas = document.getElementById('statsChart');
         if (!canvas) {
             console.error("Canvas element with id 'statsChart' not found.");
             return;
         }
-        // Asignamos el canvas a la variable
         const canvas2 = document.getElementById('statsTournamentChart');
         if (!canvas2) {
             console.error("Tournament Canvas element with id 'statsChart' not found.");
             return;
         }
-        // generamos el contexto 2D del canvas
         const ctx = canvas.getContext('2d');
         if (!ctx) {
             console.error("Failed to get 2D context from canvas.");
             return;
         }
-        // generamos el contexto 2D del canvas
         const ctx2 = canvas2.getContext('2d');
         if (!ctx2) {
             console.error("Failed to get 2D context from canvas.");
@@ -162,6 +155,7 @@ export function handleStats(userStats) {
             },
             options: {
                 responsive: true,
+                animateRotate: true,
                 plugins: {
                     legend: {
                         labels: {
@@ -210,14 +204,12 @@ export function handleStats(userStats) {
                     const index = points[0].index;
                     const label = statsChart.data.labels[index];
                     const color = statsChart.data.datasets[0].backgroundColor[index];
-                    //Obtenemos todas las partidas
                     try {
                         const gameRecords = yield fetchGameLogs();
                         const users = yield fetchUsers();
                         console.log("users", users);
                         const response = yield fetch("../../html/stats/statslist.html");
                         let htmlTemplate = yield response.text();
-                        // Generar el contenido dinámico
                         let tableRows = "";
                         gameRecords.forEach((record) => {
                             const date = new Date(record.createdAt).toLocaleString();
@@ -263,12 +255,10 @@ export function handleStats(userStats) {
                             }
                         });
                         htmlTemplate = htmlTemplate.replace(/{{table_rows}}/g, tableRows);
-                        // Reemplazar los marcadores de posición
                         htmlTemplate = htmlTemplate
                             .replace(/{{label}}/g, label)
                             .replace(/{{color}}/g, color)
                             .replace(/{{table_rows}}/g, tableRows);
-                        // Insertar en el DOM
                         const container = document.createElement("div");
                         container.innerHTML = htmlTemplate;
                         document.body.appendChild(container);
@@ -296,19 +286,12 @@ export function handleStats(userStats) {
                     const label = statsTournamentChart.data.labels[index];
                     const color = statsTournamentChart.data.datasets[0].backgroundColor[index];
                     const value = statsTournamentChart.data.datasets[0].data[index];
-                    // Ejecutar acción personalizada	
-                    console.log(`Doble clic en: ${label} (${value})`);
-                    // alert(`Doble clic en: ${label} (${value})`);
-                    // Podés llamar aquí a otra función según el label
-                    // if (label === 'Wins') { ... }
-                    //// Inicio prueba
                     try {
                         const gameRecords = yield fetchGameLogs();
                         const users = yield fetchUsers();
                         console.log("users", users);
                         const response = yield fetch("../../html/stats/statslist.html");
                         let htmlTemplate = yield response.text();
-                        // Generar el contenido dinámico
                         let tableRows = "";
                         gameRecords.forEach((record) => {
                             const tournamentInfo = record.tournamentId ? `Tournament: ${record.tournamentId}` : "Non-tournament game";
@@ -356,12 +339,10 @@ export function handleStats(userStats) {
                             }
                         });
                         htmlTemplate = htmlTemplate.replace(/{{table_rows}}/g, tableRows);
-                        // Reemplazar los marcadores de posición
                         htmlTemplate = htmlTemplate
                             .replace(/{{label}}/g, label)
                             .replace(/{{color}}/g, color)
                             .replace(/{{table_rows}}/g, tableRows);
-                        // Insertar en el DOM
                         const container = document.createElement("div");
                         container.innerHTML = htmlTemplate;
                         document.body.appendChild(container);
@@ -377,45 +358,26 @@ export function handleStats(userStats) {
                     catch (error) {
                         console.error("Error fetching game logs:", error);
                     }
-                    //// Fin de prueba
                 }
             });
         });
     });
 }
-// Pendiente de adaptar ///
 export function handlePongTournamentStats(proccessedStats) {
     return __awaiter(this, void 0, void 0, function* () {
         const userID = proccessedStats.userId;
         initializeUserNames();
-        // De esta forma hacemos que se ejectue el script de Chart.js
-        if (typeof Chart === 'undefined') {
-            yield loadChartJs();
-        }
-        // Asignamos el canvas a la variable
+        yield loadChartJs();
         const pongTcanvas = document.getElementById('pong-tournament-statsChart');
         if (!pongTcanvas) {
             console.error("Canvas element with id 'statsChart' not found.");
             return;
         }
-        // Asignamos el pongTcanvas a la variable
-        // const pongTcanvas2 = document.getElementById('pong-tournament-statsExtendedChart') as HTMLCanvasElement | null;
-        // if (!pongTcanvas2) {
-        // 	console.error("Tournament Canvas element with id 'statsChart' not found.");
-        // 	return;
-        // }
-        // generamos el contexto 2D del pongTcanvas
         const ctx = pongTcanvas.getContext('2d');
         if (!ctx) {
             console.error("Failed to get 2D context from pongTcanvas.");
             return;
         }
-        // // generamos el contexto 2D del pongTcanvas
-        // const ctx2 = pongTcanvas2.getContext('2d');
-        // if (!ctx2) {
-        // 	console.error("Failed to get 2D context from pongTcanvas.");
-        // 	return;
-        // }
         const statsChart = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -439,28 +401,6 @@ export function handlePongTournamentStats(proccessedStats) {
             }
         });
         const torunamentLoosed = proccessedStats.Tournamentslosses;
-        // const statsTournamentChart = new Chart(ctx2, {
-        // 	type: 'pie',
-        // 	data: {
-        // 		labels: ['Wins', 'Losses', 'Total'],
-        // 		datasets: [{
-        // 			data: [proccessedStats.TournamentsWins, torunamentLoosed, proccessedStats.tournamentsPlayed],
-        // 			backgroundColor: ['#ffe90d', '#bc3112', '#feab39'], 
-        // 			borderColor: '#1F2937',
-        // 			borderWidth: 2
-        // 		}]
-        // 	},
-        // 	options: {
-        // 		responsive: true,
-        // 		plugins: {
-        // 			legend: {
-        // 				labels: {
-        // 					color: 'white'
-        // 				}
-        // 			}
-        // 		}
-        // 	}
-        // });
         function navivageBack() {
             const container = document.getElementById("stats-modal");
             if (container) {
@@ -478,13 +418,11 @@ export function handlePongTournamentStats(proccessedStats) {
                     const label = statsChart.data.labels[index];
                     const color = statsChart.data.datasets[0].backgroundColor[index];
                     try {
-                        // const gameRecords = await fetchGameLogs();
                         const users = yield fetchUsers();
                         console.log("users", users);
                         const response = yield fetch("../../html/stats/tournamentpongstatslist.html");
                         let htmlTemplate = yield response.text();
                         let tableRows = "";
-                        // proccessedStats.userStats.forEach((record: { createdAt: string; winner: string; loser: string; duration: number; tournamentId: string | null }) => {
                         proccessedStats.userStats.forEach((record) => {
                             console.log("record:", record);
                             const date = new Date(record.created_at).toLocaleString();
@@ -538,12 +476,10 @@ export function handlePongTournamentStats(proccessedStats) {
                             }
                         });
                         htmlTemplate = htmlTemplate.replace(/{{table_rows}}/g, tableRows);
-                        // Reemplazar los marcadores de posición
                         htmlTemplate = htmlTemplate
                             .replace(/{{label}}/g, label)
                             .replace(/{{color}}/g, color)
                             .replace(/{{table_rows}}/g, tableRows);
-                        // Insertar en el DOM
                         const container = document.createElement("div");
                         container.innerHTML = htmlTemplate;
                         document.body.appendChild(container);
@@ -568,36 +504,28 @@ export function handleChessStats(userStats) {
     return __awaiter(this, void 0, void 0, function* () {
         userID = userStats.userId;
         initializeUserNames();
-        // De esta forma hacemos que se ejectue el script de Chart.js
-        if (typeof Chart === 'undefined') {
-            yield loadChartJs();
-            // await loadChessChartJs();
-        }
-        // Asignamos el canvas a la variable
+        yield loadChartJs();
         const chesscanvas = document.getElementById('chess-statsChart');
         if (!chesscanvas) {
             console.error("Canvas element with id 'chess-statsChart' not found.");
             return;
         }
-        // Asignamos el chesscanvas a la variable
         const chesscanvas2 = document.getElementById('chess-statsExtendedChart');
         if (!chesscanvas2) {
             console.error("Tournament Canvas element with id 'chess-statsExtendedChart' not found.");
             return;
         }
-        // generamos el contexto 2D del chesscanvas
-        const ctx = chesscanvas.getContext('2d');
-        if (!ctx) {
+        const chess_ctx = chesscanvas.getContext('2d');
+        if (!chess_ctx) {
             console.error("Failed to get 2D context from chesscanvas.");
             return;
         }
-        // generamos el contexto 2D del chesscanvas
-        const ctx2 = chesscanvas2.getContext('2d');
-        if (!ctx2) {
+        const chess_ctx2 = chesscanvas2.getContext('2d');
+        if (!chess_ctx2) {
             console.error("Failed to get 2D context from chesscanvas.");
             return;
         }
-        const chessstatsChart = new Chart(ctx, {
+        const chessstatsChart = new Chart(chess_ctx, {
             type: 'pie',
             data: {
                 labels: ['Wins', 'Draws', 'Losses', 'Total'],
@@ -620,8 +548,7 @@ export function handleChessStats(userStats) {
             }
         });
         console.log("userStats for extended chart:", userStats);
-        // const torunamentLoosed = userStats.tournamentsPlayed - userStats.winsInTournaments;
-        const statsExtendedChart = new Chart(ctx2, {
+        const statsExtendedChart = new Chart(chess_ctx2, {
             type: 'pie',
             data: {
                 labels: ['Wins By CheckMate', 'Wins By Resignation', 'Wins By TimeOut', 'Losses By CheckMate', 'Losses By Resignation', 'Losses By TimeOut'],
@@ -883,26 +810,25 @@ export function handleChessStats(userStats) {
         });
     });
 }
-// Cargamos por cdn Chart.js para no tener que instalarlo
 function loadChartJs() {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
+            const windowAny = window;
+            // if window has a Chart, chart.js is already loaded
+            if (windowAny.Chart) {
+                resolve();
+                return;
+            }
+            // if not, we load it and resolve the promise when it's loaded
             const script = document.createElement('script');
-            // script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
             script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.js';
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error("Failed to load Chart.js"));
+            script.onload = () => {
+                resolve();
+            };
+            script.onerror = () => {
+                reject(new Error('Failed to load Chart.js'));
+            };
             document.head.appendChild(script);
         });
     });
 }
-// async function loadChessChartJs(): Promise<void> {
-// 	return new Promise((resolve, reject) => {
-// 		const script = document.createElement('script');
-// 		// script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-// 		script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.js';
-// 		script.onload = () => resolve();
-// 		script.onerror = () => reject(new Error("Failed to load Chart.js"));
-// 		document.head.appendChild(script);
-// 	});
-// }

@@ -1,6 +1,6 @@
-<div class="flex flex-row bg-pong-primary text-white items-center justify-between">
+<div class="flex flex-col lg:flex-row bg-pong-primary w-[90%] lg:w-full text-white items-center justify-between">
 	<!-- Sección izquierda: Datos del usuario -->
-	<div class="w-1/2 p-6 flex flex-col items-center border-r border-gray-700">
+	<div class="w-[90%] lg:w-1/2 p-6 flex flex-col items-center  border-b lg:border-b-0 lg:border-r border-gray-700">
 	  <!-- Avatar -->
 	  <div id= "avatar-container" class="mb-6">
 		<img id="avatar-preview" src="{{ avatarPath }}" alt="Avatar" 
@@ -12,54 +12,64 @@
 	  <!-- Formulario de datos del usuario -->
 	  <form id="user-form" method="post" class="w-full max-w-md space-y-4">
 		<div>
-		  <label for="usernameInput" class="block mb-2 text-sm font-medium">Username</label>
+		  <label for="usernameInput" class="block mb-2 text-center lg:text-left text-sm font-medium">Username</label>
 		  <input type="text" id="usernameInput" name="username" value="{{ username }}" class="
 		  				border  text-pong-primary text-lg rounded-lg
 			   			focus:outline-none focus:ring-1  
                       focus:ring-candlelight-400 focus:border-candlelight-400 block w-full ps-10 p-2.5
-                      bg-pong-bg-tertiary placeholder-candlelight-400"
+                      bg-pong-bg-tertiary placeholder-candlelight-400 text-center lg:text-left"
 			" readonly>
 		</div>
 		<div>
-		  <label for="emailInput" class="block mb-2 text-sm font-medium">Email</label>
+		  <label for="emailInput" class="block mb-2 text-sm font-medium text-center lg:text-left">Email</label>
 		  <input type="email" id="emailInput" name="email" value="{{ email }}" class="
 						border  text-pong-primary text-lg rounded-lg
 			   			focus:outline-none focus:ring-1  
                       focus:ring-chilean-fire-500 focus:border-chilean-fire-500 block w-full ps-10 p-2.5
-                      bg-pong-bg-tertiary placeholder-chilean-fire-500"
+                      bg-pong-bg-tertiary placeholder-chilean-fire-500 text-center lg:text-left"
 		  w-full p-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white
 		  
 		  	" readonly>
 		</div>
 		<div>
-			<label for="tournamentusernameInput" class="block mb-2 text-sm font-medium">Tournament Username</label>
+			<label for="tournamentusernameInput" class="block mb-2 text-sm font-medium text-center lg:text-left">Tournament Username</label>
 			<input type="text" id="tournamentusernameInput" name="tournamentUsername" value="{{ tournamentusername }}" class="
 						border  text-pong-primary text-lg rounded-lg
 			   			focus:outline-none focus:ring-1  
 					  focus:ring-international-orange-700 focus:border-international-orange-700 block w-full ps-10 p-2.5
-					  bg-pong-bg-tertiary placeholder-international-orange-700"
+					  bg-pong-bg-tertiary placeholder-international-orange-700 text-center lg:text-left"
 			" readonly>
 		  </div>
-		<div class="flex justify-between">
+		<div class="flex justify-evenly gap-2 lg:gap-0 lg:justify-between">
 			<button type="button" id="edit-button" class="btn-pong-primary pr-1 pl-2 py-2 rounded-lg w-47">Edit info</button>
 		  <!-- <button type="file"   id="avatar" name="avatar" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Cambiar Avatar</button> -->
 		  <button type="button" id="change-password-button" class="btn-pong-secondary pr-2 pl-1 py-2 rounded-lg w-47">Change Password</button>
 		</div>
 	  </form>
-	</div>
-  
+	</div> 
 	<!-- Sección derecha: Estadísticas del usuario -->
-	<div id="profile-stats-container" class="w-1/2 p-6">
-	  <h2 class="text-2xl font-bold mb-4">User Statistics</h2>
-	  <div id="user-stats" class="bg-pong-secondary  p-4 rounded-lg">
-		<!-- Aquí se renderizarán las estadísticas del usuario -->
-	  </div>
+	<div id="profile-stats-container" class="w-[90%] lg:w-1/2  p-6">
+		<div class="stat_img_container flex justify-center">
+			<img src="../img/statsImg.png" alt="Stats Icon" class="w-auto h-32 mb-4">
+		</div>
+	  	<h2 class="text-xl text-center font-bold mb-2">Pong</h2>
+			<div id="user-pong-stats" class="bg-pong-secondary  p-4 rounded-lg">
+				<!-- Aquí se renderizarán las estadísticas del usuario -->
+			</div>
+	  	<h2 class="text-xl text-center font-bold mt-4 mb-2">Chess</h2>
+	  		<div id="user-chess-stats" class="bg-pong-secondary  p-4 rounded-lg">
+			<!-- Aquí se renderizarán las estadísticas del usuario -->
+	 	</div>
+			<!-- Segundo bloque alineado -->
+		<div class="w-full text-center my-2">
+			<p class="text-gray-300 text-sm">For more info visit <strong><a href="https://localhost:8443//#stats" class="text-md text-candlelight-400">stats</a></strong> section</p>
+		</div>
 	</div>
   </div>
   
   <!-- Modal para cambiar contraseña -->
-  <div id="change-password-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-	<div class="bg-pong-secondary  p-6 rounded-lg w-96 border-2 border-candlelight-400">
+  <div id="change-password-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 hidden">
+	<div class="bg-pong-secondary p-6 rounded-lg w-96 border-2 border-candlelight-400">
 	  <h3 class="text-xl font-bold mb-4">Change Password</h3>
 	  <form id="change-password-form" action="post" class="space-y-4">
 		<div>
@@ -96,7 +106,7 @@
 					  placeholder="Confirm password" required
 			>
 		</div>
-		<div class="flex justify-end">
+		<div class="flex justify-end gap-2">
 		  <button type="button" id="cancel-modal-password" class="btn-pong-tertiary px-4 py-2 rounded-lg mr-2">Cancel</button>
 		  <button type="button" id="save-modal-password" class="btn-pong-primary px-4 py-2 rounded-lg">Save</button>
 		</div>
