@@ -24,6 +24,13 @@ export default class GameMatch extends Step {
         this.readyStateInterval = null;
         this.countdownInterval = null;
         this.pauseInterval = null;
+        // Prevent page scrolling with ArrowUp/ArrowDown while on game-match
+        this.preventScrollOnArrow = (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                // Block the browser's default scroll but allow the event for game controllers
+                e.preventDefault();
+            }
+        };
         this.game = game;
         this.tournament = tournament !== null && tournament !== void 0 ? tournament : null;
         this.renderer = game.getGameRender();
@@ -51,6 +58,8 @@ export default class GameMatch extends Step {
                 appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
             }
             this.updatePlayerActivity(true);
+            // Disable main page scrolling using ArrowUp/ArrowDown while this step is active
+            window.addEventListener('keydown', this.preventScrollOnArrow, { passive: false });
             const canvas = document.getElementById('game-canvas');
             if (canvas) {
                 this.renderer.canvas = canvas;
@@ -354,6 +363,8 @@ export default class GameMatch extends Step {
     destroy() {
         console.warn("GameMatch Destructor Called(!)");
         this.updatePlayerActivity(false);
+        // Re-enable normal page behavior
+        window.removeEventListener('keydown', this.preventScrollOnArrow);
         this.controllers.cleanup();
         this.renderer.destroy();
         if (this.ai) {

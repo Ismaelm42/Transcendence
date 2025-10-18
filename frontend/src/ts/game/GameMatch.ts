@@ -30,6 +30,13 @@ export default class GameMatch extends Step
 	private readyStateInterval: number | null = null;
 	private countdownInterval: number | null = null;
 	public	pauseInterval: number | null = null;
+    // Prevent page scrolling with ArrowUp/ArrowDown while on game-match
+    private preventScrollOnArrow = (e: KeyboardEvent) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            // Block the browser's default scroll but allow the event for game controllers
+            e.preventDefault();
+        }
+    };
 
 	constructor(game: Game, tournament?: Tournament | null)
 	{
@@ -66,6 +73,9 @@ export default class GameMatch extends Step
 		}
 
 		this.updatePlayerActivity(true);
+
+		// Disable main page scrolling using ArrowUp/ArrowDown while this step is active
+		window.addEventListener('keydown', this.preventScrollOnArrow, { passive: false });
 		
 		const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
 		if (canvas)
@@ -417,6 +427,8 @@ export default class GameMatch extends Step
 	{
 		console.warn("GameMatch Destructor Called(!)");
 		this.updatePlayerActivity(false);
+		// Re-enable normal page behavior
+		window.removeEventListener('keydown', this.preventScrollOnArrow);
 		this.controllers.cleanup();
 		this.renderer.destroy();
 		if (this.ai)
