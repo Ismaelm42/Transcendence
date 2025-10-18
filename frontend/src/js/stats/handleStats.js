@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 let userID;
 let userNames = new Map();
-function formatTimeFromMilliseconds(milliseconds) {
+export function formatTimeFromMilliseconds(milliseconds) {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);

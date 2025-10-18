@@ -14,6 +14,7 @@ import { GameControllers } from './GameControllers.js'
 import { GameData, GameConfig, GamePlayer } from './types.js';
 import { GameAI } from './GameAI.js';
 import Tournament from '../tournament/Tournament.js';
+import { formatTimeFromMilliseconds } from '../stats/handleStats.js';
 
 export default class GameMatch extends Step
 {
@@ -265,8 +266,7 @@ export default class GameMatch extends Step
 		}
 		if (durationElement)
 		{
-			const duration = gameData.duration ? Math.floor(gameData.duration / 1000) : 0;
-			durationElement.textContent = duration.toString();
+			durationElement.textContent = formatTimeFromMilliseconds(gameData.duration);
 		}
 		const reasonElement = document.getElementById('end-reason');
 		if (reasonElement)

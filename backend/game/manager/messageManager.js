@@ -199,6 +199,8 @@ export function handleClientReady(client, data)
 			gameSession.broadcastResponse('GAME_COUNTDOWN', { seconds: COUNTDOWN_SECONDS });
 			setTimeout(() => {
 				gameSession.broadcastResponse('GAME_START');
+				if (!gameSession.metadata.startTime)
+					gameSession.metadata.startTime = Date.now();
 				setTimeout(() => {
 					gameSession.startGameLoop(gamesList);
 				}, 1000); // 1 second freeze after GAME_START

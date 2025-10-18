@@ -16,6 +16,7 @@ import { SPA } from '../spa/spa.js';
 import { Step } from "../spa/stepRender.js";
 import { GameControllers } from './GameControllers.js';
 import { GameAI } from './GameAI.js';
+import { formatTimeFromMilliseconds } from '../stats/handleStats.js';
 export default class GameMatch extends Step {
     constructor(game, tournament) {
         super('game-container');
@@ -228,8 +229,7 @@ export default class GameMatch extends Step {
             scoreElement.textContent = `${score[0]} - ${score[1]}`;
         }
         if (durationElement) {
-            const duration = gameData.duration ? Math.floor(gameData.duration / 1000) : 0;
-            durationElement.textContent = duration.toString();
+            durationElement.textContent = formatTimeFromMilliseconds(gameData.duration);
         }
         const reasonElement = document.getElementById('end-reason');
         if (reasonElement)

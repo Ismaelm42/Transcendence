@@ -4,7 +4,7 @@ declare var Chart: any;
 let userID: string;
 let userNames: Map<string, string> = new Map();
 
-function formatTimeFromMilliseconds(milliseconds: number): string {
+export function formatTimeFromMilliseconds(milliseconds: number): string {
 	const totalSeconds = Math.floor(milliseconds / 1000);
 	const hours = Math.floor(totalSeconds / 3600);
 	const minutes = Math.floor((totalSeconds % 3600) / 60);

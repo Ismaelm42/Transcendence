@@ -36,7 +36,6 @@ export default class GameSession
 		this.metadata = {
 			id: this.roomId,
 			mode: this.gameMode,
-			startTime: Date.now(),
 			endTime: null,
 			duration: 0,
 			tournamentId: null,
