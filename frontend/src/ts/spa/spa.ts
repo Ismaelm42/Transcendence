@@ -313,7 +313,8 @@ export class SPA {
 			type: 'PAUSE_GAME',
 			reason: 'User navigating away'
 		}));
-		const	left = await showConfirmDialog("You are about to leave the game. This will end your current session. Continue?", this.currentGame.pauseDuration);
+		let	msg = this.currentGame.getGameLog().tournamentId ? " and tournament" : "";
+		const	left = await showConfirmDialog("You are about to leave the game. This will end your current session" + msg + ". Continue?", this.currentGame.pauseDuration);
 		if (left && this.currentGame.getGameLog().mode != 'remote')
 			this.currentGame.getGameConnection()?.killGameSession(this.currentGame.getGameLog().id);
 		return left;

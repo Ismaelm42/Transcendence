@@ -114,6 +114,8 @@ export function checkScoring(gamesList)
 export async function endGame(gamesList, needSaving)
 {
 	this.isFinished = true;
+	clearTimeout(this.pauseTimer);
+	//clearTimeout(this.resumeTimeout);
 	const gamelogData = this.finalizeGame();
 	clearInterval(this.gameLoop);
 	clearInterval(this.aiInterval);

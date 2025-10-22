@@ -186,8 +186,8 @@ export function handleGameActivity(client, data)
 
 export async function	fetchGameSessionsInfo(client)
 {
-	const	token = request.cookies.token;
-	const	user = await extractUserFromToken(token);
+	// const	token = request.cookies.token;
+	// const	user = await extractUserFromToken(token);
 	const	games = [];
 	for (const gameSession of gamesList.values())
 	{
@@ -197,6 +197,6 @@ export async function	fetchGameSessionsInfo(client)
 	client.connection.send(JSON.stringify({
 		type: 'GAMES_DETAILS',
 		games: games,
-		clientUserId: user.id
+		clientUserId: client.user.id
 	}));
 }
