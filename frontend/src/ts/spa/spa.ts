@@ -74,14 +74,7 @@ export class SPA {
 			this.loadStep();
 		});
 
-			// Native browser reload / close guard
-			window.onbeforeunload = (e) => {
-				if (this.currentStep === 'game-match' && this.currentGame?.isGameActive?.()) {
-					e.preventDefault();
-					e.returnValue = '';
-					return '';
-				}
-			};
+			// Note: We no longer block reload/close with a native prompt; server pauses on disconnect
 		
 		window.addEventListener("pageshow", (event) => {
 			if (event.persisted && location.hash === '#login') {

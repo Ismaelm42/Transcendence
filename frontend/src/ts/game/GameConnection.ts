@@ -148,7 +148,7 @@ export class GameConnection
 									this.game.pauseDuration = data.maxPauseDuration;
 								// Mark as active (paused still counts as active match)
 								this.game.setGameLog({ readyState: true } as any);
-								this.game.getGameMatch()?.showPauseModal(data.reason, data.userId);
+								this.game.getGameMatch()?.showPauseModal(data.reason, data.userId, data.pauseStartTime);
 								break ;
 							case 'GAME_RESUMED':
 								// Ensure leave guards are active post-resume and controllers are ready

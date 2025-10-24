@@ -158,7 +158,7 @@ export default class GameMatch extends Step
 			this.startReadyStatePolling();
 	}
 	
-	public showPauseModal(reason?: string, pauserId?: string): void
+	public showPauseModal(reason?: string, pauserId?: string, pauseStartTime?: number): void
 	{
 		const	confirmModal = document.getElementById('confirm-dialog-overlay');
 		if(confirmModal && confirmModal.style.display != "none")
@@ -186,7 +186,9 @@ export default class GameMatch extends Step
 			clearInterval(this.pauseInterval);
 			this.pauseInterval = null;
 		}
-		let	remaining = duration;
+		// If server provided pauseStartTime, adjust remaining to reflect elapsed time
+		const elapsed = pauseStartTime ? Math.max(0, Date.now() - pauseStartTime) : 0;
+		let	remaining = Math.max(0, duration - elapsed);
 		const render = () => {
 			if (remaining <= 0) {
 				timerEl.textContent = '00:00';

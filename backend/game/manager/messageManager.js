@@ -50,7 +50,7 @@ export function handleJoinGame(client, data)
 				metadata: gameSession.metadata
 			}));
 			// If the game is paused, inform the client and attempt auto-resume when everyone is active
-			if (gameSession.isPaused) {
+			if (gameSession.isPaused && gameSession.metadata && gameSession.metadata.startTime) {
 				try {
 					connection.send(JSON.stringify({
 						type: 'GAME_PAUSED',

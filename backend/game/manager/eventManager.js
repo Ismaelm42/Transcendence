@@ -213,7 +213,7 @@ export function handleGameActivity(client, data)
 		player.active = !!data.active; // true if on game-match, false otherwise
 
 	// If game is paused and all players are active again, auto resume with countdown
-	if (gameSession.isPaused) {
+	if (gameSession.isPaused && gameSession.metadata && gameSession.metadata.startTime) {
 		let totalPlayers = 0;
 		let activePlayers = 0;
 		gameSession.players.forEach((p) => {
