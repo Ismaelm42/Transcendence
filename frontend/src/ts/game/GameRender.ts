@@ -165,22 +165,39 @@ export class GameRender
 
 	private drawScore()
 	{
-		if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.scores)
-		{
+				// "original"
+		// if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.scores)
+		// {
+		// 	console.error("Cannot draw scores:");
+		// 	return ;
+		// }
+		// const player1Score = this.gameState.scores[0];
+    	// const player2Score = this.gameState.scores[1];
+		// this.ctx.fillStyle = "white";
+		// this.ctx.font = "60px Tektur, sans-serif";
+		// // Position scores on their respective sides (about 25% in from each edge and 80 from top)
+		// const leftScoreX = Math.round(this.canvas.width * 0.25);
+		// const rightScoreX = Math.round(this.canvas.width * 0.75);
+		// const scoreY = 80;
+		// this.ctx.textAlign = "center";
+		// this.ctx.fillText(`${player1Score}`, leftScoreX, scoreY);
+    	// this.ctx.fillText(`${player2Score}`, rightScoreX, scoreY);
+				// fin "original"
+
+
+		/// inicio de trasteo
+
+		const score1 = document.getElementById("score1p");
+		const score2 = document.getElementById("score2p");
+
+		if (!score1 || !score2 || !this.gameState || !this.gameState.scores){
 			console.error("Cannot draw scores:");
 			return ;
 		}
-		const player1Score = this.gameState.scores[0];
-    	const player2Score = this.gameState.scores[1];
-		this.ctx.fillStyle = "white";
-		this.ctx.font = "60px Tektur, sans-serif";
-		// Position scores on their respective sides (about 25% in from each edge and 80 from top)
-		const leftScoreX = Math.round(this.canvas.width * 0.25);
-		const rightScoreX = Math.round(this.canvas.width * 0.75);
-		const scoreY = 80;
-		this.ctx.textAlign = "center";
-		this.ctx.fillText(`${player1Score}`, leftScoreX, scoreY);
-    	this.ctx.fillText(`${player2Score}`, rightScoreX, scoreY);
+		score1.textContent = this.gameState.scores[0].toString();
+		score2.textContent = this.gameState.scores[1].toString();
+
+		/// Fin de trasteo
 	}
 
 	private drawCenterLine()

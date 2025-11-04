@@ -1,21 +1,71 @@
 <!-- Game canvas, by default-->
+<!--class="w-full max-w-[1200px] mx-auto text-center flex flex-col items-center"-->
 <div
 	id="game-container"
-	class="w-full max-w-[1200px] mx-auto text-center flex flex-col items-center"
+	class="w-screen h-screen overflow-hidden fixed top-0 left-0 flex flex-col justify-center items-center"
+
 >
-	<canvas
-		id="game-canvas"
-		width="800"
-		height="600"
-		class="bg-black mx-auto block max-w-full h-auto"
-></canvas>
-	<button
-		id="pause-btn"
-		class="mt-6 btn-pong-secondary text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
-		type="button"
-	>
-	⏸ Pause
-	</button>
+
+
+<!-- Overlay decorativo (candlelight-400) alrededor del área del canvas -->
+<div class="w-screen h-screen overflow-hidden fixed flex justify-center items-center mb-4">
+	<div class="w-full h-full rounded-xl  bg-candlelight-400/30 backdrop-blur-md flex flex-col justify-center items-center">
+		<!-- Caja de forma/overlay; el canvas real queda justo después y visualmente coincidirá con este contenedor -->
+		 <!-- Encabezado encima del canvas: en small apila 3 bloques, en md+ se muestra en fila -->
+
+		 <div class="w-full flex flex-col items-center mb-4 mt-4 md:mt-0">
+			<div class="relative flex flex-col md:flex-row items-center justify-center w-[80vw] max-w-[800px] mx-auto text-center gap-2">
+				<div id="pong_game_player1" class="w-1/3 text-international-orange-400 font-semibold truncate ">{{ Player 1 }}</div>
+				
+				<div id="pong_game_score" class="w-1/3 text-2xl md:text-3xl font-bold text-pong-secondary text-center text-candlelight-400 flex items-center justify-center">
+					<div><span class="min-w-3 w-1/3" id="score1p">0</span></div>
+					<div class="min-w-3 w-1/3"> - </div>
+					<div><span class="min-w-3 w-1/3" id="score2p">0</span></div>
+				</div>
+
+				<div id="pong_game_player2" class="w-1/3 text-international-orange-400 font-semibold truncate">{{ Player 2 }}</div>
+			</div>
+		</div>
+
+		<canvas
+			id="game-canvas"
+			class="bg-black mx-auto block max-w-full h-auto rounded-xl border-4 border-candlelight-400"
+		>
+		</canvas>
+		<style>
+		  canvas {
+		    width: 80vw;          /* 80% del ancho de la ventana */
+		    height: 60vh;         /* 60% de la altura de la ventana */
+		    max-width: 800px;     /* máximo ancho */
+		    max-height: 600px;    /* máximo alto */
+		    min-width: 300px;     /* mínimo ancho */
+		    min-height: 200px;    /* mínimo alto */
+		    /* border: 1px solid var(--color-candlelight-400);
+		    display: block;
+		    margin: auto; */
+		  }
+		</style>
+		<div class="w-full flex flex-col  items-center mb-4">
+			<div class="flex flex-col md:flex-row items-center justify-center gap-4 w-[80vw] max-w-[800px] mx-auto text-center">
+				<button
+					id="pause-btn"
+					class="mt-6 btn-pong-secondary text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
+					type="button"
+				>
+				⏸ Pause
+						<button
+					id="match-back-btn"
+					onclick="window.location.href='https://localhost:8443/#home'"
+					class="mt-6 btn-pong-tertiary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
+					type="button"
+				>
+				🏠 Home 
+				</button>
+			</div>	
+		</div>
+	</div>
+</div>
+
 </div>
 
 <!-- Ready-waiting players modal overlay -->
@@ -171,21 +221,20 @@ style="display: none;">
 	tabindex="-1"
 	style="display: none;"
 >
-	<div class="confirm-dialog bg-gray-800 rounded-lg shadow-xl px-8 py-6 flex flex-col items-center border-4 border-[#00ff99]">
+	<div class="confirm-dialog bg-gray-800 rounded-lg shadow-xl px-8 py-6 flex flex-col items-center border-4 border-candlelight-400">
 		<div id="confirm-dialog-content" class="confirm-dialog-content text-white text-lg mb-4 text-center"></div>
-		<div id="confirm-timer" class="text-[#00ff99] text-2xl font-[Tektur] mb-2"></div>
+		<div id="confirm-timer" class="text-candlelight-400 text-2xl font-[Tektur] mb-2"></div>
 		<div class="w-64 h-2 bg-gray-700 rounded overflow-hidden mb-4">
-			<div id="confirm-timer-bar" class="h-full bg-[#00ff99]" style="width:100%"></div>
+			<div id="confirm-timer-bar" class="h-full bg-candlelight-400" style="width:100%"></div>
 		</div>
 		<div class="confirm-dialog-buttons flex gap-4">
 			<button id="confirm-dialog-yes"
-				class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-600"
+				class="btn-pong-primary py-2 px-6 rounded-lg font-bold cursor-pointer "
 			>
 				Yes
 			</button>
 			<button id="confirm-dialog-no"
-				class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
-			>
+				class="btn-pong-tertiary text-white font-bold py-2 px-6 rounded-lg cursor-pointer focus:outline-none">
 				No
 			</button>
 		</div>
