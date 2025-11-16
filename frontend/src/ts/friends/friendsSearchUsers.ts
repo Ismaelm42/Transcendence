@@ -28,19 +28,6 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Eve
 	}
 	const requestBody = { keyword: searchValue };
 
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	// console.log("searchValue antes del try :" + searchValue);
-	
-	// console.log("requestBody antes del try :" + requestBody);;
-	
 	try {
 		const response = await fetch("https://localhost:8443/back/get_all_users_coincidences", {
 			method: "POST",
@@ -51,7 +38,6 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Eve
 
 		if (!response.ok) {
 			const errorMessage = await response.json();
-			console.error("Error retrieving user list:", errorMessage);
 			showMessage(errorMessage.error, null);
 			return;
 		}
@@ -67,14 +53,12 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Eve
 		}
 
 		if (!userList || userList.length === 0) {
-			console.log("vengo vacío");
 			showMessage("No users found", 1000);
 			return;
 		}
 		// Cargar HTML cabecera base una sola vez
 		const searchTableTemplate = await fetch("../../html/friends/search_table.html");
 		if (!searchTableTemplate.ok){ 
-			console.error("Error loading HTML file:");
 			throw new Error("Failed to load the HTML file")
 		}else{	
 			const tableHTML = await searchTableTemplate.text();
@@ -96,11 +80,9 @@ export async function searchUsersFriends(origen: 'boton' | 'codigo', event?: Eve
 			else if (status === "pending" && role === "active") statusCode = 3;
 			else if (status === "blocked" && role === "passive") statusCode = 4;
 			else if (status === "blocked" && role === "active") statusCode = 5;
-			//console.log("user antes del SearchResultItem:", user);
 			new SearchResultItem("search_results", [user.id, user.username], statusCode);
 		}
 	} catch (error) {
-		console.error("Error retrieving user list:", error);
 		showMessage("An error occurred while retrieving the user list.", null);
 	}
 }

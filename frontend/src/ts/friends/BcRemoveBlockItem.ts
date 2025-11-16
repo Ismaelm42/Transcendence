@@ -20,13 +20,10 @@ export class BcRemoveBlockItem extends BasicComponent {
 			const span = wrapper.querySelector('span[data-user-id]');
 			if (!span) return;
 			const userId = span.textContent?.trim();
-			console.log('ID del usuario:', userId);
 			const requestBody = {
 				friendId: userId
 			};
 			try {
-				console.log("En BcRemoveBlockItem");
-				console.log("btn:", btn);
 				const response = await fetch("https://localhost:8443/back/delete_friend", {
 					method: "POST",
 					credentials: 'include',
@@ -46,7 +43,6 @@ export class BcRemoveBlockItem extends BasicComponent {
 					showMessage(errorMessage.error, null);
 				}
 			} catch (error) {
-				console.error("Error removing friend request");
 			}
 		});
 		const btn2 = this.el?.querySelector('.btnBlockItem');
@@ -57,13 +53,10 @@ export class BcRemoveBlockItem extends BasicComponent {
 			const span = wrapper.querySelector('span[data-user-id]');
 			if (!span) return;
 			const userId = span.textContent?.trim();
-			console.log('ID del usuario:', userId);
 			const requestBody = {
 				friendId: userId
 			};
 			try {
-				console.log("En BcRemoveBlockItem");
-				console.log("btn:", btn);
 				const response = await fetch("https://localhost:8443/back/block_user", {
 					method: "POST",
 					credentials: 'include',
@@ -83,7 +76,6 @@ export class BcRemoveBlockItem extends BasicComponent {
 					showMessage(errorMessage.error, null);
 				}
 			} catch (error) {
-				console.error("Error blocking friend");
 			}
 		});
 	}

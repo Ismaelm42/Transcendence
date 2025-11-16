@@ -33,11 +33,9 @@ export default class LoginRender extends Step {
 								const { handleLoginSubmit } = await import('./handleLoginSubmit.js');
 								form.addEventListener("submit", async (event) => {
 									event.preventDefault();
-									console.log("Se ha pulsado handleLoginSubmit:", event);
 									handleLoginSubmit(event);
 								});
 							} catch (err) {
-								console.error("Error al importar handleLoginSubmit.js:", err);
 							}
 						}
 					});
@@ -45,7 +43,6 @@ export default class LoginRender extends Step {
 					appElement.innerHTML =  htmlContent;
 				}
 			} catch (error) {
-				console.error("Error al renderizar la página de login:", error);
 				appElement.innerHTML =  `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
 			}
 		}

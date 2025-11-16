@@ -6,13 +6,12 @@ export default class Home extends Step {
 		const menuContainer = document.getElementById("menu-container");
 		try {
 			const user = await this.checkAuth();
-			console.log ('En Home user despues de checkAuth: ' + user);
 		if (user) {
 			// Retornar el contenido para usuarios autenticados
 			appElement.innerHTML =  `
 				<div id="pong-container">
 					<div class="paddle left-paddle"></div>
-					<h2>Bienvenido, ${user}!</h2>
+					<h2>Welcome, ${user}!</h2>
 					<div class="paddle right-paddle"></div>
 				</div>
 			`;

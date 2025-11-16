@@ -11,9 +11,6 @@ export class PlayerCard {
     public onPlayerFilled?: (tournamentPlayer: TournamentPlayer, selectedOption:number) => void;
 
 	constructor(playerIndex: number, container:HTMLElement, tournamentId?: string) {
-		console.log("Creating PlayerCard component");
-		console.log("Player index:", playerIndex);
-	  	console.log("Container element:", container);	
 		this.player_index = playerIndex;
 	  	this.templatePath = "../html/tournament/PlayerForm.html";
 		this.tournamentId = tournamentId;
@@ -50,8 +47,6 @@ export class PlayerCard {
 			if (guestLoginForm) {
 				guestLoginForm.addEventListener('submit', (event) => {
 					event.preventDefault();
-					console.log(`Guest Player ${this.player_index} login form submitted`);
-					console.log(`Guest Tournament Name: ${guestTournamentName?.value}`);
 					// Handle guest login logic here
 					if (this.onPlayerFilled) {
 						this.onPlayerFilled(this.tournamentPlayer, 2);
@@ -63,7 +58,6 @@ export class PlayerCard {
 			if (playersLogintBtn) {
 				playersLogintBtn.addEventListener('click', (event) => {
 					event.preventDefault();
-					console.log(`Player ${this.player_index} login button clicked`);
 					if (playerEmail.value !== "" && playerPassword.value !== "") {
 						this.tournamentPlayer.gameplayer.email = playerEmail.value;
 						if (this.onPlayerFilled) {
@@ -79,7 +73,6 @@ export class PlayerCard {
 				AiplayerBtn.addEventListener('click', (event) => 
 				{
 					event.preventDefault();
-					console.log(`AI Player ${this.player_index} button clicked`);
 					if (this.onPlayerFilled) 
 					{
 						this.onPlayerFilled(this.tournamentPlayer, 3);
@@ -104,17 +97,12 @@ export class PlayerCard {
 	// 	if (guestLoginForm) {
 	// 		guestLoginForm.addEventListener('submit', (event) => {
 	// 			event.preventDefault();
-	// 			console.log(`Guest Player ${this.player_index} login form submitted`);
-	// 			console.log(`Guest Tournament Name: ${guestTournamentName?.value}`);
 	// 			// Handle guest login logic here
 	// 			this.checkGuestPlayer(guestTournamentName?.value).then((result) => {
 	// 				if (result) {
-	// 					console.log("En checkGuestPlayer, user2P: ", this.tournamentPlayer);
 	// 					if (this.onPlayerFilled) {
 	// 						this.onPlayerFilled(this.tournamentPlayer);
 	// 					}		
-	// 				}else {
-	// 					console.error("Error: Guest player verification failed.");
 	// 				}
 	// 			});
 	// 		});
@@ -123,35 +111,27 @@ export class PlayerCard {
 	// 	if (playersLogintBtn) {
 	// 		playersLogintBtn.addEventListener('click', (event) => {
 	// 			event.preventDefault();
-	// 			console.log(`Player ${this.player_index} login button clicked`);
 	// 			if (playerEmail.value !== "" && playerPassword.value !== "") {
 	// 				this.checkPlayer(playerEmail.value, playerPassword.value).then ((result) => {;
 	// 				if (result) {
-	// 					console.log("En checkPlayer2P, user2P: ", this.tournamentPlayer);
 	// 					if (this.onPlayerFilled) {
 	// 						this.onPlayerFilled(this.tournamentPlayer);
 	// 					}		
-	// 				}else {
-	// 					console.error("Error: Player verification failed.");
 	// 				}
 	// 				}).catch((error) => {
-	// 					console.error("Error en la verificación:", error);
 	// 				});				
 	// 			}
-	// 			console.log("fin de checkPlayer");
 	// 		});
 	// 	}
 
 	// 	if (AiplayerBtn) {
 	// 		AiplayerBtn.addEventListener('click', (event) => {
 	// 			event.preventDefault();
-	// 			console.log(`AI Player ${this.player_index} button clicked`);
 	// 		});
 	// 	}
 	// }
 
 	// async checkGuestPlayer(guestTorunamentName: string) {
-	// 	console.log(`Guest Player en checkguestPlayer: ${this.player_index} name: ${guestTorunamentName}`);
 	// 	if (!guestTorunamentName || guestTorunamentName.trim() === '') {
 	// 		const AvatarPath = `https://localhost:8443/back/images/avatar-${this.player_index}.png`; // Default avatar path
 	// 		this.tournamentPlayer = {
@@ -196,7 +176,6 @@ export class PlayerCard {
 	// 					};
 	// 				}
 	// 		} catch (error) {
-	// 			console.error("Error while verifying:", error);
 	// 			}
 			
 	// 			if (this.onPlayerFilled) {
@@ -239,7 +218,6 @@ export class PlayerCard {
 	// 			return user2P;
 	// 		}
 	// 	} catch (error) {
-	// 		console.error("Error while verifying:", error);
 	// 	}
 	// }
 

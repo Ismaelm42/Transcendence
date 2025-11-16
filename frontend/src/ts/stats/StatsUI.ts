@@ -52,7 +52,6 @@ export class StatsUI
 		}
 		catch (error)
 		{
-			console.error("Error loading stats UI:", error);
 			appElement.innerHTML = `<div class="error-container">Failed to load stats interface. Please try again.</div>`;
 		}
 		if (this.activarEvents) {
@@ -67,7 +66,6 @@ export class StatsUI
 
 				selectElement.addEventListener("change", async (event) => {
 					const selectedValue = (event.target as HTMLSelectElement).value;
-					console.log("Selected value:", selectedValue);
 					switch (selectedValue) {
 						case "CP":
 							//llamar a la función de stats de pong
@@ -256,7 +254,6 @@ export class StatsUI
 	// {
 	// 	if (!this.stats.getStatsConnection().socket || !this.stats.getStatsConnection().connectionStat)
 	// 	{
-	// 		console.error("Cannot join stats: connection not ready");
 	// 		return ;
 	// 	}
 	// 	this.stats.setStatsConfig(this.stats.getStatsConfig());
@@ -276,7 +273,6 @@ export class StatsUI
 	// 	}
 	// 	// Per each stats returned by backend, we create a new stats card and append it to lobbyDiv
 	// 	// TODO: we can add more elements to the card as "Ready, Full, In progress"...
-	// 	console.log("StatsDATA from server statss", statss);
 	// 	statss.forEach((stats: StatsData) => {
 	// 		const card = document.createElement('div');
 	// 		card.className = 'bg-pong-primary rounded p-4 flex flex-col gap-2 border-1 border-pong-tertiary shadow-md';

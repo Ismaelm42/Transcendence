@@ -19,7 +19,6 @@ export default class Chess extends Step {
 			checkIfGameIsRunning();
 		}
 		catch (error) {
-			console.log(error);
 			appElement.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
 		}
 	}

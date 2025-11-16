@@ -44,18 +44,15 @@ export async function extractUserFromToken(token) {
     // Extract user from token
     try {
         if (!token) {
-            console.log('No token provided.');
             return null;
         }
         const decodedId = jwt.verify(token, JWT_SECRET);
 		const decodedUser = await crud.user.getUserById(decodedId.userId);
         if (!decodedUser || !decodedUser.username) {
-            console.log('Invalid or missing username in getUserById.');
             return null;
         }
         return decodedUser;
     } catch (error) {
-        console.error('Error verifying token:', error);
         return null;
     }
 }

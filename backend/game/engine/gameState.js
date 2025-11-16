@@ -30,7 +30,6 @@ export function setDifficulty(level)
 		this.state.ball.dy = normalizedDy * newSpeed;
 	}
 	
-	console.log(`Game ${this.roomId} difficulty set to: ${level}`);
 }
 
 // Initialize or reset game elements positions
@@ -127,17 +126,14 @@ export async function endGame(gamesList, needSaving)
 			await createGamelog(gamelogData);
 			console.warn('GameLog succesfully saved to DB');
 		} catch (err) {
-			console.error('Error saving gamelog:', err);
 		}
 	}
 	// Remove gameSession from map if we are on tournament game or game aborted  - no rematch possible
 	if (gamesList && gamesList.has(this.roomId) && (this.metadata.tournamentId || !needSaving))
 	{
-		console.log("in-tournament or aborted game: deleting gameSession from map");
 		gamesList.delete(this.roomId);
 	}
 	// Notify players
 	this.broadcastResponse('GAME_END');
 	this.shouldCleanup = true;
-	console.log("[!]-_GAME SESSION STOPPED AND DELETED FROM BACKEND_-[!]");
 }

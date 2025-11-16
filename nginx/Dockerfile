@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM nginx:mainline-alpine
 
 RUN mkdir -p /etc/nginx/ssl/private /etc/ssl/certs/
 

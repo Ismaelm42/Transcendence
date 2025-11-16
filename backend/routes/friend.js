@@ -11,7 +11,6 @@ export function configureFriendRoutes(fastify) {
 			return reply.code(401).send({ error: 'Unauthenticated user' });
 		const userId = user.id;
 		const { friendId } = request.body;
-		console.log('friendId = ', friendId);
 		try {
 			const newFriend = await crud.friend.createFriendEntry(userId, friendId);
 

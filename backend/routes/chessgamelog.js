@@ -32,8 +32,6 @@ export function configureChessgamelogRoutes(fastify, sequelize) {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			const userId = decoded.userId;
 			const ParamsuserId = request.params.userId;
-			console.log('userId en get_user_chessgamelogs', userId);
-			console.log('ParamsuserId en get_user_chessgamelogs', ParamsuserId);
 			const userChessgamelogs = await crud.chessgamelog.getChessgamelogsByUserId(userId);
 			reply.status(200).send(userChessgamelogs);
 		} catch (err) {
@@ -49,7 +47,6 @@ export function configureChessgamelogRoutes(fastify, sequelize) {
 			const token = request.cookies.token;
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			const userId = decoded.userId;
-			console.log('Request body:', request.body);
 			const chessgamelogData = request.body;
 			if (chessgamelogData.user1 === userId){
 				const chessgamelog = await crud.chessgamelog.createChessgamelog(chessgamelogData);

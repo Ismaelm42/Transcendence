@@ -3,7 +3,6 @@ import { showMessage } from '../modal/showMessage.js';
 import { initOnlineSocket } from '../friends/onlineUsersSocket.js';
 
 export async function handleLoginSubmit(event: SubmitEvent) {
-	console.log("handleLoginSubmit:", event);
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
@@ -23,12 +22,10 @@ export async function handleLoginSubmit(event: SubmitEvent) {
             showMessage(`Error: ${errorResponse.message}`, null);
         } else {
             const result = await response.json();
-            console.log("Login exitoso:", result);
             initOnlineSocket(); // Inicia el socket aquí
             const app = SPA.getInstance();
             app.navigate("home");
         }
     } catch (error) {
-        console.error("Error al enviar el formulario de login:", error);
     }
 }

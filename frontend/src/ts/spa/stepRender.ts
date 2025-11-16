@@ -18,7 +18,6 @@ export class Step {
 	}
 
 	async checkAuth() {
-		console.log("Verificando autenticación en checkAuth()...");
 		const validation = false;	// si está en false se está verificando la autenticación
 		// Simulación de verificación de autenticación PARA CUANDO LA COOKIE NO SE ENVIA BIEN"
 		if (validation) {
@@ -29,7 +28,6 @@ export class Step {
 			}
 			return user.username;
 		}else {
-			// console.log("Verificando autenticación...");
 			try {	
 				const response = await fetch("https://localhost:8443/back/auth/verify-token", {
 					method: "GET",
@@ -40,7 +38,6 @@ export class Step {
 					const data = await response.json();
 				return data.user.username; // Devuelve el nombre de usuario si está autenticado
 				} catch (error) {
-					console.error("Error al verificar la autenticación:", error);
 					return null;
 				}
 		}
@@ -53,7 +50,6 @@ export class Step {
 	async renderHeader(headerElement: HTMLElement): Promise<void> {
 		try {
 			const user = await this.checkAuth();
-			// console.log("Valor de user en renderHeader:", user);
 			headerElement.innerHTML = user ? 			
 				`<div id="authButtons" class="flex items-center">
 					<span id="username" class="text-white hover:text-amber-300"><a href="#profile"> ${user} </a></span>
@@ -68,7 +64,6 @@ export class Step {
 				</div>
 			`;
 		} catch (error) {
-			console.error("Error en renderHeader:", error);
 			headerElement.innerHTML = `<div id="authButtons">Error al cargar el estado de autenticación</div>`;
 		}
 	}

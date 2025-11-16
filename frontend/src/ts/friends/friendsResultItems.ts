@@ -25,14 +25,9 @@ export class SearchResultItem {
 		this.user = user;
 		this.userStatus = userStatus; // Inicializa el estado de usuarios
 		this.init();
-		//console.log("userStatus en SearchResultItem:", this.userStatus);
 	}
 	
 	async render(appElement: HTMLElement):Promise<void> {
-		// console.log("En SearchResultItem render");
-		// console.log("userStatus:", this.userStatus);
-		// console.log("user:", this.user);
-		// console.log("containerId:", this.container.id);
 		const placeholders = {
 			"id": this.user ? this.user[0] : "",
 			"username": this.user ? this.user[1] : "",
@@ -53,11 +48,8 @@ export class SearchResultItem {
 			if (component) {
 				component.render(this.container!, placeholders);
 			} else {
-				console.error("Component is undefined for userStatus:", this.userStatus);
 			}
-		//console.log("Justo despues de renderizar el componente en SearchResultItem");	
 		} catch (error) {
-			console.error("Error loading HTML file:", error);
 		}
 	}
 

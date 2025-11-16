@@ -10,7 +10,6 @@ export function configureOnlineSocket(fastify) {
 			const token = req.cookies.token;
 			const user = await extractUserFromToken(req.cookies.token);
 			if (!user) {
-				console.error('User invalido, cerrando socket');
 				socket.close();
 				return;
 			}

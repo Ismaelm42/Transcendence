@@ -78,7 +78,6 @@ export function showPrivateChat(e: MouseEvent, socket: WebSocket, userId: string
 	if (currentRoom !== roomId) {
 		const [id1, id2] = roomId.split("-");
 		const id = id1 === userId ? id2 : id1;
-		console.log("id", id)
 		const message = {
 			type: 'private',
 			id: id,

@@ -4,7 +4,6 @@ export function showMessage(message: string, time: number | null): void {
 	const closeButton = document.getElementById("close-message");
 
 	if (!messageContainer || !messageContent || !closeButton) {
-		console.error("Required elements are missing in the DOM.");
 		return;
 	}
 
@@ -44,13 +43,11 @@ export function showMessage(message: string, time: number | null): void {
 }
 
 export function showWinnerMessage(message: string, time: number | null): void {
-	console.log("showWinnerMessage called with message:", message, "and time:", time);
 	const messageContainer = document.getElementById("winner-message-container");
 	const messageContent = document.getElementById("winner-message-content");
 	const closeButton = document.getElementById("close-winner-message");
 
 	if (!messageContainer || !messageContent || !closeButton) {
-		console.error("Required elements are missing in the DOM.");
 		return;
 	}
 
@@ -104,7 +101,6 @@ export function showConfirmDialog(message: string, timer: number): Promise<boole
 		const barEl = document.getElementById("confirm-timer-bar") as HTMLDivElement | null;
 
 		if (!overlay || !content || !yesBtn || !noBtn) {
-			console.error("Confirm dialog elements missing in DOM.");
 			resolve(false);
 			return ;
 		}

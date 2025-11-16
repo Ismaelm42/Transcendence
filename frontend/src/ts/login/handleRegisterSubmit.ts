@@ -35,9 +35,7 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
 			// try
 			// {
 			// 	const result = await response.json();
-			// 	console.log("Resultado del registro:", result);
 			// } catch (error) {
-			// 	console.error("Error al realizar el registro:", error);
 	        //     if (error instanceof Error) {
 	        //         alert("Error: " + error.message);
 	        //     } else {
@@ -49,8 +47,6 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
 	        app.navigate("home");
 			}
     	 } catch (error) {
-			console.error("Error al enviar el formulario de registro:", error);
-	    console.error("Error en el registro o login:", error);
 	    return "Error al enviar el formulario de registro o username ya existente";
 	}
 }

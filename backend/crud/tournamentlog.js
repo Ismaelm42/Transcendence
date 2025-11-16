@@ -73,7 +73,6 @@ export const getTournamentlogsByUserId = async (userId) => {
 
 		  // Executing the query
 		  const [results] = await sequelize.query(finalQuery);
-		  console.log("tournamentlogs by userId: " + JSON.stringify(results));
 		  return results;
 	} catch (err) {
 		throw new Error(`Error fetching tournamentlogs ${err.message}`);
@@ -102,7 +101,6 @@ export const getTournamentWinsByUserId = async (userId) => {
 		    WHERE ${queries.join(' OR ')}
 		  `;
 		  const [results] = await sequelize.query(finalQuery);
-		  console.log("tournamentlogs by userId: " + JSON.stringify(results));
 		  return results;
 	} catch (err) {
 		throw new Error(`Error fetching tournamentlogs ${err.message}`);
@@ -127,16 +125,13 @@ export const getTournamentWinsByUserId = async (userId) => {
 
 // tested and working
 export const getNextTournamentlogId = async () => {
-	console.log('Fetching next tournamentlog ID');
 	try {
 		const result = await Tournamentlog.findOne({
 			order: [['createdAt', 'DESC']],
 			attributes: ['tournamentId'],
 		});
 		let tournamentId = result && result.tournamentId ? result.tournamentId + 1 : 1;
-		console.log('Next tournamentlog ID:', tournamentId);
 		const newTournamentlog = await createTournamentlog(tournamentId,null,null,null,null);
-		console.log('Created new tournamentlog:', newTournamentlog);
 		return tournamentId;
 	} catch (err) {
 		throw new Error(`Error fetching next tournamentlog ID: ${err.message}`);
@@ -148,7 +143,6 @@ export const createTournamentlog = async (tournamentId, playerscount, config, us
 		if (!tournamentId) {
 		throw new Error('tournamentId cannot be empty');
 	}
-	console.log('Creating tournamentlog with:', tournamentId, playerscount, config, users, gamesData);
 	try {
 		const tournamentData = { tournamentId };
 		if (playerscount && playerscount !== undefined)
@@ -175,10 +169,7 @@ export const createTournamentlog = async (tournamentId, playerscount, config, us
 const findplayerByUsername= (users, username) => {
 	if (!users || !Array.isArray(users)) return null;
 	for (const user of users) {
-		console.log("user: " + JSON.stringify(user));
-		console.log("user.gameplayer: " + JSON.stringify(user.gameplayer));
 		if (user.gameplayer && user.gameplayer.username === username) {
-			console.log("findplayerByUsername: user.gameplayer found: " + JSON.stringify(user.gameplayer));
 			return user.gameplayer;
 		}
 	}
@@ -186,7 +177,6 @@ const findplayerByUsername= (users, username) => {
 }
 
 const returnMode = (player1, player2) =>{
-		//console.log("Returning mode for players:", player1, player2);
 		if (player1.id === -1 && player2.id === -1) {
 			return 'auto';
 		} else if (player1.id === -1 || player2.id === -1) {
@@ -204,7 +194,6 @@ const returnMode = (player1, player2) =>{
 //  * @returns game mode 
 //  */
 // const returnMode = (player1, player2) =>{
-// 		//console.log("Returning mode for players:", player1, player2);
 // 		if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
 // 				&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) { 
 // 			return 'auto';
@@ -221,10 +210,7 @@ const returnMode = (player1, player2) =>{
 // const findplayerById = (users, playerId) => {
 // 	if (!users || !Array.isArray(users)) return null;
 // 	for (const user of users) {
-// 		console.log("user: " + JSON.stringify(user));
-// 		console.log("user.gamePLayer: " + JSON.stringify(user.gameplayer));
 // 		if (user.gameplayer && user.gameplayer.id === playerId) {
-// 			console.log("findplayerById: user.gamePLayer found: " + JSON.stringify(user.gameplayer));
 // 			return user.gameplayer;
 // 		}
 // 	}
@@ -234,9 +220,6 @@ const returnMode = (player1, player2) =>{
 // const updateGameData = (users,playerscount, gamesData) => {
 // 	if (!gamesData || !playerscount) return gamesData;
 	
-// 	console.log("Updating gameData with playerscount:", playerscount);
-// 	console.log("Initial gamesData:", JSON.stringify(gamesData));
-// 	console.log("Users:", JSON.stringify(users));
 // 	// 1. Buscar el último ganador válido en el array
 // 	let lastWinnerId = null;
 // 	for (let i = gamesData.length - 1; i >= 0; i--) {
@@ -248,14 +231,12 @@ const returnMode = (player1, player2) =>{
 // 			game.result.winner !== ''
 // 		) {
 // 			lastWinnerId = game.result.winner;
-// 			console.log("Last winner found:", lastWinnerId);
 // 			break; // encontramos el último ganador
 // 		}
 // 	}
 
 // 	// 2. Si hay ganador, buscar sus datos y asignarlo a siguiente slot vacío
 // 	if (lastWinnerId) {
-// 		console.log("users: " + JSON.stringify(users));
 // 		const winnerUser = findplayerById(users, lastWinnerId);
 // 		if (winnerUser) {
 // 			for (let game of gamesData) {
@@ -300,7 +281,6 @@ const returnMode = (player1, player2) =>{
 
 const updateGameData = (users, playerscount, gamesData) => {
 	if (!gamesData || !playerscount) return gamesData;
-	console.log("updateGameData - Users:", JSON.stringify(users));
 	/**check for the las winner */
 	let lastWinnerUsername = null;
 	for (let i = gamesData.length - 1; i >= 0; i--) {
@@ -312,7 +292,6 @@ const updateGameData = (users, playerscount, gamesData) => {
 			game.result.winner !== ''
 		) {
 			lastWinnerUsername = game.result.winner;
-			console.log("Last winner username found:", lastWinnerUsername);
 			break;
 		}
 	}
@@ -320,11 +299,9 @@ const updateGameData = (users, playerscount, gamesData) => {
 	// 2. if we have a lastwinner, check if we have to fullfiil a gamedata with this player
 	// this approach could be change if we use the game id as reference
 	if (lastWinnerUsername) {
-		console.log("users: " + JSON.stringify(users));
 		const winnerUser = findplayerByUsername(users, lastWinnerUsername);
 		if (winnerUser) {
 			for (let game of gamesData) {
-				console.log("updating Game: " + JSON.stringify(game));
 				if (game.player1.username === '') {
 					Object.assign(game.player1, {
 						id: winnerUser.id,
@@ -369,10 +346,8 @@ const updateGameData = (users, playerscount, gamesData) => {
 // Tested and working
 export const updateTournamentlog = async (tournamentId, playerscount, config, users, gamesData, winner) => {
 	try {
-		console.log('Updating updateTournamentlog with:', tournamentId, playerscount, config, users, gamesData, winner);
 		let tournamentlog = (await Tournamentlog.findAll({ where: { tournamentId } }))[0];
 		return Promise.resolve().then(() => {
-			console.log('Found tournamentlog:', tournamentlog);
 			if (tournamentlog) {
 				if (playerscount)
 					tournamentlog.playerscount = playerscount;

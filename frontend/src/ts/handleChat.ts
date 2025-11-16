@@ -68,7 +68,6 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, it
 	console.warn("handleSocketMessage: ", socket, chatMessages, items, name );
 	socket.onmessage = async (event: MessageEvent) => {
 		const data = JSON.parse(event.data);
-		console.log("Received data:", data);
 		if (data.type === 'message') {
 			const HtmlContent = await formatMsgTemplate(data, name);
 			let stored = sessionStorage.getItem("chatHTML") || "";
@@ -88,14 +87,12 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, it
 // TODO: Handle the case when the Socket close.
 function handleSocketClose(socket: WebSocket): void {
 	socket.onclose = (event: CloseEvent) => {
-		console.log(`CLIENT: Connection closed - Code: ${event.code}`);
 	}
 }
 
 // TODO: Handle the case when the Socket gets an error.
 function handleSocketError(socket: WebSocket): void {
 	socket.onerror = (event) => {
-		console.error("CLIENT: WebSocket error:", event);
 	}
 }
 

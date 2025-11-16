@@ -440,8 +440,12 @@ export class Chessboard {
 			notation = ('O-O-O' + suffix);
 		else if (data.promoteTo)
 			notation = pieceTo ? (fromAlg[0] + 'x' + toAlg + '=' + color[0] + data.promoteTo + suffix) : (toAlg + '=' + color[0] + data.promoteTo + suffix);
-		else if (pieceFrom instanceof Pawn)
-			notation = pieceTo ? (fromAlg[0] + 'x' + toAlg + suffix) : (toAlg + suffix);
+		else if (pieceFrom instanceof Pawn) {
+			if (fromSquare % 10 !== toSquare % 10 && !pieceTo)
+				notation = fromAlg[0] + 'x' + toAlg + suffix;
+			else
+				notation = pieceTo ? (fromAlg[0] + 'x' + toAlg + suffix) : (toAlg + suffix);
+		}
 		else
 			notation = pieceTo ? (pieceFrom.getNotation() + disambiguation + 'x' + toAlg + suffix) : (pieceFrom.getNotation() + disambiguation + toAlg + suffix);
 		

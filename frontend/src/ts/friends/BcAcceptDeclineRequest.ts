@@ -20,7 +20,6 @@ export class BcAcceptDeclineRequest extends BasicComponent {
 			const span = wrapper.querySelector('span[data-user-id]');
 			if (!span) return;
 			const userId = span.textContent?.trim();
-			console.log('ID del usuario:', userId);
 			const requestBody = {
 				friendId: userId
 			};
@@ -44,7 +43,6 @@ export class BcAcceptDeclineRequest extends BasicComponent {
 					showMessage(errorMessage.error, null);
 				}
 			} catch (error) {
-				console.error("Error accepting friend request");
 			}
 		});
 		const btn2 = this.el?.querySelector('.btnDeclineRequest ');
@@ -55,7 +53,6 @@ export class BcAcceptDeclineRequest extends BasicComponent {
 			const span = wrapper.querySelector('span[data-user-id]');
 			if (!span) return;
 			const userId = span.textContent?.trim();
-			console.log('ID del usuario:', userId);
 			const requestBody = {
 				friendId: userId
 			};
@@ -79,7 +76,6 @@ export class BcAcceptDeclineRequest extends BasicComponent {
 					showMessage(errorMessage.error, null);
 				}
 			} catch (error) {
-				console.error("Error declining friend request");
 			}
 		});
 	}

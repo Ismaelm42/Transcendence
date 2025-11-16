@@ -17,7 +17,6 @@ export const runSeeders = (sequelize) => {
 		const { User } = sequelize.models;
 		const userCount = await User.count();
 		if (userCount > 0) {
-			console.log('Seeders not executed: the database already contains data.');
 			return resolve('Seeders not needed');
 		}
 		exec('npx sequelize-cli db:seed:all --debug', { cwd: '/app/database/' }, (err, stdout, stderr) => {

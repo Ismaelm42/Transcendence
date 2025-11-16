@@ -93,7 +93,6 @@ export class SPA {
 		
 		window.addEventListener("pageshow", (event) => {
 			if (event.persisted && location.hash === '#login') {
-				console.log("Recargando el step de login" );
 				const appContainer = document.getElementById('app-container');
 				if (appContainer) {
 					appContainer.innerHTML = '';
@@ -116,7 +115,6 @@ export class SPA {
 					headerElement.innerHTML = headerContent;
 				}
 			} else {
-				console.error('Error al cargar el header:', headerResponse.statusText);
 			}
 			// Cargar el footer
             const footerResponse = await fetch('../../html/layout/footer.html');
@@ -126,12 +124,8 @@ export class SPA {
                 if (footerElement) {
                     footerElement.innerHTML = footerContent;
                 }
-				console.log ('footer cargado');
-            } else {
-                console.error('Error al cargar el footer:', footerResponse.statusText);
-            }
+            } 
         } catch (error) {
-            console.error('Error al cargar el footer:', error);
         }
     }
 
@@ -178,8 +172,6 @@ export class SPA {
         } catch (e) {
             console.debug('SPA.leave-check error', e);
         }
-		console.log("this.currentStep: " , this.currentStep);
-		console.log("step: " , step);
 		// Handle leaving game-match step on active game
 		if (this.currentStep === 'game-match')
 			await this.gameMatchNavigation(this.currentStep, step);
@@ -205,19 +197,15 @@ export class SPA {
 			{
 				stepInstance = new module.default('app-container');
 				this.currentTournament = stepInstance;
-				console.log('tournament-lobby currentTournament: ', this.currentTournament);
 			}
 			else
 				stepInstance = new module.default('app-container');
 			const user = await stepInstance.checkAuth();
 			if (user) {
-				console.log("Usuario autenticado: ", user);
 				// Si el usuario está autenticado, inicializamos el socket de usuarios online
 				if (!onlineSocket || onlineSocket.readyState === WebSocket.CLOSED) {
 					initOnlineSocket();
 				}
-			} else {
-				console.log("Usuario no autenticado: ", user);
 			}
 			if (routeConfig.protected && !user) {
 				console.warn(`Acceso denegado a la ruta protegida: ${step}`);

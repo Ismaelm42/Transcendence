@@ -33,8 +33,6 @@ export function configureTournamentlogRoutes(fastify, sequelize) {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			const userId = decoded.userId;
 			const ParamsuserId = request.params.userId;
-			// console.log('userId en get_user_tournamentlogs', userId);
-			// console.log('ParamsuserId en get_user_tournamentlogs', ParamsuserId);
 			const userTournamentlogs = await crud.tournamentlog.getTournamentlogsByUserId(userId);
 			userTournamentlogs.unshift({ userId });
 			reply.status(200).send(userTournamentlogs);
@@ -59,7 +57,6 @@ export function configureTournamentlogRoutes(fastify, sequelize) {
 		try {
 			// const nextTournamentlogId = "43"; // Placeholder for the next tournamentlog ID"
 			const nextTournamentlogId = await crud.tournamentlog.getNextTournamentlogId();
-			console.log('Next tournamentlog ID:', nextTournamentlogId);
 			reply.status(200).send({ nextTournamentlogId });
 		} catch (err) {
 			fastify.log.error(err);

@@ -40,7 +40,6 @@ export function hideGameOverOptions() {
 }
 
 export async function saveChessGame(data: any): Promise<void>  {
-		console.log("saveChessGame: ", data);
 		let Chessgamelog = {
 			user1: data.hostId,
 			user2: data.hostId && data.hostId !== data.guestId ? data.guestId : -2, // -2 for guest player
@@ -71,7 +70,6 @@ export async function saveChessGame(data: any): Promise<void>  {
 			Chessgamelog.winnerStr = null;
 			Chessgamelog.loserStr = null;
 		}
-		console.log("Chessgamelog to be sent: ", Chessgamelog);
 		try {
 			const response = await fetch("https://localhost:8443/back/post_chessgamelog", {
 				method: "POST",
@@ -82,16 +80,7 @@ export async function saveChessGame(data: any): Promise<void>  {
 				body: JSON.stringify(Chessgamelog)
 			});
 			const result = await response.json();
-			if (!response.ok) {
-				console.log(`Error: ${result.message}`);
-			} else {
-				if (result && result.id && result.id == -42)
-					console.log("Online game: Game log already saved by the host: ", result);
-				else
-					console.log("Game log saved successfully:", result);
-			}
 		} catch (error) {
-			console.error("Error while verifying:", error);
 		}
 	}
 

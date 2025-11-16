@@ -81,12 +81,10 @@ export default class GameMatch extends Step
 			player2Name = player2Name.toUpperCase();
 			//get the html content and replace the placeholders
 			const htmlContent = await response.text().then((text) => {
-				// console.log("Raw gameMatch.html content", text);
 				let replaced = text.replace("{{ Player 1 }}", player1Name);
 				replaced = replaced.replace("{{ Player 2 }}", player2Name);
 				return replaced;
 			});
-			// console.log("Loaded gameMatch.html content despues del replace" , htmlContent);
 			appElement.innerHTML = htmlContent;
 
 			//		fin de trasteo						//////////////////////////////////////////////////////////
@@ -98,7 +96,6 @@ export default class GameMatch extends Step
 		}
 		catch (error)
 		{
-			console.error("Error loading game UI:", error);
 			appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
 		}
 
@@ -330,8 +327,6 @@ export default class GameMatch extends Step
 			const spa = SPA.getInstance();
 			if(this.tournament && this.tournament.getTournamentId() !== -42)
 			{
-				console.log("FROM showGameResults, Handling match result for tournament:", this.tournament.getTournamentId());
-				console.log("Match result data:", gameData);
 				this.tournament.resumeTournament();
 				this.tournament.handleMatchResult(gameData);
 			}
