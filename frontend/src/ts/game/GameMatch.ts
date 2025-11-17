@@ -383,6 +383,13 @@ export default class GameMatch extends Step
 		const player1Ready = document.getElementById('player1-ready') as HTMLElement;
 		const player2Ready = document.getElementById('player2-ready') as HTMLElement;
 
+		//inicio trasteo /////////////////////////////////////////////////////TO DO: BORRAR COMENTARIO/////
+		const player2Resultname = document.getElementById("pong_game_player2");
+		if (player2Resultname && player2Resultname.textContent === "PLAYER 2"){
+			player2Resultname.innerHTML = playerDetails.player2?.username.toUpperCase() || "PLAYER 2";
+		}
+		//fin de trasteo /////////////////////////////////////////////////////TO DO: BORRAR COMENTARIO/////
+
 		player1Name.innerHTML = playerDetails.player1?.username || "Waiting <br>player 1...";
 		player1Avatar.src = playerDetails.player1?.avatarPath || "https://localhost:8443/back/images/7.png";
 		player2Name.innerHTML = playerDetails.player2?.username || "Waiting <br>player 2...";
