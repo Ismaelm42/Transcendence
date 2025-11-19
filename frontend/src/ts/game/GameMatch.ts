@@ -425,6 +425,25 @@ export default class GameMatch extends Step
 		return (this.aiSide);
 	}
 
+	// Ensure AI is running after reload/resume (safe due to guard in GameAI.start)
+	public startAIIfNeeded(): void
+	{
+		// If we're in 1vAI but AI wasn't instantiated (e.g., cold reload), create it now
+		if (!this.ai && this.game.getGameLog().mode === '1vAI') {
+			// Determine AI side from current gamelog
+			this.setAiSide(this.game.getGameLog());
+			this.ai = new GameAI(this.game, this.aiSide);
+			// Rebuild controllers so human/AI sides map correctly
+			if (this.controllers) {
+				this.controllers.destroy();
+			}
+			this.controllers = new GameControllers(this.game, this.aiSide);
+			this.controllers.setupControllers();
+		}
+		if (this.ai)
+			this.ai.start();
+	}
+
 	public destroy() : void
 	{
 		console.warn("GameMatch Destructor Called(!)");

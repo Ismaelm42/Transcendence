@@ -108,6 +108,20 @@ export class GameConnection
 								else 
 									spa.navigate('game-match');
 								console.log("Game initialized:", data);
+								// If rejoining a running 1vAI match, ensure controllers and AI start
+								try {
+									const isAI = (data?.metadata?.mode === '1vAI') || (this.game.getGameLog().mode === '1vAI');
+									if (isAI && data?.metadata?.startTime) {
+										setTimeout(() => {
+											const spa2 = SPA.getInstance();
+											const match = spa2.currentGame?.getGameMatch();
+											if (match) {
+												match.controllers.setupControllers();
+												match.startAIIfNeeded();
+											}
+										}, 150);
+									}
+								} catch {}
 								break ;
 							case 'GAME_STATE':
 								// Mark game as active to enable leave guards on reload/navigation
@@ -157,6 +171,8 @@ export class GameConnection
 								try {
 									const spa2 = SPA.getInstance();
 									spa2.currentGame?.getGameMatch()?.controllers.setupControllers();
+									if (this.game.getGameLog().mode === '1vAI')
+										spa2.currentGame?.getGameMatch()?.startAIIfNeeded();
 								} catch {}
 								break ;
 							default:

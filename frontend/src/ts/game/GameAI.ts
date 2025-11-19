@@ -15,6 +15,9 @@ export class GameAI
 
 	start()
 	{
+		// Avoid duplicate intervals on reconnect/resume
+		if (this.intervalId)
+			return;
 		this.intervalId = window.setInterval(() => this.update(), 16);
 	}
 
