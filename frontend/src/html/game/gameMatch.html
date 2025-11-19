@@ -156,9 +156,9 @@ style="display: none;">
 			Game Paused
 		</span>
 		<div id="pause-reason" class="text-pong-secondary  text-lg mb-4"></div>
-		<div id="pause-timer" class="text-[#00ff99] text-3xl font-[Tektur] mb-2"></div>
+		<div id="pause-timer" class="text-international-orange-400 text-3xl font-[Tektur] mb-2"></div>
 		<div class="w-64 h-2 bg-gray-700 rounded overflow-hidden mb-4">
-			<div id="pause-timer-bar" class="h-full bg-[#00ff99]" style="width:100%"></div>
+			<div id="pause-timer-bar" class="h-full bg-chilean-fire-400" style="width:100%"></div>
 		</div>
 		<button id="resume-btn"
 			class="mt-4 btn-pong-tertiary text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
@@ -175,21 +175,21 @@ style="display: none;">
 	tabindex="-1"
 	style="display: none;"
 >
-	<div class="confirm-dialog bg-gray-800 rounded-lg shadow-xl px-8 py-6 flex flex-col items-center border-4 border-[#00ff99]">
+	<div class="rounded-lg px-8 py-6 flex flex-col items-center shadow-xl bg-overlays border-4 border-candlelight-400 backdrop-blur" style="box-shadow: 0 0 20px rgba(241, 188, 11, 0.5);">
 		<div id="confirm-dialog-content" class="confirm-dialog-content text-white text-lg mb-4 text-center"></div>
-		<div id="confirm-timer" class="text-[#00ff99] text-2xl font-[Tektur] mb-2"></div>
+		<div id="confirm-timer" class="text-international-orange-400 text-3xl font-[Tektur] mb-2"></div>
 		<div class="w-64 h-2 bg-gray-700 rounded overflow-hidden mb-4">
-			<div id="confirm-timer-bar" class="h-full bg-[#00ff99]" style="width:100%"></div>
+			<div id="confirm-timer-bar" class="h-full bg-chilean-fire-400" style="width:100%"></div>
 		</div>
 		<div class="confirm-dialog-buttons flex gap-4">
 			<button id="confirm-dialog-yes"
-				class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-600"
-			>
+				class="mt-4 btn-pong-secondary text-pong-secondary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
+				type="button">
 				Yes
 			</button>
 			<button id="confirm-dialog-no"
-				class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-600"
-			>
+				class="mt-4 btn-pong-tertiary text-pong-tertiary font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-candlelight-400"
+				type="button">
 				No
 			</button>
 		</div>
