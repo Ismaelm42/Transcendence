@@ -172,7 +172,9 @@ export default class GameMatch extends Step
 			pauseReason.textContent = reason || '';
 		if (this.log.mode === 'remote' && resumeBtn && pauserId)
 		{
-			resumeBtn.style.display = (this.game.getOnlineId() === pauserId) ? 'inline-block' : 'none';
+			console.warn("onlineId: ", this.game.getOnlineId());
+			console.warn("pauserId: ", pauserId);
+			resumeBtn.style.display = (this.game.getOnlineId() == pauserId) ? 'inline-block' : 'none';
 		}
 
 		const timerEl = document.getElementById('pause-timer');

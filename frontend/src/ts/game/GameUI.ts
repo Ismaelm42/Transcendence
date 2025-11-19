@@ -264,6 +264,7 @@ export class GameUI
 				if (gameId)
 				{	
 					this.game.setGameIsHost(false);
+					this.game.getGameConnection().parseUserInfo(null);
 					this.game.getGameConnection().joinGame(gameId);
 				}
 			});

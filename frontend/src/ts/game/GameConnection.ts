@@ -86,11 +86,15 @@ export class GameConnection
 						switch(data.type)
 						{
 							case 'USER_INFO':
+								const userId = data?.user?.id;
+								if (userId !== undefined && userId !== null)
+									this.game.setOnlineId(String(userId));
+								else
+									console.warn('USER_INFO received without user id');
 								if (this.pendingUserInfoResolve)
 								{
 									this.pendingUserInfoResolve(data.user);
 									this.pendingUserInfoResolve = null;
-									this.game.setOnlineId(data.user.id);
 								}
 								else
 									console.warn('No pendingUserInfoResolve to call!');
@@ -99,6 +103,11 @@ export class GameConnection
 								const spa = SPA.getInstance();
 								if (data.metadata)
 									this.game.setGameLog(data.metadata);
+								if (!this.game.getOnlineId() && !this.pendingUserInfoResolve)
+								{
+									this.pendingUserInfoResolve = () => {};
+									this.socket?.send(JSON.stringify({ type: 'GET_USER', mode: 'local' }));
+								}
 								if (window.location.hash === '#game-match' && spa.currentGame?.getGameMatch())
 								{
 									const appElement = document.getElementById('app-container');

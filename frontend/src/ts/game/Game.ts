@@ -164,7 +164,7 @@ export default class Game extends Step
 		this.isHost = state;
 	}
 
-	public setOnlineId(id: string): void
+	public setOnlineId(id: string ): void
 	{
 		this.onlineId = id;
 	}
