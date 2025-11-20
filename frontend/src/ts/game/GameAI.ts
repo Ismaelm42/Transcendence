@@ -37,7 +37,7 @@ export class GameAI
 			return ;
 		
 		if (this.game.getGameLog().config?.difficulty === 'easy')
-			this.errorFactor = 0.09;
+			this.errorFactor = 0.11;
 		else if (this.game.getGameLog().config?.difficulty === 'hard')
 			this.errorFactor = 0.06;
 		const	ballY = gameState.ball?.y ?? 0.5;

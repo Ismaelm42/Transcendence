@@ -142,6 +142,7 @@ export class GameConnection
 								this.game.startGameSession();
 								break ;
 							case 'GAME_END':
+								// Kill tournament - tournament.resetTournament()
 								this.game.endGameSession(data.result);
 								this.game.getGameMatch()?.showGameResults(this.game.getGameLog());
 								break ;

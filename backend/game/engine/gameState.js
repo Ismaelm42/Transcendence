@@ -5,6 +5,8 @@
 
 import { gamesList } from "../manager/eventManager.js";
 import { createGamelog } from '../../crud/gamelog.js';
+import { deleteTempuserByTournamentId } from '../../crud/tempuser.js';
+
 
 //Set game difficulty which affects AI behavior and ball speed
 export function setDifficulty(level)
@@ -140,4 +142,10 @@ export async function endGame(gamesList, needSaving)
 	this.broadcastResponse('GAME_END');
 	this.shouldCleanup = true;
 	console.log("[!]-_GAME SESSION STOPPED AND DELETED FROM BACKEND_-[!]");
+	console.log("tournamentID:", this.metadata.tournamentId);
+	if (this.metadata.tournamentId && this.metadata.tournamentId > 0)
+	{	
+		console.log("INSIDE IF - tournamentID:", this.metadata.tournamentId);
+		deleteTempuserByTournamentId(this.metadata.tournamentId);
+	}
 }
