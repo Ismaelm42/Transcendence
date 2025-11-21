@@ -174,6 +174,11 @@ export class SPA {
 
 	async loadStep() {
 		let step = location.hash.replace('#', '') || 'home';
+		// If the hash didn't change effectively, avoid reloading the same step (prevents duplicate listeners)
+		if (this.currentStep === step) {
+			console.debug('SPA: same step detected, skipping reload for', step);
+			return;
+		}
 		// this.navigate(step);
 
 		// // Obtener la URL actual
@@ -216,6 +221,13 @@ export class SPA {
 			let stepInstance;
 			if (step === 'game-match')
 			{
+				// If a match instance already exists, destroy it to avoid duplicate listeners/intervals
+				try {
+					const existingMatch = this.currentGame?.getGameMatch?.();
+					if (existingMatch && typeof existingMatch.destroy === 'function') {
+						existingMatch.destroy();
+					}
+				} catch {}
 				// Cold reload into game-match: if there is no currentGame, attempt reconnection
 				if (!this.currentGame) {
 					this.currentGame = new Game('app-container');

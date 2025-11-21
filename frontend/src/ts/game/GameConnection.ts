@@ -183,6 +183,17 @@ export class GameConnection
 									spa2.currentGame?.getGameMatch()?.controllers.setupControllers();
 									if (this.game.getGameLog().mode === '1vAI')
 										spa2.currentGame?.getGameMatch()?.startAIIfNeeded();
+									// If we have a previous state but render loop not running (e.g. after reload), force a restart
+									const renderer: any = this.game.getGameRender();
+									if (renderer && !renderer.animationFrameId && (renderer.lastKnownState || renderer.gameState)) {
+										console.debug('Forcing render loop restart after GAME_RESUMED');
+										// Use the most recent known state to kick the loop
+										const stateToUse = renderer.gameState || renderer.lastKnownState;
+										if (stateToUse)
+											renderer.renderGameState(stateToUse);
+									}
+									// Opportunistically request a fresh state snapshot if supported by backend
+									try { this.socket?.send(JSON.stringify({ type: 'GET_STATE' })); } catch {}
 								} catch {}
 								break ;
 							default:
