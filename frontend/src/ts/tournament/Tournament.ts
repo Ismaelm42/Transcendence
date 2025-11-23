@@ -478,10 +478,10 @@ export default class Tournament extends Step {
 			const	matchData : GameData = this.gameDataArray[this.nextGameIndex];
 			if( matchData.id.includes('Bye')) {
 				matchData.result = {
-						winner: matchData.playerDetails.player1?.id.toString() || '',
-						loser: "0",
+						winner: matchData.playerDetails.player1?.tournamentUsername.toString() || '',
+						loser: "bye",
 						score: [5, 0],
-						endReason: 'Game ended' 
+						endReason: 'Game ended'
 					};
 				
 				showMessage(`${matchData.playerDetails.player1?.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
@@ -574,6 +574,9 @@ export default class Tournament extends Step {
 			let winnerPlayer = null;
 			if (result.result && result.result.winner) {
 				winnerPlayer = this.bracket.find(player => player.username === result.result!.winner);
+				if(result.id.includes('bye')) {
+					winnerPlayer = result.playerDetails.player1 || null;
+				}
 				if (winnerPlayer) {
 					this.bracket.push(winnerPlayer);
 				}
