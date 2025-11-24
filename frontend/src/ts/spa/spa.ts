@@ -6,118 +6,68 @@ import Tournament from "../tournament/Tournament.js";
 import { clearSearchFilter } from "../chat/filterSearch.js";
 
 export class SPA {
-    private container: HTMLElement;
-    private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
+	private container: HTMLElement;
+	private static instance: SPA; // Guardamos una referencia estática y privada para solo poder acceder con el getter
 	public currentGame: Game | null = null;
 	public currentTournament: Tournament | null = null;
 	private currentStep: string | null = null;
 	// Guard flag to avoid double prompts (popstate + hashchange firing together)
 	private navigationGuardActive: boolean = false;
 
-    private routes: { [key: string]: { module: string; protected: boolean } } = {
-        'home': { module: '../home/homeRender.js', protected: false },
-        'login': { module: '../login/loginRender.js', protected: false },
-        'register': { module: '../login/registerRender.js', protected: false },
-        'game-lobby': { module: '../game/Game.js', protected: true },
-        'game-match': { module: '../game/GameMatch.js', protected: true },
-		'play-chess': {module: '../chess/chessRender.js', protected: true },
-        'tournament-lobby': { module: '../tournament/Tournament.js', protected: true },
-        'friends': { module: '../friends/friendsRender.js', protected: true },
-        'chat': { module: '../chat/chatRender.js', protected: true },
-        'stats': { module: '../stats/statsRender.js', protected: true },
-        'logout': { module: '../login/logoutRender.js', protected: true },
+	private routes: { [key: string]: { module: string; protected: boolean } } = {
+		'home': { module: '../home/homeRender.js', protected: false },
+		'login': { module: '../login/loginRender.js', protected: false },
+		'register': { module: '../login/registerRender.js', protected: false },
+		'game-lobby': { module: '../game/Game.js', protected: true },
+		'game-match': { module: '../game/GameMatch.js', protected: true },
+		'play-chess': { module: '../chess/chessRender.js', protected: true },
+		'tournament-lobby': { module: '../tournament/Tournament.js', protected: true },
+		'friends': { module: '../friends/friendsRender.js', protected: true },
+		'chat': { module: '../chat/chatRender.js', protected: true },
+		'stats': { module: '../stats/statsRender.js', protected: true },
+		'logout': { module: '../login/logoutRender.js', protected: true },
 		'profile': { module: '../profile/userProfileRender.js', protected: true }
-    };
+	};
 
-    public constructor(containerId: string) {
-        this.container = document.getElementById(containerId) as HTMLElement;
+	public constructor(containerId: string) {
+		this.container = document.getElementById(containerId) as HTMLElement;
 		SPA.instance = this;
-		this.loadHEaderAndFooter();	
+		this.loadHEaderAndFooter();
 
-		// Check if hard-reloaded on tournamnet-match: route to Home immediately
-		// TODO: display info message "you aborted tournament"
-		try {
-			const forceHome = sessionStorage.getItem('forceHome');
-			if (forceHome) {
-				sessionStorage.removeItem('forceHome');
-				if (location.hash !== '#home') {
-					window.location.hash = '#home';
-					showMessage("Tournament in progress aborted. You navigated away or reload page and got redirected home", 5000);
-				}
-			}
-		} catch {}
+		// Handle Reloads: Check if we were in an active session before the reload
+		const wasActiveSession = sessionStorage.getItem('was_active_session');
+		sessionStorage.removeItem('was_active_session'); // Clear flag immediately
 
-		this.loadStep();
+		const initialHash = location.hash.replace('#', '');
 
-		// Unified hash-based routing (single source of truth)
-		let revertingHash = false; // guard re-entrancy when we revert after a cancelled leave
-		// Handle browser reload/close: treat as a hard leave and route to Home on next boot - for tournament-match case
+		// Redirect if we flagged an active session OR if trying to load game-match directly (which is never valid on reload)
+		if (wasActiveSession === 'true' || initialHash === 'game-match') {
+			location.hash = '#home';
+			setTimeout(() => showMessage("You reloaded the page during active game session\nSession has been terminated", 6000), 500);
+		} else {
+			this.loadStep();
+		}
+
 		window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
-			const inActiveMatch = this.currentStep === 'game-match' && !!this.currentGame?.isGameActive?.();
-			const tournamentId = this.currentTournament?.getTournamentId?.();
+			const tId = this.currentTournament?.getTournamentId();
+			console.warn(`[beforeunload] Step: ${this.currentStep}, TournamentID: ${tId}`);
 
-			if (tournamentId && tournamentId > -42) {
-				try {
-					// Ensure the next boot lands on Home and skips reconnection
-					sessionStorage.setItem('forceHome', '1');
-					// Best-effort notify server to end/pause the game
-					if (inActiveMatch) {
-						this.currentGame?.getGameConnection()?.killGameSession(this.currentGame.getGameLog().id);
-					}
-				} catch {}
-				// Trigger native confirmation on reload/close
-				e.preventDefault();
-				e.returnValue = '';
+			// Terminate session if on game-match OR if on tournament-lobby with an active tournament (ID != -42)
+			// Note: We check if tId is defined to avoid false positives if currentTournament is null
+			if (this.currentStep === 'game-match' || (this.currentStep === 'tournament-lobby' && tId !== undefined && tId !== null && tId !== -42)) {
+				console.log("[beforeunload] Terminating session...");
+				sessionStorage.setItem('was_active_session', 'true'); // Flag for the next reload
+				this.terminateSession();
 			}
 		});
+
 		window.addEventListener('hashchange', async () => {
-			if (revertingHash) return; // ignore synthetic change caused by our own revert
-			const nextStep = location.hash.replace('#', '') || 'home';
-			// Guard: leaving an active game-match
-			if (!this.navigationGuardActive && this.currentStep === 'game-match' && nextStep !== 'game-match') {
-				this.navigationGuardActive = true;
-				const confirmed = await this.confirmLeaveGameMatch(nextStep);
-				this.navigationGuardActive = false;
-				if (!confirmed) {
-					this.currentGame?.getGameConnection().socket?.send(JSON.stringify({ type: 'RESUME_GAME' }));
-					revertingHash = true;
-					window.location.hash = `#${this.currentStep}`; // restore previous
-					revertingHash = false;
-					return;
-				}
-			}
-			// Tournament in progress warning logic (moved from popstate)
-			if (this.currentTournament && typeof this.currentTournament.getTournamentId === 'function') {
-				const tournamentId = this.currentTournament.getTournamentId();
-				const warningFlag = this.currentTournament.LeaveWithoutWarningFLAG;
-				// Minimal fix: do not treat navigation into a match route as aborting the tournament
-				if (this.currentStep === 'tournament-lobby'
-					&& nextStep !== 'tournament-lobby'
-					&& nextStep !== 'game-match'
-					&& nextStep !== 'play-chess'
-					&& typeof tournamentId !== 'undefined'
-					&& tournamentId !== null
-					&& tournamentId > -42
-					&& warningFlag !== true) {
-					showMessage("Tournament in progress aborted", 5000);
-					const tournamentUI = this.currentTournament.getTournamentUI?.();
-					if (tournamentUI && typeof tournamentUI.resetTournament === 'function') {
-						tournamentUI.resetTournament();
-					}
-					const messageContainer = document.getElementById("message-container");
-					const intervalId = setInterval(() => {
-						if (messageContainer?.style.display === 'none') {
-							clearInterval(intervalId);
-						}
-					}, 1000);
-				}
-			}
 			this.loadStep();
 		});
- 		
+
 		window.addEventListener("pageshow", (event) => {
 			if (event.persisted && location.hash === '#login') {
-				console.log("Recargando el step de login" );
+				console.log("Recargando el step de login");
 				const appContainer = document.getElementById('app-container');
 				if (appContainer) {
 					appContainer.innerHTML = '';
@@ -125,11 +75,11 @@ export class SPA {
 				this.loadStep();
 			}
 		});
-    }
+	}
 
-    private async loadHEaderAndFooter() {
+	private async loadHEaderAndFooter() {
 
-        try {
+		try {
 			// cargar el header
 
 			const headerResponse = await fetch('../../html/layout/header.html');
@@ -143,132 +93,134 @@ export class SPA {
 				console.error('Error al cargar el header:', headerResponse.statusText);
 			}
 			// Cargar el footer
-            const footerResponse = await fetch('../../html/layout/footer.html');
-            if (footerResponse.ok) {
-                const footerContent = await footerResponse.text();
-                const footerElement = document.getElementById('footer-container');
-                if (footerElement) {
-                    footerElement.innerHTML = footerContent;
-                }
-				console.log ('footer cargado');
-            } else {
-                console.error('Error al cargar el footer:', footerResponse.statusText);
-            }
-        } catch (error) {
-            console.error('Error al cargar el footer:', error);
-        }
-    }
-
-    async navigate(step: string) {
-		// Intercept programmatic navigation (guarding game-match before changing hash)
-		if (this.currentStep === 'game-match' && step !== 'game-match') {
-			const confirmed = await this.confirmLeaveGameMatch(step);
-			if (!confirmed) {
-				this.currentGame?.getGameConnection().socket?.send(JSON.stringify({ type: 'RESUME_GAME' }));
-				return;
+			const footerResponse = await fetch('../../html/layout/footer.html');
+			if (footerResponse.ok) {
+				const footerContent = await footerResponse.text();
+				const footerElement = document.getElementById('footer-container');
+				if (footerElement) {
+					footerElement.innerHTML = footerContent;
+				}
+				console.log('footer cargado');
+			} else {
+				console.error('Error al cargar el footer:', footerResponse.statusText);
 			}
+		} catch (error) {
+			console.error('Error al cargar el footer:', error);
 		}
+	}
+
+	async navigate(step: string) {
 		if (location.hash === `#${step}`) return; // no-op if already there
 		location.hash = `#${step}`; // hashchange handler will call loadStep
-    }
+	}
+
+	private terminateSession() {
+		// Kill Game
+		if (this.currentGame) {
+			if (this.currentGame.isGameActive?.()) {
+				try {
+					this.currentGame.getGameConnection()?.killGameSession(this.currentGame.getGameLog().id);
+				} catch (e) { console.error("Error killing game session:", e); }
+			}
+			// Cleanup match UI if exists
+			try {
+				const match = this.currentGame.getGameMatch?.();
+				if (match) {
+					if (typeof match.updatePlayerActivity === 'function') match.updatePlayerActivity(false);
+					if (typeof match.destroy === 'function') match.destroy();
+				}
+			} catch (e) { console.error("Error destroying match UI:", e); }
+		}
+
+		// Kill Tournament
+		if (this.currentTournament && this.currentTournament.getTournamentId && this.currentTournament.getTournamentId()! > -42) {
+			try {
+				const ui = this.currentTournament.getTournamentUI?.();
+				if (ui && typeof ui.resetTournament === 'function') {
+					ui.resetTournament();
+				} else if (typeof this.currentTournament.resetTournament === 'function') {
+					this.currentTournament.resetTournament();
+				}
+			} catch (e) { console.error("Error resetting tournament:", e); }
+		}
+
+		this.currentGame = null;
+	}
 
 	async loadStep() {
 		let step = location.hash.replace('#', '') || 'home';
+
+		// Determine if the transition is safe (Tournament Flow)
+		const isTournamentSetup = this.currentStep === 'tournament-lobby' && this.currentTournament?.getTournamentId() === -42;
+		const isTournamentFlow = (this.currentStep === 'tournament-lobby' && step === 'game-match' && this.currentTournament?.getTournamentId() !== -42);
+		// Handle Navigation away from active session
+		if ((this.currentStep === 'game-match' || this.currentStep === 'tournament-lobby') && step !== this.currentStep) {
+			if (isTournamentSetup) {
+				// Safe to leave setup
+			} else if (isTournamentFlow) {
+				// Safe transition between lobby and match
+				// If leaving game-match, we must destroy the match UI to stop loops, but NOT kill the session
+				if (this.currentStep === 'game-match') {
+					try {
+						const match = this.currentGame?.getGameMatch?.();
+						if (match) {
+							if (typeof match.updatePlayerActivity === 'function') match.updatePlayerActivity(false);
+							if (typeof match.destroy === 'function') match.destroy();
+						}
+					} catch (e) { console.error("Error destroying match UI:", e); }
+				}
+			} else {
+				// Unsafe transition - terminate
+				this.terminateSession();
+				showMessage("You navigated away from active session\nSession has been terminated", 6000);
+			}
+		}
+
 		// If the hash didn't change effectively, avoid reloading the same step (prevents duplicate listeners)
 		if (this.currentStep === step) {
 			console.debug('SPA: same step detected, skipping reload for', step);
 			return;
 		}
-		// this.navigate(step);
 
-		// // Obtener la URL actual
-		// let currentUrl = window.location.href;
+		this.currentStep = step;
 
-		// // Eliminar todo lo que está después de la última barra
-		// let baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-
-		// // Modificar la URL para que termine con /#home
-		// let newUrl = baseUrl + '#home';
-
-		// // Actualizar la URL sin recargar la página
-		// history.replaceState(null, '', newUrl);
-
-		// DEBUG: show why the "leaving game-match" branch may not run
-        try {
-            console.debug('SPA.leave-check', {
-                currentStep: this.currentStep,
-                nextStep: step,
-                hasCurrentGame: !!this.currentGame,
-                getGameConnectionResult: this.currentGame?.getGameConnection?.(),
-                hasSocket: !!this.currentGame?.getGameConnection?.()?.socket,
-                isGameActive: this.currentGame?.isGameActive?.(),
-                currentTournament: this.currentTournament
-            });
-        } catch (e) {
-            console.debug('SPA.leave-check error', e);
-        }
-		console.warn("this.currentStep: " , this.currentStep);
-		console.log("step: " , step);
-		// Handle leaving game-match step on active game
-		if (this.currentStep === 'game-match')
-			await this.gameMatchNavigation(this.currentStep, step);
-		
-        this.currentStep = step;
-		
 		const routeConfig = this.routes[step];
 		if (routeConfig) {
 			const module = await import(`./${routeConfig.module}`);
 			let stepInstance;
-			if (step === 'game-match')
-			{
+			if (step === 'game-match') {
 				// If a match instance already exists, destroy it to avoid duplicate listeners/intervals
 				try {
 					const existingMatch = this.currentGame?.getGameMatch?.();
 					if (existingMatch && typeof existingMatch.destroy === 'function') {
 						existingMatch.destroy();
 					}
-				} catch {}
-				// Cold reload into game-match: if there is no currentGame, attempt reconnection
+				} catch { }
+
 				if (!this.currentGame) {
-					this.currentGame = new Game('app-container');
-					try {
-						await this.currentGame.getGameConnection().establishConnection();
-						const { sessions, userId } = await this.currentGame.getGameConnection().checkActiveGameSessions();
-						const userGame = sessions.find((session: any) =>
-							session.playerDetails.player1?.id === userId ||
-							session.playerDetails.player2?.id === userId
-						);
-						if (!userGame) {
-							showMessage('No active game session found. Redirecting to home...', 2000);
-							this.navigate('home');
-							return;
-						}
-						// Set host flag based on which player the user is
-						const isHost = userGame.playerDetails?.player1?.id === userId;
-						this.currentGame.setGameIsHost(!!isHost);
-						// Rejoin the existing room to trigger GAME_INIT from server
-						this.currentGame.getGameConnection().joinGame(userGame.id);
-					} catch (err) {
-						console.error('Failed to reconnect to active game:', err);
-						showMessage('Failed to reconnect to game. Redirecting to home...', 2000);
-						this.navigate('home');
-						return;
-					}
+					showMessage('No active game session found. Redirecting to home...', 6000);
+					this.navigate('home');
+					return;
 				}
+
 				stepInstance = new module.default(this.currentGame, this.currentTournament);
 				if (this.currentGame && stepInstance)
 					this.currentGame.setGameMatch(stepInstance);
 			}
-			else if (step === 'game-lobby')
-			{
+			else if (step === 'game-lobby') {
 				stepInstance = new module.default('app-container');
 				this.currentGame = stepInstance;
 			}
-			else if (step === 'tournament-lobby')
-			{
-				stepInstance = new module.default('app-container');
-				this.currentTournament = stepInstance;
-				console.log('tournament-lobby currentTournament: ', this.currentTournament);
+			else if (step === 'tournament-lobby') {
+				// Reuse existing tournament instance if active to preserve state
+				if (this.currentTournament && this.currentTournament.getTournamentId() !== -42) {
+					stepInstance = this.currentTournament;
+					console.log('Reusing active tournament instance');
+				} else {
+					stepInstance = new module.default('app-container');
+					this.currentTournament = stepInstance;
+					console.log('Created new tournament instance');
+				}
 			}
 			else
 				stepInstance = new module.default('app-container');
@@ -292,107 +244,24 @@ export class SPA {
 				try { clearSearchFilter(); } catch (e) { /* ignore */ }
 			}
 			await stepInstance.init();
+
+			// If we reused the tournament instance, we might need to restore the view (bracket)
+			if (step === 'tournament-lobby' && this.currentTournament && this.currentTournament.getTournamentId() !== -42) {
+				try {
+					this.currentTournament.resumeTournament();
+				} catch (e) { console.error("Error resuming tournament UI:", e); }
+			}
+
 		} else {
-			showMessage('url does not exist', 2000);
-			window.location.hash = '#home'; 
+			showMessage('URL does not exist', 6000);
+			window.location.hash = '#home';
 		}
 	}
 	public static getInstance(): SPA {
 		return SPA.instance;
 	}
 
-	public async	gameMatchNavigation(currentStep: string, nextStep: string)
-	{
-		if (!this.currentGame)
-			return ;
-	
-		const routeConfig = this.routes[nextStep];
-		// Navigating OUT OF game-match
-		if (currentStep === 'game-match' && nextStep != 'game-match')
-		{		
-			const	log = this.currentGame.getGameLog();
-			const	match = this.currentGame.getGameMatch();
-			// Remote mode - pause and keep the game alive for a set time
-			if (log.mode === 'remote' && this.currentGame.getGameConnection() &&
-				this.currentGame.getGameConnection().socket && this.currentGame.isGameActive())
-			{
-				const username = this.currentGame.getGameIsHost()
-					? log.playerDetails.player1?.username
-					: log.playerDetails.player2?.username;
-				this.currentGame.getGameConnection()?.socket?.send(
-					JSON.stringify({
-						type: 'PAUSE_GAME',
-						reason: `${username} left the game`
-					})
-				);
-			}
-			// Any other game-mode, kill game on the backend and do not save log on database
-			else if (log.mode != 'remote' && this.currentGame.getGameConnection() &&
-				this.currentGame.getGameConnection().socket && this.currentGame.isGameActive())
-			{
-				this.currentGame.getGameConnection().killGameSession(this.currentGame.getGameLog().id);
-			}
-			// If instance of match on browser, clean-remove (to prevent duplicated listeners on resume)
-			if (match)
-			{
-				match.updatePlayerActivity(false);
-				match.destroy();
-			}
-		}
-	
-		// RELOADING game-match - this is going to be resume online, reload will be much simpler
-		// TODO Remove when finished if not needed
-		// else if (currentStep === 'game-match' && nextStep === 'game-match')
-		// {
-		// 	if (this.currentGame.getGameMatch())
-		// 		this.currentGame.getGameMatch()?.destroy();
-		// 	try
-		// 	{
-		// 		const {sessions, userId} = await this.currentGame.getGameConnection().checkActiveGameSessions();
-		// 		const userGame = sessions.find(
-		// 			(session: any) =>
-		// 				session.playerDetails.player1?.id === userId ||
-		// 				session.playerDetails.player2?.id === userId
-		// 		);
-		// 		if (!userGame)
-		// 		{
-		// 			showMessage('No active game session found. Redirecting to home...', 2000);
-		// 			this.navigate('home');
-		// 			return ;
-		// 		}
-		// 		// else: resume game as needed
-		// 		else
-		// 		{
-		// 			const module = await import(`./${routeConfig.module}`);
-		// 			const stepInstance = new module.default(this.currentGame, this.currentTournament);
-		// 			if (this.currentGame && stepInstance)
-		// 				this.currentGame.setGameMatch(stepInstance);
-		// 		}
-		// 	} catch (e){
-		// 		showMessage('Error checking game session. Redirecting to home...', 2000);
-		// 		this.navigate('home');
-		// 	}
-		// }
-	}
-
-	// Centralized confirmation logic for leaving game-match
-	private async confirmLeaveGameMatch(nextStep: string): Promise<boolean>
-	{
-		// If there's no active game object or game not active, allow silently
-		if (!this.currentGame || !this.currentGame.isGameActive?.())
-			return true;
-		this.currentGame.getGameConnection()?.socket?.send(JSON.stringify({
-			type: 'PAUSE_GAME',
-			reason: 'User navigating away'
-		}));
-		let	msg = this.currentGame.getGameLog().tournamentId ? " and tournament" : "";
-		const	left = await showConfirmDialog("You are about to leave the game. This will end your current session" + msg + ". Continue?", this.currentGame.pauseDuration);
-		if (left && this.currentGame.getGameLog().mode != 'remote')
-			this.currentGame.getGameConnection()?.killGameSession(this.currentGame.getGameLog().id);
-		return left;
-	}
-
-	public  setCurrentStep(step: string) {
+	public setCurrentStep(step: string) {
 		this.currentStep = step;
 	}
 }
