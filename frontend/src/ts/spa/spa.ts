@@ -197,7 +197,7 @@ export class SPA {
 					}
 				} catch { }
 
-				if (!this.currentGame) {
+				if (!this.currentGame || !this.currentGame.isGameActive?.()) {
 					showMessage('No active game session found. Redirected to home', 6000);
 					this.currentStep = 'home';
 					this.navigate('home');

@@ -151,6 +151,10 @@ export default class Game extends Step {
 	public setOnlineId(id: string): void {
 		this.onlineId = id;
 	}
+
+	public setReadyState(state: boolean): void {
+		this.log.readyState = state;
+	}
 	/***********************************/
 	/*********** GETTERS ***************/
 	public getGameConfig(): GameConfig {
