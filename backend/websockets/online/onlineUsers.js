@@ -138,9 +138,8 @@ async function handleAcceptChallenge(fastify, socket, user, data) {
 				client.send(JSON.stringify({
 					type: 'goToGame',
 					roomId: challengeId,
-					url,
 					gameMode,
-					token,
+					youAre: userIdStr === fromUserId ? 'player1' : 'player2'
 				}));
 			} catch (error) {
 				console.error('Error notifying game start:', error);

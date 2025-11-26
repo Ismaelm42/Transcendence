@@ -1,5 +1,6 @@
 import { GameConnection } from "../game/GameConnection.js";
 import Game from "../game/Game.js";
+import { showMessage } from "../modal/showMessage.js";
 
 export let onlineSocket: WebSocket | null = null;
 
@@ -31,36 +32,46 @@ export function initOnlineSocket() {
 					break;
 				}
 				case "goToGame": {
-					// backend envía: { type:'goToGame', roomId, gameMode, ... }
 					const roomId: string = data.roomId;
-					console.log("Navigating to game with ID:", roomId);
+					const youAre: 'player1'|'player2'|undefined = data.youAre;
 
-					const { SPA } = await import('../spa/spa.js');
-					const spa = SPA.getInstance();
-
-					// 1) navega a game-lobby (ruta válida en tu SPA)
-					await spa.navigate('game-lobby');
-
-					// 2) espera a que GameConnection esté conectado (WS de juego OPEN)
-					await waitForGameReady();
-
-					// 3) únete a la sala por el WS de juego
-					spa.currentGame?.setOnlineId?.(roomId);
-					spa.currentGame?.getGameConnection?.()?.joinGame?.(roomId);
-
-					(window as any).showMessage?.('Uniéndose a la sala...', 'info');
-					break;
-				}
-				// Fallback por si usas JOIN_GAME en vez de goToGame
-				case "JOIN_GAME": {
-					const roomId: string = data.roomId;
 					const { SPA } = await import('../spa/spa.js');
 					const spa = SPA.getInstance();
 					await spa.navigate('game-lobby');
 					await waitForGameReady();
-					spa.currentGame?.setOnlineId?.(roomId);
-					spa.currentGame?.getGameConnection?.()?.joinGame?.(roomId);
-					(window as any).showMessage?.('Uniéndose a la sala...', 'info');
+
+					const gc = spa.currentGame?.getGameConnection?.();
+					if (!gc?.socket || gc.socket.readyState !== WebSocket.OPEN) {
+						console.warn("WS de juego no listo");
+						break;
+					}
+
+					if (youAre === 'player1') {
+						// Host: igual que ahora
+						console.log("Enviando JOIN_GAME como player1");
+						gc.socket.send(JSON.stringify({
+							type: 'JOIN_GAME',
+							roomId,
+							youAre
+						}));
+						showMessage('Uniéndose como jugador 1...', null);
+                    } else if (youAre === 'player2') {
+                        // Invitado: replicar botón Join del lobby (GameUI.updateLobby)
+                        // Equivalente a:
+                        //   this.game.setGameIsHost(false);
+                        //   this.game.getGameConnection().joinGame(gameId);
+                        try {
+                            console.log("Replicando botón Join: setGameIsHost(false) + joinGame(roomId)");
+                            spa.currentGame?.setGameIsHost?.(false);
+                            spa.currentGame?.getGameConnection?.().joinGame(roomId);
+                            showMessage('Uniéndose como jugador 2...', null);
+                        } catch (e) {
+                            console.error("Error al unirse como player2:", e);
+                        }
+                    } else {
+						// Sin rol: fallback al join directo
+						spa.currentGame?.getGameConnection?.().joinGame(roomId);
+					}
 					break;
 				}
 				default:
