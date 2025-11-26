@@ -198,7 +198,8 @@ export class SPA {
 				} catch { }
 
 				if (!this.currentGame) {
-					showMessage('No active game session found. Redirecting to home...', 6000);
+					showMessage('No active game session found. Redirected to home', 6000);
+					this.currentStep = 'home';
 					this.navigate('home');
 					return;
 				}
@@ -226,7 +227,6 @@ export class SPA {
 				stepInstance = new module.default('app-container');
 			const user = await stepInstance.checkAuth();
 			if (user) {
-				console.log("Usuario autenticado: ", user);
 				// Si el usuario está autenticado, inicializamos el socket de usuarios online
 				if (!onlineSocket || onlineSocket.readyState === WebSocket.CLOSED) {
 					initOnlineSocket();

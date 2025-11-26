@@ -1,4 +1,4 @@
-import  {SPA} from './spa.js';
+import { SPA } from './spa.js';
 
 export class Step {
 	protected container: HTMLElement;
@@ -18,43 +18,42 @@ export class Step {
 	}
 
 	async checkAuth() {
-		console.log("Verificando autenticación en checkAuth()...");
 		const validation = false;	// si está en false se está verificando la autenticación
 		// Simulación de verificación de autenticación PARA CUANDO LA COOKIE NO SE ENVIA BIEN"
 		if (validation) {
-			const user= {
+			const user = {
 				"username": "Pepe5@gmail.com",
 				"password": "1234",
 				"email": "Pepe5@gmail.com"
 			}
 			return user.username;
-		}else {
+		} else {
 			// console.log("Verificando autenticación...");
-			try {	
+			try {
 				const response = await fetch("https://localhost:8443/back/auth/verify-token", {
 					method: "GET",
 					credentials: "include"
 				});
-		
+
 				if (!response.ok) return null;
-					const data = await response.json();
+				const data = await response.json();
 				return data.user.username; // Devuelve el nombre de usuario si está autenticado
-				} catch (error) {
-					console.error("Error al verificar la autenticación:", error);
-					return null;
-				}
+			} catch (error) {
+				console.error("Error al verificar la autenticación:", error);
+				return null;
+			}
 		}
 	}
-	
-	async render(appElement: HTMLElement):Promise<void> {
-		appElement.innerHTML= '<div>Contenido no definido</div>';
+
+	async render(appElement: HTMLElement): Promise<void> {
+		appElement.innerHTML = '<div>Contenido no definido</div>';
 	}
 
 	async renderHeader(headerElement: HTMLElement): Promise<void> {
 		try {
 			const user = await this.checkAuth();
 			// console.log("Valor de user en renderHeader:", user);
-			headerElement.innerHTML = user ? 			
+			headerElement.innerHTML = user ?
 				`<div id="authButtons" class="flex items-center">
 					<span id="username" class="text-white hover:text-amber-300"><a href="#profile"> ${user} </a></span>
 					<div id="headerSeparator" class="vertical-bar"></div>
@@ -77,7 +76,7 @@ export class Step {
 	 * Método para renderizar el menú de navegación si se está logueado
 	 * @param menuElement elemento HTML donde se renderiza el menú
 	 */
-	async renderMenu(menuElement: HTMLElement): Promise<void>{
+	async renderMenu(menuElement: HTMLElement): Promise<void> {
 		const user = await this.checkAuth();
 		if (user) {
 			// Modificar el innerHTML de menuContainer si el usuario está autenticado
@@ -119,8 +118,8 @@ export class Step {
 				</ul>
 			</nav>
 			`;
-		}else {
-			menuElement.innerHTML =  '';
+		} else {
+			menuElement.innerHTML = '';
 		}
 	}
 
@@ -155,7 +154,7 @@ export class Step {
 	 * Método para inicializar el paso se asegura que existen los elementos header, menu y app
 	 * para poder renderizar el contenido correspondiente en cada slot o "placeholder"
 	 */
-	async init(){
+	async init() {
 		let headerElement = document.getElementById('header-buttons');
 		let menuElement = document.getElementById('menu-container');
 		let appElement = document.getElementById('app-container');
