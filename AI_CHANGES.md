@@ -1,3 +1,30 @@
+# AI Implementation Update
+
+## Requirement
+"The AI can only refresh its view of the game once per second, requiring it to anticipate bounces and other actions."
+
+## Changes Implemented
+
+### 1. Velocity Tracking
+The AI now calculates the ball's velocity (`lastVelocity`) by comparing the current game state with the previous frame's state. This is essential for prediction.
+
+### 2. 1Hz Decision Loop
+A timer mechanism (`lastDecisionTime`) was added to restrict the AI's "view" refresh to once every 1000ms (1 second).
+- **Before**: The AI checked the ball position every 16ms and moved immediately.
+- **After**: The AI calculates a new target position only when `Date.now() - lastDecisionTime >= 1000`.
+
+### 3. Bounce Anticipation (Prediction)
+Since the AI is blind for 1 second, it must predict where the ball will be. The `calculateTarget` method:
+- Calculates the time (ticks) until the ball reaches the AI's paddle x-coordinate.
+- Extrapolates the ball's y-coordinate based on its current velocity.
+- Simulates bounces off the top (0) and bottom (1) walls to find the final y-position.
+
+### 4. Smooth Execution
+While the *decision* is made once per second, the `update` loop still runs at 60Hz to smoothly move the paddle towards the calculated `targetY`.
+
+## Updated Code (`GameAI.ts`)
+
+```typescript
 import Game from './Game.js';
 
 export class GameAI 
@@ -110,3 +137,4 @@ export class GameAI
 		this.targetY = predictedY;
 	}
 }
+```

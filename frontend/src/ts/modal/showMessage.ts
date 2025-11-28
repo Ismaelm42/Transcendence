@@ -9,7 +9,7 @@ export function showMessage(message: string, time: number | null): void {
 	}
 
 	// Set the message content and make the container visible
-	messageContent.innerHTML = message;
+	messageContent.innerHTML = message.replace(/\n/g, "<br>");
 	messageContainer.style.display = "flex"; // mostrar
 
 	// Focus the close button so Enter will trigger it
@@ -55,7 +55,7 @@ export function showWinnerMessage(message: string, time: number | null): void {
 	}
 
 	// Set the message content and make the container visible
-	messageContent.innerHTML = message;
+	messageContent.innerHTML = message.replace(/\n/g, "<br>");
 	messageContainer.style.display = "flex"; // mostrar
 
 	// Focus the close button so Enter will trigger it
@@ -109,7 +109,7 @@ export function showConfirmDialog(message: string, timer: number): Promise<boole
 			return ;
 		}
 
-		content.innerHTML = message;
+		content.innerHTML = message.replace(/\n/g, "<br>");
 		overlay.classList.remove("hidden");
 		overlay.style.display = "flex";
 		yesBtn.focus();
