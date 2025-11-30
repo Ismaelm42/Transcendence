@@ -388,6 +388,7 @@ export class TournamentUI {
 
 	// todo: Pendiente de ver en actualizacones de torneo
 	renderBracket(data: any): void {
+		console.log(`[TournamentUI] renderBracket. Tournament InstanceID: ${(this.tournament as any).instanceId}`);
 		const appElement = document.getElementById('tournament-bracket-container');
 		if (!appElement) {
 			console.error("Tournament bracket container not found");

@@ -50,7 +50,8 @@ export class SPA {
 
 		window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
 			const tId = this.currentTournament?.getTournamentId();
-			console.warn(`[beforeunload] Step: ${this.currentStep}, TournamentID: ${tId}`);
+			const instId = (this.currentTournament as any)?.instanceId;
+			console.warn(`[beforeunload] Step: ${this.currentStep}, TournamentID: ${tId}, InstanceID: ${instId}, Type: ${typeof tId}`);
 
 			// Terminate session if on game-match OR if on tournament-lobby with an active tournament (ID != -42)
 			// Note: We check if tId is defined to avoid false positives if currentTournament is null
@@ -115,6 +116,7 @@ export class SPA {
 	}
 
 	private terminateSession() {
+		console.warn("[DEBUG] terminateSession called");
 		// Kill Game
 		if (this.currentGame) {
 			if (this.currentGame.isGameActive?.()) {
@@ -149,6 +151,7 @@ export class SPA {
 
 	async loadStep() {
 		let step = location.hash.replace('#', '') || 'home';
+		console.warn(`[loadStep] Navigating from ${this.currentStep} to ${step}. TournamentID: ${this.currentTournament?.getTournamentId()}, InstanceID: ${(this.currentTournament as any)?.instanceId}`);
 
 		// Determine if the transition is safe (Tournament Flow)
 		const isTournamentSetup = this.currentStep === 'tournament-lobby' && this.currentTournament?.getTournamentId() === -42;
@@ -169,7 +172,10 @@ export class SPA {
 						}
 					} catch (e) { console.error("Error destroying match UI:", e); }
 				}
-			} else if (!this.currentGame?.isGameActive()){
+			} else if (this.currentStep === 'tournament-lobby') {
+				this.terminateSession();
+				showMessage("You navigated away from active tournament\nTournament has been terminated", 6000);
+			} else if (!this.currentGame?.isGameActive()) {
 				// Safe to leave setup
 			} else {
 				// Unsafe transition - terminate

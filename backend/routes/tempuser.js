@@ -1,6 +1,6 @@
 import { crud } from '../crud/crud.js';
 
-export function configureTempUserRoutes(fastify,sequelize) {
+export function configureTempUserRoutes(fastify, sequelize) {
 
 	// Define a POST route to create a new user
 	fastify.post('/create_temp_user', async (request, reply) => {
@@ -29,6 +29,7 @@ export function configureTempUserRoutes(fastify,sequelize) {
 	// Define a DELETE route to remove a user by ID
 	fastify.delete('/delete_user_by_tournament_id', async (request, reply) => {
 		const { TournamentId } = request.body;
+		console.log(`[DEBUG] delete_user_by_tournament_id called for TournamentId: ${TournamentId}`);
 		try {
 			const result = await crud.tempuser.deleteTempuserByTournamentId(TournamentId);
 			reply.status(200).send(result);
@@ -39,7 +40,7 @@ export function configureTempUserRoutes(fastify,sequelize) {
 	});
 
 	// prepared just in case we need to use send.beacon that appaently only works with POST
-	
+
 	// fastify.post('/clean_temp_user_after_closing', async (request, reply) => {
 	// 	console.log('Cleaning temp users after closing tournament');
 	// 	const { tournamentId } = request.body;
@@ -59,7 +60,7 @@ export function configureTempUserRoutes(fastify,sequelize) {
 			reply.status(200).send(result);
 		} catch (err) {
 			fastify.log.error(err);
-			reply.status(500).send({ error: 'Error deleting all users '+ err.message });
+			reply.status(500).send({ error: 'Error deleting all users ' + err.message });
 		}
 	});
 }
