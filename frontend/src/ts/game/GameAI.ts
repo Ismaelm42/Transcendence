@@ -1,24 +1,21 @@
 import Game from './Game.js';
 
-export class GameAI 
-{
-	private		game: Game;
-	private		intervalId: number | null = null;
-	private		errorFactor: number = 0.08;
-	private		aiSide: 'player1' | 'player2' | null;
-	private		lastDecisionTime: number = 0;
-	private		targetY: number = 0.5;
-	private		lastState: any = null;
-	private		lastVelocity: { x: number, y: number } | null = null;
+export class GameAI {
+	private game: Game;
+	private intervalId: number | null = null;
+	private errorFactor: number = 0.08;
+	private aiSide: 'player1' | 'player2' | null;
+	private lastDecisionTime: number = 0;
+	private targetY: number = 0.5;
+	private lastState: any = null;
+	private lastVelocity: { x: number, y: number } | null = null;
 
-	constructor(game: Game, aiSide: 'player1' | 'player2' | null)
-	{
+	constructor(game: Game, aiSide: 'player1' | 'player2' | null) {
 		this.game = game;
 		this.aiSide = aiSide;
 	}
 
-	start()
-	{
+	start() {
 		// Avoid duplicate intervals on reconnect/resume
 		if (this.intervalId)
 			return;
@@ -26,24 +23,20 @@ export class GameAI
 		this.intervalId = window.setInterval(() => this.update(), 16);
 	}
 
-	stop()
-	{
-		if (this.intervalId)
-		{
+	stop() {
+		if (this.intervalId) {
 			window.clearInterval(this.intervalId);
 			this.intervalId = null;
 		}
 	}
 
-	private update()
-	{
-		const	gameState = this.game.getGameRender().gameState;
+	private update() {
+		const gameState = this.game.getGameRender().gameState;
 		if (!gameState || !this.game.getGameConnection().socket || !this.aiSide)
-			return ;
-		
+			return;
+
 		// Track velocity
-		if (this.lastState && this.lastState !== gameState)
-		{
+		if (this.lastState && this.lastState !== gameState) {
 			const dx = gameState.ball.x - this.lastState.ball.x;
 			const dy = gameState.ball.y - this.lastState.ball.y;
 			if (Math.abs(dx) > 0.00001 || Math.abs(dy) > 0.00001)
@@ -53,20 +46,23 @@ export class GameAI
 
 		// Decision logic (1Hz)
 		const now = Date.now();
-		if (now - this.lastDecisionTime >= 1000)
-		{
+		if (now - this.lastDecisionTime >= 1000) {
 			this.calculateTarget(gameState);
 			this.lastDecisionTime = now;
 		}
-		
+
 		if (this.game.getGameLog().config?.difficulty === 'easy')
 			this.errorFactor = 0.11;
 		else if (this.game.getGameLog().config?.difficulty === 'hard')
 			this.errorFactor = 0.06;
 
-		const	paddleY = gameState.paddles[this.aiSide].y ?? 0.5;
-		let		up = false, down = false;
-		
+		const paddleX = (this.aiSide === 'player1') ? 0.03 : 0.97;
+		if (Math.abs(gameState.ball.x - paddleX) < 0.2)
+			this.errorFactor = 0.01;
+
+		const paddleY = gameState.paddles[this.aiSide].y ?? 0.5;
+		let up = false, down = false;
+
 		if (this.targetY < paddleY - this.errorFactor)
 			up = true;
 		else if (this.targetY > paddleY + this.errorFactor)
@@ -82,10 +78,8 @@ export class GameAI
 		}));
 	}
 
-	private calculateTarget(gameState: any)
-	{
-		if (!this.lastVelocity || Math.abs(this.lastVelocity.x) < 0.00001)
-		{
+	private calculateTarget(gameState: any) {
+		if (!this.lastVelocity || Math.abs(this.lastVelocity.x) < 0.00001) {
 			this.targetY = gameState.ball.y;
 			return;
 		}
@@ -94,16 +88,14 @@ export class GameAI
 		const dist = paddleX - gameState.ball.x;
 		const ticks = dist / this.lastVelocity.x;
 
-		if (ticks < 0)
-		{
+		if (ticks < 0) {
 			this.targetY = 0.5;
 			return;
 		}
 
 		let predictedY = gameState.ball.y + (this.lastVelocity.y * ticks);
 
-		while (predictedY < 0 || predictedY > 1)
-		{
+		while (predictedY < 0 || predictedY > 1) {
 			if (predictedY < 0) predictedY = -predictedY;
 			if (predictedY > 1) predictedY = 2 - predictedY;
 		}
