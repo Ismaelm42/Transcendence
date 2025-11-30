@@ -31,54 +31,6 @@ export function handleJoinGame(client, data) {
 			};
 		}
 	}
-	else {
-		// Existing session: if this user already belongs, reattach their connection and mark active
-		const existingPlayer = gameSession.players.get(user.id);
-		if (existingPlayer) {
-			existingPlayer.connection = connection;
-			existingPlayer.active = true;
-			clients.set(user.id, { connection, roomId });
-			// Send current metadata/config so client can render immediately
-			connection.send(JSON.stringify({
-				type: 'GAME_INIT',
-				config: gameSession.getConfig(),
-				metadata: gameSession.metadata
-			}));
-			// If the game is paused, inform the client and attempt auto-resume when everyone is active
-			if (gameSession.isPaused && gameSession.metadata && gameSession.metadata.startTime) {
-				try {
-					connection.send(JSON.stringify({
-						type: 'GAME_PAUSED',
-						reason: 'Reconnected during pause',
-						userId: user.id,
-						maxPauseDuration: gameSession.maxPauseDuration,
-						pauseStartTime: gameSession.pauseStartTime || Date.now()
-					}));
-				} catch { }
-				// Check if all players are active now; if so, trigger countdown and resume
-				let totalPlayers = 0;
-				let activePlayers = 0;
-				gameSession.players.forEach((p) => {
-					totalPlayers++;
-					if (p.active) activePlayers++;
-				});
-				if (totalPlayers > 0 && activePlayers === totalPlayers) {
-					const COUNTDOWN_SECONDS = 3;
-					gameSession.broadcastResponse('GAME_COUNTDOWN', {
-						seconds: COUNTDOWN_SECONDS,
-						reason: 'All players returned'
-					});
-					setTimeout(() => {
-						gameSession.resumeGame(gamesList);
-						gameSession.broadcastResponse('GAME_RESUMED', {
-							reason: 'All players returned'
-						});
-					}, COUNTDOWN_SECONDS * 1000);
-				}
-			}
-			return;
-		}
-	}
 	// 2. Add players to the game
 	// Tournament game: set both player1 and player2 from metadata
 	if (data.tournamentId && data.player1 && data.player2) {

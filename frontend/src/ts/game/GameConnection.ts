@@ -212,6 +212,7 @@ export class GameConnection {
 			return;
 		}
 		if (gameId) {
+			console.warn("Joining remote game:", gameId);
 			this.game.setGameMode('remote');
 			const joinMsg: any = {
 				type: 'JOIN_GAME',

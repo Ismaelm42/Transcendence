@@ -33,27 +33,35 @@ export function initOnlineSocket() {
 				case "goToGame": {
 					const roomId: string = data.roomId;
 					const youAre: 'player1'|'player2'|undefined = data.youAre;
+                    const gameMode: string = data.gameMode;
 
+                    const game = new Game(roomId);
 					const { SPA } = await import('../spa/spa.js');
 					const spa = SPA.getInstance();
-					await spa.navigate('game-lobby');
-					await waitForGameReady();
+                    if (spa) {
+                        spa.currentGame = game;
+                    }
+					//await spa.navigate('game-lobby');
+					//await waitForGameReady();
+					game.setGameMode(gameMode);
 
-					const gc = spa.currentGame?.getGameConnection?.();
+					const gc = game.getGameConnection?.();
+                    await gc?.establishConnection();
 					if (!gc?.socket || gc.socket.readyState !== WebSocket.OPEN) {
 						console.warn("WS de juego no listo");
 						break;
 					}
-
+					console.log("WS de juego listo, procediendo a unir al juego", gc.socket);
 					if (youAre === 'player1') {
 						// Host: igual que ahora
+						gc.joinGame(roomId);
 						console.log("Enviando JOIN_GAME como player1");
-						gc.socket.send(JSON.stringify({
-							type: 'JOIN_GAME',
-							roomId,
-							youAre
-						}));
-						showMessage('Uniéndose como jugador 1...', null);
+                        showMessage('Uniéndose como jugador 1...', null);
+						// gc.socket.send(JSON.stringify({
+						// 	type: 'JOIN_GAME',
+						// 	roomId: roomId,
+						// 	mode: gameMode
+						// }));
                     } else if (youAre === 'player2') {
                         // Invitado: replicar botón Join del lobby (GameUI.updateLobby)
                         // Equivalente a:

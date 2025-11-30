@@ -124,9 +124,8 @@ async function handleAcceptChallenge(fastify, socket, user, data) {
 	const { fromUserId, toUserId } = pendingChallenge;
 
 
-	const gameMode = '1vs1';
-	const gameId = `game-${challengeId}`; // ID unico del juego
-	const url = `/game/${challengeId}`; // URL del juego
+	const gameMode = 'remote';
+	const gameId = challengeId; // ID unico del juego
 
 	for (const client of fastify.websocketServer.clients) {
 		const userIdStr = String(client.userId);
