@@ -6,8 +6,8 @@
 import GameSession from './GameSession.js';
 import { resetState, update, checkScoring, endGame, setDifficulty } from './gameState.js';
 import { resetBall, checkPaddleCollision } from './physics.js';
-import { addPlayer, removePlayer, getPlayerView, movePlayerPaddle, setPlayerDetails } from './players.js';
-import { broadcastResponse, getConnections, checkPlayersStatus,  } from './network.js';
+import { addPlayer, removePlayer, getPlayerView, movePlayerPaddle, setPlayerDetails, handlePlayerDisconnect } from './players.js';
+import { broadcastResponse, getConnections, checkPlayersStatus, } from './network.js';
 import { finalizeGame, getGamelogData } from './gameLogs.js';
 
 // From gameState.js
@@ -27,6 +27,7 @@ GameSession.prototype.getPlayerView = getPlayerView;
 GameSession.prototype.removePlayer = removePlayer;
 GameSession.prototype.movePlayerPaddle = movePlayerPaddle;
 GameSession.prototype.setPlayerDetails = setPlayerDetails;
+GameSession.prototype.handlePlayerDisconnect = handlePlayerDisconnect;
 
 // From network.js
 GameSession.prototype.getConnections = getConnections;

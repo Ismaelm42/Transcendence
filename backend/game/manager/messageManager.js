@@ -8,22 +8,19 @@ import { crud } from '../../crud/crud.js';
 /**
  * When a player JOINs the game
  */
-export function handleJoinGame(client, data)
-{
-	const	{ user, connection } = client;
-	const	gameMode = data.mode;
-	const	roomId = data.roomId || `game-${Date.now().toString(36)}`;
-	const	config = data.config || { scoreLimit: 5, difficulty: 'medium' };
-	const	secondPlayerInfo = data.player2 || null;
+export function handleJoinGame(client, data) {
+	const { user, connection } = client;
+	const gameMode = data.mode;
+	const roomId = data.roomId || `game-${Date.now().toString(36)}`;
+	const config = data.config || { scoreLimit: 5, difficulty: 'medium' };
+	const secondPlayerInfo = data.player2 || null;
 	// 1. Find or create the game session
 	let gameSession = gamesList.get(roomId);
-	if (!gameSession)
-	{
+	if (!gameSession) {
 		gameSession = new GameSession(roomId, gameMode);
 		gamesList.set(roomId, gameSession);
 		// Apply game configuration
-		if (config)
-		{
+		if (config) {
 			if (config.scoreLimit)
 				gameSession.winScore = config.scoreLimit;
 			if (config.difficulty)
@@ -34,12 +31,10 @@ export function handleJoinGame(client, data)
 			};
 		}
 	}
-	else
-	{
+	else {
 		// Existing session: if this user already belongs, reattach their connection and mark active
 		const existingPlayer = gameSession.players.get(user.id);
-		if (existingPlayer)
-		{
+		if (existingPlayer) {
 			existingPlayer.connection = connection;
 			existingPlayer.active = true;
 			clients.set(user.id, { connection, roomId });
@@ -59,7 +54,7 @@ export function handleJoinGame(client, data)
 						maxPauseDuration: gameSession.maxPauseDuration,
 						pauseStartTime: gameSession.pauseStartTime || Date.now()
 					}));
-				} catch {}
+				} catch { }
 				// Check if all players are active now; if so, trigger countdown and resume
 				let totalPlayers = 0;
 				let activePlayers = 0;
@@ -86,8 +81,7 @@ export function handleJoinGame(client, data)
 	}
 	// 2. Add players to the game
 	// Tournament game: set both player1 and player2 from metadata
-	if (data.tournamentId && data.player1 && data.player2)
-	{
+	if (data.tournamentId && data.player1 && data.player2) {
 		gameSession.setPlayerDetails('player1', data.player1);
 		gameSession.setPlayerDetails('player2', data.player2);
 		gameSession.setTournamentId(data.tournamentId);
@@ -95,16 +89,14 @@ export function handleJoinGame(client, data)
 		clients.set(user.id, { connection, roomId });
 	}
 	// Standard game: set this socket connected user to corresponding palyer slot
-	else
-	{
+	else {
 		const playerNumber = gameSession.addPlayer(user.id, connection);
-		if (!playerNumber)
-		{
+		if (!playerNumber) {
 			connection.send(JSON.stringify({
 				type: 'ERROR',
 				message: 'Game is full'
 			}));
-			return ;
+			return;
 		}
 		// 3. Store game player logs!
 		gameSession.setPlayerDetails(playerNumber, user);
@@ -121,34 +113,32 @@ export function handleJoinGame(client, data)
 	}));
 }
 
-export function handleRestartGame(client, data)
-{
+export function handleRestartGame(client, data) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	// Delete old game session if it exists
 	const oldGameSession = gamesList.get(clientData?.roomId);
-	if (!data.rematch)
-	{	
+	if (!data.rematch) {
 		if (oldGameSession)
 			gamesList.delete(clientData.roomId);
-		return ;
+		return;
 	}
 	if (oldGameSession)
 		gamesList.delete(clientData.roomId);
 	// Create a new game with same config
 	const gameMode = data.mode || (oldGameSession ? oldGameSession.gameMode : '1v1');
 	const roomId = `game-${Date.now().toString(36)}`;
-	const config = data.config || { 
-		scoreLimit: oldGameSession ? oldGameSession.winScore : 5, 
-		difficulty: oldGameSession ? oldGameSession.difficulty : 'medium' 
+	const config = data.config || {
+		scoreLimit: oldGameSession ? oldGameSession.winScore : 5,
+		difficulty: oldGameSession ? oldGameSession.difficulty : 'medium'
 	};
 
-	let	player2 = null;
+	let player2 = null;
 	if (oldGameSession && (gameMode === '1v1' || gameMode === '1vAI'))
 		player2 = oldGameSession.metadata?.playerDetails?.player2 || null;
 	// Call join game with new parameters
 	console.log("player2:", player2);
-	handleJoinGame({user, connection: client.connection}, {
+	handleJoinGame({ user, connection: client.connection }, {
 		mode: gameMode,
 		roomId: roomId,
 		config: config,
@@ -160,42 +150,45 @@ export function handleRestartGame(client, data)
  * When a player sends keys input (should be up/down for paddle movement)
  * Server updates the player's paddle position and this updated position is reflected in the next GAME_STATE broadcast
  */
-export function handlePlayerInput(client, data)
-{
+export function handlePlayerInput(client, data) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
 	if (!gameSession)
-		return ;
+		return;
 	gameSession.movePlayerPaddle(user.id, data.input, data.input.player);
 }
 
 /**
  * When a player leaves
  */
-export function handleLeaveGame(client)
-{
+export function handleLeaveGame(client) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
-	
+
 	// 1. Find and update the game session
 	const gameSession = gamesList.get(clientData?.roomId);
-	if (gameSession)
-	{
-		gameSession.removePlayer(user.id);
-		// 2. End game if empty
-		if (gameSession.isEmpty() || gameSession.isFinished || gameSession.shouldCleanup)
-			gamesList.delete(clientData.roomId);
+	if (gameSession) {
+		// Check for active remote game disconnect
+		if (gameSession.metadata.mode === 'remote' &&
+			gameSession.metadata.startTime &&
+			!gameSession.isFinished) {
+			gameSession.handlePlayerDisconnect(user.id, gamesList);
+		}
+		else {
+			gameSession.removePlayer(user.id);
+			// 2. End game if empty
+			if (gameSession.isEmpty() || gameSession.isFinished || gameSession.shouldCleanup)
+				gamesList.delete(clientData.roomId);
+		}
 	}
 	// 3. Remove client tracking
 	clients.delete(user.id);
 }
 
-export async function	handlePlayerInfo(client, data)
-{
-	let 	user = null;
-	if (data.mode && data.mode === 'local')
-	{
+export async function handlePlayerInfo(client, data) {
+	let user = null;
+	if (data.mode && data.mode === 'local') {
 		user = {
 			id: client.user.id,
 			username: client.user.username,
@@ -204,31 +197,27 @@ export async function	handlePlayerInfo(client, data)
 			avatarPath: client.user.avatarPath
 		};
 	}
-	else if (data.mode && data.mode === 'external' && data.email)
-	{
-		try
-		{
+	else if (data.mode && data.mode === 'external' && data.email) {
+		try {
 			user = await crud.user.getUserByEmail(data.email);
-			if (!user)
-			{
+			if (!user) {
 				console.log(`Error: User not found for email ${data.email}`);
 				user = null;
-				return ;
+				return;
 			}
 		}
-		catch (error){
+		catch (error) {
 			console.error("Error while fetching user by email:", error);
 		}
 	}
 	client.connection.send(JSON.stringify({
-			type: 'USER_INFO',
-			mode: data.mode,
-			user: user
+		type: 'USER_INFO',
+		mode: data.mode,
+		user: user
 	}));
 }
 
-export function handleClientReady(client, data)
-{
+export function handleClientReady(client, data) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
@@ -240,11 +229,9 @@ export function handleClientReady(client, data)
 	if (player)
 		player.ready = true;
 
-	if (gameSession.shouldStart())
-	{
+	if (gameSession.shouldStart()) {
 		const allReady = Array.from(gameSession.players.values()).every(p => p.ready);
-		if (allReady && !gameSession.gameLoop)
-		{
+		if (allReady && !gameSession.gameLoop) {
 			gameSession.state = gameSession.resetState();
 			gameSession.broadcastResponse('GAME_COUNTDOWN', { seconds: COUNTDOWN_SECONDS });
 			setTimeout(() => {
@@ -259,11 +246,9 @@ export function handleClientReady(client, data)
 	}
 }
 
-export function handleGamesList(client)
-{
+export function handleGamesList(client) {
 	const games = [];
-	for (const gameSession of gamesList.values())
-	{
+	for (const gameSession of gamesList.values()) {
 		if (gameSession && gameSession.metadata && gameSession.metadata.mode === 'remote')
 			games.push(gameSession.metadata);
 	}
@@ -273,8 +258,7 @@ export function handleGamesList(client)
 	}));
 }
 
-export function handleGetReadyState(client)
-{
+export function handleGetReadyState(client) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
@@ -292,15 +276,13 @@ export function handleGetReadyState(client)
 	}));
 }
 
-export function handlePauseGame(client, data)
-{
+export function handlePauseGame(client, data) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
 	if (!gameSession)
-		return ;
-	if (!gameSession.isPaused && gameSession.gameLoop)
-	{
+		return;
+	if (!gameSession.isPaused && gameSession.gameLoop) {
 		gameSession.pauseGame();
 		gameSession.pauseStartTime = Date.now();
 		// Set timeout to auto-check players
@@ -309,9 +291,9 @@ export function handlePauseGame(client, data)
 		}, gameSession.maxPauseDuration);
 		// Notify or pass to client-frontside pause status and reason
 		const reason = data?.reason || `${user.username} paused the game`;
-		gameSession.broadcastResponse('GAME_PAUSED', { 
+		gameSession.broadcastResponse('GAME_PAUSED', {
 			reason,
-			username: user.username, 
+			username: user.username,
 			userId: user.id,
 			maxPauseDuration: gameSession.maxPauseDuration,
 			pauseStartTime: Date.now()
@@ -319,15 +301,13 @@ export function handlePauseGame(client, data)
 	}
 }
 
-export function handleResumeGame(client, data)
-{
+export function handleResumeGame(client, data) {
 	const { user } = client;
 	const clientData = clients.get(user.id);
 	const gameSession = gamesList.get(clientData.roomId);
 	if (!gameSession || !gameSession.isPaused)
-		return ;
-	if (gameSession.pauseTimer)
-	{
+		return;
+	if (gameSession.pauseTimer) {
 		clearTimeout(gameSession.pauseTimer);
 		gameSession.pauseTimer = null;
 	}

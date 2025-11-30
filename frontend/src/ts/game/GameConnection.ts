@@ -90,6 +90,7 @@ export class GameConnection {
 								}
 								else
 									console.warn('No pendingUserInfoResolve to call!');
+								this.updateHostStatus();
 								break;
 							case 'GAME_INIT':
 								const spa = SPA.getInstance();
@@ -108,6 +109,7 @@ export class GameConnection {
 								else
 									spa.navigate('game-match');
 								console.log("Game initialized:", data);
+								this.updateHostStatus();
 								// If rejoining a running 1vAI match, ensure controllers and AI start
 								try {
 									const isAI = (data?.metadata?.mode === '1vAI') || (this.game.getGameLog().mode === '1vAI');
@@ -313,8 +315,7 @@ export class GameConnection {
 
 	public killGameSession(gameId: string) {
 		this.socket?.send(JSON.stringify({
-			type: 'END_GAME',
-			gameId: gameId
+			type: 'LEAVE_GAME'
 		}));
 	}
 
@@ -334,5 +335,19 @@ export class GameConnection {
 			this.socket.close();
 		}
 		this.pendingUserInfoResolve = null;
+	}
+
+	private updateHostStatus() {
+		const onlineId = this.game.getOnlineId();
+		const player1 = this.game.getGameLog().playerDetails.player1;
+
+		if (onlineId && player1 && player1.id) {
+			if (String(onlineId) === String(player1.id)) {
+				this.game.setGameIsHost(true);
+			} else {
+				this.game.setGameIsHost(false);
+			}
+			console.log(`Host status updated: ${this.game.getGameIsHost()} (OnlineID: ${onlineId}, P1 ID: ${player1.id})`);
+		}
 	}
 }
