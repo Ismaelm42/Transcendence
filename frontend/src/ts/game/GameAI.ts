@@ -52,9 +52,9 @@ export class GameAI {
 		}
 
 		if (this.game.getGameLog().config?.difficulty === 'easy')
-			this.errorFactor = 0.11;
+			this.errorFactor = 0.16;
 		else if (this.game.getGameLog().config?.difficulty === 'hard')
-			this.errorFactor = 0.06;
+			this.errorFactor = 0.08;
 
 		const paddleX = (this.aiSide === 'player1') ? 0.03 : 0.97;
 		if (Math.abs(gameState.ball.x - paddleX) < 0.2)
