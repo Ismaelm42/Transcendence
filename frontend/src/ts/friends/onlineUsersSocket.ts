@@ -27,7 +27,7 @@ export function initOnlineSocket() {
 				case "incomingChallenge": {
 					const { fromUsername, challengeId } = data;
 					console.log("Incoming challenge received from:", fromUsername);
-					showChallengeNotification(fromUsername, challengeId);
+					await showChallengeNotification(fromUsername, challengeId);
 					break;
 				}
 				case "goToGame": {
@@ -103,7 +103,7 @@ export function closeOnlineSocket() {
 	}
 }
 
-export function showChallengeNotification(fromUsername: string, challengeId: string) {
+export async function showChallengeNotification(fromUsername: string, challengeId: string) {
    let modal = document.getElementById('challenge-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -178,7 +178,9 @@ export function showChallengeNotification(fromUsername: string, challengeId: str
         `;
         document.head.appendChild(style);
     }
-
+	const game = new Game();
+	const gc = game.getGameConnection();
+	await gc.establishConnection();
     // Actualiza el texto
     const text = document.getElementById('challenge-text');
     if (text) {
@@ -191,7 +193,8 @@ export function showChallengeNotification(fromUsername: string, challengeId: str
     const rejectBtn = document.getElementById('reject-btn');
     if (acceptBtn && rejectBtn) {
         acceptBtn.onclick = () => {
-            onlineSocket?.send(JSON.stringify({ type: "acceptChallenge", challengeId }));
+            gc.joinGame(challengeId);
+			//onlineSocket?.send(JSON.stringify({ type: "acceptChallenge", challengeId }));
             modal.style.display = 'none';
         };
         rejectBtn.onclick = () => {

@@ -88,6 +88,7 @@ async function handleChallenge(fastify, socket, user, data) {
 	const fromUsername = user.username;
 	const toUserId = String(data.toUserId);
 	const challengeId = `${fromUserId}-${toUserId}-${Date.now()}`;
+	const roomId = data.roomId; // Usar el mismo ID para la sala del juego
 
 	pendingChallenges.set(challengeId, { fromUserId, toUserId, fromUsername, timestamp: Date.now() });
 
@@ -99,7 +100,8 @@ async function handleChallenge(fastify, socket, user, data) {
 				type: 'incomingChallenge',
 				fromUserId,
 				fromUsername,
-				challengeId
+				challengeId,
+				roomId
 			}));
 		} catch (error) {
 			console.error('Error sending challenge:', error);

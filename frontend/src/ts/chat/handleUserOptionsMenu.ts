@@ -2,6 +2,7 @@ import { handlePrivateMsg } from "./handleSenders.js";
 import { showUserProfile } from "./handleUserProfile.js";
 import { onlineSocket } from "../friends/onlineUsersSocket.js";
 import { showMessage } from "../modal/showMessage.js";
+import Game from "../game/Game.js";
 
 export function showUserOptionsMenu(userElement: HTMLDivElement, event: MouseEvent, socket: WebSocket, currentUserId: string) {
 	const username = userElement.querySelector("span.text-sm")?.textContent?.trim();
@@ -98,17 +99,22 @@ function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username:
 	});
 }
 
-export function handlePlayGame(currentUserId: string, targetUserId: string, username: string) {
+export async function handlePlayGame(currentUserId: string, targetUserId: string, username: string) {
 	if (!onlineSocket || onlineSocket.readyState !== WebSocket.OPEN) {
 		console.error("Online socket not open. ReadyState:", onlineSocket?.readyState);
 		return;
 	}
-
+	const 	game = new Game();
+	const	gc = game.getGameConnection();
+	await gc.establishConnection();
+	game.setGameMode('remote');
+	gc.joinGame("chota");
 	const socketMessage = {
 		type: "challenge",
 		fromUserId: currentUserId,
 		toUserId: targetUserId,
 		timestamp: Date.now(),
+		roomId: "chota"
 	};
 
 	try {
