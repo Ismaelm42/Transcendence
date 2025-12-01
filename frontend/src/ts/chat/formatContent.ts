@@ -35,15 +35,39 @@ export async function formatMsgTemplate(data: any, userId: string): Promise<stri
 
 	if (data.message.toString().startsWith("$$INVITE$$:")) {
 		const gameId = data.message.toString().split(":")[1];
-		message = `
-			<div class="invite-card p-2 bg-gray-800 rounded border border-gray-600">
-				<p class="text-white mb-2">Game Invitation</p>
-				<div class="flex gap-2">
-					<button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600" data-action="accept-invite" data-game-id="${gameId}">Accept</button>
-					<button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" data-action="ignore-invite">Ignore</button>
-				</div>
-			</div>
-		`;
+		if (data.userId.toString() === userId.toString()) {
+			// Enviado por mí (solo aviso)
+			message = `
+                <div class="invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-chilean-fire-500/40 shadow-sm backdrop-blur">
+                    <p class="text-international-orange-400 font-semibold mb-1">Invitation sent</p>
+                </div>
+            `;
+		} else {
+			// Recibido (mostrar aceptar / rechazar)
+			message = `
+                <div class="invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-chilean-fire-500/40 shadow-sm backdrop-blur">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-international-orange-400 font-semibold">Game invite</p>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <button
+                                class="btn-pong-primary px-3 py-1.5 rounded-md text-sm font-semibold"
+                                data-action="accept-invite"
+                                data-game-id="${gameId}">
+                                Accept
+                            </button>
+                            <button
+                                class="px-3 py-1.5 rounded-md text-sm font-semibold border border-international-orange-400 text-international-orange-400 hover:bg-international-orange-500/10 transition"
+                                data-action="ignore-invite"
+                                data-game-id="${gameId}">
+                                Decline
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+		}
 	}
 
 	const imagePath = `${data.imagePath}?t=${Date.now()}`;
