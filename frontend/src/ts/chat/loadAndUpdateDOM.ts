@@ -1,4 +1,5 @@
 import { handleUserInfo } from "./handleUserInfo.js";
+import { updateInvitationStates } from "./formatContent.js";
 
 export function removeNotificationChatTab() {
 
@@ -33,7 +34,8 @@ export function handleContentStorage(chatMessages: HTMLDivElement, recentChats: 
 		recentChats.innerHTML = chats;
 	}
 	if (!currentRoom && publicChat) {
-		chatMessages.innerHTML = publicChat;
+		// Update invitation states in the cached public chat HTML before rendering
+		chatMessages.innerHTML = updateInvitationStates(publicChat);
 	}
 	if (!currentRoom) {
 		sessionStorage.setItem("current-room", "");

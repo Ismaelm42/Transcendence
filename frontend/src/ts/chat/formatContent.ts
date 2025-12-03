@@ -8,6 +8,44 @@ export function soundNotification() {
 	});
 }
 
+/**
+ * Updates invitation cards in HTML based on stored states in sessionStorage
+ * @param html - The HTML string containing invitation cards
+ * @returns Updated HTML string with invitation states applied
+ */
+export function updateInvitationStates(html: string): string {
+	const inviteStates = JSON.parse(sessionStorage.getItem("invite-states") || "{}");
+	
+	// Create a temporary container to parse and manipulate the HTML
+	const container = document.createElement('div');
+	container.innerHTML = html;
+	
+	// Find all invitation cards
+	const inviteCards = container.querySelectorAll('.invite-card[data-game-id]');
+	
+	inviteCards.forEach((card) => {
+		const gameId = card.getAttribute('data-game-id');
+		if (!gameId) return;
+		
+		const state = inviteStates[gameId];
+		
+		if (state === 'accepted') {
+			card.innerHTML = `
+				<p class="text-green-400 font-semibold">Game accepted</p>
+			`;
+			card.className = 'invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-green-500/40 shadow-sm backdrop-blur';
+		} else if (state === 'declined') {
+			card.innerHTML = `
+				<p class="text-gray-400 font-semibold">Game declined</p>
+			`;
+			card.className = 'invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-gray-500/40 shadow-sm backdrop-blur';
+		}
+		// If no state, leave the card as-is (with buttons)
+	});
+	
+	return container.innerHTML;
+}
+
 function formatTextToHtml(text: string) {
 
 	let htmlText = text
@@ -35,6 +73,11 @@ export async function formatMsgTemplate(data: any, userId: string): Promise<stri
 
 	if (data.message.toString().startsWith("$$INVITE$$:")) {
 		const gameId = data.message.toString().split(":")[1];
+		
+		// Check sessionStorage for invitation state
+		const inviteStates = JSON.parse(sessionStorage.getItem("invite-states") || "{}");
+		const inviteState = inviteStates[gameId];
+		
 		if (data.userId.toString() === userId.toString()) {
 			// Enviado por mí (solo aviso)
 			message = `
@@ -43,30 +86,45 @@ export async function formatMsgTemplate(data: any, userId: string): Promise<stri
                 </div>
             `;
 		} else {
-			// Recibido (mostrar aceptar / rechazar)
-			message = `
-                <div class="invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-chilean-fire-500/40 shadow-sm backdrop-blur">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="min-w-0">
-                            <p class="text-international-orange-400 font-semibold">Game invite</p>
-                        </div>
-                        <div class="flex gap-2 shrink-0">
-                            <button
-                                class="btn-pong-primary px-3 py-1.5 rounded-md text-sm font-semibold"
-                                data-action="accept-invite"
-                                data-game-id="${gameId}">
-                                Accept
-                            </button>
-                            <button
-                                class="px-3 py-1.5 rounded-md text-sm font-semibold border border-international-orange-400 text-international-orange-400 hover:bg-international-orange-500/10 transition"
-                                data-action="ignore-invite"
-                                data-game-id="${gameId}">
-                                Decline
-                            </button>
+			// Recibido - check if already interacted with
+			if (inviteState === 'accepted') {
+				message = `
+                    <div class="invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-green-500/40 shadow-sm backdrop-blur">
+                        <p class="text-green-400 font-semibold">Game accepted</p>
+                    </div>
+                `;
+			} else if (inviteState === 'declined') {
+				message = `
+                    <div class="invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-gray-500/40 shadow-sm backdrop-blur">
+                        <p class="text-gray-400 font-semibold">Game declined</p>
+                    </div>
+                `;
+			} else {
+				// Show buttons (no interaction yet)
+				message = `
+                    <div class="invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-chilean-fire-500/40 shadow-sm backdrop-blur" data-game-id="${gameId}">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-international-orange-400 font-semibold">Game invite</p>
+                            </div>
+                            <div class="flex gap-2 shrink-0">
+                                <button
+                                    class="btn-pong-primary px-3 py-1.5 rounded-md text-sm font-semibold"
+                                    data-action="accept-invite"
+                                    data-game-id="${gameId}">
+                                    Accept
+                                </button>
+                                <button
+                                    class="px-3 py-1.5 rounded-md text-sm font-semibold border border-international-orange-400 text-international-orange-400 hover:bg-international-orange-500/10 transition"
+                                    data-action="ignore-invite"
+                                    data-game-id="${gameId}">
+                                    Decline
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+			}
 		}
 	}
 

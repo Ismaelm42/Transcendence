@@ -56,32 +56,60 @@ export default class Chat extends Step {
 			});
 
 			chatMessages.addEventListener('click', (e) => {
-				const target = e.target as HTMLElement;
-				const action = target.getAttribute('data-action');
-				if (action === 'accept-invite') {
-					const gameId = target.getAttribute('data-game-id');
-					if (gameId) {
-						const spa = SPA.getInstance();
-						if (spa.currentGame) {
-							spa.currentGame.isChatGame = true;
-							spa.currentGame.isJoining = true;
-							spa.currentGame.setGameMode('remote');
-							spa.currentGame.setGameIsHost(false);
-							spa.currentGame.getGameConnection().joinGame(gameId);
-						}
+			const target = e.target as HTMLElement;
+			const action = target.getAttribute('data-action');
+			if (action === 'accept-invite') {
+				const gameId = target.getAttribute('data-game-id');
+				if (gameId) {
+					// Save state to sessionStorage
+					const inviteStates = JSON.parse(sessionStorage.getItem("invite-states") || "{}");
+					inviteStates[gameId] = 'accepted';
+					sessionStorage.setItem("invite-states", JSON.stringify(inviteStates));
+					
+					// Update the card UI immediately
+					const card = target.closest('.invite-card') as HTMLElement;
+					if (card) {
+						card.innerHTML = `
+							<p class="text-green-400 font-semibold">Game accepted</p>
+						`;
+						card.className = 'invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-green-500/40 shadow-sm backdrop-blur';
 					}
-				} else if (action === 'ignore-invite') {
-					const gameId = target.getAttribute('data-game-id');
-					if (gameId && Step.chatSocket && Step.chatSocket.readyState === WebSocket.OPEN) {
-						Step.chatSocket.send(JSON.stringify({
-							type: 'DECLINE_GAME_INVITE',
-							gameId: gameId
-						}));
+					
+					// Join the game
+					const spa = SPA.getInstance();
+					if (spa.currentGame) {
+						spa.currentGame.isChatGame = true;
+						spa.currentGame.isJoining = true;
+						spa.currentGame.setGameMode('remote');
+						spa.currentGame.setGameIsHost(false);
+						spa.currentGame.getGameConnection().joinGame(gameId);
 					}
-					const card = target.closest('.invite-card');
-					card?.remove();
 				}
-			});
+			} else if (action === 'ignore-invite') {
+				const gameId = target.getAttribute('data-game-id');
+				if (gameId && Step.chatSocket && Step.chatSocket.readyState === WebSocket.OPEN) {
+					// Save state to sessionStorage
+					const inviteStates = JSON.parse(sessionStorage.getItem("invite-states") || "{}");
+					inviteStates[gameId] = 'declined';
+					sessionStorage.setItem("invite-states", JSON.stringify(inviteStates));
+					
+					// Update the card UI immediately
+					const card = target.closest('.invite-card') as HTMLElement;
+					if (card) {
+						card.innerHTML = `
+							<p class="text-gray-400 font-semibold">Game declined</p>
+						`;
+						card.className = 'invite-card p-3 md:p-4 bg-gray-900/60 rounded-lg border border-gray-500/40 shadow-sm backdrop-blur';
+					}
+					
+					// Send decline message to backend
+					Step.chatSocket.send(JSON.stringify({
+						type: 'DECLINE_GAME_INVITE',
+						gameId: gameId
+					}));
+				}
+			}
+		});
 		}
 		catch (error) {
 			console.log(error);

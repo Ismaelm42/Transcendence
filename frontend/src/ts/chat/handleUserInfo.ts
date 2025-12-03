@@ -1,4 +1,4 @@
-import { formatUserInfo } from "./formatContent.js";
+import { formatUserInfo, updateInvitationStates } from "./formatContent.js";
 
 export function updatePartnerStatus() {
 	
@@ -27,7 +27,9 @@ export async function handleUserInfo(chatMessages: HTMLDivElement, data:any, use
 		UserInfo.innerHTML = await formatUserInfo(data);
 		const privateChat = JSON.parse(sessionStorage.getItem("private-chat") || "{}") as Record<string, string>;
 		const stored = privateChat[data.roomId] || "";
-		chatMessages.innerHTML = stored || "";
+		// Update invitation states in the cached HTML before rendering
+		const updatedHtml = stored ? updateInvitationStates(stored) : "";
+		chatMessages.innerHTML = updatedHtml;
 		requestAnimationFrame(() => {
 			chatMessages.scrollTop = chatMessages.scrollHeight;
 		});
@@ -37,7 +39,8 @@ export async function handleUserInfo(chatMessages: HTMLDivElement, data:any, use
 			sessionStorage.setItem("current-room", "");
 			const stored = sessionStorage.getItem("public-chat") || "";
 			UserInfo.innerHTML = "";
-			chatMessages.innerHTML = stored;
+			// Update invitation states when going back to public chat
+			chatMessages.innerHTML = stored ? updateInvitationStates(stored) : "";
 			requestAnimationFrame(() => {
 				chatMessages.scrollTop = chatMessages.scrollHeight;
 			});
