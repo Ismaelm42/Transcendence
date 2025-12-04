@@ -20,6 +20,13 @@ export function initOnlineSocket() {
 					sessionStorage.setItem("userConnected", JSON.stringify(data.users));
 					window.dispatchEvent(new Event("onlineUsersUpdated"));
 					break;
+				case "error":
+					console.error("Error received:", data.message);
+					showMessage(data.message, 3000);
+					setTimeout(() => {
+						window.location.hash = "#logout";
+					}, 3000);
+					break;
 				case "refreshRelations":
 					console.log("Refresh relations event received");
 					window.dispatchEvent(new Event("onlineUsersUpdated"));

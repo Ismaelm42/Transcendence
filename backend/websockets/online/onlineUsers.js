@@ -3,6 +3,10 @@ import { extractUserFromToken } from "../../auth/token.js";
 
 const onlineUsers = new Map();
 
+export function isUserOnline(userId) {
+	return onlineUsers.has(String(userId));
+}
+
 export function configureOnlineSocket(fastify) {
 	fastify.register(async function (fastify) {
 		fastify.get('/ws/online', { websocket: true }, async (socket, req) => {
@@ -11,6 +15,14 @@ export function configureOnlineSocket(fastify) {
 			const user = await extractUserFromToken(req.cookies.token);
 			if (!user) {
 				console.error('User invalido, cerrando socket');
+				socket.close();
+				return;
+			}
+
+			// Check if user is already online
+			if (onlineUsers.has(String(user.id))) {
+				console.log(`User ${user.username} already connected. Rejecting new connection.`);
+				socket.send(JSON.stringify({ type: 'error', message: 'You are already logged in from another location.' }));
 				socket.close();
 				return;
 			}
@@ -27,7 +39,8 @@ export function configureOnlineSocket(fastify) {
 
 			// 4. Elimina al usuario cuando se desconecte
 			socket.on('close', () => {
-				onlineUsers.delete(user.id);
+				// Ensure key types match when deleting (stored as String(user.id))
+				onlineUsers.delete(String(user.id));
 				broadcastOnlineUsers(fastify);
 			});
 			handleOnlineSocketMessages(fastify, socket, user);

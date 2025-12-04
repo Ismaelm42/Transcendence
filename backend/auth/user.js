@@ -5,6 +5,7 @@ import GoogleStrategy from "passport-google-oauth20";
 import { crud } from '../crud/crud.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { setTokenCookie, destroyTokenCookie } from "./token.js";
+import { isUserOnline } from "../websockets/online/onlineUsers.js";
 
 export async function authenticateUser(email, password, reply) {
 
@@ -15,6 +16,11 @@ export async function authenticateUser(email, password, reply) {
 	const isMatch = await comparePassword(password, user.password);
 	if (!isMatch)
 		return reply.status(401).send({ message: 'Wrong password' });
+
+	if (isUserOnline(user.id)) {
+		return reply.status(403).send({ message: 'User already logged in from another location' });
+	}
+
 	setTokenCookie(user.id, reply);
 	await crud.user.updateLastLoginById(user.id);
 	return reply.status(200).send({

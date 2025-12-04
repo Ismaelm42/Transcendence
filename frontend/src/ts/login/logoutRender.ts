@@ -1,4 +1,5 @@
 import { Step } from '../spa/stepRender.js';
+import { closeOnlineSocket } from '../friends/onlineUsersSocket.js';
 
 export default class LoginRender extends Step {
 
@@ -14,6 +15,7 @@ export default class LoginRender extends Step {
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			sessionStorage.clear();
 			sessionStorage.removeItem("chatHTML");
+			closeOnlineSocket();
 			if (Step.chessSocket) {
 				Step.chessSocket.close();
 				Step.chessSocket = null;
