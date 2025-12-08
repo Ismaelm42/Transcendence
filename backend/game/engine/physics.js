@@ -3,29 +3,28 @@
  */
 
 // Function for restoring the ball in the middle and towards scored-against player
-export function resetBall(scoringDirection)
-{
-	const	centerX = 0.5; 
-	const	centerY = 0.5;
-	const	speed = 0.20;
-	const	angleVariance = (Math.random() * 0.1) - 0.05;
-	let		direction;
+export function resetBall(scoringDirection) {
+	const centerX = 0.5;
+	const centerY = 0.5;
+	const speed = 0.20;
+	const angleVariance = (Math.random() * 0.1) - 0.05;
+	let direction;
 
 	if (scoringDirection === undefined)
 		direction = Math.random() > 0.5 ? 1 : -1;
 	else
 		direction = scoringDirection === 'right' ? 1 : -1;
-	
-	this.state.ball = { 
-		x: centerX, 
-		y: centerY, 
-		dx: (speed * this.ballSpeedMultiplier) * direction, 
+
+	this.state.ball = {
+		x: centerX,
+		y: centerY,
+		dx: (speed * this.ballSpeedMultiplier) * direction,
 		dy: (0.05 + angleVariance) * this.ballSpeedMultiplier
-	};	
+	};
 }
 
-function clampAngle(angle, minDeg = 15, maxDeg = 165)
-{
+
+function clampAngle(angle, minDeg = 15, maxDeg = 165) {
 	const min = (minDeg * Math.PI) / 180;
 	const max = (maxDeg * Math.PI) / 180;
 	if (angle > Math.PI)
@@ -41,8 +40,7 @@ function clampAngle(angle, minDeg = 15, maxDeg = 165)
 
 // Main function to check for paddle-ball collisions
 // TODO: Reduce function size by getting some calculations out by using auxiliary functions
-export function checkPaddleCollision(playerNumber)
-{
+export function checkPaddleCollision(playerNumber) {
 	// Get paddle and ball position from the game state
 	const paddle = this.state.paddles[playerNumber];
 	const ball = this.state.ball;
@@ -56,13 +54,13 @@ export function checkPaddleCollision(playerNumber)
 		paddle.lastY = paddle.y;
 	const paddleVelocity = paddle.y - paddle.lastY;
 	paddle.lastY = paddle.y;
-	
+
 	// Calculate paddle position and dimensions (edges), again with relative units to canvas size
 	const paddleX = playerNumber === 'player1' ? 0.03 : (0.97 - paddleWidth);
 	const paddleTop = paddle.y - (paddleHeight / 2);
 	const paddleBottom = paddle.y + (paddleHeight / 2);
 	const collisionEdgeX = playerNumber === 'player1' ? paddleX + paddleWidth : paddleX;
-	
+
 	// Checks if ball is within paddle's vertical range and at the collision edge, this ends in booleans true/false
 	const ballInYRange = (ball.y >= paddleTop) && (ball.y <= paddleBottom);
 	let ballAtCollisionX = false;
@@ -70,16 +68,15 @@ export function checkPaddleCollision(playerNumber)
 		ballAtCollisionX = ((ball.x - ballRadius) <= collisionEdgeX) && (ball.x >= paddleX);
 	else
 		ballAtCollisionX = ((ball.x + ballRadius) >= collisionEdgeX) && (ball.x <= (paddleX + paddleWidth));
-	
+
 	// If both bolean variables are true, then check for collision
-	if (ballAtCollisionX && ballInYRange)
-	{
+	if (ballAtCollisionX && ballInYRange) {
 		// Position adjustment to prevent penetration - adding a small offset
 		if (playerNumber === 'player1')
 			this.state.ball.x = collisionEdgeX + ballRadius + 0.001;
 		else
 			this.state.ball.x = collisionEdgeX - ballRadius - 0.001;
-			
+
 		// ATARI-STYLE BOUNCE PHYSICS + Ball Increasing Speed:
 		// 1. Calculate relative position on paddle (from -1 at top to +1 at bottom)
 		const hitPosition = (ball.y - paddle.y) / (paddleHeight / 2);
@@ -94,9 +91,9 @@ export function checkPaddleCollision(playerNumber)
 		this.state.ball.dy += angleEffect;
 		// 6. Edge cases - hitting extreme top/bottom of paddle creates extreme angles
 		if (Math.abs(hitPosition) > 0.8)
-			this.state.ball.dy += (hitPosition > 0 ? 0.1 : -0.1);
+			this.state.ball.dy += (hitPosition > 0 ? 0.05 : -0.05);
 		// 7. Increase ball speed
-		let	speed = Math.sqrt(this.state.ball.dx ** 2 + this.state.ball.dy ** 2) * this.ballSpeedIncrease;
+		let speed = Math.sqrt(this.state.ball.dx ** 2 + this.state.ball.dy ** 2) * this.ballSpeedIncrease;
 		// 8. Cap maximum speed to prevent the game from becoming unplayable
 		if (speed > this.ballMaxSpeed)
 			speed = this.ballMaxSpeed;
@@ -105,9 +102,9 @@ export function checkPaddleCollision(playerNumber)
 		let newDx = Math.cos(angle) * speed;
 		let newDy = Math.sin(angle) * speed;
 		// 10. Prevent dx from being too small (e.g., < 0.1 * speed)
-		const minDx = 0.1 * speed;
-		if (Math.abs(newDx) < minDx)
-		{
+		// Increased minDx to 0.35 (approx 70 degrees max angle) to prevent vertical loops
+		const minDx = 0.35 * speed;
+		if (Math.abs(newDx) < minDx) {
 			newDx = (newDx < 0 ? -1 : 1) * minDx;
 			newDy = (newDy < 0 ? -1 : 1) * Math.sqrt(speed ** 2 - minDx ** 2);
 		}
