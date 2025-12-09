@@ -23,7 +23,6 @@ export class GameRender
 	{
 		if (!this.canvas || !this.ctx)
 		{
-			console.error("Cannot draw initial canvas state: missing canvas or context");
 			return ;
 		}
 		// (!) IMPORTANT - default state HAS TO MATCH backend's initial state
@@ -47,15 +46,12 @@ export class GameRender
 		this.stateTimestamp = Date.now();
 		if (!this.canvas)
 		{
-			console.log("Canvas not found, attempting to initialize");
 			this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 			if (this.canvas)
 			{
-				console.log("Canvas found with dimensions:", this.canvas.width, "x", this.canvas.height);
 				this.ctx = this.canvas.getContext('2d');
 				if (!this.ctx)
 				{
-					console.error("Failed to get canvas context");
 					return;
 				}
 				// Start the animation loop if this is the first state update
@@ -63,7 +59,6 @@ export class GameRender
 			}
 			else
 			{
-				console.error("Could not find canvas element");
 				return;
 			}
 		}
@@ -87,12 +82,10 @@ export class GameRender
 	{
 		if (!this.ctx || !this.canvas)
 		{
-			console.error("Cannot draw: missing context or canvas");
 			return ;
 		}
 		if (!this.gameState)
 		{
-			console.error("Cannot draw: missing game state");
 			return ;
 		}
 		// Clear the canvas
@@ -109,7 +102,6 @@ export class GameRender
 	{
 		if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.paddles)
 		{
-			console.error("Cannot draw paddles");
 			return ;
 		}
 		// Draw paddles with measures relative to canvas size - must match same on the backend(!)
@@ -139,7 +131,6 @@ export class GameRender
 	{
 		if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.ball)
 		{
-			console.error("Cannot draw ball");
 			return;
 		}
 		// Ball position is in normalized coordinates (0-1 range)
@@ -165,22 +156,37 @@ export class GameRender
 
 	private drawScore()
 	{
-		if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.scores)
-		{
-			console.error("Cannot draw scores:");
+				// "original"
+		// if (!this.ctx || !this.canvas || !this.gameState || !this.gameState.scores)
+		// {
+		// 	return ;
+		// }
+		// const player1Score = this.gameState.scores[0];
+    	// const player2Score = this.gameState.scores[1];
+		// this.ctx.fillStyle = "white";
+		// this.ctx.font = "60px Tektur, sans-serif";
+		// // Position scores on their respective sides (about 25% in from each edge and 80 from top)
+		// const leftScoreX = Math.round(this.canvas.width * 0.25);
+		// const rightScoreX = Math.round(this.canvas.width * 0.75);
+		// const scoreY = 80;
+		// this.ctx.textAlign = "center";
+		// this.ctx.fillText(`${player1Score}`, leftScoreX, scoreY);
+    	// this.ctx.fillText(`${player2Score}`, rightScoreX, scoreY);
+				// fin "original"
+
+
+		/// inicio de trasteo
+
+		const score1 = document.getElementById("score1p");
+		const score2 = document.getElementById("score2p");
+
+		if (!score1 || !score2 || !this.gameState || !this.gameState.scores){
 			return ;
 		}
-		const player1Score = this.gameState.scores[0];
-    	const player2Score = this.gameState.scores[1];
-		this.ctx.fillStyle = "white";
-		this.ctx.font = "60px Tektur, sans-serif";
-		// Position scores on their respective sides (about 25% in from each edge and 80 from top)
-		const leftScoreX = Math.round(this.canvas.width * 0.25);
-		const rightScoreX = Math.round(this.canvas.width * 0.75);
-		const scoreY = 80;
-		this.ctx.textAlign = "center";
-		this.ctx.fillText(`${player1Score}`, leftScoreX, scoreY);
-    	this.ctx.fillText(`${player2Score}`, rightScoreX, scoreY);
+		score1.textContent = this.gameState.scores[0].toString();
+		score2.textContent = this.gameState.scores[1].toString();
+
+		/// Fin de trasteo
 	}
 
 	private drawCenterLine()

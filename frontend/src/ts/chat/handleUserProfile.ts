@@ -12,7 +12,6 @@ export async function showUserProfile(currentUserId: string, userId: string, use
 	const friendsEntries = await fetchFriendEntries(userId);
 
 	if (!userData || !userStats || !friendsEntries) {
-		console.log("Error fetching user data or stats.");
 		return;
 	}
 

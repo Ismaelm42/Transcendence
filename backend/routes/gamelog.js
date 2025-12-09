@@ -32,8 +32,6 @@ export function configureGamelogRoutes(fastify, sequelize) {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 			const userId = decoded.userId;
 			const ParamsuserId = request.params.userId;
-			console.log('userId en get_user_gamelogs', userId);
-			console.log('ParamsuserId en get_user_gamelogs', ParamsuserId);
 			const userGamelogs = await crud.gamelog.getGamelogsByUserId(userId);
 			reply.status(200).send(userGamelogs);
 		} catch (err) {

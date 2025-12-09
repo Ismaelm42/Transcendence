@@ -179,7 +179,6 @@ export const updateLastLogoutById = async (userId) => {
 		if (user) {
 			user.lastLogout = new Date();
 			await user.save();
-			console.log('User lastLogout updated', user.lastLogout);
 			return user;
 		} else {
 			return { error: `User ${userId} not found at updateLastLogout` };

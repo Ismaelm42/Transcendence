@@ -2,15 +2,12 @@ import { acceptFriendRequest } from "../chat/userProfileFetchers.js";
 import { rejectFriendRequest, deleteFriend, unblockUser, blockUser } from "../chat/userProfileActions.js";
 
 export async function renderRelations(relationsContainer: HTMLElement, userId: string): Promise<void> {
-	console.log("Rendering relations for user ID:", userId, "Storage userConnected:", sessionStorage.getItem("userConnected"));
 
 	try {
 		if (!relationsContainer) {
-			console.error("El contenedor de relaciones no existe en el DOM");
 			return;
 		}
 		const relations = await getRelationsForUserId(userId);
-		//console.log("Relations:", relations);
 		
  		if (!relations || relations.length === 0) {
 			relationsContainer.innerHTML = `
@@ -31,7 +28,6 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
 		const blockedContainer = document.getElementById("blocked-container") as HTMLElement;
 
 		if (!friendsContainer || !pendingContainer || !blockedContainer) {
-			console.error("Uno o más contenedores no existen en el DOM");
 			return;
 		}
 		friendsContainer!.innerHTML = "";
@@ -59,7 +55,6 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
             if (!otherUserId) return;
 
             if (button.classList.contains("btnAcceptRequest")) {
-				console.log("Accepting friend request for user ID:", otherUserId);
                 await acceptFriendRequest(otherUserId);
             } else if (button.classList.contains("btnCancelFriendRequest")) {
                 await rejectFriendRequest(otherUserId);
@@ -80,7 +75,6 @@ export async function renderRelations(relationsContainer: HTMLElement, userId: s
 
 
 	catch (error) {
-		console.error("Error retrieving relations:", error);
 		relationsContainer.innerHTML = `<div id="pong-container">An error occurred while generating the content</div>`;
 		return;
 	}
@@ -101,7 +95,6 @@ async function getRelationsForUserId(userId: string): Promise<any[]> {
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error("Error fetching relations:", error);
 		return [];
 	}
 }
@@ -120,7 +113,6 @@ async function getUserById(userId: string): Promise<any> {
 		const user = await response.json();
 		return user;
 	} catch (error) {
-		console.error("Error fetching user:", error);
 		return { id: userId, username: "Unknown", avatarPath: "/img/default-avatar.png" }; // Default values
 	}
 }
@@ -210,15 +202,12 @@ function getButtonConfig(status: string, relation: any, userId: string): string 
 }
 
 function getColorStatus(userId: string): string {
-	console.log("Retrieving color status for user ID:", userId);
 	const UserConnected = sessionStorage.getItem("userConnected");
 	let colorStatus = "offline"; // Valor por defecto 
 	
 	for (const user of JSON.parse(UserConnected || "[]")) {
-		console.log("Checking user:", user.userId, "against", userId);
 		if (user.userId == userId) {
 			colorStatus= user.status
-			console.log("User status found:", colorStatus);
 			break;
 		}
 	}

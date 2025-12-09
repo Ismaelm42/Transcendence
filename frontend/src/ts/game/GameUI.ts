@@ -45,8 +45,8 @@ export class GameUI {
 			const htmlContent = await response.text();
 			appElement.innerHTML = htmlContent;
 		}
-		catch (error) {
-			console.error("Error loading game UI:", error);
+		catch (error)
+		{
 			appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
 		}
 		this.setupEventListeners();
@@ -202,10 +202,11 @@ export class GameUI {
 		};
 	}
 
-	public launchGame(): void {
-		if (!this.game.getGameConnection().socket || !this.game.getGameConnection().connectionStat) {
-			console.error("Cannot join game: connection not ready");
-			return;
+	public launchGame(): void 
+	{
+		if (!this.game.getGameConnection().socket || !this.game.getGameConnection().connectionStat)
+		{
+			return ;
 		}
 		this.game.setGameConfig(this.game.getGameConfig());
 		this.game.getGameConnection().joinGame();
@@ -222,7 +223,6 @@ export class GameUI {
 		}
 		// Per each game returned by backend, we create a new game card and append it to lobbyDiv
 		// TODO: we can add more elements to the card as "Ready, Full, In progress"...
-		console.log("GameDATA from server games", games);
 		games.forEach((game: GameData) => {
 			const card = document.createElement('div');
 			card.className = 'bg-pong-primary rounded p-4 flex flex-col gap-2 border-1 border-pong-tertiary shadow-md';

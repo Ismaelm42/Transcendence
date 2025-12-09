@@ -1,4 +1,4 @@
-FROM node:lts-bookworm
+FROM node:lts-bookworm-slim
 
 RUN mkdir /app/
 

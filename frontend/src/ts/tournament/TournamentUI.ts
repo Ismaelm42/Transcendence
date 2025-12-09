@@ -17,8 +17,8 @@ const DEFAULT_CONTAINER_ID = "tournament-container";
 export class TournamentUI {
 	private tournament: Tournament;
 
-	constructor(tournament: Tournament) {
-		console.log("TournamentUI constructor - tournament:", tournament);
+	constructor(tournament: Tournament)
+	{
 		this.tournament = tournament;
 		// this.boundOnLeavingTournamentLobby = this.onLeavingTournamentLobby.bind(this);
 	}
@@ -48,16 +48,16 @@ export class TournamentUI {
 			const htmlContent = await response.text();
 			appElement.innerHTML = htmlContent;
 		}
-		catch (error) {
-			console.error("Error loading game UI:", error);
+		catch (error)
+		{
 			appElement.innerHTML = `<div class="error-container">Failed to load tournament interface. Please try again.</div>`;
 		}
 		this.setupEventListeners();
 	}
 
 	// Sets up event listeners for game mode buttons, which after will also set controllers
-	setupEventListeners() {
-		console.log("Setting up tournament UI event listeners");
+	setupEventListeners()
+	{
 		// Game mode buttons
 		document.getElementById('localTournament')?.addEventListener('click', async () => {
 			this.showOnly('local-tournament-form');
@@ -132,10 +132,8 @@ export class TournamentUI {
 					let numberOfPlayers = parseInt(numberSlider?.value || "4");
 					let scoreLimit = parseInt(scoreSlider?.value || "5");
 
-					console.log("difficultySlider.value:", difficultySlider?.value);
 					// Difficulty slider
 					if (!difficultySlider) {
-						console.error("Difficulty slider not found");
 						return;
 					}
 					const value = parseInt(difficultySlider?.value);
@@ -162,9 +160,7 @@ export class TournamentUI {
 					} else {
 						console.error("Summary elements not found");
 					}
-					console.log("InAddEevnlisteners - Preparing players for tournament with number of players: ", numberOfPlayers);
-					this.preparePlayers(numberOfPlayers);
-					console.log("setupEventListeners: enabling hash Guard")
+						this.preparePlayers(numberOfPlayers);
 					this.enableTournamentHashGuard();
 				});
 
@@ -182,8 +178,6 @@ export class TournamentUI {
 
 				//   if (event instanceof MouseEvent) {
 				// 	const target = event.target as HTMLElement;
-				// 	console.log(`Click detected on: ${target.tagName}`);
-				// 	console.log(`Event target:`, target);	  
 				// 	const targetElement = event.target as HTMLElement;
 				// 	if (targetElement.tagName === 'A') {
 				// 		const href = (targetElement as HTMLAnchorElement).href;
@@ -222,20 +216,15 @@ export class TournamentUI {
 		// this.tournament.setEmptyTournamentPlayers(numberOfPlayers);
 		if (this.tournament.getTournamentPlayers().length < 1) {
 			await this.getFirstPlayer();
-			console.log("Pending players desde preparePlayers:", this.tournament.getPendingPlayersCount());
-			console.log("Preparing players for tournament with number of players:", numberOfPlayers);
 			this.getNextPlayer();
-		} else {
-			console.log("Tournament players already prepared, skipping getFirstPlayer.");
+		}else {
 			this.getNextPlayer();
 		}
 
 	}
 
 	getNextPlayer(): void {
-		console.log("Getting next player for tournament");
 		const trutru = this.tournament.getTournamentPlayers();
-		console.log("Tournament players:", trutru);
 		const numberOfPlayers = this.tournament.getTournamentConfig().numberOfPlayers;
 		const numberOfPendingPlayers = this.tournament.getPendingPlayersCount();
 		if (numberOfPendingPlayers === 0) {
@@ -313,21 +302,19 @@ export class TournamentUI {
 					tournamentPlayer.status = 'ready';
 				}
 
-				playersContainer.innerHTML = ''; // Clear previous content
-				this.tournament.addTournamentPlayer(playerCard.tournamentPlayer);
-				this.renderRegisteredPlayers(this.tournament.getTournamentPlayers());
-				if (this.tournament.getTournamentPlayers().length < numberOfPlayers) {
-					this.getNextPlayer();
-				} else {
-					console.log("All players are ready. Launching tournament.");
-					await this.tournament.launchTournament(this.tournament);
-				}
+					playersContainer.innerHTML = ''; // Clear previous content
+					this.tournament.addTournamentPlayer(playerCard.tournamentPlayer);
+					this.renderRegisteredPlayers(this.tournament.getTournamentPlayers());
+					if(this.tournament.getTournamentPlayers().length < numberOfPlayers) {
+						this.getNextPlayer();
+					}else 
+					{
+						await this.tournament.launchTournament(this.tournament);	
+					}
 
 			};
 		}
-		console.log("going out next player for tournament");
 		const tritri = this.tournament.getTournamentPlayers();
-		console.log("Tournament players:", tritri);
 	}
 
 	// Todo: pendiente de probar en la final
@@ -363,12 +350,9 @@ export class TournamentUI {
 		}
 		this.loadTemplate('../../html/tournament/nextMatch.html').then(nextMatchHtml => {
 			let parsed = nextMatchHtml;
-			console.log("En renderNextMatchInfo data array:", gameDataArray);
-			console.log("renderNextMatchInfo: Next game index:", nextMatchIndex);
 			const player1 = gameDataArray[nextMatchIndex].playerDetails.player1;
 			const player2 = gameDataArray[nextMatchIndex].playerDetails.player2;
 			if (!player1 || !player2) {
-				console.error("Player data is missing for next match.");
 				return;
 			}
 			parsed = parsed
@@ -388,28 +372,26 @@ export class TournamentUI {
 
 	// todo: Pendiente de ver en actualizacones de torneo
 	renderBracket(data: any): void {
-		console.log(`[TournamentUI] renderBracket. Tournament InstanceID: ${(this.tournament as any).instanceId}`);
-		const appElement = document.getElementById('tournament-bracket-container');
-		if (!appElement) {
-			console.error("Tournament bracket container not found");
-			return;
-		}
-		var html_Bracket_template = `../../html/tournament/bracket-template-${data.length}.html`;
-		// var html_Bracket_template =  `../../html/tournament/bracket-template-3.html`;
-		this.loadTemplate(html_Bracket_template).then(BracketHtml => {
-			let parsed = BracketHtml;
-			for (let i = 0; i < data.length; i++) {
-				const player = data[i];
-				parsed = parsed
-					.replace(new RegExp(`player-${i + 1}\\.tournamentName`, 'g'), player.gameplayer.tournamentUsername)
-					.replace(new RegExp(`player-${i + 1}\\.avatar`, 'g'), player.gameplayer.avatarPath);
-			}
-			const wrapper = document.createElement('div');
-			wrapper.className = 'tournament-bracket';
-			wrapper.innerHTML = parsed;
-			appElement.appendChild(wrapper);
-			this.renderNextMatchInfo(appElement);
-		});
+		  const appElement = document.getElementById('tournament-bracket-container');
+		  if (!appElement) {
+		   return;
+		  }
+		  var html_Bracket_template = `../../html/tournament/bracket-template-${data.length}.html`;
+				// var html_Bracket_template =  `../../html/tournament/bracket-template-3.html`;
+				this.loadTemplate(html_Bracket_template).then(BracketHtml => {
+					let parsed = BracketHtml;
+					for (let i = 0; i < data.length; i++) {
+						const player = data[i];
+						parsed = parsed
+							.replace(new RegExp(`player-${i + 1}\\.tournamentName`, 'g'), player.gameplayer.tournamentUsername)
+							.replace(new RegExp(`player-${i + 1}\\.avatar`, 'g'), player.gameplayer.avatarPath);
+					}
+					const wrapper = document.createElement('div');
+					wrapper.className = 'tournament-bracket';
+					wrapper.innerHTML = parsed;
+					appElement.appendChild(wrapper);
+					this.renderNextMatchInfo(appElement);
+				});
 	}
 
 	/**
@@ -418,64 +400,57 @@ export class TournamentUI {
 	 * @param data Array of TournamentPlayer objects representing the current bracket state.
 	 */
 	async updateRenderBracket(data: GamePlayer[]): Promise<void> {
-		const appElement = document.getElementById('tournament-bracket-container');
-
-		if (!appElement) {
-			console.error("Tournament bracket container not found");
-			return;
-		}
-		appElement.innerHTML = ''
-		const numberOfPlayers = this.tournament.getTournamentConfig().numberOfPlayers;
-		const html_Bracket_template = `../../html/tournament/bracket-template-${numberOfPlayers}.html`;
-		this.loadTemplate(html_Bracket_template).then(BracketHtml => {
-			let parsed = BracketHtml;
-			console.log("Bracket data:", JSON.stringify(data));
-			console.log("Bracket data length:", data.length);
-			console.log(typeof data);
-			// Iterar por los jugadores
-			for (let i = 0; i < Object.keys(data).length; i++) {
-				const player = data[i];
-				if (i < numberOfPlayers) {
-					parsed = parsed
-						.replace(new RegExp(`player-${i + 1}\\.tournamentName`, 'g'), player.tournamentUsername)
-						.replace(new RegExp(`player-${i + 1}\\.avatar`, 'g'), player.avatarPath);
-				} else {
-					var matchIndex;
-					if (numberOfPlayers === 6 && i === 10) {
-						matchIndex = 3
-
-					} else {
-						matchIndex = i - numberOfPlayers + 1; // Adjust index for matches
-					}
-					parsed = parsed.replace(new RegExp(`winner Match ${matchIndex}`, 'g'), data[i].tournamentUsername);
-					console.log(`winner_match_{matchIndex}_img`, `winner_match_${matchIndex}_img`);
-					// Replace the src attribute for the winner's avatar directly in the HTML template
-					parsed = parsed.replace(
-						new RegExp(`(<img[^>]*id=["']winner_match_${matchIndex}_img(\\.\\d+)?["'][^>]*src=["'])[^"']*(['"][^>]*>)`, 'g'),
-						`$1${data[i].avatarPath}$3`
-					);
-				}
+			const appElement = document.getElementById('tournament-bracket-container');
+		
+			if (!appElement) {
+				return;
 			}
-			const wrapper = document.createElement('div');
-			wrapper.className = 'tournament-bracket';
-			wrapper.classList.add('w-[90%]', 'lg:w-full');
-			wrapper.innerHTML = parsed;
-			appElement.appendChild(wrapper);
-			this.renderNextMatchInfo(appElement);
-		});
+			appElement.innerHTML = ''
+			const numberOfPlayers = this.tournament.getTournamentConfig().numberOfPlayers;
+			const html_Bracket_template = `../../html/tournament/bracket-template-${numberOfPlayers}.html`;
+			this.loadTemplate(html_Bracket_template).then(BracketHtml => {
+				let parsed = BracketHtml;
+				// Iterar por los jugadores
+				for (let i = 0; i < Object.keys(data).length; i++) {
+					const player = data[i];
+					if (i < numberOfPlayers) {
+						parsed = parsed
+							.replace(new RegExp(`player-${i + 1}\\.tournamentName`, 'g'), player.tournamentUsername)
+							.replace(new RegExp(`player-${i + 1}\\.avatar`, 'g'), player.avatarPath);
+					}else{
+						var matchIndex;
+						if (numberOfPlayers === 6 && i === 10) {
+							matchIndex = 3
+							
+						}else
+						{
+							matchIndex = i - numberOfPlayers + 1; // Adjust index for matches
+						}
+							parsed = parsed.replace(new RegExp(`winner Match ${matchIndex}`, 'g'), data[i].tournamentUsername);
+							// Replace the src attribute for the winner's avatar directly in the HTML template
+							parsed = parsed.replace(
+								new RegExp(`(<img[^>]*id=["']winner_match_${matchIndex}_img(\\.\\d+)?["'][^>]*src=["'])[^"']*(['"][^>]*>)`, 'g'),
+								`$1${data[i].avatarPath}$3`
+							);
+					}
+				}
+				const wrapper = document.createElement('div');
+				wrapper.className = 'tournament-bracket';
+				wrapper.classList.add('w-[90%]', 'lg:w-full');
+				wrapper.innerHTML = parsed;
+				appElement.appendChild(wrapper);
+				this.renderNextMatchInfo(appElement);
+			});
 	}
 
 	async getFirstPlayer(): Promise<void> {
-		console.log("en getFirstPlayrer tournament:Gameplayers: " + JSON.stringify(this.tournament.getTournamentPlayers()));
 		try {
 			const response = await fetch("https://localhost:8443/back/verify_first_player", {
 				method: "POST",
 				credentials: 'include',
 			});
 			const result = await response.json();
-			if (!response.ok) {
-				console.log(`Error: ${result.message}`);
-			} else {
+			if (response.ok) {
 				const playerOne: GamePlayer = {
 					id: result.id,
 					username: result.username,
@@ -493,7 +468,6 @@ export class TournamentUI {
 				this.renderRegisteredPlayers(this.tournament.getTournamentPlayers());
 			}
 		} catch (error) {
-			console.error("Error while verifying:", error);
 		}
 	}
 
@@ -506,7 +480,6 @@ export class TournamentUI {
 		const PlayerRegisterHTMLContainer = document.getElementById('registered-players');
 
 		if (!PlayerRegisterHTMLContainer) {
-			console.error("Player register HTML container not found");
 			return;
 		}
 		else {
@@ -550,8 +523,6 @@ export class TournamentUI {
 	}
 
 	async checkGuestPlayer(index: number, guestTournamentName: string): Promise<TournamentPlayer | null> {
-		console.log(`Guest Player en checkguestPlayer: ${index} name: ${guestTournamentName}`);
-		console.log("Checking int torunamentId:", this.tournament.getTournamentId());
 		if (!guestTournamentName || guestTournamentName.trim() === '') {
 			const AvatarPath = `https://localhost:8443/back/images/avatar-${index}.png`;
 			return {
@@ -581,7 +552,6 @@ export class TournamentUI {
 					return null;
 				}
 				this.tournament.setTournamentId(result.tournamentId);
-				console.log("Tournament ID set to:", this.tournament.getTournamentId());
 				// if (this.tournament.getTournamentId() === -42 && !result.tournamentId) {
 				return {
 					Index: '',
@@ -595,7 +565,6 @@ export class TournamentUI {
 					}
 				};
 			} catch (error) {
-				console.error("Error while verifying:", error);
 				return null;
 			}
 		}
@@ -628,7 +597,6 @@ export class TournamentUI {
 				}
 			};
 		} catch (error) {
-			console.error("Error while verifying:", error);
 			return null;
 		}
 	}
@@ -710,7 +678,6 @@ export class TournamentUI {
 
 
 	private handleAnchorClick(anchor: HTMLAnchorElement) {
-		console.log("Anchor clicked:", anchor.href);
 		const href = anchor.getAttribute('href') || '';
 		let message = "Are you sure you want to leave the tournament?"
 		if (href.includes('#tournament-lobby')) {
@@ -731,13 +698,11 @@ export class TournamentUI {
 
 		if (isClick) {
 			const target = (event as MouseEvent).target as HTMLElement;
-			console.log(`Click detected on: ${target.tagName}`);
 
 			// guard for the title H1 "TRANSCENDENCE" inside an A element
 			if (target.tagName === 'H1') {
 				const closestAnchor = target.closest('a') as HTMLAnchorElement | null;
 				if (closestAnchor) {
-					console.log("Click on H1 inside A; rerouting to A element.");
 					event.preventDefault();
 					this.handleAnchorClick(closestAnchor);
 					return;
@@ -822,7 +787,6 @@ export class TournamentUI {
 				keyboardEvent.preventDefault();
 				const confirmExit = confirm("this will lead yo to Home. Are you sure you want to exit the tournament?");
 				if (confirmExit && keyboardEvent.key === "Escape") {
-					console.log("Escape pressed, user confirmed exit.");
 					this.resetTournament(); // Reset the tournament state
 					window.location.href = "#home";
 				}
@@ -839,13 +803,10 @@ export class TournamentUI {
 	 * This event does not show a message.
 	 */
 	enableTournamentHashGuard() {
-		console.log("enableTournamentHashGuard: enabled.");
 		if (!this.boundPageHideHandler) {
 			this.boundPageHideHandler = () => {
-				console.log("Page is being hidden or unloaded.");
 				const tournamentId = this.tournament.getTournamentId();
 				if (tournamentId !== null && tournamentId !== undefined) {
-					console.log("enableTournamentHashGuard: Deleting temp users for tournamentId on pagehide:", tournamentId);
 					fetch('https://localhost:8443/back/delete_user_by_tournament_id', {
 						method: 'DELETE',
 						headers: {
@@ -856,13 +817,11 @@ export class TournamentUI {
 					});
 				}
 			};
-			console.log("addEventListener(\"pagehide\")");
 			window.addEventListener("pagehide", this.boundPageHideHandler);
 		}
 	}
 
 	disableTournamentHashGuard() {
-		console.log("Tournament Hash Guard disabled.");
 		if (this.boundClickHandler) {
 			document.removeEventListener('click', this.boundClickHandler, true);
 			this.boundClickHandler = null;
@@ -872,7 +831,6 @@ export class TournamentUI {
 			this.boundKeyHandler = null;
 		}
 		if (this.boundPageHideHandler) {
-			console.log("removeEventListener(\"pagehide\")");
 			window.removeEventListener("pagehide", this.boundPageHideHandler);
 			this.boundPageHideHandler = null;
 		}
@@ -905,40 +863,34 @@ export class TournamentUI {
 
 // private boundOnLeavingTournamentLobby: (event: HashChangeEvent) => void;
 
-// onLeavingTournamentLobby(event: HashChangeEvent) {
-// 	const fromHash = new URL(event.oldURL).hash;
-// 	const toHash = new URL(event.newURL).hash;
-// 	console.log("onLeavingTournamentLobby called");
-// 	// Solo si salimos de #tournament-lobby
-// 	if (fromHash === "#tournament-lobby") {
-// 		const confirmChange = confirm("Estás saliendo del lobby del torneo. ¿Quieres continuar?");
-// 		if (!confirmChange) {
-// 			// Revertir al lobby
-// 			location.hash = fromHash;
-// 		}
-// 		else {
-// 			// Si el torneo tiene un ID válido, eliminar los usuarios temporales
-// 			console.log("En else Confirm change to:", toHash);
-// 			if (this.tournament){
-// 				console.log("En if antes de getTournamentId");
-// 				let Tid = this.tournament.getTournamentId()?? -42;
-// 				console.log("Deleting temp users for tournamentId:", Tid);
-// 				try {
-// 					this.tournament.deleteTempUsers(Tid);
-// 				} catch (error) {
-// 					console.error("Error deleting temp users by tournamentId:", error);
-// 				}
-// 			}
-// 			this.disableTournamentHashGuard();
-// 		}
-// 	}
+	// onLeavingTournamentLobby(event: HashChangeEvent) {
+	// 	const fromHash = new URL(event.oldURL).hash;
+	// 	const toHash = new URL(event.newURL).hash;
+	// 	// Solo si salimos de #tournament-lobby
+	// 	if (fromHash === "#tournament-lobby") {
+	// 		const confirmChange = confirm("Estás saliendo del lobby del torneo. ¿Quieres continuar?");
+	// 		if (!confirmChange) {
+	// 			// Revertir al lobby
+	// 			location.hash = fromHash;
+	// 		}
+	// 		else {
+	// 			// Si el torneo tiene un ID válido, eliminar los usuarios temporales
+	// 			if (this.tournament){
+	// 				let Tid = this.tournament.getTournamentId()?? -42;
+	// 				try {
+	// 					this.tournament.deleteTempUsers(Tid);
+	// 				} catch (error) {
+	// 				}
+	// 			}
+	// 			this.disableTournamentHashGuard();
+	// 		}
+	// 	}
 
 // }
 
 
-// evaluarMovimiento(event: MouseEvent) {
-// 	const target = event.target as HTMLElement;
-// 	console.log(`Click detected on: ${target.tagName}`);
+	// evaluarMovimiento(event: MouseEvent) {
+	// 	const target = event.target as HTMLElement;
 
 // 	if (target.tagName === 'H1')
 // 		this.disableTournamentHashGuard();
@@ -983,17 +935,14 @@ export class TournamentUI {
 
 
 
-// window.onhashchange = function (event) {
-// 	const confirmChange = confirm("Estás seguro de que quieres cambiar de sección?");
-// 	if (!confirmChange) {
-// 		// Revertir el cambio de hash
-// 		history.pushState(null, '', event.oldURL);
-// 	} else {
-// 		// Proseguir con el cambio
-// 		console.log("Hash actual:", location.hash);
-// 	}
-// };
-// Asumiendo que ya agregaste algo al historial con pushState
+		// window.onhashchange = function (event) {
+		// 	const confirmChange = confirm("Estás seguro de que quieres cambiar de sección?");
+		// 	if (!confirmChange) {
+		// 		// Revertir el cambio de hash
+		// 		history.pushState(null, '', event.oldURL);
+		// 	}
+		// };
+		// Asumiendo que ya agregaste algo al historial con pushState
 
 // Captura clicks en toda la página
 // document.addEventListener('click', (event: MouseEvent) => {

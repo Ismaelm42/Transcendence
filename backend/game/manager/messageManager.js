@@ -144,8 +144,7 @@ export function handleRestartGame(client, data) {
 	if (oldGameSession && (gameMode === '1v1' || gameMode === '1vAI'))
 		player2 = oldGameSession.metadata?.playerDetails?.player2 || null;
 	// Call join game with new parameters
-	console.log("player2:", player2);
-	handleJoinGame({ user, connection: client.connection }, {
+	handleJoinGame({user, connection: client.connection}, {
 		mode: gameMode,
 		roomId: roomId,
 		config: config,
@@ -207,14 +206,13 @@ export async function handlePlayerInfo(client, data) {
 	else if (data.mode && data.mode === 'external' && data.email) {
 		try {
 			user = await crud.user.getUserByEmail(data.email);
-			if (!user) {
-				console.log(`Error: User not found for email ${data.email}`);
+			if (!user)
+			{
 				user = null;
 				return;
 			}
 		}
-		catch (error) {
-			console.error("Error while fetching user by email:", error);
+		catch (error){
 		}
 	}
 	client.connection.send(JSON.stringify({

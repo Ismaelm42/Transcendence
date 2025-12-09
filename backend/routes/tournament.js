@@ -19,7 +19,6 @@ export function configureTournamentRoutes(fastify) {
 	 * @returns {object} - A safe user object with non-sensitive data.
 	*/
 	fastify.post('/verify_first_player', async (request, reply) => {
-		console.log('verify_first_player');
 		let userSafe1;
 		try {
 			const user1 = await extractUserFromToken(request.cookies.token);
@@ -74,9 +73,6 @@ export function configureTournamentRoutes(fastify) {
 	 */
 	fastify.post('/verify_guest_tournamentName', async (request, reply) => {
 		const { tournamentId, tournamentName } = request.body;
-		console.log('verify_guest_tournamentName');
-		console.log (request.body);
-		console.log('tournamentId:', tournamentId, 'tournamentName:', tournamentName);
 		var newTournamentId;
 		if (tournamentName) { 
 				try {
@@ -158,22 +154,18 @@ export function configureTournamentRoutes(fastify) {
 	fastify.post('/updateBracket', async (request, reply) => {
 
 		fastify.log.info('En /updateBracket: ');
-		console.log('Request body:', request.body);
 		// This block save the Gamelog in
 		const { result, gamesData , playerscount} = request.body;
-		console.log('gamesData:', gamesData);
 		if (!gamesData || !Array.isArray(gamesData)) {
 			fastify.log.error('Missing or invalid gamesData in request body');
 			return reply.status(400).send({ error: 'Missing or invalid gamesData in request body' });
 		}
 		
 		//// asigning the gameToUpdate to the gamesData game
-		console.log ('GamesData before:', gamesData);
 		const gameToUpdate = gamesData.find(game => game.id === result.id);
 		if (gameToUpdate) {
 			Object.assign(gameToUpdate, result);
 		}
-		console.log ('GamesData after:', gamesData);
 		////////////////////////////////////////////////////
 
 		const tournamentId = gamesData[0].tournamentId;

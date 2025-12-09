@@ -20,10 +20,15 @@ export async function getPongStats(appElement: HTMLElement): Promise<any> {
 				credentials: "include"
 			});
 
-			if (!getUserResponse.ok) {
-				throw new Error("Error retrieving stats");
-			}
+			// if (!getUserResponse.ok) {
+			// 	throw new Error("Error retrieving stats");
+			// }
+
 			const userStats = await getUserResponse.json();
+			
+			if (!getUserResponse.ok) {
+				throw new Error(userStats.error || "Error retrieving statsadasdasdasdas");
+			}
 			if (userStats) {
 				try{
 				const statsContainer = document.getElementById("pong-stats-content");
@@ -43,13 +48,19 @@ export async function getPongStats(appElement: HTMLElement): Promise<any> {
 					handleStats(userStats);
 					}
 				}catch (error) {
-					console.log("Error loading HTML file:", error);
 					appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
 				}
 			}
 		} catch (error) {
-			console.log("Error rendering Stats element:", error);
-			appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
+			if(error instanceof Error) {
+				if(error.message.includes("jwt must be provided")) {
+					appElement.innerHTML ="";
+					window.location.href = "https://localhost:8443/#login";
+				}
+			}
+			else {
+				appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
+			}
 		}
 }
 
@@ -61,10 +72,15 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 			method: "GET",
 			credentials: "include"
 		});
-		if (!getUserResponse.ok) {
-			throw new Error("Error retrieving stats");
-		}
-		const userStats = await getUserResponse.json();
+			// if (!getUserResponse.ok) {
+			// 	throw new Error("Error retrieving stats");
+			// }
+
+			const userStats = await getUserResponse.json();
+			
+			if (!getUserResponse.ok) {
+				throw new Error(userStats.error || "Error retrieving statsadasdasdasdas");
+			}
 
 		if (userStats) {
 			const userIDElement = userStats.shift(); // Remove the first element which contains only { userId: ... }
@@ -96,11 +112,6 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 						}
 					});
 				});
-			// console.log("TournamentsWon:", TournamentsWon);
-			// console.log("TournamentsLost:", TournamentsLost);
-			// console.log("TournamentsPlayed:", tournamentsPlayed);
-			// console.log("TimePlayed:", timePlayed);
-			// console.log("userStats in getPongTournamentStats:", userStats);
 			// Update the HTML content with the tournament stats /////////////////////////////////////////////////////////////////////////////
 				if (userStats) {
 				try{
@@ -116,9 +127,6 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 						.replace("{{ timePlayed }}", (formatTimeFromMilliseconds(timePlayed)).toString())
 					statsContainer.innerHTML =  htmlContent;
 					// userStats.unshift(userIDElement); // Re-add the userId element to the start of the array
-					// console.log("userStats after unshift:", userStats);
-					// console.log("type of userStats:", typeof userStats);
-					// console.log("htmlContent:", htmlContent);
 					const proccessedStats = {
 						userId: userId as string,
 						username: username as string,
@@ -131,15 +139,21 @@ export async function getPongTournamentStats(appElement: HTMLElement): Promise<a
 					handlePongTournamentStats(proccessedStats);
 					}
 				}catch (error) {
-					console.log("Error loading HTML file:", error);
 					appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
 				}
 			}
 			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			}
 		} catch (error) {
-			console.log("Error rendering Pong TournamentStats element:", error);
-			appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
+			if(error instanceof Error) {
+				if(error.message.includes("jwt must be provided")) {
+					appElement.innerHTML ="";
+					window.location.href = "https://localhost:8443/#login";
+				}
+			}
+			else {
+				appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
+			}
 	}
 }
 
@@ -150,10 +164,16 @@ export async function getChessStats(appElement: HTMLElement): Promise<any> {
 			method: "GET",
 			credentials: "include"
 		});
-		if (!getUserResponse.ok) {
-			throw new Error("Error retrieving stats");
-		}
-		const userStats = await getUserResponse.json();
+			// if (!getUserResponse.ok) {
+			// 	throw new Error("Error retrieving stats");
+			// }
+
+
+			const userStats = await getUserResponse.json();
+
+			if (!getUserResponse.ok) {
+				throw new Error(userStats.error || "Error retrieving statsadasdasdasdas");
+			}
 		if (userStats) {
 			try{
 			const statsContainer = document.getElementById("chess-stats-content");
@@ -172,12 +192,18 @@ export async function getChessStats(appElement: HTMLElement): Promise<any> {
 				handleChessStats(userStats);
 				}
 			}catch (error) {
-				console.log("Error loading HTML file:", error);
 				appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
 			}
 		}
 		} catch (error) {
-			console.log("Error rendering Stats element:", error);
-			appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
+			if(error instanceof Error) {
+				if(error.message.includes("jwt must be provided")) {
+					appElement.innerHTML ="";
+					window.location.href = "https://localhost:8443/#login";
+				}
+			}
+			else {
+				appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
+			}
 		}
 }

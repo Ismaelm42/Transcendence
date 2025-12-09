@@ -147,7 +147,6 @@ async function sendLobbyToTargetClients() {
 		}
 
 		if (filteredLobbies.length > 0) {
-			console.log("Hello")
 			const message = {
 				type: 'lobby',
 				object: filteredLobbies
@@ -635,7 +634,6 @@ export function handleIncomingSocketMessage(user, socket) {
 					break;
 			}
 		} catch (error) {
-			console.log("An error occured:", error);
 		}
 	})
 }
@@ -643,7 +641,6 @@ export function handleIncomingSocketMessage(user, socket) {
 export function handleSocketClose(user, socket) {
 
 	socket.on('close', () => {
-		console.log("SOCKET CLOSED")
 		deleteLobby(user.id);
 		clients.delete(user.id);
 	});
@@ -652,10 +649,8 @@ export function handleSocketClose(user, socket) {
 export function handleSocketError(user, socket) {
 
 	socket.on('error', (error) => {
-		console.log("SOCKET ERROR")
 		deleteLobby(user.id);
 		clients.delete(user.id);
-		console.log(`WebSocket error :`, error);
 	});
 }
 

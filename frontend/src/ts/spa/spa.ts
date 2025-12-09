@@ -68,7 +68,6 @@ export class SPA {
 
 		window.addEventListener("pageshow", (event) => {
 			if (event.persisted && location.hash === '#login') {
-				console.log("Recargando el step de login");
 				const appContainer = document.getElementById('app-container');
 				if (appContainer) {
 					appContainer.innerHTML = '';
@@ -91,24 +90,19 @@ export class SPA {
 					headerElement.innerHTML = headerContent;
 				}
 			} else {
-				console.error('Error al cargar el header:', headerResponse.statusText);
 			}
 			// Cargar el footer
-			const footerResponse = await fetch('../../html/layout/footer.html');
-			if (footerResponse.ok) {
-				const footerContent = await footerResponse.text();
-				const footerElement = document.getElementById('footer-container');
-				if (footerElement) {
-					footerElement.innerHTML = footerContent;
-				}
-				console.log('footer cargado');
-			} else {
-				console.error('Error al cargar el footer:', footerResponse.statusText);
-			}
-		} catch (error) {
-			console.error('Error al cargar el footer:', error);
-		}
-	}
+            const footerResponse = await fetch('../../html/layout/footer.html');
+            if (footerResponse.ok) {
+                const footerContent = await footerResponse.text();
+                const footerElement = document.getElementById('footer-container');
+                if (footerElement) {
+                    footerElement.innerHTML = footerContent;
+                }
+            } 
+        } catch (error) {
+        }
+    }
 
 	async navigate(step: string) {
 		if (location.hash === `#${step}`) return; // no-op if already there
@@ -240,8 +234,6 @@ export class SPA {
 				if (!onlineSocket || onlineSocket.readyState === WebSocket.CLOSED) {
 					initOnlineSocket();
 				}
-			} else {
-				console.log("Usuario no autenticado: ", user);
 			}
 			if (routeConfig.protected && !user) {
 				console.warn(`Acceso denegado a la ruta protegida: ${step}`);

@@ -31,7 +31,6 @@ export default class Friends extends Step {
 			if (!userId) {
 				throw new Error("User ID not found");
 			}
-			console.log("User ID:", userId);
 			const relationsContainer = document.getElementById("relations-container") as HTMLDivElement;
 			await renderRelations(relationsContainer!, userId);
 
@@ -64,7 +63,6 @@ export default class Friends extends Step {
 			// }
 
 		}catch (error) {
-				console.error("Error loading HTML file:", error);
 				appElement.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
 		}
 	}

@@ -64,12 +64,38 @@ export default class GameMatch extends Step
 			const response = await fetch("../../html/game/gameMatch.html");
 			if (!response.ok)
 				throw new Error("Failed to load the game UI HTML file");
-			const htmlContent = await response.text();
+			
+			//  	inicio trasteo						//////////////////////////////////////////////////////////
+			// get the username of both players
+			let player1Name = this.log.playerDetails.player1?.username || "Player 1";
+			let player2Name = this.log.playerDetails.player2?.username || "Player 2";
+			// if tournament match, get tournament usernames
+			if (this.tournament && this.tournament.getTournamentId() !== -42 
+								&& this.log.playerDetails.player1?.tournamentUsername 
+								&& this.log.playerDetails.player2?.tournamentUsername){
+						player1Name = this.log.playerDetails.player1?.tournamentUsername;
+						player2Name = this.log.playerDetails.player2?.tournamentUsername;
+				}
+			// make uppercase
+			player1Name = player1Name.toUpperCase();
+			player2Name = player2Name.toUpperCase();
+			//get the html content and replace the placeholders
+			const htmlContent = await response.text().then((text) => {
+				let replaced = text.replace("{{ Player 1 }}", player1Name);
+				replaced = replaced.replace("{{ Player 2 }}", player2Name);
+				return replaced;
+			});
 			appElement.innerHTML = htmlContent;
+
+			//		fin de trasteo						//////////////////////////////////////////////////////////
+
+			//		original						//////////////////////////////////////////////////////////
+			// const htmlContent = await response.text();
+			// appElement.innerHTML = htmlContent;
+			//		fin original						//////////////////////////////////////////////////////////
 		}
 		catch (error)
 		{
-			console.error("Error loading game UI:", error);
 			appElement.innerHTML = `<div class="error-container">Failed to load game interface. Please try again.</div>`;
 		}
 
@@ -305,8 +331,6 @@ export default class GameMatch extends Step
 			const spa = SPA.getInstance();
 			if(this.tournament && this.tournament.getTournamentId() !== -42)
 			{
-				console.log("FROM showGameResults, Handling match result for tournament:", this.tournament.getTournamentId());
-				console.log("Match result data:", gameData);
 				this.tournament.resumeTournament();
 				this.tournament.handleMatchResult(gameData);
 			}
@@ -357,7 +381,11 @@ export default class GameMatch extends Step
 		const player2Avatar = document.getElementById('player2-avatar') as HTMLImageElement;
 		const player1Ready = document.getElementById('player1-ready') as HTMLElement;
 		const player2Ready = document.getElementById('player2-ready') as HTMLElement;
+		const player2Resultname = document.getElementById("pong_game_player2");
 
+		if (player2Resultname && player2Resultname.textContent === "PLAYER 2"){
+			player2Resultname.innerHTML = playerDetails.player2?.username.toUpperCase() || "PLAYER 2";
+		}
 		player1Name.innerHTML = playerDetails.player1?.username || "Waiting <br>player 1...";
 		player1Avatar.src = playerDetails.player1?.avatarPath || "https://localhost:8443/back/images/7.png";
 		player2Name.innerHTML = playerDetails.player2?.username || "Waiting <br>player 2...";

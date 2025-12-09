@@ -9,7 +9,6 @@ function changePassword(){
 	form?.addEventListener("submit", (event) => {
 		event.preventDefault();
 	});
-	console.log("Change password button clicked changePassword launched");
 	const changePasswordModal = document.getElementById("change-password-modal");
 	const cancelModalButton = document.getElementById("cancel-modal-password");
 	if (changePasswordModal) {
@@ -17,7 +16,6 @@ function changePassword(){
 	}
 	const saveButton = document.getElementById("save-modal-password");
 	saveButton?.addEventListener("click", async () => {
-		console.log ("Save button clicked");
 		const form = document.getElementById("change-password-form") as HTMLFormElement;	
 		const formData = new FormData(form);
 
@@ -39,7 +37,6 @@ function changePassword(){
 			return;
 		}
 
-		console.log("Form data:", data);
 		try {
 			const response = await fetch('https://localhost:8443/back/change_password', {
 			method: "POST",
@@ -65,10 +62,8 @@ function changePassword(){
 		}catch (error) {
 			if (error instanceof Error) {
 				showMessage(error.message, null);
-				console.error("Error changing password:", error);
 			} else {
 				showMessage('An unexpected error occurred', null);
-				console.error("Error changing password:", error);
 			}
 		}
 		});
@@ -81,8 +76,6 @@ function changePassword(){
 }
 
 function cancel(){
-	console.log ("cancel button clicked cancel launched");
-	console.log("Original values:", originalUsername, originalEmail, originalTournamentusername);
 	const userForm = document.getElementById("user-form");
 	if (userForm) {
 		const inputs = userForm.querySelectorAll("input");
@@ -112,7 +105,6 @@ function cancel(){
 }
 
 function editInfo() {
-	console.log("Edit button clicked editInfo launched");
 	const userForm = document.getElementById("user-form");
 	// Habilitar edición de campos
 	if (userForm) {
@@ -120,7 +112,6 @@ function editInfo() {
 		const nameInput = document.getElementById('usernameInput') as HTMLInputElement;
 		const emailInput = document.getElementById('emailInput') as HTMLInputElement;
 		const Tournamentusername = document.getElementById('tournamentusernameInput') as HTMLInputElement;
-		console.log("nameInput:", nameInput);
 		originalUsername = nameInput.value;
 		originalEmail = emailInput.value;
 		originalTournamentusername = Tournamentusername.value;
@@ -138,11 +129,9 @@ function editInfo() {
 }		
 
 async function saveInfo() {
-	console.log("Edit button clicked saveInfo launched");
 	const userForm = document.getElementById("user-form");
 	const formData = new FormData(userForm as HTMLFormElement);
 	const data = Object.fromEntries(formData.entries());
-	console.log("Form data:", data);
 	try {
 		const response = await fetch('https://localhost:8443/back/update_user', {
 			method: "POST",
@@ -154,7 +143,6 @@ async function saveInfo() {
 		if (response.ok) {
 			showMessage('Profile updated successfully', 2000);
 			const HeaderButton = document.getElementById("username");
-			console.log("data.usernameInput. ", data.username);
 			if (HeaderButton) {
 				HeaderButton.textContent = data.username.toString();
 			}
@@ -218,7 +206,6 @@ async function changeAvatar() {
 
 export async function handleProfile() {
 
-		console.log("En handleProfile desde el ts handleProfile");
 		const editButton = document.getElementById("edit-button");
 		const changePasswordButton = document.getElementById("change-password-button");
 
@@ -283,7 +270,6 @@ export async function handleProfile() {
 			// 	editButton.addEventListener("click", async () => {
 			// 		const formData = new FormData(userForm as HTMLFormElement);
 			// 		const data = Object.fromEntries(formData.entries());
-			// 		console.log("Form data:", data);
 			// 		try {
 			// 			const response = await fetch('https://localhost:8443/back/update_user', {
 			// 				method: "POST",
@@ -310,7 +296,6 @@ export async function handleProfile() {
 			// 				alert('Failed to update profile');
 			// 			}
 			// 			} catch (error) {
-			// 				console.error("Error al enviar el formulario de registro:", error);
 			// 			}
 			// 	});
 			// 	}
@@ -339,7 +324,6 @@ export async function handleProfile() {
 // function changePassword(changePasswordButton: HTMLButtonElement | null, changePasswordModal: HTMLDivElement | null, cancelModalButton: HTMLButtonElement | null) {
 // 	// Cambiar contraseña
 // 	changePasswordButton?.addEventListener("click", () => {
-// 		console.log("Change password button clicked");
 
 // 		});
 // 	}
@@ -350,7 +334,6 @@ function savefields(editButton: HTMLButtonElement | null, userForm: HTMLFormElem
 
 export async function handleProfile() {
 
-		console.log("En desde el ts handleProfile");
 		const editButton = document.getElementById("edit-button");
 		const changePasswordButton = document.getElementById("change-password-button");
 		const avatarInput = document.getElementById("avatar");
@@ -361,7 +344,6 @@ export async function handleProfile() {
 	
 		// Habilitar edición de campos
 		editButton?.addEventListener("click", () => {
-			console.log("Edit button clicked");
 			if (userForm) {
 				const inputs = userForm.querySelectorAll("input");
 				inputs.forEach(input => input.removeAttribute("readonly"));
@@ -373,7 +355,6 @@ export async function handleProfile() {
 				editButton.addEventListener("click", async () => {
 					const formData = new FormData(userForm as HTMLFormElement);
 					const data = Object.fromEntries(formData.entries());
-					console.log("Form data:", data);
 					try {
 						const response = await fetch('https://localhost:8443/back/update_user', {
 							method: "POST",
@@ -400,7 +381,6 @@ export async function handleProfile() {
 							alert('Failed to update profile');
 						}
 						} catch (error) {
-							console.error("Error al enviar el formulario de registro:", error);
 						}
 				});
 				}

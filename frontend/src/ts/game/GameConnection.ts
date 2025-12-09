@@ -39,8 +39,8 @@ export class GameConnection {
 	async establishConnection(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			// 0. Check if there is already an existing socket, to avoid creating new one
-			if (globalGameSocket && globalGameSocket.readyState === WebSocket.OPEN) {
-				console.log("Websocket reused =)");
+			if (globalGameSocket && globalGameSocket.readyState === WebSocket.OPEN)
+			{
 				this.socket = globalGameSocket;
 				this.connectionStat = true;
 				// Remove old handlers before assigning new ones
@@ -55,16 +55,13 @@ export class GameConnection {
 			this.socket = new WebSocket(`https://${window.location.host}/back/ws/game`);
 			globalGameSocket = this.socket;
 			this.socket.onopen = () => {
-				console.log('New socket connected to game server');
 				this.connectionStat = true;
 				resolve();
 			};
 			this.socket.onerror = (error) => {
-				console.error("WebSocket error:", error);
 				reject(error);
 			};
 			this.socket.onclose = (event) => {
-				console.log(`WebSocket connection closed: Code ${event.code}${event.reason ? ' - ' + event.reason : ''}`);
 				this.connectionStat = false;
 				if (globalGameSocket === this.socket)
 					globalGameSocket = null;
@@ -139,7 +136,6 @@ export class GameConnection {
 								this.game.getGameRender().renderGameState(data.state);
 								break;
 							case 'GAME_START':
-								console.log("Game started:", data);
 								this.game.startGameSession();
 								break;
 							case 'GAME_END':
@@ -148,15 +144,13 @@ export class GameConnection {
 								this.game.getGameMatch()?.showGameResults(this.game.getGameLog());
 								break;
 							case 'SERVER_TEST':
-								console.log("Server test message:", data.message);
 								this.socket?.send(JSON.stringify({
 									type: 'PING',
 									message: 'Client response to server test'
 								}));
 								break;
 							case 'PONG':
-								console.log("Server responded to ping");
-								break;
+								break ;
 							case 'GAMES_LIST':
 								this.game.getGameUI().updateLobby(data.games || []);
 								break;
@@ -206,7 +200,6 @@ export class GameConnection {
 						}
 					}
 					catch (error) {
-						console.error("Error parsing server message:", error);
 					}
 				};
 			}
@@ -296,8 +289,7 @@ export class GameConnection {
 			});
 			if (!response.ok) {
 				const result = await response.json();
-				console.log(`Error: ${result.message}`);
-				return ({ success: false, message: result.message });
+				return (false);
 			}
 			else
 				return ({ success: true });

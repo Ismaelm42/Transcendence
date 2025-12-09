@@ -5,7 +5,6 @@ export function configureTempUserRoutes(fastify, sequelize) {
 	// Define a POST route to create a new user
 	fastify.post('/create_temp_user', async (request, reply) => {
 		const { tournamentId, tournamentName } = request.body;
-		console.log('Creating temp user with:', tournamentId, tournamentName);
 		try {
 			const newTempUser = await crud.tempuser.createTempuser(tournamentId, tournamentName);
 			reply.status(200).send({ message: `User ${tournamentName} created successfully`, tournamentName: tournamentName });
@@ -42,7 +41,6 @@ export function configureTempUserRoutes(fastify, sequelize) {
 	// prepared just in case we need to use send.beacon that appaently only works with POST
 
 	// fastify.post('/clean_temp_user_after_closing', async (request, reply) => {
-	// 	console.log('Cleaning temp users after closing tournament');
 	// 	const { tournamentId } = request.body;
 	// 	try {
 	// 		const result = await crud.tempuser.deleteTempuserByTournamentId(tournamentId);

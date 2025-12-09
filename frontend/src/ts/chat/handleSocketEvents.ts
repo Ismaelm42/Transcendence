@@ -81,7 +81,6 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, re
 		}
 		if (data.type === 'connectedUsers') {
 			sessionStorage.setItem("JSONusers", JSON.stringify(data));
-			console.log(data)
 			handleConnectedUsers(data);
 			if (sessionStorage.getItem("current-room") !== "") {
 				updatePartnerStatus();
@@ -92,13 +91,11 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, re
 
 function handleSocketClose(socket: WebSocket) {
 	socket.onclose = (event: CloseEvent) => {
-		console.log(`CLIENT: Connection closed - Code: ${event.code}`);
 	}
 }
 
 function handleSocketError(socket: WebSocket) {
 	socket.onerror = (event) => {
-		console.error("CLIENT: WebSocket error:", event);
 	}
 }
 

@@ -64,7 +64,6 @@ export async function fetchChessGameLogs(): Promise<any> {
 			throw new Error("Error retrieving stats");
 		}
 		const userStats = await getUserResponse.json();
-		console.log("userStats:", userStats);
 		return await userStats;
 		// const response = await fetch('https://localhost:8443/back/get_user_chessgamelogs`', {			
 		// 	method: "GET",
@@ -91,12 +90,10 @@ export async function initializeUserNames(): Promise<void> {
 			userNames.set(user.id, user.username);
 		});
 	} catch (error) {
-		console.error("Error initializing user names:", error);
 	}
 }
 
 export function getUserNameById(userId: string| null): string | undefined {
-	console.log("userId", userId);
 	if (userId == "-1")
 		return "AI";
 	if (userId == "-2")
@@ -113,22 +110,18 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 	await loadChartJs();
 	const canvas = document.getElementById('statsChart') as HTMLCanvasElement | null;
 	if (!canvas) {
-		console.error("Canvas element with id 'statsChart' not found.");
 		return;
 	}
 	const canvas2 = document.getElementById('statsTournamentChart') as HTMLCanvasElement | null;
 	if (!canvas2) {
-		console.error("Tournament Canvas element with id 'statsChart' not found.");
 		return;
 	}
 	const ctx = canvas.getContext('2d');
 	if (!ctx) {
-		console.error("Failed to get 2D context from canvas.");
 		return;
 	}
 	const ctx2 = canvas2.getContext('2d');
 	if (!ctx2) {
-		console.error("Failed to get 2D context from canvas.");
 		return;
 	}
 	const statsChart = new Chart(ctx, {
@@ -197,7 +190,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 			try {
 				const gameRecords = await fetchGameLogs();
 				const users = await fetchUsers();
-				console.log("users", users);
 				const response = await fetch("../../html/stats/statslist.html");
 				let htmlTemplate = await response.text();
 				let tableRows = "";
@@ -261,7 +253,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 					window.removeEventListener("popstate", navivageBack);
 				});
 			} catch (error) {
-				console.error("Error fetching game logs:", error);
 			}
 		}
 	});
@@ -278,7 +269,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 			try {
 				const gameRecords = await fetchGameLogs();
 				const users = await fetchUsers();
-				console.log("users", users);
 				const response = await fetch("../../html/stats/statslist.html");
 				let htmlTemplate = await response.text();
 				let tableRows = "";
@@ -344,7 +334,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 					window.removeEventListener("popstate", navivageBack);
 				});
 			} catch (error) {
-				console.error("Error fetching game logs:", error);
 			}
 		}
 	});
@@ -366,12 +355,10 @@ export async function handlePongTournamentStats(
 	await loadChartJs();
 	const pongTcanvas = document.getElementById('pong-tournament-statsChart') as HTMLCanvasElement | null;
 	if (!pongTcanvas) {
-		console.error("Canvas element with id 'statsChart' not found.");
 		return;
 	}
 	const ctx = pongTcanvas.getContext('2d');
 	if (!ctx) {
-		console.error("Failed to get 2D context from pongTcanvas.");
 		return;
 	}
 	const statsChart = new Chart(ctx, {
@@ -415,12 +402,10 @@ export async function handlePongTournamentStats(
 			const color = statsChart.data.datasets[0].backgroundColor[index]
 			try {
 				const users = await fetchUsers();
-				console.log("users", users);
 				const response = await fetch("../../html/stats/tournamentpongstatslist.html");
 				let htmlTemplate = await response.text();
 				let tableRows = "";
 				proccessedStats.userStats.forEach((record: Tournament_log) => {
-					console.log("record:", record);
 					const date = new Date(record.created_at).toLocaleString();
 					let tournamentDuration = 0;
 					const parsedGames = JSON.parse(record.games_data as unknown as string) as { duration: number }[];
@@ -491,7 +476,6 @@ export async function handlePongTournamentStats(
 					window.removeEventListener("popstate", navivageBack);
 				});
 			} catch (error) {
-				console.error("Error fetching game logs:", error);
 			}
 		}
 	});
@@ -515,22 +499,18 @@ export async function handleChessStats(userStats: {
 	await loadChartJs();
 	const chesscanvas = document.getElementById('chess-statsChart') as HTMLCanvasElement | null;
 	if (!chesscanvas) {
-		console.error("Canvas element with id 'chess-statsChart' not found.");
 		return;
 	}
 	const chesscanvas2 = document.getElementById('chess-statsExtendedChart') as HTMLCanvasElement | null;
 	if (!chesscanvas2) {
-		console.error("Tournament Canvas element with id 'chess-statsExtendedChart' not found.");
 		return;
 	}
 	const chess_ctx = chesscanvas.getContext('2d');
 	if (!chess_ctx) {
-		console.error("Failed to get 2D context from chesscanvas.");
 		return;
 	}
 	const chess_ctx2 = chesscanvas2.getContext('2d');
 	if (!chess_ctx2) {
-		console.error("Failed to get 2D context from chesscanvas.");
 		return;
 	}
 	const chessstatsChart = new Chart(chess_ctx, {
@@ -555,7 +535,6 @@ export async function handleChessStats(userStats: {
 			}
 		}
 	});
-	console.log("userStats for extended chart:", userStats);
 	const statsExtendedChart = new Chart(chess_ctx2, {
 		type: 'pie',
 		data: {
@@ -590,7 +569,6 @@ export async function handleChessStats(userStats: {
 
 	// 🖱️ Doble click handler for game stats
 	chesscanvas.addEventListener('dblclick', async function (event) {
-		console.log("chesscanvas dblclick event:", event);
 		const points = chessstatsChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
 
 		if (points.length) {
@@ -602,7 +580,6 @@ export async function handleChessStats(userStats: {
 			try {
 				const gameRecords = await fetchChessGameLogs();
 				const users = await fetchUsers();
-				console.log("users", users);
 				const response = await fetch("../../html/stats/chessstatslist.html");
 				let htmlTemplate = await response.text();
 				// Generar el contenido dinámico
@@ -685,7 +662,6 @@ export async function handleChessStats(userStats: {
 					window.removeEventListener("popstate", navivageBack);
 				});
 			} catch (error) {
-				console.error("Error fetching game logs:", error);
 			}
 		}
 	});
@@ -701,7 +677,6 @@ export async function handleChessStats(userStats: {
 			const value = statsExtendedChart.data.datasets[0].data[index];
 
 			// Ejecutar acción personalizada	
-			console.log(`Doble clic en: ${label} (${value})`);
 			// alert(`Doble clic en: ${label} (${value})`);
 
 			// Podés llamar aquí a otra función según el label
@@ -711,7 +686,6 @@ export async function handleChessStats(userStats: {
 				try {
 				const gameRecords = await fetchChessGameLogs();
 				const users = await fetchUsers();
-				console.log("users", users);
 				const response = await fetch("../../html/stats/chessstatslist.html");
 				let htmlTemplate = await response.text();
 				// Generar el contenido dinámico
@@ -825,7 +799,6 @@ export async function handleChessStats(userStats: {
 					window.removeEventListener("popstate", navivageBack);
 				});
 			} catch (error) {
-				console.error("Error fetching chess game logs:", error);
 			}
 
 			//// Fin de prueba

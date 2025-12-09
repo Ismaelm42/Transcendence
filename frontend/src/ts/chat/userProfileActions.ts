@@ -31,7 +31,6 @@ export function canAcceptRequest(userId: string, friendsEntries: any[], currentU
             String(entry.userId) === String(userId) &&
             String(entry.friendId) === String(currentUserId)
     );
-    console.log("canAcceptRequest", { userId, currentUserId, result });
     return result;
 }
 
@@ -124,5 +123,4 @@ export function openPrivateChat(username: string) {
 	if (privateChat) {
 		privateChat.remove();
 	}
-	console.log("Abriendo chat privado con:", username);
 }

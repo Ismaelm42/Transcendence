@@ -23,7 +23,6 @@ function handleSocketMessage() {
 		const data = JSON.parse(event.data);
 		if (data.type != 'time') {
 			setData(data);
-			console.log(data);
 		}
 		switch (data.type) {
 			case 'info':
@@ -123,13 +122,11 @@ function handleSocketMessage() {
 
 function handleSocketClose() {
 	socket!.onclose = (event: CloseEvent) => {
-		console.log(`CLIENT: Connection closed - Code: ${event.code}`);
 	}
 }
 
 function handleSocketError() {
 	socket!.onerror = (event) => {
-		console.error("CLIENT: WebSocket error:", event);
 	}
 }
 

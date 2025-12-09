@@ -20,7 +20,6 @@ export class BcCancelFriendRequest extends BasicComponent {
 			const span = wrapper.querySelector('span[data-user-id]');
 			if (!span) return;
 			const userId = span.textContent?.trim();
-			console.log('ID del usuario:', userId);
 			const requestBody = {
 				friendId: userId
 			};
@@ -44,7 +43,6 @@ export class BcCancelFriendRequest extends BasicComponent {
 					showMessage(errorMessage.error, null);
 				}
 			} catch (error) {
-				console.error("Error cancelling friend request");
 			}
 		});
 	}

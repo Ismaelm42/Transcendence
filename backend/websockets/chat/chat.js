@@ -175,7 +175,6 @@ async function handlePrivate(user, data) {
 			await sendJSON(user, partner, data.message, data.roomId);
 		}
 	} catch (error) {
-		console.error("Error opening private message:", error);
 		return;
 	}
 }
@@ -229,7 +228,6 @@ export async function handleIncomingSocketMessage(user, socket) {
 				await handleDeclineGameInvite(updatedUser, data);
 			}
 		} catch (error) {
-			console.log("An error occured:", error);
 		}
 	})
 }
@@ -255,7 +253,6 @@ export function handleSocketError(user, socket) {
 		sendStatusToAllClients(user, false);
 		clients.delete(user.id);
 		blockedIds.delete(user.id);
-		console.log(`${user.id} WebSocket error :`, error);
 	});
 }
 

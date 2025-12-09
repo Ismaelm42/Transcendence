@@ -66,7 +66,6 @@ export default class Game extends Step {
 
 	public startGameSession(): void {
 		this.log.startTime = Date.now();
-		console.log(`Starting game session. Mode: ${this.log.mode}`);
 		this.log.readyState = true;
 	}
 
@@ -76,7 +75,6 @@ export default class Game extends Step {
 		else
 			this.log.duration = Date.now() - this.log.startTime;
 		this.log.result = result;
-		console.log("Game session ended:", this.log);
 		this.renderer.stopRenderLoop();
 		this.log.readyState = false;
 	}

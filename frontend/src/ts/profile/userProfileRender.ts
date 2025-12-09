@@ -11,7 +11,6 @@ export default class Profile extends Step {
 			if (!this.username) {
 				this.username = await this.checkAuth();
 			}
-			console.log("Valor de user en render:", this.username);
 			const usernameencode = this.username ? encodeURIComponent(this.username) : '';
 			// const user = this.username;
 			const url = `https://localhost:8443/back/get_user_by_username/?username=${this.username}`;
@@ -40,7 +39,6 @@ export default class Profile extends Step {
 			handleProfile();
 			// }
 		} catch (error) {
-			console.error("Error al renderizar la página de login:", error);
 			appElement.innerHTML =  `<div id="pong-container">Ocurrió un error al generar el contenido</div>`;
 		}
 		const statContainer = document.getElementById("user-pong-stats");
@@ -92,12 +90,10 @@ export default class Profile extends Step {
 								.replace("{{ draws }}", chessUserStats.draws.toString());
 							chessstatContainer.innerHTML =  chesshtmlContent;	
 							}catch (error) {
-								console.error("Error loading HTML file:", error);
 								statContainer.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
 							}
 						}
 				} catch (error) {
-				console.error("Error rendering Stats element:", error);
 				statContainer.innerHTML =  `<div id="pong-container">An error occurred while generating the content</div>`;
 			}
 		}
