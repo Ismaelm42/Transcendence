@@ -66,6 +66,7 @@ export function	messageManager(client, connection)
 	connection.on('message', (message) => {
 		try {
 			const data = JSON.parse(message.toString());
+			console.log(data);
 			switch (data.type)
 			{
 				case 'JOIN_GAME':

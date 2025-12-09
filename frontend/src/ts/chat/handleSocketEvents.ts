@@ -71,6 +71,10 @@ function handleSocketMessage(socket: WebSocket, chatMessages: HTMLDivElement, re
 			if (userId === data.userId) {
 				sessionStorage.setItem("JSONdata", JSON.stringify(data));
 			}
+			if (data.message && data.message.toString().startsWith("$$INVITE$$:") && userId === data.userId) {
+				handleUserInfo(chatMessages, data, userId);
+				return;
+			}
 			if (!data.message) {
 				handleUserInfo(chatMessages, data, userId);
 			}
