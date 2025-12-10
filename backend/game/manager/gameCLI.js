@@ -14,22 +14,27 @@ import WebSocket from 'ws';
 import readline from 'readline';
 import https from 'https';
 
-const	cliInput = readline.createInterface({input: process.stdin, output: process.stdout});
+let cliInput;
 
-//Usage message for the CLI
-function usage()
-{
+function initCLI() {
+	cliInput = readline.createInterface({ input: process.stdin, output: process.stdout });
+}
+
+initCLI();
+
+let inGame = false;
+let myPlayerNumber = null;
+let lastState = null;
+
+// Usage message for the CLI
+function usage() {
 	console.log(`
-Available comments:
+Available commands:
 		join           - Create game session
 
 		join <gameID>  - Join existing game session
 
 		ready          - Ready to start
-
-		up             - Move paddle up
-
-		down           - Move paddle down
 
 		list           - List available games
 
@@ -40,8 +45,7 @@ Available comments:
 }
 
 // Prompt user for email and password
-async function promptCredentials()
-{
+async function promptCredentials() {
 	return new Promise((resolve) => {
 		cliInput.question('Email: ', (email) => {
 			cliInput.question('Password: ', (password) => {
@@ -51,9 +55,8 @@ async function promptCredentials()
 	});
 }
 
-//Authenticate user and extract token from cookie
-async function loginAndGetToken(email, password)
-{
+// Authenticate user and extract token from cookie
+async function loginAndGetToken(email, password) {
 	const res = await fetch('https://localhost:8443/back/auth/login', {
 		method: 'POST',
 		body: JSON.stringify({ email, password }),
@@ -74,12 +77,14 @@ async function loginAndGetToken(email, password)
 }
 
 // CLI command loop
-function insertCommand(socket)
-{
+function insertCommand(socket) {
+	if (inGame) return; // Don't prompt if in game
+
 	cliInput.question('> ', (cmd) => {
+		if (inGame) return; // Ignore input if game started while waiting
+
 		const [command, arg] = cmd.trim().split(' ');
-		switch (command)
-		{
+		switch (command) {
 			case 'join':
 				socket.send(JSON.stringify({
 					type: 'JOIN_GAME',
@@ -89,12 +94,6 @@ function insertCommand(socket)
 				break;
 			case 'ready':
 				socket.send(JSON.stringify({ type: 'CLIENT_READY' }));
-				break;
-			case 'up':
-				socket.send(JSON.stringify({ type: 'PLAYER_INPUT', input: { up: true, down: false } }));
-				break;
-			case 'down':
-				socket.send(JSON.stringify({ type: 'PLAYER_INPUT', input: { up: false, down: true } }));
 				break;
 			case 'list':
 				socket.send(JSON.stringify({ type: 'SHOW_GAMES' }));
@@ -112,21 +111,148 @@ function insertCommand(socket)
 	});
 }
 
+// ASCII Game Renderer
+function renderGame(state) {
+	const width = 60;
+	const height = 20;
+	const paddleHeight = Math.floor(0.15 * height); // 15% of height
+	
+	// Clear screen
+	console.clear();
+
+	// Draw Top Border
+	console.log('+' + '-'.repeat(width) + '+');
+
+	for (let y = 0; y < height; y++) {
+		let row = '|';
+		for (let x = 0; x < width; x++) {
+			const normalizedX = x / width;
+			const normalizedY = y / height;
+
+			// Check Ball
+			// Simple proximity check
+			const ballX = Math.floor(state.ball.x * width);
+			const ballY = Math.floor(state.ball.y * height);
+			
+			// Check Paddles
+			const p1Y = Math.floor(state.paddles.player1.y * height);
+			const p2Y = Math.floor(state.paddles.player2.y * height);
+			
+			const paddleHalf = Math.floor(paddleHeight / 2);
+
+			let char = ' ';
+
+			if (x === ballX && y === ballY) {
+				char = 'O';
+			} else if (x >= 0 && x <= 2) {
+				// Player 1 Paddle (Left)
+				if (y >= p1Y - paddleHalf && y <= p1Y + paddleHalf) char = ']';
+			} else if (x >= width - 3 && x <= width - 1) {
+				// Player 2 Paddle (Right)
+				if (y >= p2Y - paddleHalf && y <= p2Y + paddleHalf) char = '[';
+			} else if (x === width / 2) {
+				char = '.'; // Net
+			}
+
+			row += char;
+		}
+		row += '|';
+		console.log(row);
+	}
+
+	// Draw Bottom Border
+	console.log('+' + '-'.repeat(width) + '+');
+	
+	// Draw Scores
+	console.log(` Player 1: ${state.scores[0]}  |  Player 2: ${state.scores[1]}`);
+	console.log(` [W/S] Move  |  [Q] Quit Game`);
+}
+
+function enableGameInput(socket) {
+	process.stdin.setRawMode(true);
+	process.stdin.resume();
+	process.stdin.on('data', onGameInput);
+	
+	function onGameInput(key) {
+		if (!inGame) return;
+
+		const char = key.toString();
+		
+		// Exit game
+		if (char === 'q' || char === '\u0003') { // q or Ctrl+C
+			socket.send(JSON.stringify({ type: 'LEAVE_GAME' }));
+			stopGameMode(socket);
+			return;
+		}
+
+		// Movement
+		if (char === 'w') {
+			socket.send(JSON.stringify({ 
+				type: 'PLAYER_INPUT', 
+				input: { up: true, down: false, player: myPlayerNumber } 
+			}));
+		} else if (char === 's') {
+			socket.send(JSON.stringify({ 
+				type: 'PLAYER_INPUT', 
+				input: { up: false, down: true, player: myPlayerNumber } 
+			}));
+		}
+	}
+
+	// Store reference to remove listener later
+	socket.gameInputListener = onGameInput;
+}
+
+function stopGameMode(socket) {
+	inGame = false;
+	process.stdin.setRawMode(false);
+	if (socket && socket.gameInputListener) {
+		process.stdin.removeListener('data', socket.gameInputListener);
+	}
+	initCLI();
+	console.clear();
+	console.log('Game ended.');
+	usage();
+	insertCommand(socket);
+}
+
 // Handle incoming WebSocket messages
-function handleSocketMessages(socket)
-{
+function handleSocketMessages(socket) {
 	socket.on('message', (data) => {
 		try {
 			const msg = JSON.parse(data);
-			console.log('Server:', msg);
+			
+			if (msg.type === 'GAME_STATE') {
+				if (!inGame) {
+					inGame = true;
+					// Pause CLI input
+					if (cliInput) cliInput.close();
+					enableGameInput(socket);
+				}
+				lastState = msg.state;
+				if (msg.state.playerNumber) {
+					myPlayerNumber = msg.state.playerNumber;
+				}
+				renderGame(msg.state);
+			} else if (msg.type === 'GAME_END' || msg.type === 'ERROR') {
+				if (inGame) {
+					stopGameMode(socket);
+				}
+				console.log('Server:', msg);
+			} else if (msg.type === 'GAME_INIT') {
+				console.log('Game Initialized. Type "ready" to start.');
+			} else {
+				if (!inGame) {
+					console.log('Server:', msg);
+				}
+			}
 		} catch (e) {
-			console.log('Server:', data);
+			console.log('Server:', data.toString());
 		}
 	});
 
 	socket.on('close', () => {
 		console.log('Connection closed.');
-		cliInput.close();
 		process.exit(0);
 	});
 }
@@ -139,13 +265,11 @@ function handleSocketMessages(socket)
 	const tokenArgIndex = process.argv.indexOf('--token');
 	if (tokenArgIndex !== -1 && process.argv[tokenArgIndex + 1])
 		token = process.argv[tokenArgIndex + 1];
-	else
-	{
+	else {
 		console.log('Please log in:');
 		const { email, password } = await promptCredentials();
 		token = await loginAndGetToken(email, password);
-		if (!token)
-		{
+		if (!token) {
 			console.log('Login failed. Please check your credentials.');
 			process.exit(1);
 		}
@@ -164,4 +288,3 @@ function handleSocketMessages(socket)
 
 	handleSocketMessages(socket);
 })();
-
