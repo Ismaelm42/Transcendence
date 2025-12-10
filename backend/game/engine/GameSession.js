@@ -22,9 +22,9 @@ export default class GameSession
 		this.difficulty = 'medium';
 		this.isFinished = false;
 		this.shouldCleanup = false;
-		this.ballSpeedMultiplier = 1.50;
-		this.ballSpeedIncrease = 1.10;
-		this.ballMaxSpeed = 0.75;
+		this.ballSpeedMultiplier = 1.60;
+		this.ballSpeedIncrease = 1.20;
+		this.ballMaxSpeed = 0.85;
 
 		// Timer values and variables
 		this.pauseTimer = null;

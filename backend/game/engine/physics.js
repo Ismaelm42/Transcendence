@@ -6,7 +6,7 @@
 export function resetBall(scoringDirection) {
 	const centerX = 0.5;
 	const centerY = 0.5;
-	const speed = 0.20;
+	const speed = 0.35;
 	const angleVariance = (Math.random() * 0.1) - 0.05;
 	let direction;
 
