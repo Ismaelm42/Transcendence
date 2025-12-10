@@ -83,6 +83,9 @@ ts:
 tailwind:
 	@cd frontend/src && npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --watch
 
+cli:
+	@node backend/game/manager/gameCLI.js
+
 PHONY: all down clean fclean purge purge-all re
 
 #ISM: !!!PURGE-ALL!!! will not work at 42 Campus. If you want to delete the backend/node_modules files, you need to do it manually in the backend container.

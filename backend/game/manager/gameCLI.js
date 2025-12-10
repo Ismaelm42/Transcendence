@@ -44,13 +44,61 @@ Available commands:
 `);
 }
 
+// Prompt for password with hidden input
+function promptPassword(query) {
+	return new Promise((resolve) => {
+		if (cliInput) {
+			cliInput.close();
+			cliInput = null;
+		}
+		process.stdin.setRawMode(true);
+		process.stdin.resume();
+		process.stdout.write(query);
+
+		let password = '';
+		const onData = (data) => {
+			const char = data.toString();
+			
+			// Enter
+			if (char === '\n' || char === '\r') {
+				process.stdin.removeListener('data', onData);
+				process.stdin.setRawMode(false);
+				process.stdin.pause();
+				process.stdout.write('\n');
+				initCLI();
+				resolve(password);
+				return;
+			}
+			
+			// Ctrl+C
+			if (char === '\u0003') {
+				process.exit();
+			}
+			
+			// Backspace
+			if (char === '\u007f') {
+				if (password.length > 0) {
+					password = password.slice(0, -1);
+					process.stdout.write('\b \b');
+				}
+				return;
+			}
+			
+			// Regular char
+			password += char;
+			process.stdout.write('*');
+		};
+		
+		process.stdin.on('data', onData);
+	});
+}
+
 // Prompt user for email and password
 async function promptCredentials() {
 	return new Promise((resolve) => {
-		cliInput.question('Email: ', (email) => {
-			cliInput.question('Password: ', (password) => {
-				resolve({ email, password });
-			});
+		cliInput.question('Email: ', async (email) => {
+			const password = await promptPassword('Password: ');
+			resolve({ email, password });
 		});
 	});
 }
