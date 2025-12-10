@@ -477,12 +477,12 @@ export default class Tournament extends Step {
 			const matchData: GameData = this.gameDataArray[this.nextGameIndex];
 			if (matchData.id.includes('Bye')) {
 				matchData.result = {
-					winner: matchData.playerDetails.player1?.id.toString() || '',
-					loser: "0",
-					score: [5, 0],
-					endReason: 'Game ended'
-				};
-
+						winner: matchData.playerDetails.player1?.tournamentUsername.toString() || '',
+						loser: "bye",
+						score: [5, 0],
+						endReason: 'Game ended'
+					};
+				
 				showMessage(`${matchData.playerDetails.player1?.tournamentUsername} passes to next round`, 5000); //replace with the funtion do display the winner
 				this.nextGameIndex++;
 				this.handleMatchResult(matchData);
@@ -548,68 +548,69 @@ export default class Tournament extends Step {
 	*/
 	public async updateTournamentBracket(result: GameData): Promise<void> {
 		try {
-			//result = game to update
-			// Sanitize gameDataArray to ensure all objects are serializable
-			// ... copy the gameDataArray to avoid mutating the original array
-			const gamesData = this.gameDataArray.map(game => ({
-				...game,
-				player1: { ...game.playerDetails.player1 },
-				player2: { ...game.playerDetails.player2 },
-				config: game.config ? { ...game.config } : undefined,
-				result: game.result ? { ...game.result } : undefined
-			}));
-			const payload = { result: result, gamesData: gamesData, playerscount: this.tournamentConfig.numberOfPlayers };
-			const response = await fetch("https://localhost:8443/back/updateBracket", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(payload),
-			});
-			const data = await response.json();
-			console.log("updateTournamentBracket: Response data:", data);
-			if (response.ok) {
-				//todo: it is posible to improve the way we receive the array of GamePlayers
-				let winnerPlayer = null;
-				if (result.result && result.result.winner) {
-					winnerPlayer = this.bracket.find(player => player.username === result.result!.winner);
-					if (winnerPlayer) {
-						this.bracket.push(winnerPlayer);
-					}
+		//result = game to update
+		// Sanitize gameDataArray to ensure all objects are serializable
+		// ... copy the gameDataArray to avoid mutating the original array
+		const gamesData = this.gameDataArray.map(game => ({
+			...game,
+			player1: { ...game.playerDetails.player1 },
+			player2: { ...game.playerDetails.player2 },
+			config: game.config ? { ...game.config } : undefined,
+			result: game.result ? { ...game.result } : undefined
+		}));
+		const payload = {result: result, gamesData: gamesData , playerscount: this.tournamentConfig.numberOfPlayers};
+		const response = await fetch("https://localhost:8443/back/updateBracket", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(payload),
+		});
+		  const data = await response.json();
+		  if(response.ok) {
+			//todo: it is posible to improve the way we receive the array of GamePlayers
+			let winnerPlayer = null;
+			if (result.result && result.result.winner) {
+				winnerPlayer = this.bracket.find(player => player.username === result.result!.winner);
+				if(result.id.includes('bye')) {
+					winnerPlayer = result.playerDetails.player1 || null;
 				}
-				this.gameDataArray = data.gamesData;
-				console.log("updateTournamentBracket: Updated gameDataArray:", this.gameDataArray);
-				if (result.id.includes('final')) {
-					// Todo: replace with the function to display the tournament winner if we want to improve it
-					showWinnerMessage(`${winnerPlayer ? winnerPlayer.tournamentUsername : 'Unknown'}`, null);
-					const appContainer = document.getElementById('app-container');
-					if (appContainer) {
-						appContainer.innerHTML = '';
-						this.ui.resetTournament();
-						//this.navigate('tournament-lobby');
-						this.ui.disableTournamentHashGuard();
-					}
-					return;
+				if (winnerPlayer) {
+					this.bracket.push(winnerPlayer);
 				}
-
-				this.ui.updateRenderBracket(this.bracket);
-				// await new Promise(resolve => setTimeout(resolve, 5000));
-				while (true) {
-					const launchBtn = document.getElementById('launch-match-btn');
-					if (launchBtn) {
-						launchBtn.addEventListener('click', () => this.launchNextMatch());
-						break
-
-					} else {
-						await new Promise(resolve => setTimeout(resolve, 50)); // Wait for 1
-					}
-				}
-				this.displayCurrentMatch();
 			}
-		} catch (error) {
-			console.error("Error while preparing the tournament bracket:", error);
-		} finally {
-			this.ui.showOnly('tournament-bracket-container');
+			this.gameDataArray = data.gamesData;
+			if (result.id.includes('final')) {
+				// Todo: replace with the function to display the tournament winner if we want to improve it
+				showWinnerMessage(`${winnerPlayer ? winnerPlayer.tournamentUsername : 'Unknown'}`, null);
+				const appContainer = document.getElementById('app-container');
+				if (appContainer) {
+					appContainer.innerHTML = '';
+					this.ui.resetTournament();
+					//this.navigate('tournament-lobby');
+					this.ui.disableTournamentHashGuard();
+				}
+				return;
+			}
+	
+			this.ui.updateRenderBracket(this.bracket);
+			// await new Promise(resolve => setTimeout(resolve, 5000));
+			while (true) {
+			const launchBtn = document.getElementById('launch-match-btn');
+			if (launchBtn)
+			{
+				launchBtn.addEventListener('click', () => this.launchNextMatch());
+				break
+			
+			}else {
+				await new Promise(resolve => setTimeout(resolve, 50)); // Wait for 1
+				}
+			}
+			this.displayCurrentMatch();
+		}
+	} catch (error) {
+	} finally {
+	      this.ui.showOnly('tournament-bracket-container');
 		}
 	}
 

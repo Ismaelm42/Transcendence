@@ -26,22 +26,31 @@ export class GameControllers
 	private handleKeyDown(e: KeyboardEvent)
 	{
         const key = e.key.toLowerCase();
+		const Wkey = document.getElementById('w_key');
+		const Skey = document.getElementById('s_key');
+		const Upkey = document.getElementById('up_key');
+		const Downkey = document.getElementById('down_key');
         let keyChanged = false;
-        if (key === 'w' && !this.keyState.w) { this.keyState.w = true; keyChanged = true; }
-        else if (key === 's' && !this.keyState.s) { this.keyState.s = true; keyChanged = true; }
-        else if (key === 'arrowup' && !this.keyState.ArrowUp) { this.keyState.ArrowUp = true; keyChanged = true; }
-        else if (key === 'arrowdown' && !this.keyState.ArrowDown) { this.keyState.ArrowDown = true; keyChanged = true; }
+        if (key === 'w' && !this.keyState.w) { this.keyState.w = true; keyChanged = true; Wkey?.classList.add('bg-candlelight-500'); }
+        else if (key === 's' && !this.keyState.s) { this.keyState.s = true; keyChanged = true; Skey?.classList.add('bg-candlelight-500'); }
+        else if (key === 'arrowup' && !this.keyState.ArrowUp) { this.keyState.ArrowUp = true; keyChanged = true; Upkey?.classList.add('bg-candlelight-500'); }
+        else if (key === 'arrowdown' && !this.keyState.ArrowDown) { this.keyState.ArrowDown = true; keyChanged = true; Downkey?.classList.add('bg-candlelight-500'); }
         if (keyChanged && (this.keyState.w || this.keyState.s || this.keyState.ArrowUp || this.keyState.ArrowDown))
             this.startSendingInputs();
     }
 
     private handleKeyUp(e: KeyboardEvent)
 	{
+		
         const key = e.key.toLowerCase();
-        if (key === 'w') this.keyState.w = false;
-        else if (key === 's') this.keyState.s = false;
-        else if (key === 'arrowup') this.keyState.ArrowUp = false;
-        else if (key === 'arrowdown') this.keyState.ArrowDown = false;
+		const Wkey = document.getElementById('w_key');
+		const Skey = document.getElementById('s_key');
+		const Upkey = document.getElementById('up_key');
+		const Downkey = document.getElementById('down_key');
+        if (key === 'w') {this.keyState.w = false; Wkey?.classList.remove('bg-candlelight-500'); }
+        else if (key === 's') {this.keyState.s = false; Skey?.classList.remove('bg-candlelight-500'); }
+        else if (key === 'arrowup') {this.keyState.ArrowUp = false;Upkey?.classList.remove('bg-candlelight-500'); }
+        else if (key === 'arrowdown') {this.keyState.ArrowDown = false; Downkey?.classList.remove('bg-candlelight-500'); }
         if (!this.keyState.w && !this.keyState.s && !this.keyState.ArrowUp && !this.keyState.ArrowDown)
             this.stopSendingInputs();
     }

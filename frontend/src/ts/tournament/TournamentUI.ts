@@ -436,7 +436,7 @@ export class TournamentUI {
 				}
 				const wrapper = document.createElement('div');
 				wrapper.className = 'tournament-bracket';
-				wrapper.classList.add('w-[90%]', 'lg:w-full');
+				// wrapper.classList.add('w-[90%]', 'lg:w-full');
 				wrapper.innerHTML = parsed;
 				appElement.appendChild(wrapper);
 				this.renderNextMatchInfo(appElement);

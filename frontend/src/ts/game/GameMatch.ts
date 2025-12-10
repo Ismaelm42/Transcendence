@@ -93,6 +93,11 @@ export default class GameMatch extends Step
 			const htmlContent = await response.text().then((text) => {
 				let replaced = text.replace("{{ Player 1 }}", player1Name);
 				replaced = replaced.replace("{{ Player 2 }}", player2Name);
+				// this hides the keys for player 1 if playing against AI
+				if (this.log && this.log.mode === '1vAI'){
+						replaced = replaced.replace(   'id="player2_keys" class="sm:mr-3',
+  														'id="player2_keys" class="hidden sm:mr-3')
+					}
 				return replaced;
 			});
 			appElement.innerHTML = htmlContent;
