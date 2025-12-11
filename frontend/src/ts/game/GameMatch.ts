@@ -93,11 +93,17 @@ export default class GameMatch extends Step
 			const htmlContent = await response.text().then((text) => {
 				let replaced = text.replace("{{ Player 1 }}", player1Name);
 				replaced = replaced.replace("{{ Player 2 }}", player2Name);
-				// this hides the keys for player 1 if playing against AI
 				if (this.log && this.log.mode === '1vAI'){
-						replaced = replaced.replace(   'id="player2_keys" class="sm:mr-3',
-  														'id="player2_keys" class="hidden sm:mr-3')
+					if (this.aiSide === 'player2'){
+						replaced = replaced.replace('id="player2_keys" class="sm:mr-3',
+							'id="player2_keys" class="invisible sm:mr-3')
 					}
+					else {	
+						replaced = replaced.replace('id="player1_keys" class="sm:ml-3',
+							'id="player1_keys" class="invisible sm:ml-3')
+					}
+
+				}
 				return replaced;
 			});
 			appElement.innerHTML = htmlContent;
@@ -453,7 +459,8 @@ export default class GameMatch extends Step
 	public	setAiSide(gamelog : GameData) : void
 	{
 		const	player1Id : number | undefined = gamelog.playerDetails.player1?.id;
-		if (player1Id !== undefined && player1Id <= -1 && player1Id >= -19)
+		// if (player1Id !== undefined && player1Id <= -1 && player1Id >= -19)
+		if (player1Id !== undefined && player1Id == -1)
 			this.aiSide = 'player1';
 		else
 			this.aiSide = 'player2';
