@@ -177,7 +177,7 @@ export function handleLeaveGame(client) {
 	if (gameSession) {
 		// Check for active remote game disconnect
 		if (gameSession.metadata.mode === 'remote' &&
-			gameSession.metadata.startTime &&
+			(gameSession.metadata.startTime || gameSession.isActive) &&
 			!gameSession.isFinished) {
 			gameSession.handlePlayerDisconnect(user.id, gamesList);
 		}
@@ -238,6 +238,7 @@ export function handleClientReady(client, data) {
 		const allReady = Array.from(gameSession.players.values()).every(p => p.ready);
 		if (allReady && !gameSession.gameLoop) {
 			gameSession.state = gameSession.resetState();
+			gameSession.isActive = true;
 			gameSession.broadcastResponse('GAME_COUNTDOWN', { seconds: COUNTDOWN_SECONDS });
 			setTimeout(() => {
 				gameSession.broadcastResponse('GAME_START');

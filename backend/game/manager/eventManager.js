@@ -136,7 +136,7 @@ export function handleGameDisconnect(client, connection) {
 
 			// If game is active and remote, handle as forfeit (disconnect)
 			if (gameSession.metadata.mode === 'remote' &&
-				gameSession.metadata.startTime &&
+				(gameSession.metadata.startTime || gameSession.isActive) &&
 				!gameSession.isFinished) {
 				console.log(`Player ${user.username} disconnected from active remote game. Forfeiting...`);
 				gameSession.handlePlayerDisconnect(user.id, gamesList);

@@ -21,6 +21,7 @@ export default class GameSession
 		this.winScore = 5;
 		this.difficulty = 'medium';
 		this.isFinished = false;
+		this.isActive = false;
 		this.shouldCleanup = false;
 		this.ballSpeedMultiplier = 1.60;
 		this.ballSpeedIncrease = 1.20;
