@@ -39,7 +39,6 @@ services:
       - transcendence
     env_file:
       - .env
-      - host.env
     restart: always
     # ISM: volume for development only
     volumes:

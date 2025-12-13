@@ -19,24 +19,10 @@ all:
 		fi; \
 		echo ".env file copied successfully."; \
 	fi; \
-	echo "Generating host.env..."; \
-	if [ "$$(uname)" = "Darwin" ]; then \
-		HOST_IP=$$(ipconfig getifaddr en0); \
-		if [ -z "$$HOST_IP" ]; then \
-			HOST_IP=$$(ipconfig getifaddr en1); \
-		fi; \
-	else \
-		HOST_IP=$$(hostname -I 2>/dev/null | cut -d " " -f 1); \
-	fi; \
-	if [ -z "$$HOST_IP" ]; then \
-		HOST_IP="localhost"; \
-	fi; \
-	echo "HOST_IP=\"$$HOST_IP:8443\"" > host.env; \
-	echo "host.env generated with IP: $$HOST_IP"; \
 	docker compose -f ${YML} up -d \
 	'
-	@cd frontend/src/ts && npx tsc
-	@cd frontend/src && npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css
+	@cd frontend/src && npm install && cd ts && npx tsc
+	@cd frontend/src && npm install && npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css
 
 down:
 	@bash -c '\

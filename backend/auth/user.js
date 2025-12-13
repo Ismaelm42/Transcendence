@@ -54,7 +54,7 @@ async function saveImageInDatabase(googleImagePath, user) {
 		const buffer = Buffer.from(arrayBuffer);
 		const dbImagePath = path.join(`/app/images/${user.id}.png`);
 		await fs.writeFile(dbImagePath, buffer);
-		crud.user.updateUserbyId(user.id, null, null, null, null, null, `https://${process.env.HOST_IP}/back/images/${user.id}.png`);
+		crud.user.updateUserbyId(user.id, null, null, null, null, null, `/back/images/${user.id}.png`);
 	}
 }
 

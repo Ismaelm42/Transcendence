@@ -105,7 +105,7 @@ async function promptCredentials() {
 
 // Authenticate user and extract token from cookie
 async function loginAndGetToken(email, password) {
-	const res = await fetch(`https://${process.env.HOST_IP}/back/auth/login`, {
+	const res = await fetch(`/back/auth/login`, {
 		method: 'POST',
 		body: JSON.stringify({ email, password }),
 		headers: { 'Content-Type': 'application/json' },

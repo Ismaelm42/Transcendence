@@ -21,7 +21,7 @@ export function configureImageRoutes(fastify, sequelize) {
 					return reply.code(400).send({ error: 'Only .png files are allowed' });
 				const filePath = path.join('/app/images', imageId);
 				await pump(part.file, fs.createWriteStream(filePath));
-				const avatarPath = `https://${process.env.HOST_IP}/back/images/` + imageId;
+				const avatarPath = `/back/images/` + imageId;
 				await crud.user.updateUserbyId(user.id, null, null, null, null, null, avatarPath);
 				return reply.send({ status: 'ok', url: avatarPath });
 			}
@@ -40,7 +40,7 @@ export function configureImageRoutes(fastify, sequelize) {
 				if (err)
 					return reply.code(500).send({ error: 'Error deleting the image' });
 			});
-			const avatarPath = `https://${process.env.HOST_IP}/back/images/` + imageId;
+			const avatarPath = `/back/images/` + imageId;
 			await crud.user.updateUserbyId(user.id, null, null, null, null, null, avatarPath);
 			return reply.send({ status: 'ok', message: 'Image deleted successfully' });
 		}
@@ -55,7 +55,7 @@ export function configureImageRoutes(fastify, sequelize) {
 	// 	if (files.length === 0)
 	// 		return (reply.status(404).send({ error: 'No avatars found' }));
 	// 	const randomIndex = Math.floor(Math.random() * files.length);
-	// 	const avatarPath = `https://${process.env.HOST_IP}/back/images/${files[randomIndex]}`;
+	// 	const avatarPath = `/back/images/${files[randomIndex]}`;
 	// 	reply.send({ avatarPath });
 	// });
 	fastify.get('/random_avatar', async (request, reply) => {
@@ -71,7 +71,7 @@ export function configureImageRoutes(fastify, sequelize) {
 			return reply.status(404).send({ error: 'No avatars found' });
 		}
 		const randomIndex = Math.floor(Math.random() * files.length);
-		const avatarPath = `https://${process.env.HOST_IP}/back/images/${files[randomIndex]}`;
+		const avatarPath = `/back/images/${files[randomIndex]}`;
 		reply.send({ avatarPath });
 	});
 }
