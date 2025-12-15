@@ -90,6 +90,15 @@ export function authenticateUserWithGoogleStrategy() {
 			cb(null, user);
 		}
 		catch (err) {
+			// Log full error for debugging OAuth2 token exchange issues
+			try {
+				console.error('Google strategy error:', err && err.toString ? err.toString() : err);
+				// some oauth libs attach response body/data
+				if (err && err.data) console.error('Google error data:', err.data);
+				if (err && err.statusCode) console.error('Google error statusCode:', err.statusCode);
+			} catch (logErr) {
+				console.error('Error logging google strategy error', logErr);
+			}
 			cb(err);
 		}
 	}));

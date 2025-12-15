@@ -1,4 +1,5 @@
 import { SPA } from '../spa/spa.js';
+import { formatErrors } from '../errors/FormatError.js';
 import { showMessage } from '../modal/showMessage.js';
 import { initOnlineSocket } from '../friends/onlineUsersSocket.js';
 
@@ -19,7 +20,8 @@ export async function handleLoginSubmit(event: SubmitEvent) {
 
         if (!response.ok) {
             const errorResponse = await response.json();
-            showMessage(`Error: ${errorResponse.message}`, null);
+            // showMessage(`Error: ${errorResponse.message}`, null); // Original line replace by the line below
+			showMessage(formatErrors(errorResponse.errors), null);
         } else {
             const result = await response.json();
             initOnlineSocket(); // Inicia el socket aquí

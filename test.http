@@ -1,5 +1,17 @@
 
 // ***************************************************************//
+//	       Para usar con extensiones como "REST client"           //
+//     	                                                       	  //
+//     -- Seleccionar la instrucción y pulsar ctrl+ Alt + r  --   //
+//     	                                                       	  //
+//  Nota: algunas peticiones requieren autenticación con token    //
+//        si no funcionan añadir el token segun sea la petición   //	
+//        el token se debe coger inspeccionando el almaceamiento  //
+//        de la aplicación. ver: get_user_by_id                   //
+// ***************************************************************//
+
+
+// ***************************************************************//
 //	     La siguiente petición crea un usuario:                   //
 // ***************************************************************//
 
@@ -33,9 +45,26 @@ POST https://localhost:8443/back/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "Pepe5@gmail.com",
-	"password": "1234",
-	"email": "Pepe5@gmail.com"
+	"password": "A12345678!<script>alert('hola')</script>",
+	"email": "alfonso2@gmail.com<script>alert('hola')</script>"
+}
+
+POST https://localhost:8443/back/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+	"password": "A12345678!",
+	"email": "alfonso2@gmail.com"
+}
+
+
+POST https://localhost:8443/back/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+	"username": "alfonso2",
+	"password": "A12345678!",
+	"email": "alfonso2@gmail.com"
 }
 
 
@@ -43,10 +72,23 @@ POST https://localhost:8443/back/register_user HTTP/1.1
 Content-Type: application/json
 
 {
-	"username": "User@gmail.com",
-	"password": "1234",
+	"username": "Usergmailcom2pass<script>alert('hola')</script>word",
+	"password": "1234<script>alert('hola')</script>word",
+	"email": "Pepe50@gmail.com<script>alert('hola')</script>word"
+}
+
+
+
+POST https://localhost:8443/back/register_user HTTP/1.1
+Content-Type: application/json
+
+{
+	"username": "Usergmailcom2",
+	"password": "1234word",
 	"email": "Pepe50@gmail.com"
 }
+
+
 
 
 // ***************************************************************//
@@ -90,7 +132,10 @@ Content-Type: application/json
 	"userId" : "2"
 }
 
+// ejemplo de token para las siguientes peticiones
 GET https://localhost:8443/back/get_user_by_id/?id=1  HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc2NTcwMDA4NiwiZXhwIjoxNzY1NzE0NDg2fQ.SKD88s03eAeh7G0GD2w4LxT6jdZm7ZMUvmcFqMvHGgA
+
 
 DELETE https://localhost:8443/back/delete_all_users  HTTP/1.1
 
@@ -139,8 +184,9 @@ Content-Type: application/json
 	"email": "Pepe50@gmail.com"
 }
 
+
 GET https://localhost:8443/back/auth/verify-token HTTP/1.1
-authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsZm9uc28gRmVybsOhbmRlel8xMTM4NjQyNzgwNTAzNDA5MTE0NzgiLCJpYXQiOjE3NDM2OTY5NjYsImV4cCI6MTc0MzcwMDU2Nn0.h2L1dBHqGqlbG_eTW6edwS6pvw-pwxVAENGkGZchIvY
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc2NTcwMDA4NiwiZXhwIjoxNzY1NzE0NDg2fQ.SKD88s03eAeh7G0GD2w4LxT6jdZm7ZMUvmcFqMvHGgA
 
 
 

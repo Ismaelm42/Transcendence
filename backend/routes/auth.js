@@ -1,5 +1,9 @@
 import jwt from 'jsonwebtoken';
 import fastifyPassport from "@fastify/passport";
+import xss from 'xss';
+import { z } from 'zod';
+import validator from 'validator';
+import formatZodError from '../utils/validationErrors.js';
 import { crud } from '../crud/crud.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { authenticateUser, signOutUser } from "../auth/user.js";
@@ -13,8 +17,30 @@ export function configureAuthRoutes(fastify, sequelize) {
 	// Define a POST route to authenticate an user
 	fastify.post('/auth/login', async (request, reply) => {
 		fastify.log.info({ body: request.body }, 'login data sent');
-		const { email, password } = request.body;
-		return authenticateUser( email, password, reply);
+
+		const loginSchema = z.object({
+			email: z.string().email().refine(e => !/<[^>]*>/.test(e), { message: 'Email cannot contain HTML tags' }),
+			password: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'Password cannot contain HTML tags' }),
+			googleId: z.string().optional().nullable(),
+			email: z.string().email().optional().nullable().refine(e => !e || !/<[^>]*>/.test(e), { message: 'Email cannot contain HTML tags' }),
+		});
+
+		const parsed = loginSchema.safeParse(request.body);
+		if (!parsed.success) {
+			const fieldErrors = formatZodError(parsed.error);
+			return reply.status(400).send({ errors: fieldErrors });
+		}
+
+		// Extract validated fields
+		const { email, password } = parsed.data;
+
+		// Normalize email so uppercase inputs match lowercase DB entries
+		const normalized = validator.normalizeEmail(email) || email.trim().toLowerCase();
+
+		// Sanitize password to remove HTML tags (keeps behavior consistent with registration)
+		const cleanPassword = password ? xss(password) : password;
+
+		return authenticateUser(normalized, cleanPassword, reply);
 	});
 
 	// Define a GET route to authenticate an user with GoogleStrategy
@@ -23,7 +49,8 @@ export function configureAuthRoutes(fastify, sequelize) {
 	},
 		async (request, reply) => {
 			setTokenCookie(request.user.id, reply);
-			reply.redirect('https://localhost:8443/#home');		}
+			reply.redirect('https://localhost:8443/#home');
+		}
 	);
 
 	// Define a POST route to logout an user
@@ -51,7 +78,11 @@ export function configureAuthRoutes(fastify, sequelize) {
 
 	fastify.post('/change_password', async (request, reply) => {
 		// fastify.log.info({ body: request.body }, 'change_password data sent');
-		let { currentPassword, newPassword, confirmPassword } = request.body;
+	let { currentPassword, newPassword, confirmPassword } = request.body;
+	// Sanitize passwords to remove HTML tags before comparison/storage (consistent with registration sanitization)
+	currentPassword = currentPassword ? xss(currentPassword) : currentPassword;
+	newPassword = newPassword ? xss(newPassword) : newPassword;
+	confirmPassword = confirmPassword ? xss(confirmPassword) : confirmPassword;
 		try {
 			const token = request.cookies.token;
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -68,7 +99,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 				const isMatch = await comparePassword(currentPassword, user.password);
 				if (!isMatch)
 					return reply.status(401).send({ message: 'Wrong current password' });
-				if (newPassword !== confirmPassword) {	// No es estrictamente necesario, ya que se hace desde el front.
+				if (newPassword !== confirmPassword) { 	// No es estrictamente necesario, ya que se hace desde el front.
 					return reply.status(401).send({ message: 'Passwords are not identical' });
 				}
 			}

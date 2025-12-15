@@ -1,5 +1,6 @@
 import { SPA } from '../spa/spa.js';
 import { showMessage } from '../modal/showMessage.js';
+import { formatErrors } from '../errors/FormatError.js';
 
 export async function handleRegisterSubmit(event: SubmitEvent) {
     event.preventDefault();
@@ -26,23 +27,11 @@ export async function handleRegisterSubmit(event: SubmitEvent) {
 				} else if (response.status === 500) {
 					showMessage("Internal server error. Please try again later.", null);
 				} else if (response.status === 400) {
-					showMessage("Bad request. Please check the entered data.", null);
+					showMessage(formatErrors(errorResponse.errors), null);
 				} else {
 					showMessage("Unknown error. Please try again later.", null);
 		        }
-			}else {	
-			// ;
-			// try
-			// {
-			// 	const result = await response.json();
-			// } catch (error) {
-	        //     if (error instanceof Error) {
-	        //         alert("Error: " + error.message);
-	        //     } else {
-	        //         alert("Error: An unknown error occurred");
-	        //     }
-			// }
-	        // Navegar a la página de inicio
+			}else {
 	        const app = SPA.getInstance();
 	        app.navigate("home");
 			}

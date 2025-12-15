@@ -9,35 +9,35 @@ module.exports = {
 	  const users = [
 		{
 		  username: 'ismael',
-		  password: await hashPassword('1234'),
+		  password: await hashPassword('12345678'),
 		  email: 'ismael@gmail.com',
 		  lastLogin: new Date(),
 		  chessRating: 2100
 			},
 			{
 				username: 'alfonso',
-				password: await hashPassword('1234'),
+				password: await hashPassword('12345678'),
 				email: 'alfonso@gmail.com',
 				lastLogin: new Date(),
 		  chessRating: 1900
 			},
 			{
 				username: 'fernando',
-				password: await hashPassword('1234'),
+				password: await hashPassword('12345678'),
 				email: 'fernando@gmail.com',
 				lastLogin: new Date(),
 		  chessRating: 2300
 			},
 			{
 				username: 'pedro',
-				password: await hashPassword('1234'),
+				password: await hashPassword('12345678'),
 				email: 'pedro@gmail.com',
 				lastLogin: new Date(),
 		  chessRating: 2250
 			},
 			{
 				username: 'user',
-				password: await hashPassword('1234'),
+				password: await hashPassword('12345678'),
 				email: 'user@gmail.com',
 				lastLogin: new Date(),
 		  chessRating: 1700

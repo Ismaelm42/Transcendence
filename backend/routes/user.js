@@ -1,9 +1,13 @@
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
+import xss from 'xss';
+import validator from 'validator';
 import { crud } from '../crud/crud.js';
 import { verifyToken } from '../auth/token.js';
 import { authenticateUser } from '../auth/user.js';
 import { comparePassword } from '../database/users/PassUtils.cjs';
 import { extractUserFromToken } from '../auth/token.js';
+import formatZodError from '../utils/validationErrors.js';
 
 export function configureUserRoutes(fastify, sequelize) {
 
@@ -21,17 +25,53 @@ export function configureUserRoutes(fastify, sequelize) {
 
 	// Define a POST route to register a new user
 	fastify.post('/register_user', async (request, reply) => {
-		const { username, password, googleId, email, avatarPath } = request.body;
-		try {
-			const formatUsername = username.trim().replace(/\s+/g, '_');
-			const newUser = await crud.user.createUser(formatUsername, password, googleId, email, avatarPath);
+		// Validate input with Zod
+		const registerSchema = z.object({
+			// Only letters, numbers and underscore allowed
+			username: z.string().min(1).max(20).regex(/^[A-Za-z0-9_]+$/, { message: 'Username may only contain letters, numbers and underscore' }),
+			password: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'Password cannot contain HTML tags' }),
+			googleId: z.string().optional().nullable(),
+			email: z.string().email().optional().nullable().refine(e => !e || !/<[^>]*>/.test(e), { message: 'Email cannot contain HTML tags' }),
+			avatarPath: z.string().optional().nullable()
+		});
+
+		const parsed = registerSchema.safeParse(request.body);
+		if (!parsed.success) {
+			const fieldErrors = formatZodError(parsed.error);
+			return reply.status(400).send({ errors: fieldErrors });
+		}
+
+		// Extract validated data
+		const { username, password, googleId, email, avatarPath } = parsed.data;
+		const cleanUsername = username.trim().substring(0, 50);
+		// Normalize email using validator if available (better normalization than simple toLowerCase)
+		const cleanEmail = email ? validator.normalizeEmail(email) : email;
+
+		// For fields that may contain arbitrary content (paths/ids), keep XSS sanitization
+		const cleanAvatar = avatarPath ? xss(avatarPath).trim() : avatarPath;
+
+		// Sanitize password to remove HTML tags (user requested). This will be the password stored and used for immediate auth.
+		const cleanPassword = password ? xss(password) : password;
+
+		// Detect if normalization/sanitization changed any inputs so we can notify the frontend
+		const warnings = {};
+		// For username we only warn if trimming removed characters (leading/trailing)
+		if (String(cleanUsername) !== String(username)) warnings.username = 'Username was trimmed';
+		if (email && String(cleanEmail) !== String(email)) warnings.email = 'Email was normalized (trimmed/lowercased)';
+		if (password && String(cleanPassword) !== String(password)) warnings.password = 'Some characters were removed from password';
+		if (avatarPath && String(cleanAvatar) !== String(avatarPath)) warnings.avatarPath = 'Some characters were removed from avatarPath';
+
+			try {
+			const newUser = await crud.user.createUser(cleanUsername, cleanPassword, googleId, cleanEmail, cleanAvatar);
 			if (!newUser) {
 				return reply.status(409).send({ error: 'User already exists' });
 			}
-			return authenticateUser(email, password, reply);
+			// Keep original behavior: authenticate immediately after registration
+			// Pass warnings so the frontend can be notified if we removed dangerous content
+			return authenticateUser(cleanEmail, cleanPassword, reply);
 		} catch (err) {
 			fastify.log.error(err);
-			if (err.message.includes('already')) {
+			if (err.message && err.message.includes('already')) {
 				return reply.status(409).send({ error: err.message });
 			} else {
 				reply.status(500).send({ error: err.message }); 

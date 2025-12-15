@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
+import formatZodError from '../utils/validationErrors.js';
 import { crud } from '../crud/crud.js';
 import { verifyToken } from '../auth/token.js';
 import { authenticateUser } from '../auth/user.js';
@@ -41,8 +43,20 @@ export function configureTournamentRoutes(fastify) {
 	 * @returns {object} - A safe user object with non-sensitive data.
 	*/
 	fastify.post('/verify_tounament_user', async (request, reply) => {
-		const { email, password } = request.body;
 		let userSafe;
+		const registerSchema = z.object({
+			// Only letters, numbers and underscore allowed
+			password: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'Password cannot contain HTML tags' }),
+			email: z.string().email().optional().nullable().refine(e => !e || !/<[^>]*>/.test(e), { message: 'Email cannot contain HTML tags' }),
+		});
+		
+		
+		const parsed = registerSchema.safeParse(request.body);
+		if (!parsed.success) {
+			const fieldErrors = formatZodError(parsed.error);
+			return reply.status(400).send({ errors: fieldErrors });
+		}
+		const { email, password } = parsed.data;
 
 		if (!email && !password) {
 			reply.status(401).send("empty field has been found");
@@ -72,7 +86,16 @@ export function configureTournamentRoutes(fastify) {
 	 * If the tournament ID is -42, it generates a new tournament ID to prevent duplicates tournamentsIds
 	 */
 	fastify.post('/verify_guest_tournamentName', async (request, reply) => {
-		const { tournamentId, tournamentName } = request.body;
+		const registerSchema = z.object({
+			tournamentId: z.number({ invalid_type_error: 'tournament ID must be a number',}),
+			tournamentName: z.string().min(1).max(20).regex(/^[A-Za-z0-9_]+$/, { message: 'TournamentName may only contain letters, numbers and underscore' }),
+		});		
+		const parsed = registerSchema.safeParse(request.body);
+		if (!parsed.success) {
+			const fieldErrors = formatZodError(parsed.error);
+			return reply.status(400).send({ errors: fieldErrors });
+		}
+		const { tournamentId, tournamentName } = parsed.data;
 		var newTournamentId;
 		if (tournamentName) { 
 				try {
@@ -90,6 +113,7 @@ export function configureTournamentRoutes(fastify) {
 						const newTempUser = await crud.tempuser.createTempuser(newTournamentId, tournamentName);
 						reply.status(200).send(newTempUser);
 					} else
+
 					 	reply.status(400).send({ error: 'Tournament name already exists' });
 				} catch (err) {
 					fastify.log.error(err);
@@ -102,15 +126,15 @@ export function configureTournamentRoutes(fastify) {
 	});
 
 	function shuffleArray(array) {
-		  const shuffled = [...array];
-		  for (let i = shuffled.length - 1; i > 0; i--) {
-		    const j = Math.floor(Math.random() * (i + 1));
-		    const temp = shuffled[i];
-		    shuffled[i] = shuffled[j];
-		    shuffled[j] = temp;
-		  }
-		  return shuffled;
+		const shuffled = [...array];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			const temp = shuffled[i];
+			shuffled[i] = shuffled[j];
+			shuffled[j] = temp;
 		}
+		return shuffled;
+	}
 
 	fastify.post('/prepareBracket', async (request, reply) => {
 		fastify.log.info('En prepareBracket: ');
