@@ -102,7 +102,6 @@ function addMenuOptionsListeners(menu: HTMLDivElement, userId: string, username:
 export function handlePlayGame(currentUserId: string, targetUserId: string, username: string, socket: WebSocket) {
 	const spa = SPA.getInstance();
 	if (!spa.currentGame) {
-		console.error("No active game instance found for chat game invitation.");
 		return;
 	}
 

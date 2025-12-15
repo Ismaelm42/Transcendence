@@ -157,10 +157,8 @@ export class TournamentUI {
 						const difficulty = this.tournament.getTournamentConfig().difficulty;
 						const capitalizedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
 						sumaryDifficultHtml.textContent = ` ${capitalizedDifficulty}`;
-					} else {
-						console.error("Summary elements not found");
 					}
-						this.preparePlayers(numberOfPlayers);
+					this.preparePlayers(numberOfPlayers);
 					this.enableTournamentHashGuard();
 				});
 

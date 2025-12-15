@@ -28,7 +28,6 @@ export function configureTempUserRoutes(fastify, sequelize) {
 	// Define a DELETE route to remove a user by ID
 	fastify.delete('/delete_user_by_tournament_id', async (request, reply) => {
 		const { TournamentId } = request.body;
-		console.log(`[DEBUG] delete_user_by_tournament_id called for TournamentId: ${TournamentId}`);
 		try {
 			const result = await crud.tempuser.deleteTempuserByTournamentId(TournamentId);
 			reply.status(200).send(result);

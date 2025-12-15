@@ -225,20 +225,4 @@ export class PlayerCard {
 	  const response = await fetch(this.templatePath);
 	  return await response.text();
 	}
-  
-	// private replacePlaceholders(template: string, data: Record<string, string>): string {
-	//   return template.replace(/\{\{(.*?)\}\}/g, (_, key) => {
-	// 	const trimmedKey = key.trim();
-	// 	if (!(trimmedKey in data)) {
-	// 	  console.warn(`Missing placeholder key: ${trimmedKey}`);
-	// 	}
-	// 	return data[trimmedKey] || '';
-	//   });
-	// }
-
-
-						
-
-
-
-  }
+}

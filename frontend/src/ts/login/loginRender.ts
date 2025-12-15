@@ -6,7 +6,7 @@ export default class LoginRender extends Step {
 		const user = await this.checkAuth();
 		sessionStorage.setItem("current-view", "Login");
 		if (user) {
-			showMessage("Usuario autenticado, redirigiendo a perfil", 3000);
+			showMessage("User authenticated, redirecting to profile", 3000);
 			window.location.hash = "#home";
 		} else {
 			try {

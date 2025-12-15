@@ -213,8 +213,6 @@ export default class GameMatch extends Step
 			pauseReason.textContent = reason || '';
 		if (this.log.mode === 'remote' && resumeBtn && pauserId)
 		{
-			console.warn("onlineId: ", this.game.getOnlineId());
-			console.warn("pauserId: ", pauserId);
 			resumeBtn.style.display = (this.game.getOnlineId() == pauserId) ? 'inline-block' : 'none';
 		}
 
@@ -492,7 +490,6 @@ export default class GameMatch extends Step
 
 	public destroy() : void
 	{
-		console.warn("GameMatch Destructor Called(!)");
 		this.updatePlayerActivity(false);
 		// Re-enable normal page behavior
 		window.removeEventListener('keydown', this.preventScrollOnArrow);

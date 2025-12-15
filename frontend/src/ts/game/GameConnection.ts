@@ -72,9 +72,6 @@ export class GameConnection {
 				this.socket.onmessage = (event) => {
 					try {
 						const data = JSON.parse(event.data);
-						if (data.type != 'GAME_STATE')
-							console.log("Message received from server:", event.data);
-						// console.log("Message received from server:", event.data);
 						switch (data.type) {
 							case 'USER_INFO':
 								const userId = data?.user?.id;
@@ -87,14 +84,10 @@ export class GameConnection {
 									if (!is1v1 || !hasId)
 										this.game.setOnlineId(String(userId));
 								}
-								else
-									console.warn('USER_INFO received without user id');
 								if (this.pendingUserInfoResolve) {
 									this.pendingUserInfoResolve(data.user);
 									this.pendingUserInfoResolve = null;
 								}
-								else
-									console.warn('No pendingUserInfoResolve to call!');
 								this.updateHostStatus();
 								break;
 							case 'GAME_INIT':
@@ -113,7 +106,6 @@ export class GameConnection {
 								}
 								else
 									spa.navigate('game-match');
-								console.log("Game initialized:", data);
 								this.updateHostStatus();
 								// If rejoining a running 1vAI match, ensure controllers and AI start
 								try {
@@ -181,8 +173,6 @@ export class GameConnection {
 									// If we have a previous state but render loop not running (e.g. after reload), force a restart
 									const renderer: any = this.game.getGameRender();
 									if (renderer && !renderer.animationFrameId && (renderer.lastKnownState || renderer.gameState)) {
-										console.debug('Forcing render loop restart after GAME_RESUMED');
-										// Use the most recent known state to kick the loop
 										const stateToUse = renderer.gameState || renderer.lastKnownState;
 										if (stateToUse)
 											renderer.renderGameState(stateToUse);
@@ -192,11 +182,10 @@ export class GameConnection {
 								} catch { }
 								break;
 							case 'ERROR':
-								console.error("Game Error:", data.message);
 								showMessage(data.message, 5000);
 								break;
 							default:
-								console.log(`Received message with type: ${data.type}`);
+								// Received message with unknown type; ignore silently
 						}
 					}
 					catch (error) {
@@ -213,7 +202,6 @@ export class GameConnection {
 	 */
 	public joinGame(gameId?: string): void {
 		if (!this.socket || !this.connectionStat) {
-			console.error("Cannot join game: connection not ready");
 			return;
 		}
 		if (gameId) {
@@ -255,7 +243,6 @@ export class GameConnection {
 					mode = 'external';
 			}
 			catch (error) {
-				console.error("Error while checking external player:", error);
 			}
 		}
 		/*User's information is requested, and a new promise is created:
@@ -295,7 +282,6 @@ export class GameConnection {
 				return ({ success: true });
 		}
 		catch (error) {
-			console.error("Error while verifying:", error);
 			return ({ success: false, message: "Network error" });
 		}
 	};
@@ -355,7 +341,6 @@ export class GameConnection {
 			} else {
 				this.game.setGameIsHost(false);
 			}
-			console.log(`Host status updated: ${this.game.getGameIsHost()} (OnlineID: ${onlineId}, P1 ID: ${player1.id})`);
 		}
 	}
 }

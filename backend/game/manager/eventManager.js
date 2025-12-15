@@ -66,7 +66,6 @@ export function	messageManager(client, connection)
 	connection.on('message', (message) => {
 		try {
 			const data = JSON.parse(message.toString());
-			console.log(data);
 			switch (data.type)
 			{
 				case 'JOIN_GAME':
@@ -138,7 +137,6 @@ export function handleGameDisconnect(client, connection) {
 			if (gameSession.metadata.mode === 'remote' &&
 				(gameSession.metadata.startTime || gameSession.isActive) &&
 				!gameSession.isFinished) {
-				console.log(`Player ${user.username} disconnected from active remote game. Forfeiting...`);
 				gameSession.handlePlayerDisconnect(user.id, gamesList);
 			}
 			else {
@@ -150,7 +148,6 @@ export function handleGameDisconnect(client, connection) {
 			// Remove client tracking
 			clients.delete(user.id);
 		} catch (e) {
-			console.error('Error handling disconnect:', e);
 		}
 	});
 }

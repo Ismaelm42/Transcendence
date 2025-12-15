@@ -44,7 +44,6 @@ export async function fetchGameLogs(): Promise<any> {
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-		console.log('hemos bajado');
 		return await response.json();
 	} catch (error) {
 		if (error instanceof Error) {
@@ -186,7 +185,6 @@ export async function handleStats(userStats: { userId: string; wins: number; los
 
 	// 🖱️ Doble click handler for game stats
 	canvas.addEventListener('dblclick', async function (event) {
-		console.log('aquí estoy en dobleclick');
 		const points = statsChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
 		if (points.length) {
 			const index = points[0].index;

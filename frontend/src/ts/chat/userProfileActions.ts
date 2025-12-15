@@ -45,13 +45,13 @@ export async function rejectFriendRequest(userId: string): Promise<void> {
 			body: JSON.stringify({ friendId: userId }),
 		});
 		if (response.ok) {
-			showMessage("Solicitud de amistad cancelada.", null);
+			showMessage("Friend request cancelled", null);
 		} else {
 			const errorMessage = await response.json();
-			alert("Error al cancelar la solicitud: " + errorMessage.error);
+			alert("Error canceling friend request: " + errorMessage.error);
 		}
 	} catch (error) {
-		alert("Error al cancelar la solicitud: " + error);
+		alert("Error Error canceling friend request: " + error);
 	}
 }
 
