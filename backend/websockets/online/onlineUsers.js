@@ -20,7 +20,6 @@ export function configureOnlineSocket(fastify) {
 
 			// Check if user is already online
 			if (onlineUsers.has(String(user.id))) {
-				console.log(`User ${user.username} already connected. Rejecting new connection.`);
 				socket.send(JSON.stringify({ type: 'error', message: 'You are already logged in from another location.' }));
 				socket.close();
 				return;
@@ -79,18 +78,16 @@ function handleOnlineSocketMessages(fastify, socket, user) {
 		const data = JSON.parse(message);
 		switch (data.type) {
 			case 'challenge':
-				console.log("Challenge received:", data);
 				handleChallenge(fastify, socket, user, data);
 				break;
 			case 'acceptChallenge':
-				console.log("Challenge accepted:", data);
 				handleAcceptChallenge(fastify, socket, user, data);
 				break;
 			case 'declineChallenge':
 				// Handle challenge decline
 				break;
 			default:
-				console.error('Unknown message type:', data.type);
+				// Unknown message types are now silently ignored
 		}
 	});
 }
@@ -114,7 +111,6 @@ async function handleChallenge(fastify, socket, user, data) {
 				challengeId
 			}));
 		} catch (error) {
-			console.error('Error sending challenge:', error);
 		}
 	}
 }
@@ -122,14 +118,11 @@ async function handleChallenge(fastify, socket, user, data) {
 async function handleAcceptChallenge(fastify, socket, user, data) {
 	const challengeId = String(data.challengeId ?? '');
 	if (!challengeId) {
-		console.error('acceptChallenge sin challengeId');
 		return;
 	}
 	
 	const pendingChallenge = pendingChallenges.get(challengeId);
-	console.log("Handling accepted challenge:", challengeId, pendingChallenge);
 	if (!pendingChallenge) {
-        console.error('Challenge not found or expired:', challengeId);
         return;
     }
 
@@ -144,9 +137,7 @@ async function handleAcceptChallenge(fastify, socket, user, data) {
 		const userIdStr = String(client.userId);
 		if (userIdStr === fromUserId || userIdStr === toUserId) {
 			const token = client.token; 
-			console.log("Sending gotToGame message with token:", token);
 			try {
-				console.log(`Sending goToGame to user ${client.userId} for game ${gameId}`);
 				client.send(JSON.stringify({
 					type: 'goToGame',
 					roomId: challengeId,
@@ -154,7 +145,6 @@ async function handleAcceptChallenge(fastify, socket, user, data) {
 					youAre: userIdStr === fromUserId ? 'player1' : 'player2'
 				}));
 			} catch (error) {
-				console.error('Error notifying game start:', error);
 			}
 		}
 	}

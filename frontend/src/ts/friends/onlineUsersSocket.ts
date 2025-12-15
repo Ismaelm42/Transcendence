@@ -15,24 +15,20 @@ export function initOnlineSocket() {
 			const data = JSON.parse(event.data);
 			switch (data.type) {
 				case "onlineUsers":
-					console.log("Usuarios online recibidos:", data.users);
 					sessionStorage.setItem("userConnected", JSON.stringify(data.users));
 					window.dispatchEvent(new Event("onlineUsersUpdated"));
 					break;
 				case "error":
-					console.error("Error received:", data.message);
 					showMessage(data.message, 3000);
 					setTimeout(() => {
 						window.location.hash = "#logout";
 					}, 3000);
 					break;
 				case "refreshRelations":
-					console.log("Refresh relations event received");
 					window.dispatchEvent(new Event("onlineUsersUpdated"));
 					break;
 				case "incomingChallenge": {
 					const { fromUsername, challengeId } = data;
-					console.log("Incoming challenge received from:", fromUsername);
 					showChallengeNotification(fromUsername, challengeId);
 					break;
 				}
@@ -47,32 +43,28 @@ export function initOnlineSocket() {
 
 					const gc = spa.currentGame?.getGameConnection?.();
 					if (!gc?.socket || gc.socket.readyState !== WebSocket.OPEN) {
-						console.warn("WS de juego no listo");
 						break;
 					}
 
 					if (youAre === 'player1') {
 						// Host: igual que ahora
-						console.log("Enviando JOIN_GAME como player1");
 						gc.socket.send(JSON.stringify({
 							type: 'JOIN_GAME',
 							roomId,
 							youAre,
 							mode: 'remote'
 						}));
-						showMessage('Uniéndose como jugador 1...', null);
+						showMessage('Joining game as player 1...', null);
                     } else if (youAre === 'player2') {
                         // Invitado: replicar botón Join del lobby (GameUI.updateLobby)
                         // Equivalente a:
                         //   this.game.setGameIsHost(false);
                         //   this.game.getGameConnection().joinGame(gameId);
                         try {
-                            console.log("Replicando botón Join: setGameIsHost(false) + joinGame(roomId)");
                             spa.currentGame?.setGameIsHost?.(false);
                             spa.currentGame?.getGameConnection?.().joinGame(roomId);
-                            showMessage('Uniéndose como jugador 2...', null);
+                            showMessage('Joining game as player 2...', null);
                         } catch (e) {
-                            console.error("Error al unirse como player2:", e);
                         }
                     } else {
 						// Sin rol: fallback al join directo
@@ -182,7 +174,6 @@ export function showChallengeNotification(fromUsername: string, challengeId: str
     const text = document.getElementById('challenge-text');
     if (text) {
         text.textContent = `${fromUsername} te desafía a jugar. ¿Aceptar?`;
-        console.log("Texto actualizado en modal:", text.textContent); // Log para verificar
     }
 
     // Maneja los botones

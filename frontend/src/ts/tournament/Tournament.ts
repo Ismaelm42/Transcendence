@@ -43,7 +43,6 @@ export default class Tournament extends Step {
 	}
 
 	public setTournamentId(tournamentId: number): void {
-		console.log(`[Tournament ${this.instanceId}] setTournamentId: ${tournamentId}`);
 		this.tournamentId = tournamentId;
 	}
 	public getTournamentId(): number | null {
@@ -109,8 +108,6 @@ export default class Tournament extends Step {
 	}
 
 	public async saveTournament(): Promise<number> {
-		console.log(`[Tournament ${this.instanceId}] saveTournament. ID: ${this.tournamentId}`);
-
 		this.log = {
 			tournamentId: this.tournamentId,
 			playerscount: this.tournamentPlayers.length,
@@ -163,7 +160,6 @@ export default class Tournament extends Step {
 
 	public checkTournamentPlayers(): boolean {
 		if (this.tournamentPlayers.length === 0) {
-			console.warn("No players in the ");
 			return false;
 		}
 		for (const player of this.tournamentPlayers) {
@@ -209,8 +205,6 @@ export default class Tournament extends Step {
 			player.status = 'ready'; // Default status for new players
 			this.tournamentPlayers.push(player);
 			this.tournamentPendingPlayers--;
-		} else {
-			console.warn("Cannot add more players, tournament is full.");
 		}
 	}
 
@@ -233,7 +227,6 @@ export default class Tournament extends Step {
 		// 	return;
 		// }
 		// if (this.gameDataArray.length == this.tournamentConfig.numberOfPlayers) {
-		// 	console.warn("Game data array is already full. Cannot add more game data.");
 		// 	return;
 		// }
 		this.gameDataArray.push(gameData);
@@ -242,7 +235,6 @@ export default class Tournament extends Step {
 	// public returnMode(player1: GamePlayer, player2: GamePlayer): string {
 	// 	// return'auto'; // HARDCODED FOR TESTING PURPOSES
 	// 	//TODO: descomentar y eliminar return 'auto';
-	// 	console.log("Returning mode for players:", player1, player2);
 	// 	if (player1.email.includes('ai') && player1.email.includes('@transcendence.com') 
 	// 			&& player2.email.includes('ai') && player2.email.includes('@transcendence.com')) {
 	// 		return 'auto';
@@ -255,7 +247,6 @@ export default class Tournament extends Step {
 	// }
 	public returnMode(player1: GamePlayer, player2: GamePlayer): string {
 		/**TODO: if we asign a id !== -1 to any Ai player revieew this function */
-		console.log("Returning mode for players:", player1, player2);
 		if (player1.id === -1 && player2.id === -1) {
 			return 'auto';
 		}
@@ -392,7 +383,6 @@ export default class Tournament extends Step {
 	}
 
 	async launchTournament(tournament: Tournament): Promise<void> {
-		console.log(`[Tournament ${this.instanceId}] launchTournament`);
 		// incluir lógica para lanzar el torneo
 
 		const tounamentData = {
@@ -657,7 +647,6 @@ export default class Tournament extends Step {
 	}
 
 	public resetTournament(): void {
-		console.log(`[Tournament ${this.instanceId}] resetTournament called`);
 		this.deleteTempUsers(this.tournamentId).then(() => {
 		}).catch((error) => {
 		});

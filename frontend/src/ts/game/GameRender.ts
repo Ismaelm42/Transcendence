@@ -35,7 +35,6 @@ export class GameRender
 			scores: [0, 0]
 		};
 		this.gameState = initialState;
-		console.warn("pregame-canvas-draw with state: ", this.gameState);
 		this.drawGame();
 	}
 

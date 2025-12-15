@@ -50,13 +50,9 @@ export class SPA {
 
 		window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
 			const tId = this.currentTournament?.getTournamentId();
-			const instId = (this.currentTournament as any)?.instanceId;
-			console.warn(`[beforeunload] Step: ${this.currentStep}, TournamentID: ${tId}, InstanceID: ${instId}, Type: ${typeof tId}`);
-
 			// Terminate session if on game-match OR if on tournament-lobby with an active tournament (ID != -42)
 			// Note: We check if tId is defined to avoid false positives if currentTournament is null
 			if (this.currentStep === 'game-match' || (this.currentStep === 'tournament-lobby' && tId !== undefined && tId !== null && tId !== -42)) {
-				console.log("[beforeunload] Terminating session...");
 				sessionStorage.setItem('was_active_session', 'true'); // Flag for the next reload
 				this.terminateSession();
 			}
@@ -110,13 +106,13 @@ export class SPA {
 	}
 
 	private terminateSession() {
-		console.warn("[DEBUG] terminateSession called");
 		// Kill Game
 		if (this.currentGame) {
 			if (this.currentGame.isGameActive?.()) {
 				try {
 					this.currentGame.getGameConnection()?.killGameSession(this.currentGame.getGameLog().id);
-				} catch (e) { console.error("Error killing game session:", e); }
+				} catch (e) { 
+				}
 			}
 			// Cleanup match UI if exists
 			try {
@@ -125,7 +121,8 @@ export class SPA {
 					if (typeof match.updatePlayerActivity === 'function') match.updatePlayerActivity(false);
 					if (typeof match.destroy === 'function') match.destroy();
 				}
-			} catch (e) { console.error("Error destroying match UI:", e); }
+			} catch (e) { 
+			}
 		}
 
 		// Kill Tournament
@@ -137,7 +134,8 @@ export class SPA {
 				} else if (typeof this.currentTournament.resetTournament === 'function') {
 					this.currentTournament.resetTournament();
 				}
-			} catch (e) { console.error("Error resetting tournament:", e); }
+			} catch (e) { 
+			}
 		}
 
 		this.currentGame = null;
@@ -145,7 +143,6 @@ export class SPA {
 
 	async loadStep() {
 		let step = location.hash.replace('#', '') || 'home';
-		console.warn(`[loadStep] Navigating from ${this.currentStep} to ${step}. TournamentID: ${this.currentTournament?.getTournamentId()}, InstanceID: ${(this.currentTournament as any)?.instanceId}`);
 
 		// Determine if the transition is safe (Tournament Flow)
 		const isTournamentSetup = this.currentStep === 'tournament-lobby' && this.currentTournament?.getTournamentId() === -42;
@@ -164,7 +161,8 @@ export class SPA {
 							if (typeof match.updatePlayerActivity === 'function') match.updatePlayerActivity(false);
 							if (typeof match.destroy === 'function') match.destroy();
 						}
-					} catch (e) { console.error("Error destroying match UI:", e); }
+					} catch (e) { 
+					}
 				}
 			} else if (this.currentStep === 'tournament-lobby') {
 				this.terminateSession();
@@ -180,7 +178,6 @@ export class SPA {
 
 		// If the hash didn't change effectively, avoid reloading the same step (prevents duplicate listeners)
 		if (this.currentStep === step) {
-			console.debug('SPA: same step detected, skipping reload for', step);
 			return;
 		}
 
@@ -219,11 +216,9 @@ export class SPA {
 				// Reuse existing tournament instance if active to preserve state
 				if (this.currentTournament && this.currentTournament.getTournamentId() !== -42) {
 					stepInstance = this.currentTournament;
-					console.log('Reusing active tournament instance');
 				} else {
 					stepInstance = new module.default('app-container');
 					this.currentTournament = stepInstance;
-					console.log('Created new tournament instance');
 				}
 			}
 			else
@@ -236,7 +231,6 @@ export class SPA {
 				}
 			}
 			if (routeConfig.protected && !user) {
-				console.warn(`Acceso denegado a la ruta protegida: ${step}`);
 				this.navigate('login');
 				return;
 			}
@@ -252,7 +246,8 @@ export class SPA {
 			if (step === 'tournament-lobby' && this.currentTournament && this.currentTournament.getTournamentId() !== -42) {
 				try {
 					this.currentTournament.resumeTournament();
-				} catch (e) { console.error("Error resuming tournament UI:", e); }
+				} catch (e) { 
+				}
 			}
 
 		} else {

@@ -16,7 +16,6 @@ export class StatsUI
 
 	showOnly(divId: string, displayStyle: string = "block") : void
 	{
-		console.warn("showOnly div = ", divId);
 		const divIndex = [
 			'pong-stats-content',
 			'pong-tournament-stats-content',

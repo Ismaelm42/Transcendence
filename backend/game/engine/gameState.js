@@ -126,7 +126,6 @@ export async function endGame(gamesList, needSaving)
 		try
 		{
 			await createGamelog(gamelogData);
-			console.warn('GameLog SAVED into DB');
 		} catch (err) {
 		}
 	}
@@ -140,7 +139,6 @@ export async function endGame(gamesList, needSaving)
 	this.shouldCleanup = true;
 	if (this.metadata.tournamentId && this.metadata.tournamentId > 0)
 	{	
-		console.log("in-Tournament-game aborted: deleting tournament temp users");
 		deleteTempuserByTournamentId(this.metadata.tournamentId);
 	}
 }
