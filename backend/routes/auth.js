@@ -14,7 +14,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export function configureAuthRoutes(fastify, sequelize) {
 
-	// Define a POST route to authenticate an user
 	fastify.post('/auth/login', async (request, reply) => {
 		fastify.log.info({ body: request.body }, 'login data sent');
 
@@ -31,19 +30,12 @@ export function configureAuthRoutes(fastify, sequelize) {
 			return reply.status(400).send({ errors: fieldErrors });
 		}
 
-		// Extract validated fields
 		const { email, password } = parsed.data;
-
-		// Normalize email so uppercase inputs match lowercase DB entries
 		const normalized = validator.normalizeEmail(email) || email.trim().toLowerCase();
-
-		// Sanitize password to remove HTML tags (keeps behavior consistent with registration)
 		const cleanPassword = password ? xss(password) : password;
-
 		return authenticateUser(normalized, cleanPassword, reply);
 	});
 
-	// Define a GET route to authenticate an user with GoogleStrategy
 	fastify.get('/auth/google/login', {
 		preValidation: fastifyPassport.authenticate('google', { scope: ['profile', 'email'] })
 	},
@@ -53,7 +45,6 @@ export function configureAuthRoutes(fastify, sequelize) {
 		}
 	);
 
-	// Define a POST route to logout an user
 	fastify.post('/auth/logout', async (request, reply) => {
 		const token = request.cookies.token
 		const user = await extractUserFromToken(token, reply);
@@ -77,12 +68,25 @@ export function configureAuthRoutes(fastify, sequelize) {
 	});
 
 	fastify.post('/change_password', async (request, reply) => {
-		// fastify.log.info({ body: request.body }, 'change_password data sent');
-	let { currentPassword, newPassword, confirmPassword } = request.body;
-	// Sanitize passwords to remove HTML tags before comparison/storage (consistent with registration sanitization)
-	currentPassword = currentPassword ? xss(currentPassword) : currentPassword;
-	newPassword = newPassword ? xss(newPassword) : newPassword;
-	confirmPassword = confirmPassword ? xss(confirmPassword) : confirmPassword;
+		
+		const passSchema = z.object({
+			currentPassword: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'currentPassword cannot contain HTML tags' }),
+			newPassword: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'newPassword cannot contain HTML tags' }),
+			confirmPassword: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'confirmPassword cannot contain HTML tags' }),
+		});
+
+		const parsed = passSchema.safeParse(request.body);
+		if (!parsed.success) {
+			const fieldErrors = formatZodError(parsed.error);
+			return reply.status(400).send({ errors: fieldErrors });
+		}
+			let { currentPassword, newPassword, confirmPassword } = request.body;
+
+			currentPassword = currentPassword ? xss(currentPassword) : currentPassword;
+			newPassword = newPassword ? xss(newPassword) : newPassword;
+			confirmPassword = confirmPassword ? xss(confirmPassword) : confirmPassword;
+
+			console.log('Sanitized Passwords:', { currentPassword, newPassword, confirmPassword });
 		try {
 			const token = request.cookies.token;
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);

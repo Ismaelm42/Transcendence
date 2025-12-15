@@ -46,13 +46,10 @@ export function configureUserRoutes(fastify, sequelize) {
 		const cleanUsername = username.trim().substring(0, 50);
 		// Normalize email using validator if available (better normalization than simple toLowerCase)
 		const cleanEmail = email ? validator.normalizeEmail(email) : email;
-
 		// For fields that may contain arbitrary content (paths/ids), keep XSS sanitization
 		const cleanAvatar = avatarPath ? xss(avatarPath).trim() : avatarPath;
-
 		// Sanitize password to remove HTML tags (user requested). This will be the password stored and used for immediate auth.
 		const cleanPassword = password ? xss(password) : password;
-
 		// Detect if normalization/sanitization changed any inputs so we can notify the frontend
 		const warnings = {};
 		// For username we only warn if trimming removed characters (leading/trailing)
@@ -94,13 +91,44 @@ export function configureUserRoutes(fastify, sequelize) {
 
 	// Define a POST route to update a user by token
 	fastify.post('/update_user', { preValidation: verifyToken }, async (request, reply) => {
+
+		// const { preusername, pretournamentUsername, prepassword, pregoogleId, preemail, preavatarPath } = request.body;
+
+		const registerSchema = z.object({
+			username: z.string().min(1).max(20).regex(/^[A-Za-z0-9_]+$/, { message: 'Username may only contain letters, numbers and underscore' }),
+			tournamentUsername: z.string().min(1).max(30).regex(/^[A-Za-z0-9_]+$/, { message: 'Tournament Username may only contain letters, numbers and underscore' }),
+			email: z.string().email().optional().nullable().refine(e => !e || !/<[^>]*>/.test(e), { message: 'Email cannot contain HTML tags' }),
+		});
+		const parsed = registerSchema.safeParse(request.body);
+		if (!parsed.success) {
+			const fieldErrors = formatZodError(parsed.error);
+			return reply.status(400).send({ errors: fieldErrors });
+		}
+
+		// Extract validated data
 		const { username, tournamentUsername, password, googleId, email, avatarPath } = request.body;
+
+		const cleanUsername = username.trim().substring(0, 50);
+		const cleantournamentUsername = tournamentUsername.trim().substring(0, 50);
+		// Normalize email using validator if available (better normalization than simple toLowerCase)
+		const cleanEmail = email ? validator.normalizeEmail(email) : email;
+		// For fields that may contain arbitrary content (paths/ids), keep XSS sanitization
+		const cleanAvatar = avatarPath ? xss(avatarPath).trim() : avatarPath;
+		// Sanitize password to remove HTML tags (user requested). This will be the password stored and used for immediate auth.
+		const cleanPassword = password ? xss(password) : password;
+		// Detect if normalization/sanitization changed any inputs so we can notify the frontend
+		const warnings = {};
+		// For username we only warn if trimming removed characters (leading/trailing)
+		if (String(cleanUsername) !== String(username)) warnings.username = 'Username was trimmed';
+		if (email && String(cleanEmail) !== String(email)) warnings.email = 'Email was normalized (trimmed/lowercased)';
+		if (password && String(cleanPassword) !== String(password)) warnings.password = 'Some characters were removed from password';
+		if (avatarPath && String(cleanAvatar) !== String(avatarPath)) warnings.avatarPath = 'Some characters were removed from avatarPath';
 		try {
 				const token = request.cookies.token;
 				const decoded = jwt.verify(token, process.env.JWT_SECRET);
 				const userId = decoded.userId;
 				fastify.log.info('userId en update_user', userId);
-			const updatedUser = await crud.user.updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
+			const updatedUser = await crud.user.updateUserbyId(userId, cleanUsername, cleantournamentUsername, cleanPassword, googleId, cleanEmail, cleanAvatar);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
 			fastify.log.error("Desde updateUser");

@@ -20,8 +20,11 @@ export async function handleLoginSubmit(event: SubmitEvent) {
 
         if (!response.ok) {
             const errorResponse = await response.json();
-            // showMessage(`Error: ${errorResponse.message}`, null); // Original line replace by the line below
-			showMessage(formatErrors(errorResponse.errors), null);
+			let msg =formatErrors(errorResponse.errors);
+			if (msg == "Bad request." && errorResponse.message) {
+				msg = errorResponse.message;
+			}
+			showMessage(msg, null);
         } else {
             const result = await response.json();
             initOnlineSocket(); // Inicia el socket aquí

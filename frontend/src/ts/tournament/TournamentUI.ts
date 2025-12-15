@@ -276,7 +276,6 @@ export class TournamentUI {
 						}
 						const guestData = await this.checkGuestPlayer(i, guestTournamentName.value);
 						if (guestData) {
-							console.log('Guest data received:', guestData);
 							tournamentPlayer.gameplayer = guestData.gameplayer;
 							tournamentPlayer.gameplayer.id = -2;
 							tournamentPlayer.gameplayer.username = `Guest00${i}`,

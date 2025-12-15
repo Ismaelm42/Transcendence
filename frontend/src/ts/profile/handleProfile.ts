@@ -1,4 +1,6 @@
 import  { showMessage } from "../modal/showMessage.js";
+import { formatErrors } from '../errors/FormatError.js';
+
 
 let originalUsername = "";
 let originalEmail = "";
@@ -33,6 +35,7 @@ function changePassword(){
 		}
 
 		if (data.newPassword !== data.confirmPassword) {
+			form.reset();
 			showMessage("New password and confirmation password do not match", null);
 			return;
 		}
@@ -56,7 +59,16 @@ function changePassword(){
 			}
 			else {
 				const errorResponse = await response.json();
-				showMessage(`Error: ${errorResponse.message}`, null);
+				const form = document.getElementById("change-password-form") as HTMLFormElement;
+				form.reset();
+				let msg =formatErrors(errorResponse.errors);
+				if (msg == "Bad request." && errorResponse.message) {
+					msg = errorResponse.message;
+				}
+				showMessage(msg, null);
+			// showMessage(formatErrors(errorResponse.errors), null);
+
+				// showMessage(`Error: ${errorResponse.message}`, null);
 			}
 			
 		}catch (error) {
@@ -70,6 +82,8 @@ function changePassword(){
 	
 		cancelModalButton?.addEventListener("click", () => {
 		if (changePasswordModal) {
+			const form = document.getElementById("change-password-form") as HTMLFormElement;
+			form.reset();
 			changePasswordModal.classList.add("hidden");
 		}
 	});
@@ -149,7 +163,15 @@ async function saveInfo() {
 			window.location.hash = "#profile";
 		} else {
 			const errorResponse = await response.json();
-			showMessage(`Error: ${errorResponse.error}`, null);
+			const form = document.getElementById("user-form") as HTMLFormElement;
+			form.reset();
+			let msg =formatErrors(errorResponse.errors);
+			if (msg == "Bad request." && errorResponse.message) {
+				msg = errorResponse.message;
+			}
+			showMessage(msg, null);
+			// showMessage(formatErrors(errorResponse.errors), null);
+			// showMessage(`Error: ${errorResponse.error}`, null);
 		}
 	} catch (error) {
 		showMessage(`Oops, something went wrong while submitting the form. Please try again.`, 3000);

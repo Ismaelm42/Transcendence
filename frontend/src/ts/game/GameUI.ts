@@ -164,20 +164,16 @@ export class GameUI {
 
 		if (!loginPanel || !loginForm || !guestBtn || !configPanel)
 			return;
-
-		// Handle registered user login
 		loginForm.onsubmit = async (e) => {
 			e.preventDefault();
 			const email = (document.getElementById('player2-email') as HTMLInputElement).value;
 			const password = (document.getElementById('player2-password') as HTMLInputElement).value;
 			const result = await this.game.getGameConnection().checkPlayer({ email, password });
-
 			if (!email || !password) {
 				if (errorMsg)
 					errorMsg.textContent = 'Please enter both email and password';
 				return;
 			}
-
 			if (result && result.success) {
 				this.game.setPlayerInfo('player2', { email, password });
 				this.showOnly('config-panel');
@@ -187,8 +183,11 @@ export class GameUI {
 				if (errorMsg) {
 					if (result && result.message === 'Payer two cannot be the same than player one')
 						errorMsg.textContent = 'You cannot play against yourself.';
+					else if (result && result.message){
+						errorMsg.textContent = result.message;
+					}
 					else
-						errorMsg.textContent = 'Invalid email or password. Please try again';
+						errorMsg.textContent = 'Invalid email or password. Please try againtrutru';
 				}
 			}
 		};
