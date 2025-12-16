@@ -39,7 +39,6 @@ function clampAngle(angle, minDeg = 15, maxDeg = 165) {
 }
 
 // Main function to check for paddle-ball collisions
-// TODO: Reduce function size by getting some calculations out by using auxiliary functions
 export function checkPaddleCollision(playerNumber) {
 	// Get paddle and ball position from the game state
 	const paddle = this.state.paddles[playerNumber];

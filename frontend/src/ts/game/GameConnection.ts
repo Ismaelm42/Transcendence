@@ -277,7 +277,6 @@ export class GameConnection {
 			if (!response.ok) {
 				const result = await response.json();
 				return ({ success: false, message: result.message});
-				// return (false);
 			}
 			else
 				return ({ success: true });

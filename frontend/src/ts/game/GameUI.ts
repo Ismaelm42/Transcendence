@@ -221,7 +221,6 @@ export class GameUI {
 			return;
 		}
 		// Per each game returned by backend, we create a new game card and append it to lobbyDiv
-		// TODO: we can add more elements to the card as "Ready, Full, In progress"...
 		games.forEach((game: GameData) => {
 			const card = document.createElement('div');
 			card.className = 'bg-pong-primary rounded p-4 flex flex-col gap-2 border-1 border-pong-tertiary shadow-md';
@@ -238,7 +237,6 @@ export class GameUI {
 			lobbyDiv.appendChild(card);
 		});
 		// Join game button - copy the game.lod metadata and uses to call JOIN API endpoint (should work)
-		// TODO: protect errors like game full or maybe only allow click event when 100% sure is the right moment
 		lobbyDiv.querySelectorAll('.join-game-btn').forEach(btn => {
 			btn.addEventListener('click', (e) => {
 				const gameId = (e.target as HTMLElement).getAttribute('data-gameid');
