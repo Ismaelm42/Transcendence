@@ -83,7 +83,6 @@ export function configureUserRoutes(fastify, sequelize) {
 			const updatedUser = await crud.user.updateUserbyId(userId, username, tournamentUsername, password, googleId, email, avatarPath);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
-			fastify.log.error("Desde updateUserbyId");
 			fastify.log.error(err);
 			reply.status(400).send({ error: err.message});
 		}
@@ -127,11 +126,9 @@ export function configureUserRoutes(fastify, sequelize) {
 				const token = request.cookies.token;
 				const decoded = jwt.verify(token, process.env.JWT_SECRET);
 				const userId = decoded.userId;
-				fastify.log.info('userId en update_user', userId);
-			const updatedUser = await crud.user.updateUserbyId(userId, cleanUsername, cleantournamentUsername, cleanPassword, googleId, cleanEmail, cleanAvatar);
+				const updatedUser = await crud.user.updateUserbyId(userId, cleanUsername, cleantournamentUsername, cleanPassword, googleId, cleanEmail, cleanAvatar);
 			reply.status(200).send({message: `User ${username} updated successfully`, updatedUser});
 		} catch (err) {
-			fastify.log.error("Desde updateUser");
 			fastify.log.error(err);
 			if (err.message.includes('already')) {
 				return reply.status(409).send({ error: err.message });
@@ -176,7 +173,6 @@ export function configureUserRoutes(fastify, sequelize) {
 			try {
 			const username = decodeURIComponent(request.query.username);
 			const user = await crud.user.getUserByName(username);
-			fastify.log.info('user devuelto en User get_user_by_username/name', user);
 			reply.status(200).send(user);
 		} catch (err) {
 			fastify.log.error(err);

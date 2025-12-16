@@ -109,7 +109,6 @@ export function configureTournamentRoutes(fastify) {
 						} else {
 							newTournamentId = tournamentId;
 						}
-						fastify.log.info('New tournamentId:', newTournamentId);
 						const newTempUser = await crud.tempuser.createTempuser(newTournamentId, tournamentName);
 						reply.status(200).send(newTempUser);
 					} else
@@ -137,10 +136,8 @@ export function configureTournamentRoutes(fastify) {
 	}
 
 	fastify.post('/prepareBracket', async (request, reply) => {
-		fastify.log.info('En prepareBracket: ');
 		const { Tid, Players,Tconfig } = request.body;
 		if (!Tid || !Players || !Tconfig) {
-			fastify.log.error('Missing required fields in request body');
 			return reply.status(400).send({ error: 'Missing required fields in request body'
 			});
 		}
@@ -199,7 +196,6 @@ export function configureTournamentRoutes(fastify) {
 		try {
 			// const updatedTournamentlog = await crud.tournamentlog.updateTournamentlog(tournamentId, gamesData) 
 			const updatedTournamentlog = await crud.tournamentlog.updateTournamentlog(tournamentId, playerscount, config, users, gamesData, winner) 
-			fastify.log.info('Tournamentlog updated successfully:', updatedTournamentlog);
 			// reply.status(200).send({ message: 'Tournamentlog updated successfully', players: updatedTournamentlog.users , gamesData: updatedTournamentlog.gamesData });
 			reply.status(200).send({ message: 'Tournamentlog updated successfully', gamesData: updatedTournamentlog.gamesData });
 		} catch (err) {

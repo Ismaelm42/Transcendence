@@ -15,8 +15,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export function configureAuthRoutes(fastify, sequelize) {
 
 	fastify.post('/auth/login', async (request, reply) => {
-		fastify.log.info({ body: request.body }, 'login data sent');
-
 		const loginSchema = z.object({
 			email: z.string().email().refine(e => !/<[^>]*>/.test(e), { message: 'Email cannot contain HTML tags' }),
 			password: z.string().min(8).max(200).regex(/^(?!.*<[^>]*>).*$/, { message: 'Password cannot contain HTML tags' }),
@@ -85,8 +83,6 @@ export function configureAuthRoutes(fastify, sequelize) {
 			currentPassword = currentPassword ? xss(currentPassword) : currentPassword;
 			newPassword = newPassword ? xss(newPassword) : newPassword;
 			confirmPassword = confirmPassword ? xss(confirmPassword) : confirmPassword;
-
-			console.log('Sanitized Passwords:', { currentPassword, newPassword, confirmPassword });
 		try {
 			const token = request.cookies.token;
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -96,9 +92,6 @@ export function configureAuthRoutes(fastify, sequelize) {
 				return reply.status(401).send({ message: 'User not found' });
 			}
 			
-			fastify.log.info({ user }, 'user data');
-			fastify.log.info ( user.password , 'user password');
-			fastify.log.info ({ currentPassword }, 'current password');
 			if (currentPassword !== "" || currentPassword.trim().length > 0 || user.password ) {
 				const isMatch = await comparePassword(currentPassword, user.password);
 				if (!isMatch)

@@ -19,10 +19,7 @@ const start = async () => {
 		await runMigrations();
 		await runSeeders(sequelize);
 
-		fastify.log.info('Database synced');
-
 		await fastify.listen({ port: 8000, host: '0.0.0.0' });
-		fastify.log.info('Server listenning on http://backend:8000');
 	}
 	catch (err) {
 		fastify.log.info(err);
