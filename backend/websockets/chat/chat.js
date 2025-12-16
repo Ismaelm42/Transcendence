@@ -2,6 +2,24 @@ import { parse } from 'cookie';
 import { crud } from '../../crud/crud.js'
 import { extractUserFromToken } from '../../auth/token.js';
 import { gamesList } from '../../game/manager/eventManager.js';
+import xss from 'xss';
+
+
+// Remove HTML tags (including script/style blocks) and then apply xss escaping
+export function stripHtmlTags(input) {
+	if (input == null) return input;
+	let s = String(input);
+	// Remove script/style blocks first
+	s = s.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+	s = s.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '');
+	// Remove all remaining tags
+	return s.replace(/<\/?[^>]+(>|$)/g, '');
+}
+
+export function sanitizeMessage(message) {
+	const stripped = stripHtmlTags(message);
+	return xss(stripped);
+}
 
 let timerId = 0;
 const rooms = new Map();
@@ -46,6 +64,7 @@ async function sendJSON(user, partner, message, roomId) {
 
 	await setTimer(user);
 	if (!partner) {
+		message = sanitizeMessage(message);
 		const response = {
 			type: "message",
 			userId: String(user.id),
@@ -172,6 +191,7 @@ async function handlePrivate(user, data) {
 			else {
 				partner = await crud.user.getUserById(parseInt(ids[0], 10));
 			}
+			data.message = sanitizeMessage(data.message);
 			await sendJSON(user, partner, data.message, data.roomId);
 		}
 	} catch (error) {
