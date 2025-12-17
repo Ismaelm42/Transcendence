@@ -29,7 +29,7 @@ export function configureAuthRoutes(fastify, sequelize) {
 		}
 
 		const { email, password } = parsed.data;
-		const normalized = validator.normalizeEmail(email) || email.trim().toLowerCase();
+		const normalized = email.trim().toLowerCase();
 		const cleanPassword = password ? xss(password) : password;
 		return authenticateUser(normalized, cleanPassword, reply);
 	});

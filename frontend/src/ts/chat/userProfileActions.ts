@@ -46,12 +46,8 @@ export async function rejectFriendRequest(userId: string): Promise<void> {
 		});
 		if (response.ok) {
 			showMessage("Friend request cancelled", null);
-		} else {
-			const errorMessage = await response.json();
-			alert("Error canceling friend request: " + errorMessage.error);
 		}
 	} catch (error) {
-		alert("Error Error canceling friend request: " + error);
 	}
 }
 
@@ -67,12 +63,8 @@ export async function deleteFriend(userId: string) {
 		});
 		if (response.ok) {
 			showMessage("Friend deleted", null);
-		} else {
-			const errorMessage = await response.json();
-			alert("Error al cancelar la solicitud: " + errorMessage.error);
 		}
 	} catch (error) {
-		alert("Error al cancelar la solicitud: " + error);
 	}
 }
 
@@ -88,12 +80,8 @@ export async function blockUser(userId: string) {
 		});
 		if (response.ok) {
 			showMessage("User blocked", null);
-		} else {
-			const errorMessage = await response.json();
-			alert("Error al cancelar la solicitud: " + errorMessage.error);
 		}
 	} catch (error) {
-		alert("Error al cancelar la solicitud: " + error);
 	}
 }
 
@@ -109,12 +97,8 @@ export async function unblockUser(userId: string) {
 		});
 		if (response.ok) {
 			showMessage("User unblocked", null);
-		} else {
-			const errorMessage = await response.json();
-			alert("Error al cancelar la solicitud: " + errorMessage.error);
 		}
 	} catch (error) {
-		alert("Error al cancelar la solicitud: " + error);
 	}
 }
 

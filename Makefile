@@ -21,8 +21,6 @@ all:
 	fi; \
 	docker compose -f ${YML} up -d \
 	'
-	@cd frontend/src && npm install && cd ts && npx tsc
-	@cd frontend/src && npm install && npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css
 
 down:
 	@bash -c '\
@@ -83,8 +81,11 @@ ts:
 tailwind:
 	@cd frontend/src && npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css --watch
 
+# Use nginx (TLS, with /back prefix) when running CLI inside Docker network
 cli:
-	@node backend/game/manager/gameCLI.js
+	@docker compose exec -e BASE_ORIGIN=https://nginx:8443 -e BACK_PREFIX=/back backend \
+	sh -lc 'node game/manager/gameCLI.js'
+# 	@node backend/game/manager/gameCLI.js
 
 PHONY: all down clean fclean purge purge-all re
 

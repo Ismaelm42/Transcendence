@@ -103,9 +103,23 @@ async function promptCredentials() {
 	});
 }
 
+// Compute base origins from environment (minimal, no extra deps)
+const BASE_ORIGIN = process.env.BASE_ORIGIN
+	|| (process.env.HOST_IP ? `https://${process.env.HOST_IP}` : null);
+const BACK_PREFIX = (process.env.BACK_PREFIX !== undefined) ? process.env.BACK_PREFIX : '/back';
+const WS_ORIGIN = BASE_ORIGIN
+	? (BASE_ORIGIN.startsWith('https://')
+		? BASE_ORIGIN.replace(/^https:\/\//, 'wss://')
+		: BASE_ORIGIN.replace(/^http:\/\//, 'ws://'))
+	: null;
+
 // Authenticate user and extract token from cookie
 async function loginAndGetToken(email, password) {
-	const res = await fetch(`/back/auth/login`, {
+	if (!BASE_ORIGIN) {
+		console.error('Missing BASE_ORIGIN or HOST_IP environment. Set BASE_ORIGIN (e.g., https://localhost:8443)');
+		process.exit(1);
+	}
+	const res = await fetch(`${BASE_ORIGIN}${BACK_PREFIX}/auth/login`, {
 		method: 'POST',
 		body: JSON.stringify({ email, password }),
 		headers: { 'Content-Type': 'application/json' },
@@ -323,7 +337,11 @@ function handleSocketMessages(socket) {
 		}
 	}
 
-	const socket = new WebSocket(`wss://${process.env.HOST_IP}/back/ws/game`, {
+	if (!WS_ORIGIN) {
+		console.error('Missing BASE_ORIGIN or HOST_IP environment. Set BASE_ORIGIN (e.g., https://localhost:8443)');
+		process.exit(1);
+	}
+	const socket = new WebSocket(`${WS_ORIGIN}${BACK_PREFIX}/ws/game`, {
 		headers: { Cookie: `token=${token}` },
 		agent: new https.Agent({ rejectUnauthorized: false }),
 	});

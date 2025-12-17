@@ -8,12 +8,12 @@ services:
     container_name: nginx
     ports:
       - "8443:8443"
-    volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./nginx/ssl_certs/private:/etc/nginx/ssl/private
-      - ./nginx/ssl_certs/public:/etc/ssl/certs
     networks:
       - transcendence
+    # volumes:
+    # - ./nginx/conf:/etc/nginx/conf.d
+    # - ./nginx/ssl_certs/private:/etc/nginx/ssl/private
+    # - ./nginx/ssl_certs/public:/etc/ssl/certs
     restart: always
 # FRONTEND
   frontend:
@@ -26,9 +26,9 @@ services:
     depends_on:
       - backend
     restart: always
-    # ISM: volume for development only
-    volumes:
-      - ./frontend/:/src/ 
+    # volumes:
+    #   - ./frontend/:/src/ 
+    # No bind mounts; assets are baked into the image
 # BACKEND
   backend:
     build: ./backend
@@ -40,6 +40,6 @@ services:
     env_file:
       - .env
     restart: always
-    # ISM: volume for development only
-    volumes:
-      - ./backend/:/app/
+    # volumes:
+    #   - ./backend/:/app/
+

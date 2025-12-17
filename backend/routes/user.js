@@ -45,7 +45,7 @@ export function configureUserRoutes(fastify, sequelize) {
 		const { username, password, googleId, email, avatarPath } = parsed.data;
 		const cleanUsername = username.trim().substring(0, 50);
 		// Normalize email using validator if available (better normalization than simple toLowerCase)
-		const cleanEmail = email ? validator.normalizeEmail(email) : email;
+		const cleanEmail = email.trim().toLowerCase();
 		// For fields that may contain arbitrary content (paths/ids), keep XSS sanitization
 		const cleanAvatar = avatarPath ? xss(avatarPath).trim() : avatarPath;
 		// Sanitize password to remove HTML tags (user requested). This will be the password stored and used for immediate auth.

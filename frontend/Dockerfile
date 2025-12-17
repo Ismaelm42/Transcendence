@@ -4,13 +4,15 @@ RUN apt update && apt -y install lighttpd
 
 COPY ./conf/lighttpd.conf /etc/lighttpd/lighttpd.conf
 
-RUN mkdir /src/
+RUN mkdir -p /src
 
 COPY ./src/ /src
 
-WORKDIR /src/src
+WORKDIR /src
 
 RUN npm install
+
+RUN npx tsc
 
 EXPOSE 3000
 

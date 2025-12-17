@@ -174,13 +174,13 @@ export default class GameMatch extends Step
 		if (this.tournament && this.tournament.getTournamentId() !== -42 && player1 && player2) {
 			(document.getElementById('player1-name') as HTMLElement).innerHTML = this.showTournamentName(players, player1?.username) || "Waiting <br>player 1...";
 			(document.getElementById('player2-name') as HTMLElement).innerHTML = this.showTournamentName(players, player2?.username) || "Waiting <br>player 2...";
-			(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || `https://${window.location.host}/back/images/7.png`;
-			(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || `https://${window.location.host}/back/images/7.png`;
+			(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || `https://${window.location.host}/back/images/avatar_ai_7.png`;
+			(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || `https://${window.location.host}/back/images/avatar_ai_7.png`;
 		} else {
 			(document.getElementById('player1-name') as HTMLElement).innerHTML = player1?.username || "Waiting <br>player 1...";
-			(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || `https://${window.location.host}/back/images/7.png`;
+			(document.getElementById('player1-avatar') as HTMLImageElement).src = player1?.avatarPath || `https://${window.location.host}/back/images/avatar_ai_7.png`;
 			(document.getElementById('player2-name') as HTMLElement).innerHTML = player2?.username || "Waiting <br>player 2...";
-			(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || `https://${window.location.host}/back/images/7.png`;
+			(document.getElementById('player2-avatar') as HTMLImageElement).src = player2?.avatarPath || `https://${window.location.host}/back/images/avatar_ai_7.png`;
 		}
 		/*  end of search */
 		if (readyBtn && waitingMsg)
@@ -400,9 +400,9 @@ export default class GameMatch extends Step
 			player2Resultname.innerHTML = playerDetails.player2?.username.toUpperCase() || "PLAYER 2";
 		}
 		player1Name.innerHTML = playerDetails.player1?.username || "Waiting <br>player 1...";
-		player1Avatar.src = playerDetails.player1?.avatarPath || `https://${window.location.host}/back/images/7.png`;
+		player1Avatar.src = playerDetails.player1?.avatarPath || `https://${window.location.host}/back/images/avatar_ai_7.png`;
 		player2Name.innerHTML = playerDetails.player2?.username || "Waiting <br>player 2...";
-		player2Avatar.src = playerDetails.player2?.avatarPath || `https://${window.location.host}/back/images/7.png`;
+		player2Avatar.src = playerDetails.player2?.avatarPath || `https://${window.location.host}/back/images/avatar_ai_7.png`;
 
 		player1Ready.textContent = readyStates.player1 ? "Ready" : "Press Ready...";
 		if (player1Ready.textContent === "Ready")
