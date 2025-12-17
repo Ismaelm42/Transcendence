@@ -53,13 +53,13 @@ export class Step {
 			headerElement.innerHTML = user ? 			
 				`<div id="authButtons" class="flex items-center">
 					<span id="username" class="text-white hover:text-amber-300"><a href="#profile"> ${user} </a></span>
-					<div id="headerSeparator" class="vertical-bar"></div>
+					<div id="headerSeparator" class="vertical-bar border-l border-white h-6 ml-3.5 mr-2.5"></div>
 					<a href="#logout" id="logoutButton" class="text-white hover:text-amber-300">Logout</a>
 				</div>
 			` : `
 				<div id="authButtons" class="flex items-center">
 					<a href="#login" class="text-white hover:text-amber-300">Login</a>
-					<div id="headerSeparator" class="vertical-bar"></div>
+					<div id="headerSeparator" class="vertical-bar border-l border-white h-6 ml-3.5 mr-2.5"></div>
 					<a href="#register" class="text-white hover:text-amber-300 ml-2">Register</a>
 				</div>
 			`;
